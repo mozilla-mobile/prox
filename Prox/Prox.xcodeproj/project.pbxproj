@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */; };
-		7B29E7C51DA3EC360099AF38 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7C41DA3EC360099AF38 /* ViewController.swift */; };
-		7B29E7C81DA3EC360099AF38 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7C61DA3EC360099AF38 /* Main.storyboard */; };
+		7B29E7C51DA3EC360099AF38 /* PlaceCarouselViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7C41DA3EC360099AF38 /* PlaceCarouselViewController.swift */; };
 		7B29E7CA1DA3EC360099AF38 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7C91DA3EC360099AF38 /* Assets.xcassets */; };
 		7B29E7CD1DA3EC360099AF38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */; };
 		7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7D71DA3EC360099AF38 /* ProxTests.swift */; };
 		7B29E7E31DA3EC360099AF38 /* ProxUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7E21DA3EC360099AF38 /* ProxUITests.swift */; };
+		7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */; };
+		7B561BB51DABD8D60096D8BC /* hilton_location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7B561BB41DABD8D60096D8BC /* hilton_location.gpx */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,8 +37,7 @@
 /* Begin PBXFileReference section */
 		7B29E7BF1DA3EC360099AF38 /* Prox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		7B29E7C41DA3EC360099AF38 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		7B29E7C71DA3EC360099AF38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		7B29E7C41DA3EC360099AF38 /* PlaceCarouselViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceCarouselViewController.swift; sourceTree = "<group>"; };
 		7B29E7C91DA3EC360099AF38 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7B29E7CC1DA3EC360099AF38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7B29E7CE1DA3EC360099AF38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -47,6 +47,7 @@
 		7B29E7DE1DA3EC360099AF38 /* ProxUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProxUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B29E7E21DA3EC360099AF38 /* ProxUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxUITests.swift; sourceTree = "<group>"; };
 		7B29E7E41DA3EC360099AF38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselHeaderView.swift; path = PlaceCarousel/PlaceCarouselHeaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,8 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */,
-				7B29E7C41DA3EC360099AF38 /* ViewController.swift */,
-				7B29E7C61DA3EC360099AF38 /* Main.storyboard */,
+				7B561BB11DABD5730096D8BC /* Place Carousel */,
 				7B29E7C91DA3EC360099AF38 /* Assets.xcassets */,
 				7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */,
 				7B29E7CE1DA3EC360099AF38 /* Info.plist */,
@@ -123,6 +123,15 @@
 				7B29E7E41DA3EC360099AF38 /* Info.plist */,
 			);
 			path = ProxUITests;
+			sourceTree = "<group>";
+		};
+		7B561BB11DABD5730096D8BC /* Place Carousel */ = {
+			isa = PBXGroup;
+			children = (
+				7B29E7C41DA3EC360099AF38 /* PlaceCarouselViewController.swift */,
+				7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */,
+			);
+			name = "Place Carousel";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -237,7 +246,6 @@
 			files = (
 				7B29E7CD1DA3EC360099AF38 /* LaunchScreen.storyboard in Resources */,
 				7B29E7CA1DA3EC360099AF38 /* Assets.xcassets in Resources */,
-				7B29E7C81DA3EC360099AF38 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,7 +270,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7B29E7C51DA3EC360099AF38 /* ViewController.swift in Sources */,
+				7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */,
+				7B29E7C51DA3EC360099AF38 /* PlaceCarouselViewController.swift in Sources */,
 				7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -299,14 +308,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		7B29E7C61DA3EC360099AF38 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				7B29E7C71DA3EC360099AF38 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -358,7 +359,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -402,7 +403,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -514,6 +515,7 @@
 				7B29E7E91DA3EC360099AF38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7B29E7EA1DA3EC360099AF38 /* Build configuration list for PBXNativeTarget "ProxTests" */ = {
 			isa = XCConfigurationList;
@@ -522,6 +524,7 @@
 				7B29E7EC1DA3EC360099AF38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7B29E7ED1DA3EC360099AF38 /* Build configuration list for PBXNativeTarget "ProxUITests" */ = {
 			isa = XCConfigurationList;
@@ -530,6 +533,7 @@
 				7B29E7EF1DA3EC360099AF38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
