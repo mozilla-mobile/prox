@@ -8,15 +8,6 @@ import QuartzCore
 
 class PlaceCarouselViewController: UIViewController {
 
-    // All views in the background are going to be displayed using a stack view
-    lazy var baseView: UIStackView = {
-        let view = UIStackView()
-        view.axis = .vertical
-        view.distribution = UIStackViewDistribution.fillProportionally
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
     // the top part of the background. Contains Number of Places, horizontal line & (soon to be) Current Location button
     lazy var headerView: PlaceCarouselHeaderView = {
         let view = PlaceCarouselHeaderView()
@@ -30,12 +21,11 @@ class PlaceCarouselViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .white
 
-        // this is adding a drop shadow to the view. 
-        // note: Doesn't seem to be working in stack view
-        view.clipsToBounds = false;
-        view.layer.shadowColor = UIColor.black.cgColor;
-        view.layer.shadowOffset = CGSize(width: 0, height: 5);
-        view.layer.shadowOpacity = 0.5;
+        view.layer.shadowColor = UIColor.darkGray.cgColor
+        view.layer.shadowOpacity = 0.25
+        view.layer.shadowOffset = CGSize(width: 0, height: 2)
+        view.layer.shadowRadius = 2
+        view.layer.shouldRasterize = true
 
         return view
     }()
@@ -50,8 +40,8 @@ class PlaceCarouselViewController: UIViewController {
     // label displaying sunrise and sunset times
     lazy var sunRiseSetTimesLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(colorLiteralRed: 0.64, green: 0.64, blue: 0.64, alpha: 1.0)
-        label.font = UIFont.boldSystemFont(ofSize: 13)
+        label.textColor = UIColor(colorLiteralRed: 0.74, green: 0.74, blue: 0.74, alpha: 1.0)
+        label.font = UIFont.systemFont(ofSize: 14)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -60,19 +50,25 @@ class PlaceCarouselViewController: UIViewController {
         super.viewDidLoad()
 
         // add the views to the stack view
-        view.addSubview(baseView)
-        baseView.addArrangedSubview(headerView)
-        baseView.addArrangedSubview(sunView)
-        baseView.addArrangedSubview(mapView)
+        view.addSubview(headerView)
 
         // setting up the layout constraints
-        var constraints = [baseView.topAnchor.constraint(equalTo: view.topAnchor),
-                           baseView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                           baseView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                           baseView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                           headerView.heightAnchor.constraint(equalToConstant: 150),
-                           sunView.heightAnchor.constraint(equalToConstant: 90),
-                           mapView.heightAnchor.constraint(equalToConstant: 400)]
+        var constraints = [headerView.topAnchor.constraint(equalTo: view.topAnchor),
+                           headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                           headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                           headerView.heightAnchor.constraint(equalToConstant: 150)]
+
+        view.addSubview(sunView)
+        constraints.append(contentsOf: [sunView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
+                                        sunView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                                        sunView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                                        sunView.heightAnchor.constraint(equalToConstant: 90)])
+
+        view.insertSubview(mapView, belowSubview: sunView)
+        constraints.append(contentsOf: [mapView.topAnchor.constraint(equalTo: sunView.bottomAnchor),
+                                        mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                                        mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                                        mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)])
 
 
         // set up the subviews for the sunrise/set view
