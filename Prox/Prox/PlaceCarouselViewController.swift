@@ -38,7 +38,7 @@ class PlaceCarouselViewController: UIViewController {
     }()
 
     // label displaying sunrise and sunset times
-    lazy var sunRiseSetTimesLabel: UILabel = {
+    lazy var sunriseSetTimesLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(colorLiteralRed: 0.74, green: 0.74, blue: 0.74, alpha: 1.0)
         label.font = UIFont.systemFont(ofSize: 14)
@@ -72,13 +72,13 @@ class PlaceCarouselViewController: UIViewController {
 
 
         // set up the subviews for the sunrise/set view
-        sunView.addSubview(sunRiseSetTimesLabel)
-        constraints.append(sunRiseSetTimesLabel.leadingAnchor.constraint(equalTo: sunView.leadingAnchor, constant: 20))
-        constraints.append(sunRiseSetTimesLabel.topAnchor.constraint(equalTo: sunView.topAnchor, constant: 14))
+        sunView.addSubview(sunriseSetTimesLabel)
+        constraints.append(sunriseSetTimesLabel.leadingAnchor.constraint(equalTo: sunView.leadingAnchor, constant: 20))
+        constraints.append(sunriseSetTimesLabel.topAnchor.constraint(equalTo: sunView.topAnchor, constant: 14))
 
         // placeholder text for the labels
         headerView.numberOfPlacesLabel.text = "4 places"
-        sunRiseSetTimesLabel.text = "Sunset is at 6:14pm today"
+        sunriseSetTimesLabel.text = "Sunset is at 6:14pm today"
 
         // apply the constraints
         NSLayoutConstraint.activate(constraints)
