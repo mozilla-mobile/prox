@@ -6,5 +6,5 @@ use_frameworks!
 target 'Prox' do
 	pod 'AFNetworking', '~> 3.0'
 	pod 'GeoFire', '~> 1.1'
-	pod 'Firebase'
+	pod 'Firebase', '>= 2.5.1'
 end
