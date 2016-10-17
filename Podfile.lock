@@ -1,0 +1,34 @@
+PODS:
+  - AFNetworking (3.1.0):
+    - AFNetworking/NSURLSession (= 3.1.0)
+    - AFNetworking/Reachability (= 3.1.0)
+    - AFNetworking/Security (= 3.1.0)
+    - AFNetworking/Serialization (= 3.1.0)
+    - AFNetworking/UIKit (= 3.1.0)
+  - AFNetworking/NSURLSession (3.1.0):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.1.0)
+  - AFNetworking/Security (3.1.0)
+  - AFNetworking/Serialization (3.1.0)
+  - AFNetworking/UIKit (3.1.0):
+    - AFNetworking/NSURLSession
+  - Firebase (2.5.1)
+  - GeoFire (1.1.3):
+    - Firebase (~> 2.2)
+    - FirebaseOSX (~> 2.4)
+
+DEPENDENCIES:
+  - AFNetworking (~> 3.0)
+  - Firebase
+  - GeoFire (~> 1.1)
+
+SPEC CHECKSUMS:
+  AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  Firebase: 3565ea88b830f28f2c77ecc524622bc71a20d085
+  GeoFire: 88535ea6f82cb0555fcea87b36b7c263a2900ae8
+
+PODFILE CHECKSUM: c2c110dde9c28c8bcaf0f6bf2ef9913fa28dd601
+
+COCOAPODS: 1.0.1
