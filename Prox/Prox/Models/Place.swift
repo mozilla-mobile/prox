@@ -3,6 +3,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
+import Firebase
+
+private let PROVIDERS_PATH = "providers/"
+private let YELP_PATH = PROVIDERS_PATH + "yelp"
 
 class Place {
 
@@ -25,6 +29,7 @@ class Place {
 
     // todo: hours
 
+    // TODO: temporary? for testing purposes.
     init(name: String,
          categories: [String],
          url: String,
@@ -48,5 +53,37 @@ class Place {
         self.tripAdvisorProvider = tripAdvisorProvider
 
         self.photoURLs = photoURLs
+    }
+
+    init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
+        guard data.exists(), data.hasChildren(), let value = data.value as? NSDictionary else {
+            return nil
+        }
+
+        // TODO: handle missing values more robustly
+        self.name = value["id"] as? String ?? "Name unknown"
+        self.summary = value["pullQuote"] as? String ?? "Summary unknown"
+
+        self.address = (value["address"] as? [String])?.joined(separator: " ") ?? "Address unknown"
+        if let coords = value["coordinates"] as? [String:Double],
+            let lat = coords["lat"], let lon = coords["lon"] {
+            self.latLong = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        } else {
+            // TODO: if we already have the address, maybe we reverse-geocode & do better. In any
+            // case, handle this.
+            print("lol unable to find coordinates")
+            return nil
+        }
+
+        self.yelpProvider = ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: YELP_PATH)) ??
+            ReviewProvider(url: "", rating: -1, reviews: [], totalReviewCount: -1)
+
+        // TODO: get data from DB. Below are currently using default values.
+        self.categories = [String]()
+        self.url = ""
+
+        self.tripAdvisorProvider = ReviewProvider(url: "", rating: -1, reviews: [], totalReviewCount: -1)
+
+        self.photoURLs = []
     }
 }
