@@ -191,7 +191,6 @@
 				7B29E7C91DA3EC360099AF38 /* Assets.xcassets */,
 				7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */,
 				7B29E7CE1DA3EC360099AF38 /* Info.plist */,
-				7BF835AF1DAF94CC00D6AF57 /* Utilities */,
 				7B5095791DB64EA1007C54F0 /* DataAccess */,
 			);
 			path = Prox;
@@ -307,13 +306,6 @@
 				7BD5CC7C1DAFF07E00BCF50D /* GFQuery.m */,
 			);
 			path = Implementation;
-			sourceTree = "<group>";
-		};
-		7BF835AF1DAF94CC00D6AF57 /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Utilities;
 			sourceTree = "<group>";
 		};
 		B811BE4A32B2F4B8A7FAAB00 /* Pods */ = {
