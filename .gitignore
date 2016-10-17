@@ -21,6 +21,9 @@ xcuserdata/
 *.moved-aside
 *.xcuserstate
 
+# Secure Information
+Prox/Prox/GoogleService-Info.plist
+
 ## Obj-C/Swift specific
 *.hmap
 *.ipa

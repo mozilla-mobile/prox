@@ -3,11 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+
+    private var authorizedUser: FIRUser?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -23,7 +26,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // display
         window?.makeKeyAndVisible()
+
+        setupFirebase()
+
         return true
+    }
+
+    private func setupFirebase() {
+        FIRApp.configure()
+
+        if let user = FIRAuth.auth()?.currentUser {
+            authorizedUser = user
+        } else {
+            FIRAuth.auth()?.signInAnonymously { (user, error) in
+                guard let user = user else {
+                    return print("sign in failed \(error)")
+                }
+                self.authorizedUser = user
+                dump(user)
+            }
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

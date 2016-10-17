@@ -1,10 +1,7 @@
-//
-//  ProxUITests.swift
-//  ProxUITests
-//
-//  Created by Emily Toop on 04/10/2016.
-//  Copyright © 2016 Mozilla. All rights reserved.
-//
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 
 import XCTest
 
@@ -16,7 +13,7 @@ class ProxUITests: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         
         // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
+        continueAfterFailure = true
         // UI tests must launch the application that they test. Doing this in setup will make sure it happens for each test method.
         XCUIApplication().launch()
 

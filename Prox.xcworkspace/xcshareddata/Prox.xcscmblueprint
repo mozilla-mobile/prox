@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "75BBA65679E6E90E4EFFF18D8BB0B5BAF6C3CCD7",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "78BC981234DC9ACF745E820B97CE28D46F6D69E7" : 9223372036854775807,
+    "75BBA65679E6E90E4EFFF18D8BB0B5BAF6C3CCD7" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "78C2B30E-11F7-48D8-9EF9-41E5F5A5BF19",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "78BC981234DC9ACF745E820B97CE28D46F6D69E7" : "geofire-objc\/",
+    "75BBA65679E6E90E4EFFF18D8BB0B5BAF6C3CCD7" : "prox\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Prox",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Prox.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/mozilla-mobile\/prox.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "75BBA65679E6E90E4EFFF18D8BB0B5BAF6C3CCD7"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/firebase\/geofire-objc.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "78BC981234DC9ACF745E820B97CE28D46F6D69E7"
+    }
+  ]
+}
