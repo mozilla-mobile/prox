@@ -10,7 +10,12 @@ private let CellReuseIdentifier = "PlaceCarouselCell"
 
 class PlaceCarousel: NSObject {
 
-    var places: [Place] = [Place]()
+    var places: [Place] = [Place]() {
+        didSet {
+            // TODO: how do we make sure the user wasn't interacting?
+            carousel.reloadData()
+        }
+    }
 
     let defaultPadding: CGFloat = 15.0
 
@@ -42,17 +47,20 @@ extension PlaceCarousel: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return places.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // TODO: this view is only partially filled in
+        let place = places[indexPath.item]
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdentifier, for: indexPath) as! PlaceCarouselCollectionViewCell
         cell.placeImage.image = UIImage(named: "place-placeholder")
         cell.category.text = "Hotel"
-        cell.name.text = "Hilton Waikaloa Village"
+        cell.name.text = place.name
 
-        cell.yelpReview.score = 4
-        cell.yelpReview.numberOfReviewersLabel.text = "647 Reviews"
+        cell.yelpReview.score = Int(place.yelpProvider.rating) // TODO: type
+        cell.yelpReview.numberOfReviewersLabel.text = "\(place.yelpProvider.totalReviewCount) Reviews"
         cell.yelpReview.reviewSiteLogo.image = UIImage(named: "logo_yelp")
 
         cell.tripAdvisorReview.score = 3

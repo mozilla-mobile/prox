@@ -116,6 +116,8 @@ class PlaceCarouselViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+
+    var once = false
 }
 
 extension PlaceCarouselViewController: MKMapViewDelegate {
@@ -138,6 +140,14 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
             let center = CLLocationCoordinate2D(latitude: coord.latitude + MAP_LATITUDE_OFFSET, longitude: coord.longitude)
             let span = MKCoordinateSpan(latitudeDelta: MAP_SPAN_DELTA, longitudeDelta: 0.0)
             mapView.region = MKCoordinateRegion(center: center, span: span)
+
+            // Make sure we only call this once, for testing purposes.
+            if !once {
+                FirebasePlacesDatabase().getPlaces(forLocation: TEST_LL) { places in
+                    self.placeCarousel.places = places
+                }
+                once = true
+            }
         }
     }
 
