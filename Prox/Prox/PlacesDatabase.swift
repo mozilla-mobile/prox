@@ -3,11 +3,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
+import Deferred
 
 /*
  * A listing of all the places we'd want to show a user.
  */
 protocol PlacesDatabase {
-    func getPlaces(forLocation location: CLLocation,
-                   withBlock callback: @escaping ([Place]) -> Void)
+    func getPlaces(forLocation location: CLLocation) -> Future<[Place]>
 }

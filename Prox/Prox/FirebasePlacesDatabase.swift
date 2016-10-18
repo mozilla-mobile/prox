@@ -4,6 +4,7 @@
 
 import Foundation
 import Firebase
+import Deferred
 
 private let ROOT_PATH = "venues/"
 private let GEOFIRE_PATH = ROOT_PATH + "locations/"
@@ -30,25 +31,28 @@ class FirebasePlacesDatabase: PlacesDatabase {
      * Queries GeoFire to get the place keys around the given location and then queries Firebase to
      * get the place details for the place keys.
      */
-    func getPlaces(forLocation location: CLLocation, withBlock callback: @escaping ([Place]) -> Void) {
-        getPlaceKeys(aroundPoint: location) { placeKeyToLoc in
-            self.getPlaceDetails(fromKeys: Array(placeKeyToLoc.keys)) { places in
-                print("lol got place details: \(places)")
-                callback(places)
-            }
+    func getPlaces(forLocation location: CLLocation) -> Future<[Place]> {
+        // TODO: OperationQueue.current okay?
+        let places = getPlaceKeys(aroundPoint: location).andThen(upon: OperationQueue.current!) { (placeKeyToLoc) -> Future<[Place]> in
+            // TODO: limit the number of place details we look up. X closest places?
+            // TODO: can we assume all queries will finish?
+            // TODO: These should be ordered by display order
+            return self.getPlaceDetails(fromKeys: Array(placeKeyToLoc.keys)).allFilled()
         }
+        return places
     }
 
     /*
      * Queries GeoFire to find keys that represent locations around the given point.
      */
-    private func getPlaceKeys(aroundPoint location: CLLocation,
-                              withBlock callback: @escaping ([String:CLLocation]) -> Void) {
+    private func getPlaceKeys(aroundPoint location: CLLocation) -> Deferred<[String:CLLocation]> {
+        let deferred = Deferred<[String:CLLocation]>()
         var placeKeyToLoc = [String:CLLocation]()
+
         guard let circleQuery = geofire.query(at: location, withRadius: SEARCH_RADIUS_KM) else {
             // TODO: is this properly handling the else case?
-            callback(placeKeyToLoc)
-            return
+            deferred.fill(with: placeKeyToLoc)
+            return deferred
         }
 
         // Append results to return object.
@@ -62,30 +66,36 @@ class FirebasePlacesDatabase: PlacesDatabase {
             // TODO: test what happens when observe is never called (i.e. no results).
             print("lol All initial data has been loaded and events have been fired for circle query!")
             circleQuery.removeAllObservers()
-            callback(placeKeyToLoc)
+            deferred.fill(with: placeKeyToLoc)
         }
+
+        return deferred
     }
 
     /*
      * Queries Firebase to find the place details from the given keys.
      */
-    private func getPlaceDetails(fromKeys placeKeys: [String],
-                                 withBlock callback: @escaping ([Place]) -> Void) {
-        var places = [Place]()
-        // TODO: how can we query on multiple child keys?
-        guard let first = placeKeys.first else {
-            callback(places)
-            return
+    private func getPlaceDetails(fromKeys placeKeys: [String]) -> [Deferred<Place>] {
+        let placeDetails = placeKeys.map { placeKey -> Deferred<Place> in
+            queryChildPlaceDetails(by: placeKey)
         }
+        return placeDetails
+    }
 
-        let childRef = placeDetailsRef.child(first)
+    private func queryChildPlaceDetails(by placeKey: String) -> Deferred<Place> {
+        let deferred = Deferred<Place>()
+
+        let childRef = placeDetailsRef.child(placeKey)
         childRef.queryOrderedByKey().observeSingleEvent(of: .value) { (data: FIRDataSnapshot) in
             if let place = Place(fromFirebaseSnapshot: data) {
-                places.append(place)
+                deferred.fill(with: place)
             } else {
-                print("lol Failed to handle data: \(data)")
+                // TODO: make better than optional; handle correctly.
+                // Note: I tried to return an optional here and the Deferred lib crashes.
+                fatalError("Could not create place from Firebase snapshot")
             }
-            callback(places)
         }
+
+        return deferred
     }
 }
