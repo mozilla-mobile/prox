@@ -23,6 +23,9 @@
 		7B5095721DB5352E007C54F0 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095701DB5352E007C54F0 /* Colors.swift */; };
 		7B5095731DB5352E007C54F0 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095711DB5352E007C54F0 /* Fonts.swift */; };
 		7B5095751DB62590007C54F0 /* NSLayoutConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */; };
+		7B5095781DB64E76007C54F0 /* TravelTimesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */; };
+		7B50957A1DB65342007C54F0 /* TravelTimesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */; };
+		7B5095811DB65FD4007C54F0 /* TravelTimesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095801DB65FD4007C54F0 /* TravelTimesTests.swift */; };
 		7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */; };
 		7B561BBA1DAC02B90096D8BC /* hilton_location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7B561BB91DAC02B90096D8BC /* hilton_location.gpx */; };
 		7BD5CC7D1DAFF07E00BCF50D /* GeoFire.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC741DAFF07E00BCF50D /* GeoFire.m */; };
@@ -86,6 +89,8 @@
 		7B5095701DB5352E007C54F0 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		7B5095711DB5352E007C54F0 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NSLayoutConstraint.swift; path = Extensions/NSLayoutConstraint.swift; sourceTree = "<group>"; };
+		7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TravelTimesProvider.swift; path = Data/TravelTimesProvider.swift; sourceTree = "<group>"; };
+		7B5095801DB65FD4007C54F0 /* TravelTimesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TravelTimesTests.swift; sourceTree = "<group>"; };
 		7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselHeaderView.swift; path = PlaceCarousel/PlaceCarouselHeaderView.swift; sourceTree = "<group>"; };
 		7B561BB91DAC02B90096D8BC /* hilton_location.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hilton_location.gpx; sourceTree = "<group>"; };
 		7BD5CC6D1DAFF07E00BCF50D /* GeoFire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoFire.h; sourceTree = "<group>"; };
@@ -187,6 +192,7 @@
 				7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */,
 				7B29E7CE1DA3EC360099AF38 /* Info.plist */,
 				7BF835AF1DAF94CC00D6AF57 /* Utilities */,
+				7B5095791DB64EA1007C54F0 /* DataAccess */,
 			);
 			path = Prox;
 			sourceTree = "<group>";
@@ -196,6 +202,7 @@
 			children = (
 				7B29E7D71DA3EC360099AF38 /* ProxTests.swift */,
 				7B29E7D91DA3EC360099AF38 /* Info.plist */,
+				7B5095801DB65FD4007C54F0 /* TravelTimesTests.swift */,
 			);
 			path = ProxTests;
 			sourceTree = "<group>";
@@ -234,6 +241,14 @@
 				7B5095711DB5352E007C54F0 /* Fonts.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		7B5095791DB64EA1007C54F0 /* DataAccess */ = {
+			isa = PBXGroup;
+			children = (
+				7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */,
+			);
+			name = DataAccess;
 			sourceTree = "<group>";
 		};
 		7B561BB11DABD5730096D8BC /* Place Carousel */ = {
@@ -612,6 +627,7 @@
 				7B29E7C51DA3EC360099AF38 /* PlaceCarouselViewController.swift in Sources */,
 				7BD5CC7F1DAFF07E00BCF50D /* GFGeoHash.m in Sources */,
 				7B50956E1DB53429007C54F0 /* HorizontalLineView.swift in Sources */,
+				7B5095781DB64E76007C54F0 /* TravelTimesProvider.swift in Sources */,
 				7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */,
 				7BD5CC811DAFF07E00BCF50D /* GFQuery.m in Sources */,
 				7B5095651DB531CA007C54F0 /* Place.swift in Sources */,
@@ -622,7 +638,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B5095811DB65FD4007C54F0 /* TravelTimesTests.swift in Sources */,
 				7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */,
+				7B50957A1DB65342007C54F0 /* TravelTimesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
