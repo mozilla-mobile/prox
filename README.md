@@ -23,8 +23,8 @@ compilation failures:
 
 ### GoogleServices-Info.plist
 For a successful build, you need the `Prox/Prox/GoogleService-Info.plist` file
-which contains secrets to connect to Firebase and our backend services. *Please
-do not add this file to version control.*
+which contains secure information to connect to Firebase and our backend
+services. *Please do not add this file to version control.*
 
 If you are a team member, this file is available in the Engineering gdrive. If
 you are not, please contact a team member directly to discuss receiving this
