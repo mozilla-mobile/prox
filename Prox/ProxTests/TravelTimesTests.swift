@@ -4,6 +4,8 @@
 
 import XCTest
 @testable import Prox
+import CoreLocation
+import MapKit
 
 class TravelTimesTests: XCTestCase {
 
