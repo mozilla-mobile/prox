@@ -4,57 +4,36 @@
 
 import UIKit
 
-class PlaceCarouselHeaderView: UIView {
+class PlaceCarouselHeaderView: HorizontalLineView {
 
     // label to display number of places
     lazy var numberOfPlacesLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 50)
+        label.font = Fonts.carouselViewNumberOfPlaces
         return label
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .white
-
+        self.startX = 20.0
+        
         self.setupViews()
     }
 
     // setting up the constraints for the views
     func setupViews() {
+        color = Colors.carouselViewHeaderHorizontalLine
         addSubview(numberOfPlacesLabel)
 
         let constraints = [ numberOfPlacesLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
                             numberOfPlacesLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10)]
 
-        NSLayoutConstraint.activate(constraints)
+        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    // draw the horizontal line at the bottom of the view
-    override func draw(_ rect: CGRect) {
-        super.draw(rect)
-
-        // draw the line
-        if let context = UIGraphicsGetCurrentContext() {
-
-            // set the stroke color and width
-            context.setStrokeColor(red: 0.78, green: 0.78, blue: 0.78, alpha: 1.0);
-            context.setLineWidth(1.5);
-
-            // move to first point
-            context.move(to: CGPoint(x: 20.0, y: rect.height))
-
-            // add a line to  second point
-            context.addLine(to: CGPoint(x: rect.width, y: rect.height))
-
-            // draw the line
-            context.strokePath()
-        }
     }
 
 }

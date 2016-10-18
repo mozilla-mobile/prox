@@ -14,6 +14,15 @@
 		7B29E7CD1DA3EC360099AF38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */; };
 		7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7D71DA3EC360099AF38 /* ProxTests.swift */; };
 		7B29E7E31DA3EC360099AF38 /* ProxUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7E21DA3EC360099AF38 /* ProxUITests.swift */; };
+		7B5095621DB531C0007C54F0 /* PlaceCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */; };
+		7B5095651DB531CA007C54F0 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095641DB531CA007C54F0 /* Place.swift */; };
+		7B5095671DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095661DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift */; };
+		7B50956B1DB53382007C54F0 /* ReviewContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095691DB53382007C54F0 /* ReviewContainerView.swift */; };
+		7B50956C1DB53382007C54F0 /* ReviewScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B50956A1DB53382007C54F0 /* ReviewScoreView.swift */; };
+		7B50956E1DB53429007C54F0 /* HorizontalLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B50956D1DB53429007C54F0 /* HorizontalLineView.swift */; };
+		7B5095721DB5352E007C54F0 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095701DB5352E007C54F0 /* Colors.swift */; };
+		7B5095731DB5352E007C54F0 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095711DB5352E007C54F0 /* Fonts.swift */; };
+		7B5095751DB62590007C54F0 /* NSLayoutConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */; };
 		7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */; };
 		7B561BBA1DAC02B90096D8BC /* hilton_location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7B561BB91DAC02B90096D8BC /* hilton_location.gpx */; };
 		7BD5CC7D1DAFF07E00BCF50D /* GeoFire.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC741DAFF07E00BCF50D /* GeoFire.m */; };
@@ -25,6 +34,7 @@
 		7BD5CC8A1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7BD5CC8B1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7C79B23D6CD1B1AC5A860E9E /* Pods_ProxTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */; };
+		E67146361DB54896007A99E4 /* CLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67146351DB54896007A99E4 /* CLLocationManager.swift */; };
 		EC42FE32127D2BD0FE36402D /* Pods_ProxUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +77,15 @@
 		7B29E7DE1DA3EC360099AF38 /* ProxUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProxUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B29E7E21DA3EC360099AF38 /* ProxUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxUITests.swift; sourceTree = "<group>"; };
 		7B29E7E41DA3EC360099AF38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarousel.swift; path = PlaceCarousel/PlaceCarousel.swift; sourceTree = "<group>"; };
+		7B5095641DB531CA007C54F0 /* Place.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
+		7B5095661DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselCollectionViewCell.swift; path = PlaceCarousel/PlaceCarouselCollectionViewCell.swift; sourceTree = "<group>"; };
+		7B5095691DB53382007C54F0 /* ReviewContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewContainerView.swift; sourceTree = "<group>"; };
+		7B50956A1DB53382007C54F0 /* ReviewScoreView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewScoreView.swift; sourceTree = "<group>"; };
+		7B50956D1DB53429007C54F0 /* HorizontalLineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalLineView.swift; sourceTree = "<group>"; };
+		7B5095701DB5352E007C54F0 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		7B5095711DB5352E007C54F0 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
+		7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NSLayoutConstraint.swift; path = Extensions/NSLayoutConstraint.swift; sourceTree = "<group>"; };
 		7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselHeaderView.swift; path = PlaceCarousel/PlaceCarouselHeaderView.swift; sourceTree = "<group>"; };
 		7B561BB91DAC02B90096D8BC /* hilton_location.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hilton_location.gpx; sourceTree = "<group>"; };
 		7BD5CC6D1DAFF07E00BCF50D /* GeoFire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoFire.h; sourceTree = "<group>"; };
@@ -89,6 +108,7 @@
 		A62868128BA3BDA4EF8E22F1 /* Pods-ProxTests.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.enterprise.xcconfig"; sourceTree = "<group>"; };
 		D4ACFAE1468306F6BC08DB51 /* Pods-ProxUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProxUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E67146351DB54896007A99E4 /* CLLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLLocationManager.swift; path = Extensions/CLLocationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +175,10 @@
 		7B29E7C11DA3EC360099AF38 /* Prox */ = {
 			isa = PBXGroup;
 			children = (
+				E67146341DB5488D007A99E4 /* Extensions */,
+				7B50956F1DB5352E007C54F0 /* Utilities */,
+				7B5095681DB53382007C54F0 /* Widgets */,
+				7B5095631DB531CA007C54F0 /* Models */,
 				7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */,
 				7BD5CC601DAFF02100BCF50D /* ThirdParty */,
 				7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */,
@@ -162,6 +186,7 @@
 				7B29E7C91DA3EC360099AF38 /* Assets.xcassets */,
 				7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */,
 				7B29E7CE1DA3EC360099AF38 /* Info.plist */,
+				7BF835AF1DAF94CC00D6AF57 /* Utilities */,
 			);
 			path = Prox;
 			sourceTree = "<group>";
@@ -184,9 +209,38 @@
 			path = ProxUITests;
 			sourceTree = "<group>";
 		};
+		7B5095631DB531CA007C54F0 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				7B5095641DB531CA007C54F0 /* Place.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		7B5095681DB53382007C54F0 /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				7B50956D1DB53429007C54F0 /* HorizontalLineView.swift */,
+				7B5095691DB53382007C54F0 /* ReviewContainerView.swift */,
+				7B50956A1DB53382007C54F0 /* ReviewScoreView.swift */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+		7B50956F1DB5352E007C54F0 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				7B5095701DB5352E007C54F0 /* Colors.swift */,
+				7B5095711DB5352E007C54F0 /* Fonts.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		7B561BB11DABD5730096D8BC /* Place Carousel */ = {
 			isa = PBXGroup;
 			children = (
+				7B5095661DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift */,
+				7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */,
 				7B29E7C41DA3EC360099AF38 /* PlaceCarouselViewController.swift */,
 				7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */,
 			);
@@ -240,6 +294,13 @@
 			path = Implementation;
 			sourceTree = "<group>";
 		};
+		7BF835AF1DAF94CC00D6AF57 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
 		B811BE4A32B2F4B8A7FAAB00 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -254,6 +315,15 @@
 				18F1C6CC1D18EC45A9072FF1 /* Pods-ProxUITests.enterprise.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		E67146341DB5488D007A99E4 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */,
+				E67146351DB54896007A99E4 /* CLLocationManager.swift */,
+			);
+			name = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -527,14 +597,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B5095731DB5352E007C54F0 /* Fonts.swift in Sources */,
+				7B5095621DB531C0007C54F0 /* PlaceCarousel.swift in Sources */,
+				7B5095721DB5352E007C54F0 /* Colors.swift in Sources */,
 				7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */,
+				7B50956B1DB53382007C54F0 /* ReviewContainerView.swift in Sources */,
 				7BD5CC7E1DAFF07E00BCF50D /* GFBase32Utils.m in Sources */,
+				7B50956C1DB53382007C54F0 /* ReviewScoreView.swift in Sources */,
 				7BD5CC801DAFF07E00BCF50D /* GFGeoHashQuery.m in Sources */,
+				7B5095671DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift in Sources */,
+				7B5095751DB62590007C54F0 /* NSLayoutConstraint.swift in Sources */,
 				7BD5CC7D1DAFF07E00BCF50D /* GeoFire.m in Sources */,
+				E67146361DB54896007A99E4 /* CLLocationManager.swift in Sources */,
 				7B29E7C51DA3EC360099AF38 /* PlaceCarouselViewController.swift in Sources */,
 				7BD5CC7F1DAFF07E00BCF50D /* GFGeoHash.m in Sources */,
+				7B50956E1DB53429007C54F0 /* HorizontalLineView.swift in Sources */,
 				7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */,
 				7BD5CC811DAFF07E00BCF50D /* GFQuery.m in Sources */,
+				7B5095651DB531CA007C54F0 /* Place.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

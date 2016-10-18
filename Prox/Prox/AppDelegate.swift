@@ -9,6 +9,7 @@ import Firebase
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var placeCarouselViewController: PlaceCarouselViewController?
 
     private var authorizedUser: FIRUser?
 
@@ -21,8 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.backgroundColor = UIColor.white;
 
         // create root view
-        let rootViewController = PlaceCarouselViewController()
-        window?.rootViewController = rootViewController
+        placeCarouselViewController = PlaceCarouselViewController()
+        window?.rootViewController = placeCarouselViewController
 
         // display
         window?.makeKeyAndVisible()
@@ -64,6 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        placeCarouselViewController!.refreshLocation()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
