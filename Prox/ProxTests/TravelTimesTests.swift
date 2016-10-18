@@ -96,5 +96,36 @@ class TravelTimesTests: XCTestCase {
 
         waitForExpectations(timeout: 5.0)
     }
+
+    func testMultipleTravelTypes() {
+        let travelRoutes = [MKDirectionsTransportType.automobile, MKDirectionsTransportType.walking]
+
+        let waitQuery = expectation(description: "Waiting for travel times to be calculated")
+
+        TravelTimesProvider.travelTime(fromLocation: testSource, toLocation: testDestination, byTransitTypes: travelRoutes) { travelTimes in
+
+            XCTAssertNotNil(travelTimes)
+            XCTAssertNotNil(travelTimes?.walkingTime)
+            XCTAssertNotNil(travelTimes?.drivingTime)
+            XCTAssertNil(travelTimes?.publicTransportTime)
+            waitQuery.fulfill()
+        }
+
+        waitForExpectations(timeout: 5.0)
+    }
+
+    func testMultipleTravelTypesInvalidRoute() {
+        let travelRoutes = [MKDirectionsTransportType.automobile, MKDirectionsTransportType.walking]
+        let testInvalidDestination = CLLocationCoordinate2D(latitude: 19.9542305, longitude: 155.8531072)
+
+        let waitQuery = expectation(description: "Waiting for travel times to be calculated")
+
+        TravelTimesProvider.travelTime(fromLocation: testSource, toLocation: testInvalidDestination, byTransitTypes: travelRoutes) { travelTimes in
+            XCTAssertNil(travelTimes)
+            waitQuery.fulfill()
+        }
+
+        waitForExpectations(timeout: 5.0)
+    }
     
 }

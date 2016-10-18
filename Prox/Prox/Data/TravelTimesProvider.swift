@@ -7,7 +7,7 @@ import MapKit
 
 struct TravelTimesProvider {
 
-    static func travelTime(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType = .any, withCompletion completion: @escaping ((TravelTimes?) -> ())) {
+    private static func directions(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType) -> MKDirections {
 
         let directionsRequest = MKDirectionsRequest()
         if #available(iOS 10.0, *) {
@@ -21,7 +21,11 @@ struct TravelTimesProvider {
         directionsRequest.departureDate = Date()
         directionsRequest.transportType = transitType
 
-        let directions = MKDirections(request: directionsRequest)
+        return MKDirections(request: directionsRequest)
+    }
+
+    static func travelTime(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType = .any, withCompletion completion: @escaping ((TravelTimes?) -> ())) {
+        let directions = self.directions(fromLocation: fromLocation, toLocation: toLocation, byTransitType: transitType)
         directions.calculateETA { (response, error) in
             if let error = error {
                 dump(error)
@@ -45,10 +49,33 @@ struct TravelTimesProvider {
             completion(travelTime)
         }
     }
+
+    static func travelTime(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitTypes transitTypes: [MKDirectionsTransportType], withCompletion completion: @escaping ((TravelTimes?) -> ())) {
+        var allTimes = [TravelTimes?]()
+        for transitType in transitTypes {
+            self.travelTime(fromLocation: fromLocation, toLocation: toLocation, byTransitType: transitType) { (travelTime) in
+                allTimes.append(travelTime)
+                if allTimes.count == transitTypes.count {
+                    var walking: TimeInterval?
+                    var driving: TimeInterval?
+                    var transit: TimeInterval?
+                    for time in allTimes {
+                        if let walkingTime = time?.walkingTime { walking = walkingTime }
+                        else if let drivingTime = time?.drivingTime { driving = drivingTime }
+                        else if let transitTime = time?.publicTransportTime { transit = transitTime }
+                    }
+                    if walking == nil && driving == nil && transit == nil {
+                        return completion(nil)
+                    }
+                    return completion(TravelTimes(walkingTime: walking, drivingTime: driving, publicTransportTime: transit))
+                }
+            }
+        }
+    }
 }
 
 struct TravelTimes {
-    let walkingTime: Double?
-    let drivingTime: Double?
-    let publicTransportTime: Double?
+    let walkingTime: TimeInterval?
+    let drivingTime: TimeInterval?
+    let publicTransportTime: TimeInterval?
 }
