@@ -5,9 +5,12 @@
 import UIKit
 import MapKit
 import QuartzCore
+import EDSunriseSet
 
 private let MAP_SPAN_DELTA = 0.05
 private let MAP_LATITUDE_OFFSET = 0.015
+
+private let ONE_DAY: TimeInterval = (60 * 60) * 24
 
 class PlaceCarouselViewController: UIViewController {
 
@@ -59,6 +62,50 @@ class PlaceCarouselViewController: UIViewController {
 
     lazy var placeCarousel = PlaceCarousel()
 
+    var sunriseSet: EDSunriseSet? {
+        didSet {
+            if let sunriseSet = sunriseSet {
+                sunriseSet.calculateSunriseSunset(Date())
+                if var sunrise = sunriseSet.localSunrise(),
+                    var sunset = sunriseSet.localSunset() {
+                    var now = Date()
+                    if let calendar = NSCalendar(identifier: NSCalendar.Identifier.gregorian) {
+
+                        sunrise.day = calendar.component(NSCalendar.Unit.day, from: now)
+                        sunrise.month = calendar.component(NSCalendar.Unit.month, from: now)
+                        sunrise.year = calendar.component(NSCalendar.Unit.year, from: now)
+
+                        sunset.day = calendar.component(NSCalendar.Unit.day, from: now)
+                        sunset.month = calendar.component(NSCalendar.Unit.month, from: now)
+                        sunset.year = calendar.component(NSCalendar.Unit.year, from: now)
+
+                        let tmpSunriseTime = calendar.date(from: sunrise)!
+                        let sunriseTime = NSDate(timeIntervalSinceNow: tmpSunriseTime.timeIntervalSinceNow)
+                        let tmpSunsetTime = calendar.date(from: sunset)!
+                        let sunsetTime = NSDate(timeIntervalSinceNow: tmpSunsetTime.timeIntervalSinceNow)
+                        let afterSunriseToday = sunriseTime.earlierDate(now) == tmpSunriseTime
+                        let afterSunsetToday = sunsetTime.earlierDate(now) == tmpSunsetTime
+                        if afterSunriseToday && !afterSunsetToday {
+                            // set the sunset time
+                            self.sunriseSetTimesLabel.text = "Sunset is at \(sunset.hour!):\(sunset.minute!)pm today"
+                        } else if !afterSunriseToday {
+                            // set the sunrise time
+                            self.sunriseSetTimesLabel.text = "Sunrise is at \(sunrise.hour!):\(sunrise.minute!)am today"
+                        } else {
+                            now.addTimeInterval(ONE_DAY)
+                            sunriseSet.calculateSunriseSunset(now)
+                            if let tomorrowSunrise = sunriseSet.localSunrise() {
+                                self.sunriseSetTimesLabel.text = "Sunrise is at \(tomorrowSunrise.hour!):\(tomorrowSunrise.minute!)am tomorrow"
+                            } else {
+                                self.sunriseSetTimesLabel.text = nil
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -91,7 +138,6 @@ class PlaceCarouselViewController: UIViewController {
 
         // placeholder text for the labels
         headerView.numberOfPlacesLabel.text = "4 places"
-        sunriseSetTimesLabel.text = "Sunset is at 6:14pm today"
 
         view.addSubview(placeCarousel.carousel)
         constraints.append(contentsOf: [placeCarousel.carousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -135,7 +181,8 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Use last coord: we want to display where the user is now.
-        if let coord = locations.last?.coordinate {
+        if let location = locations.last {
+            let coord = location.coordinate
             // Offset center to display user's location below place cards.
             let center = CLLocationCoordinate2D(latitude: coord.latitude + MAP_LATITUDE_OFFSET, longitude: coord.longitude)
             let span = MKCoordinateSpan(latitudeDelta: MAP_SPAN_DELTA, longitudeDelta: 0.0)
@@ -148,6 +195,19 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
                 }
                 once = true
             }
+            
+            #if (arch(i386) || arch(x86_64))
+                let geocoder = CLGeocoder()
+                geocoder.reverseGeocodeLocation(location) { placemarks, error in
+                    if let placemark = placemarks?.first {
+                        DispatchQueue.main.async() {
+                            self.sunriseSet = EDSunriseSet(timezone: placemark.timeZone, latitude: coord.latitude, longitude: coord.longitude)
+                        }
+                    }
+                }
+            #else
+                sunriseSet = EDSunriseSet(timezone: NSTimeZone.local, latitude: coord.latitude, longitude: coord.longitude)
+            #endif
         }
     }
 
