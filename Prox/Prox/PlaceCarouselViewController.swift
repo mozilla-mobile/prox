@@ -64,45 +64,56 @@ class PlaceCarouselViewController: UIViewController {
 
     var sunriseSet: EDSunriseSet? {
         didSet {
-            if let sunriseSet = sunriseSet {
-                sunriseSet.calculateSunriseSunset(Date())
-                if var sunrise = sunriseSet.localSunrise(),
-                    var sunset = sunriseSet.localSunset() {
-                    var now = Date()
-                    if let calendar = NSCalendar(identifier: NSCalendar.Identifier.gregorian) {
+            setSunriseSetTimes()
+        }
+    }
 
-                        sunrise.day = calendar.component(NSCalendar.Unit.day, from: now)
-                        sunrise.month = calendar.component(NSCalendar.Unit.month, from: now)
-                        sunrise.year = calendar.component(NSCalendar.Unit.year, from: now)
+    private func setSunriseSetTimes() {
+        let today = Date()
 
-                        sunset.day = calendar.component(NSCalendar.Unit.day, from: now)
-                        sunset.month = calendar.component(NSCalendar.Unit.month, from: now)
-                        sunset.year = calendar.component(NSCalendar.Unit.year, from: now)
+        guard let sunriseSet = self.sunriseSet else {
+            return self.sunriseSetTimesLabel.text = nil
+        }
 
-                        let tmpSunriseTime = calendar.date(from: sunrise)!
-                        let sunriseTime = NSDate(timeIntervalSinceNow: tmpSunriseTime.timeIntervalSinceNow)
-                        let tmpSunsetTime = calendar.date(from: sunset)!
-                        let sunsetTime = NSDate(timeIntervalSinceNow: tmpSunsetTime.timeIntervalSinceNow)
-                        let afterSunriseToday = sunriseTime.earlierDate(now) == tmpSunriseTime
-                        let afterSunsetToday = sunsetTime.earlierDate(now) == tmpSunsetTime
-                        if afterSunriseToday && !afterSunsetToday {
-                            // set the sunset time
-                            self.sunriseSetTimesLabel.text = "Sunset is at \(sunset.hour!):\(sunset.minute!)pm today"
-                        } else if !afterSunriseToday {
-                            // set the sunrise time
-                            self.sunriseSetTimesLabel.text = "Sunrise is at \(sunrise.hour!):\(sunrise.minute!)am today"
-                        } else {
-                            now.addTimeInterval(ONE_DAY)
-                            sunriseSet.calculateSunriseSunset(now)
-                            if let tomorrowSunrise = sunriseSet.localSunrise() {
-                                self.sunriseSetTimesLabel.text = "Sunrise is at \(tomorrowSunrise.hour!):\(tomorrowSunrise.minute!)am tomorrow"
-                            } else {
-                                self.sunriseSetTimesLabel.text = nil
-                            }
-                        }
-                    }
-                }
-            }
+        sunriseSet.calculateSunriseSunset(today)
+
+        guard var sunrise = sunriseSet.localSunrise(),
+            var sunset = sunriseSet.localSunset(),
+            let calendar = NSCalendar(identifier: NSCalendar.Identifier.gregorian) else {
+                return self.sunriseSetTimesLabel.text = nil
+        }
+
+        sunrise.day = calendar.component(NSCalendar.Unit.day, from: today)
+        sunrise.month = calendar.component(NSCalendar.Unit.month, from: today)
+        sunrise.year = calendar.component(NSCalendar.Unit.year, from: today)
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "h:mm a"
+
+        if let sunriseTime = calendar.date(from: sunrise),
+            sunriseTime.isAfterDate(date: today) {
+            let timeAsString = dateFormatter.string(from: sunriseTime)
+            return self.sunriseSetTimesLabel.text = "Sunrise is at \(timeAsString) today"
+        }
+
+        sunset.day = calendar.component(NSCalendar.Unit.day, from: today)
+        sunset.month = calendar.component(NSCalendar.Unit.month, from: today)
+        sunset.year = calendar.component(NSCalendar.Unit.year, from: today)
+
+        if let sunsetTime = calendar.date(from: sunset),
+            sunsetTime.isAfterDate(date: today) {
+            let timeAsString = dateFormatter.string(from: sunsetTime)
+            return self.sunriseSetTimesLabel.text = "Sunset is at \(timeAsString) today"
+        }
+
+        let tomorrow = today.addingTimeInterval(ONE_DAY)
+        sunriseSet.calculateSunriseSunset(tomorrow)
+        if let tomorrowSunrise = sunriseSet.localSunrise(),
+            let tomorrowSunriseTime = calendar.date(from: tomorrowSunrise) {
+            let timeAsString = dateFormatter.string(from: tomorrowSunriseTime)
+            self.sunriseSetTimesLabel.text = "Sunrise is at \(timeAsString) tomorrow"
+        } else {
+            self.sunriseSetTimesLabel.text = nil
         }
     }
 
@@ -196,6 +207,8 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
                 once = true
             }
             
+            // if we're running in the simulator, find the timezone of the current coordinates and calculate the sunrise/set times for then
+            // this is so that, if we're simulating our location, we still get sunset/sunrise times
             #if (arch(i386) || arch(x86_64))
                 let geocoder = CLGeocoder()
                 geocoder.reverseGeocodeLocation(location) { placemarks, error in
@@ -216,3 +229,15 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
         print("lol-location \(error.localizedDescription)")
     }
 }
+
+
+private extension Date {
+    func isAfterDate(date: Date) -> Bool {
+        return NSDate(timeIntervalSinceNow: self.timeIntervalSinceNow).earlierDate(date) == date
+    }
+
+    func isBeforeDate(date: Date) -> Bool {
+        return NSDate(timeIntervalSinceNow: self.timeIntervalSinceNow).earlierDate(date) == self
+    }
+}
+
