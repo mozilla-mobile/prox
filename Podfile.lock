@@ -14,6 +14,7 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
+  - BNRDeferred (3.0.0-beta.1)
   - Firebase/Auth (3.7.1):
     - Firebase/Core
     - FirebaseAuth (= 3.0.5)
@@ -48,12 +49,14 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
+  - BNRDeferred (~> 3.0-beta)
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Database
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  BNRDeferred: d5be6829872c65f39c0470cdc322d85dc50e9d10
   Firebase: be473484f0d515e72ffd04acf22f981773c23e58
   FirebaseAnalytics: 0533a00b681e08fd0b2cd0444b7ddf0ef9fd7a1a
   FirebaseAuth: 75a062bbf2d3c97d1e6e55bbc110e13a6853e25d
@@ -65,6 +68,6 @@ SPEC CHECKSUMS:
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
   GoogleUtilities: 8bbc733218aad26306f9d4a253823986110e3358
 
-PODFILE CHECKSUM: e1181f3fbaed96e5c8e52f732e8207a2816e618c
+PODFILE CHECKSUM: db2c511d49a7042347076ca6133785cd6e4a88df
 
 COCOAPODS: 1.0.1
