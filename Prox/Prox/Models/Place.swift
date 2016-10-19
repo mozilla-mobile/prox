@@ -30,7 +30,14 @@ class Place {
 
     let photoURLs: [String]?
 
-    // todo: hours
+    /*
+     * Notes:
+     *   - Times are 24hr, e.g. 1400 for 2pm
+     *   - Times are in the timezone of the place
+     *   - "end" < "start" if a location is open overnight
+     *   - An entry for DayOfWeek will be missing if a location is not open that day
+     */
+    let hours: [DayOfWeek:OpenHours]?
 
     init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
         guard data.exists(), data.hasChildren(),
@@ -59,5 +66,18 @@ class Place {
         self.tripAdvisorProvider = nil
 
         self.photoURLs = []
+
+        self.hours = nil // TODO: verify dict is not empty
     }
+}
+
+enum DayOfWeek: Int {
+    case monday = 0 // matches server representation
+    case tuesday, wednesday, thursday, friday
+    case saturday, sunday
+}
+
+struct OpenHours {
+    let startTime: Int
+    let endTime: Int
 }
