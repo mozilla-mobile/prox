@@ -28,9 +28,7 @@ class TravelTimesTests: XCTestCase {
 
         TravelTimesProvider.travelTime(fromLocation: testSource, toLocation: testDestination) { travelTimes in
             XCTAssertNotNil(travelTimes)
-            XCTAssertNil(travelTimes?.walkingTime)
-            XCTAssertNotNil(travelTimes?.drivingTime)
-            XCTAssertNil(travelTimes?.publicTransportTime)
+            XCTAssertTrue(travelTimes?.walkingTime != nil || travelTimes?.drivingTime != nil || travelTimes?.publicTransportTime != nil)
             waitQuery.fulfill()
         }
 

@@ -10,14 +10,8 @@ struct TravelTimesProvider {
     private static func directions(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType) -> MKDirections {
 
         let directionsRequest = MKDirectionsRequest()
-        if #available(iOS 10.0, *) {
-            directionsRequest.source = MKMapItem(placemark: MKPlacemark(coordinate: fromLocation))
-            directionsRequest.destination = MKMapItem(placemark: MKPlacemark(coordinate: toLocation))
-        } else {
-            directionsRequest.source = MKMapItem(placemark: MKPlacemark(coordinate: fromLocation, addressDictionary: nil))
-            directionsRequest.destination = MKMapItem(placemark: MKPlacemark(coordinate: toLocation, addressDictionary: nil))
-        }
-
+        directionsRequest.source = MKMapItem(placemark: MKPlacemark(coordinate: fromLocation, addressDictionary: nil))
+        directionsRequest.destination = MKMapItem(placemark: MKPlacemark(coordinate: toLocation, addressDictionary: nil))
         directionsRequest.departureDate = Date()
         directionsRequest.transportType = transitType
 
