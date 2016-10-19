@@ -11,78 +11,49 @@ private let YELP_PATH = PROVIDERS_PATH + "yelp"
 class Place {
 
     let name: String
-    let categories: [String]
-    let url: String
     let summary: String
-
-    let address: String
     let latLong: CLLocationCoordinate2D
+
+    // Optional values.
+    let categories: [String]?
+    let url: String?
+
+    let address: String?
     var travelTimeMins: Int {
         // TODO: get travel time – need to be async?
         return -1
     }
 
-    let yelpProvider: ReviewProvider
-    let tripAdvisorProvider: ReviewProvider
+    let yelpProvider: ReviewProvider?
+    let tripAdvisorProvider: ReviewProvider?
 
-    let photoURLs: [String]
+    let photoURLs: [String]?
 
     // todo: hours
 
-    // TODO: temporary? for testing purposes.
-    init(name: String,
-         categories: [String],
-         url: String,
-         summary: String,
-         address: String,
-         longitude: Double,
-         latitude: Double,
-         yelpProvider: ReviewProvider,
-         tripAdvisorProvider: ReviewProvider,
-         photoURLs: [String]) {
+    init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
+        guard data.exists(), data.hasChildren(),
+                let value = data.value as? NSDictionary,
+                let name = value["id"] as? String, // TODO: change to name from id
+                let summary = value["pullQuote"] as? String,
+                let coords = value["coordinates"] as? [String:Double],
+                let lat = coords["lat"], let lon = coords["lon"] else {
+            return nil
+        }
 
         self.name = name
-        self.categories = categories
-        self.url = url
         self.summary = summary
+        self.latLong = CLLocationCoordinate2D(latitude: lat, longitude: lon)
 
-        self.address = address
-        self.latLong = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        self.address = (value["address"] as? [String])?.joined(separator: " ")
 
-        self.yelpProvider = yelpProvider
-        self.tripAdvisorProvider = tripAdvisorProvider
-
-        self.photoURLs = photoURLs
-    }
-
-    init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
-        guard data.exists(), data.hasChildren(), let value = data.value as? NSDictionary else {
-            return nil
-        }
-
-        // TODO: handle missing values more robustly
-        self.name = value["id"] as? String ?? "Name unknown"
-        self.summary = value["pullQuote"] as? String ?? "Summary unknown"
-
-        self.address = (value["address"] as? [String])?.joined(separator: " ") ?? "Address unknown"
-        if let coords = value["coordinates"] as? [String:Double],
-            let lat = coords["lat"], let lon = coords["lon"] {
-            self.latLong = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-        } else {
-            // TODO: if we already have the address, maybe we reverse-geocode & do better. In any
-            // case, handle this.
-            print("lol unable to find coordinates")
-            return nil
-        }
-
-        self.yelpProvider = ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: YELP_PATH)) ??
-            ReviewProvider(url: "", rating: -1, reviews: [], totalReviewCount: -1)
+        self.yelpProvider = ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: YELP_PATH))
 
         // TODO: get data from DB. Below are currently using default values.
         self.categories = [String]()
         self.url = ""
 
-        self.tripAdvisorProvider = ReviewProvider(url: "", rating: -1, reviews: [], totalReviewCount: -1)
+        self.tripAdvisorProvider = nil
 
         self.photoURLs = []
     }

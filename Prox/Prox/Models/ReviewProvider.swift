@@ -9,34 +9,23 @@ class ReviewProvider {
 
     let url: String
 
-    let rating: Double
-    let reviews: [String]
-    let totalReviewCount: Int
-
-    // TODO: temporary? until we can init everything from Firebase
-    init(url: String,
-         rating: Double,
-         reviews: [String],
-         totalReviewCount: Int) {
-
-        self.url = url
-
-        self.rating = rating
-        self.reviews = reviews
-        self.totalReviewCount = totalReviewCount
-    }
+    // Optional values.
+    let rating: Double?
+    let reviews: [String]?
+    let totalReviewCount: Int?
 
     init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
-        guard data.exists(), data.hasChildren(), let value = data.value as? NSDictionary else {
+        guard data.exists(), data.hasChildren(),
+                let value = data.value as? NSDictionary,
+                let url = value["url"] as? String else {
             print("lol unable to init ReviewProvider")
             return nil
         }
 
-        // TODO: handle missing values robustly
-        self.url = value["url"] as? String ?? "URL unknown"
+        self.url = url
 
-        self.rating = value["rating"] as? Double ?? -1
-        self.totalReviewCount = value["reviewCount"] as? Int ?? -1
+        self.rating = value["rating"] as? Double
+        self.totalReviewCount = value["reviewCount"] as? Int
 
         // TODO: get values from DB (these are default).
         self.reviews = []
