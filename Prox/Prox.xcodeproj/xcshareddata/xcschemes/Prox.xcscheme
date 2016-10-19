@@ -84,7 +84,7 @@
       <AdditionalOptions>
       </AdditionalOptions>
       <LocationScenarioReference
-         identifier = "../../hilton_location.gpx"
+         identifier = "../Prox/hilton_location.gpx"
          referenceType = "0">
       </LocationScenarioReference>
    </LaunchAction>
