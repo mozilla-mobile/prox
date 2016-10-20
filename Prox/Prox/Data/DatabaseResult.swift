@@ -4,7 +4,7 @@
 
 import Foundation
 
-// This is an empty class that forms a base class for all places
+// This is a generic result class for describing the result of a database call
 // It is done this way because:
 // 1. Deferred cannot handle optionals
 // 2. Deferred cannot handle Protocols, even if they are class protocols
