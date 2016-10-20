@@ -88,12 +88,12 @@ class FirebasePlacesDatabase: PlacesDatabase {
 
         let childRef = placeDetailsRef.child(placeKey)
         childRef.queryOrderedByKey().observeSingleEvent(of: .value) { (data: FIRDataSnapshot) in
-            if let place = Place(fromFirebaseSnapshot: data) {
+            if let place = Venue(fromFirebaseSnapshot: data) {
                 deferred.fill(with: place)
             } else {
                 // TODO: make better than optional; handle correctly.
                 // Note: I tried to return an optional here and the Deferred lib crashes.
-                fatalError("Could not create place from Firebase snapshot")
+                deferred.fill(with: Place())
             }
         }
 

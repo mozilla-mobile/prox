@@ -10,7 +10,7 @@ private let CellReuseIdentifier = "PlaceCarouselCell"
 
 class PlaceCarousel: NSObject {
 
-    var places: [Place] = [Place]() {
+    var places: [Venue] = [Venue]() {
         didSet {
             // TODO: how do we make sure the user wasn't interacting?
             carousel.reloadData()
