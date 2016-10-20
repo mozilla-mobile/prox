@@ -61,7 +61,7 @@ extension PlaceCarousel: UICollectionViewDataSource {
 
         if let yelp = place.yelpProvider {
             // TODO: handle optionals in UI
-            cell.yelpReview.score = Int(yelp.rating ?? -1) // TODO: type
+            cell.yelpReview.score = Float(yelp.rating ?? -1)  // TODO: type
             cell.yelpReview.numberOfReviewersLabel.text = "\(yelp.totalReviewCount!) Reviews"
             cell.yelpReview.reviewSiteLogo.image = UIImage(named: "logo_yelp")
         }
