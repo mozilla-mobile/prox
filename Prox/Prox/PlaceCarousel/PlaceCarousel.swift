@@ -66,7 +66,7 @@ extension PlaceCarousel: UICollectionViewDataSource {
             cell.yelpReview.reviewSiteLogo.image = UIImage(named: "logo_yelp")
         }
 
-        cell.tripAdvisorReview.score = 3
+        cell.tripAdvisorReview.score = 3.5
         cell.tripAdvisorReview.numberOfReviewersLabel.text = "6,665 Reviews"
         cell.tripAdvisorReview.reviewSiteLogo.image = UIImage(named: "logo_ta")
 

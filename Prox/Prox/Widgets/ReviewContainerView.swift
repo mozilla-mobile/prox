@@ -13,7 +13,7 @@ class ReviewContainerView: UIView {
         }
     }
 
-    var score: Int = 0 {
+    var score: Float = 0 {
         didSet {
             reviewScore.score = score
         }
@@ -43,7 +43,7 @@ class ReviewContainerView: UIView {
         self.init(score: 0)
     }
 
-    init(score: Int) {
+    init(score: Float) {
         super.init(frame: .zero)
         self.score = score
         setupSubviews()

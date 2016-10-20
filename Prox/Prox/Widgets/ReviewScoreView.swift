@@ -8,20 +8,15 @@ class ReviewScoreView: UIStackView {
 
     var color: UIColor? {
         didSet {
-            for subview in arrangedSubviews {
-                if let subview = subview as? ReviewScoreItemView {
-                    subview.color = color
-                }
+            if color != oldValue {
+                updateReviewScore(score: self.score)
             }
         }
     }
-    var score: Int = 0 {
+
+    var score: Float = 0.0 {
         didSet {
-            for (index, subview) in arrangedSubviews.enumerated() {
-                if let subview = subview as? ReviewScoreItemView {
-                    subview.fill = index < score
-                }
-            }
+            updateReviewScore(score: score)
         }
     }
 
@@ -29,7 +24,7 @@ class ReviewScoreView: UIStackView {
         self.init(score: 0)
     }
 
-    init(score: Int) {
+    init(score: Float) {
         super.init(frame: .zero)
 
         self.score = score
@@ -41,9 +36,9 @@ class ReviewScoreView: UIStackView {
 
         for index in 0..<5 {
             let scoreItem = ReviewScoreItemView()
-            scoreItem.color = color
             scoreItem.backgroundColor = .clear
-            scoreItem.fill = index < score
+            let scoreLeft = self.score - Float(index)
+            setFillScore(score: scoreLeft, forView: scoreItem)
             addArrangedSubview(scoreItem)
         }
     }
@@ -62,34 +57,58 @@ class ReviewScoreView: UIStackView {
         }
     }
 
+    private func updateReviewScore(score: Float) {
+        for (index, subview) in arrangedSubviews.enumerated() {
+            if let scoreItem = subview as? ReviewScoreItemView {
+                let scoreLeft = self.score - Float(index)
+                setFillScore(score: scoreLeft, forView: scoreItem)
+            }
+        }
+    }
+
+    private func setFillScore(score: Float, forView view: ReviewScoreItemView) {
+        if score >= 1 {
+            view.leftColor = color
+            view.rightColor = color
+        } else if score > 0 {
+            view.leftColor = color
+            view.rightColor = Colors.reviewScoreDefault
+        } else {
+            view.leftColor = Colors.reviewScoreDefault
+            view.rightColor = Colors.reviewScoreDefault
+        }
+    }
+
 }
 
 private class ReviewScoreItemView: UIView {
 
-    var color: UIColor? {
+    var leftColor: UIColor? {
         didSet {
             setNeedsDisplay()
         }
     }
-    var fill: Bool = false {
+
+    var rightColor: UIColor? {
         didSet {
-            if fill != oldValue {
-                setNeedsDisplay()
-            }
+            setNeedsDisplay()
         }
     }
 
     override func draw(_ rect: CGRect) {
         super.draw(rect)
 
-        if let context = UIGraphicsGetCurrentContext() {
-            if fill {
-                context.setFillColor(color?.cgColor ?? UIColor.black.cgColor)
-            } else {
-                context.setFillColor(Colors.reviewScoreDefault.cgColor)
-            }
-            context.fillEllipse(in: rect)
-        }
+        let width = rect.size.width / 2
+
+        let leftHalf = UIBezierPath(roundedRect: CGRect(x: rect.origin.x, y: rect.origin.x, width: width, height: rect.size.height), byRoundingCorners: [UIRectCorner.topLeft, UIRectCorner.bottomLeft], cornerRadii: CGSize(width: 10, height: 10))
+        leftHalf.close()
+        (leftColor ?? UIColor.black).setFill()
+        leftHalf.fill()
+
+        let rightHalf = UIBezierPath(roundedRect: CGRect(x: rect.origin.x + width, y: rect.origin.x, width: width, height: rect.size.height), byRoundingCorners: [UIRectCorner.topRight, UIRectCorner.bottomRight], cornerRadii: CGSize(width: 10, height: 10))
+        rightHalf.close()
+        (rightColor ?? UIColor.black).setFill()
+        rightHalf.fill()
     }
 
 }
