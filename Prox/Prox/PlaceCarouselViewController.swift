@@ -203,6 +203,8 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
             let center = CLLocationCoordinate2D(latitude: coord.latitude + MAP_LATITUDE_OFFSET, longitude: coord.longitude)
             let span = MKCoordinateSpan(latitudeDelta: MAP_SPAN_DELTA, longitudeDelta: 0.0)
             mapView.region = MKCoordinateRegion(center: center, span: span)
+            
+            self.placeCarousel.currentLocation = location
 
             // Make sure we only call this once, for testing purposes.
             if !once {
@@ -211,6 +213,8 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
                 }
                 once = true
             }
+
+            self.placeCarousel.currentLocation = location
 
             // if we're running in the simulator, find the timezone of the current coordinates and calculate the sunrise/set times for then
             // this is so that, if we're simulating our location, we still get sunset/sunrise times

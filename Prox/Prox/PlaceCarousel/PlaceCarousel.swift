@@ -17,6 +17,8 @@ class PlaceCarousel: NSObject {
         }
     }
 
+    var currentLocation: CLLocation?
+
     let defaultPadding: CGFloat = 15.0
 
     private lazy var carouselLayout: UICollectionViewFlowLayout = {
@@ -70,13 +72,37 @@ extension PlaceCarousel: UICollectionViewDataSource {
         cell.tripAdvisorReview.numberOfReviewersLabel.text = "6,665 Reviews"
         cell.tripAdvisorReview.reviewSiteLogo.image = UIImage(named: "logo_ta")
 
-        if indexPath.item == 0 {
-            cell.locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
-            cell.location.text = "You're here"
-            cell.isSelected = true
-        } else {
-            cell.location.text = "17 min walk away"
-            cell.isSelected = false
+        if let currentLocation = self.currentLocation {
+            place.travelTime(from: currentLocation.coordinate) { travelTimes in
+                guard let travelTimes = travelTimes else {
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    if let walkingTimeSeconds = travelTimes.walkingTime {
+                        let walkingTimeMinutes = round(walkingTimeSeconds / 60.0)
+                        if walkingTimeMinutes <= 30.0 {
+                            if walkingTimeMinutes < 3.0 {
+                                cell.locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+                                cell.location.text = "You're here"
+                                cell.isSelected = true
+                            } else {
+                                cell.location.text = "\(walkingTimeMinutes) min walk away"
+                                cell.isSelected = false
+                            }
+                            return
+                        }
+                    }
+
+                    if let drivingTimeSeconds = travelTimes.drivingTime {
+                        let drivingTimeMinutes = round(drivingTimeSeconds / 60.0)
+                        cell.location.text = "\(drivingTimeMinutes) min drive away"
+                        cell.isSelected = false
+                    } else {
+                        return
+                    }
+                }
+            }
         }
         return cell
     }

@@ -11,6 +11,8 @@ private let YELP_PATH = PROVIDERS_PATH + "yelp"
 
 class Place {
 
+    private let transitTypes: [MKDirectionsTransportType] = [.automobile, .walking]
+
     let name: String
     let summary: String
     let latLong: CLLocationCoordinate2D
@@ -20,10 +22,6 @@ class Place {
     let url: String?
 
     let address: String?
-    var travelTimeMins: Int {
-        // TODO: get travel time – need to be async?
-        return -1
-    }
 
     let yelpProvider: ReviewProvider?
     let tripAdvisorProvider: ReviewProvider?
@@ -68,6 +66,10 @@ class Place {
         self.photoURLs = []
 
         self.hours = nil // TODO: verify dict is not empty
+    }
+
+    func travelTime(from: CLLocationCoordinate2D, withCallback callback: @escaping ((TravelTimes?) -> ())) {
+        TravelTimesProvider.travelTime(fromLocation: from, toLocation: latLong, withCompletion: callback)
     }
 }
 
