@@ -32,9 +32,9 @@ class FirebasePlacesDatabase: PlacesDatabase {
      * Queries GeoFire to get the place keys around the given location and then queries Firebase to
      * get the place details for the place keys.
      */
-    func getPlaces(forLocation location: CLLocation) -> Future<[Place]> {
+    func getPlaces(forLocation location: CLLocation) -> Future<[PlacesResult]> {
         // TODO: OperationQueue.current okay?
-        let places = getPlaceKeys(aroundPoint: location).andThen(upon: OperationQueue.current!) { (placeKeyToLoc) -> Future<[Place]> in
+        let places = getPlaceKeys(aroundPoint: location).andThen(upon: OperationQueue.current!) { (placeKeyToLoc) -> Future<[PlacesResult]> in
             // TODO: limit the number of place details we look up. X closest places?
             // TODO: can we assume all queries will finish?
             // TODO: These should be ordered by display order
@@ -76,24 +76,24 @@ class FirebasePlacesDatabase: PlacesDatabase {
     /*
      * Queries Firebase to find the place details from the given keys.
      */
-    private func getPlaceDetails(fromKeys placeKeys: [String]) -> [Deferred<Place>] {
-        let placeDetails = placeKeys.map { placeKey -> Deferred<Place> in
+    private func getPlaceDetails(fromKeys placeKeys: [String]) -> [Deferred<PlacesResult>] {
+        let placeDetails = placeKeys.map { placeKey -> Deferred<PlacesResult> in
             queryChildPlaceDetails(by: placeKey)
         }
         return placeDetails
     }
 
-    private func queryChildPlaceDetails(by placeKey: String) -> Deferred<Place> {
-        let deferred = Deferred<Place>()
+    private func queryChildPlaceDetails(by placeKey: String) -> Deferred<PlacesResult> {
+        let deferred = Deferred<PlacesResult>()
 
         let childRef = placeDetailsRef.child(placeKey)
         childRef.queryOrderedByKey().observeSingleEvent(of: .value) { (data: FIRDataSnapshot) in
-            if let place = Venue(fromFirebaseSnapshot: data) {
-                deferred.fill(with: place)
+            if let place = Place(fromFirebaseSnapshot: data) {
+                deferred.fill(with: PlacesResult.succeed(place: place))
             } else {
                 // TODO: make better than optional; handle correctly.
                 // Note: I tried to return an optional here and the Deferred lib crashes.
-                deferred.fill(with: Place())
+                deferred.fill(with: PlacesResult.fail(withMessage: "Unable to create place"))
             }
         }
 

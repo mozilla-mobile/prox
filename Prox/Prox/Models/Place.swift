@@ -9,18 +9,7 @@ import CoreLocation
 private let PROVIDERS_PATH = "providers/"
 private let YELP_PATH = PROVIDERS_PATH + "yelp"
 
-// This is an empty class that forms a base class for all places
-// It is done this way because:
-// 1. Deferred cannot handle optionals
-// 2. Deferred cannot handle Protocols, even if they are class protocols
-// 3. Deferred can only handle actual classes. Therefore if a Venue fails to initalize
-//    because it doesn't have all the info it needs to make itself
-//    we cannot return a nil through the deferred, we have to return a fake class
-//    that we can use to filter out later.
-//    It's a rather hacky solution and I will continue to think about how this can be addressed better
-class Place {}
-
-class Venue: Place {
+class Place {
 
     let name: String
     let summary: String
