@@ -9,15 +9,15 @@ private enum DeferredResult {
     case failure
 }
 
-class PlacesResult {
+class DatabaseResult<T> {
 
-    private let place: Place?
+    private let value: T?
     private let deferredResult: DeferredResult
 
     let errorMessage: String?
 
-    private init(place: Place) {
-        self.place = place
+    private init(value: T) {
+        self.value = value
         deferredResult = .success
         errorMessage = nil
     }
@@ -25,27 +25,27 @@ class PlacesResult {
     private init(errorMessage: String?) {
         self.errorMessage = errorMessage
         deferredResult = .failure
-        place = nil
+        value = nil
     }
 
-    static func succeed(place: Place) -> PlacesResult {
-        return PlacesResult(place: place)
+    static func succeed(value: T) -> DatabaseResult {
+        return DatabaseResult(value: value)
     }
 
-    static func fail(withMessage message: String?) -> PlacesResult {
-        return PlacesResult(errorMessage: message)
+    static func fail(withMessage message: String?) -> DatabaseResult {
+        return DatabaseResult(errorMessage: message)
     }
 
     func isSuccess() -> Bool {
-        return deferredResult == .success && place != nil
+        return deferredResult == .success && value != nil
     }
 
     func isFailure() -> Bool {
         return deferredResult == .failure
     }
 
-    func successResult() -> Place {
-        return place!
+    func successResult() -> T {
+        return value!
     }
 
 }
