@@ -33,8 +33,8 @@ class FirebasePlacesDatabase: PlacesDatabase {
      * get the place details for the place keys.
      */
     func getPlaces(forLocation location: CLLocation) -> Future<[DatabaseResult<Place>]> {
-        // TODO: OperationQueue.current okay?
-        let places = getPlaceKeys(aroundPoint: location).andThen(upon: OperationQueue.current!) { (placeKeyToLoc) -> Future<[DatabaseResult<Place>]> in
+        let queue = DispatchQueue.global(qos: .userInitiated)
+        let places = getPlaceKeys(aroundPoint: location).andThen(upon: queue) { (placeKeyToLoc) -> Future<[DatabaseResult<Place>]> in
             // TODO: limit the number of place details we look up. X closest places?
             // TODO: can we assume all queries will finish?
             // TODO: These should be ordered by display order
