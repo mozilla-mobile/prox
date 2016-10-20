@@ -51,21 +51,20 @@ class FirebasePlacesDatabase: PlacesDatabase {
         var placeKeyToLoc = [String:CLLocation]()
 
         guard let circleQuery = geofire.query(at: location, withRadius: SEARCH_RADIUS_KM) else {
-            // TODO: is this properly handling the else case?
             deferred.fill(with: placeKeyToLoc)
             return deferred
         }
 
         // Append results to return object.
         circleQuery.observe(.keyEntered) { (key, location) in
-            // TODO: why is this optional value? handle.
-            placeKeyToLoc[key!] = location!
+            if let unwrappedKey = key, let unwrappedLocation = location {
+                placeKeyToLoc[unwrappedKey] = unwrappedLocation
+            }
         }
 
-        // Handle query completion (TODO: does this actually indicate query completion?).
+        // Handle query completion.
         circleQuery.observeReady {
-            // TODO: test what happens when observe is never called (i.e. no results).
-            print("lol All initial data has been loaded and events have been fired for circle query!")
+            print("lol geofire query has completed")
             circleQuery.removeAllObservers()
             deferred.fill(with: placeKeyToLoc)
         }
