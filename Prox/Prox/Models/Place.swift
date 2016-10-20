@@ -35,15 +35,17 @@ class Place {
     init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
         guard data.exists(), data.hasChildren(),
                 let value = data.value as? NSDictionary,
+                let summary = value["description"] as? String ?? value["pullQuote"] as? String,
                 let name = value["id"] as? String, // TODO: change to name from id
-                let summary = value["pullQuote"] as? String,
                 let coords = value["coordinates"] as? [String:Double],
                 let lat = coords["lat"], let lon = coords["lon"] else {
             return nil
         }
 
         self.name = name
+
         self.summary = summary
+
         self.latLong = CLLocationCoordinate2D(latitude: lat, longitude: lon)
 
         self.address = (value["address"] as? [String])?.joined(separator: " ")
