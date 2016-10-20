@@ -67,10 +67,6 @@ class Place {
 
         self.hours = nil // TODO: verify dict is not empty
     }
-
-    func travelTime(from: CLLocationCoordinate2D, withCallback callback: @escaping ((TravelTimes?) -> ())) {
-        TravelTimesProvider.travelTime(fromLocation: from, toLocation: latLong, withCompletion: callback)
-    }
 }
 
 enum DayOfWeek: Int {

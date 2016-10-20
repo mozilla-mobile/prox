@@ -73,16 +73,16 @@ extension PlaceCarousel: UICollectionViewDataSource {
         cell.tripAdvisorReview.reviewSiteLogo.image = UIImage(named: "logo_ta")
 
         if let currentLocation = self.currentLocation {
-            place.travelTime(from: currentLocation.coordinate) { travelTimes in
+            TravelTimesProvider.travelTime(fromLocation: currentLocation.coordinate, toLocation: place.latLong) { travelTimes in
                 guard let travelTimes = travelTimes else {
                     return
                 }
 
                 DispatchQueue.main.async {
                     if let walkingTimeSeconds = travelTimes.walkingTime {
-                        let walkingTimeMinutes = round(walkingTimeSeconds / 60.0)
-                        if walkingTimeMinutes <= 30.0 {
-                            if walkingTimeMinutes < 3.0 {
+                        let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
+                        if walkingTimeMinutes <= 30 {
+                            if walkingTimeMinutes < 3 {
                                 cell.locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
                                 cell.location.text = "You're here"
                                 cell.isSelected = true
@@ -95,7 +95,7 @@ extension PlaceCarousel: UICollectionViewDataSource {
                     }
 
                     if let drivingTimeSeconds = travelTimes.drivingTime {
-                        let drivingTimeMinutes = round(drivingTimeSeconds / 60.0)
+                        let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
                         cell.location.text = "\(drivingTimeMinutes) min drive away"
                         cell.isSelected = false
                     } else {
