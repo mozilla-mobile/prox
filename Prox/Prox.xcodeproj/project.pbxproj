@@ -26,7 +26,7 @@
 		7B5095781DB64E76007C54F0 /* TravelTimesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */; };
 		7B50957A1DB65342007C54F0 /* TravelTimesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */; };
 		7B5095811DB65FD4007C54F0 /* TravelTimesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095801DB65FD4007C54F0 /* TravelTimesTests.swift */; };
-		7B5095851DB903B7007C54F0 /* PlacesResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095841DB903B7007C54F0 /* PlacesResult.swift */; };
+		7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095841DB903B7007C54F0 /* DatabaseResult.swift */; };
 		7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */; };
 		7B561BBA1DAC02B90096D8BC /* hilton_location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7B561BB91DAC02B90096D8BC /* hilton_location.gpx */; };
 		7BD5CC7D1DAFF07E00BCF50D /* GeoFire.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC741DAFF07E00BCF50D /* GeoFire.m */; };
@@ -95,7 +95,7 @@
 		7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NSLayoutConstraint.swift; path = Extensions/NSLayoutConstraint.swift; sourceTree = "<group>"; };
 		7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TravelTimesProvider.swift; path = Data/TravelTimesProvider.swift; sourceTree = "<group>"; };
 		7B5095801DB65FD4007C54F0 /* TravelTimesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TravelTimesTests.swift; sourceTree = "<group>"; };
-		7B5095841DB903B7007C54F0 /* PlacesResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlacesResult.swift; path = Data/PlacesResult.swift; sourceTree = "<group>"; };
+		7B5095841DB903B7007C54F0 /* DatabaseResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatabaseResult.swift; path = Data/DatabaseResult.swift; sourceTree = "<group>"; };
 		7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselHeaderView.swift; path = PlaceCarousel/PlaceCarouselHeaderView.swift; sourceTree = "<group>"; };
 		7B561BB91DAC02B90096D8BC /* hilton_location.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hilton_location.gpx; sourceTree = "<group>"; };
 		7BD5CC6D1DAFF07E00BCF50D /* GeoFire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoFire.h; sourceTree = "<group>"; };
@@ -339,7 +339,7 @@
 			children = (
 				E65857DF1DB69F7600CD18F8 /* FirebasePlacesDatabase.swift */,
 				E65857E11DB6A72D00CD18F8 /* PlacesDatabase.swift */,
-				7B5095841DB903B7007C54F0 /* PlacesResult.swift */,
+				7B5095841DB903B7007C54F0 /* DatabaseResult.swift */,
 			);
 			name = Database;
 			sourceTree = "<group>";
@@ -629,7 +629,7 @@
 				E65857E21DB6A72D00CD18F8 /* PlacesDatabase.swift in Sources */,
 				7B5095721DB5352E007C54F0 /* Colors.swift in Sources */,
 				7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */,
-				7B5095851DB903B7007C54F0 /* PlacesResult.swift in Sources */,
+				7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */,
 				7B50956B1DB53382007C54F0 /* ReviewContainerView.swift in Sources */,
 				7BD5CC7E1DAFF07E00BCF50D /* GFBase32Utils.m in Sources */,
 				7B50956C1DB53382007C54F0 /* ReviewScoreView.swift in Sources */,

@@ -4,6 +4,16 @@
 
 import Foundation
 
+// This is an empty class that forms a base class for all places
+// It is done this way because:
+// 1. Deferred cannot handle optionals
+// 2. Deferred cannot handle Protocols, even if they are class protocols
+// 3. Deferred can only handle actual classes. Therefore if a Venue fails to initalize
+//    because it doesn't have all the info it needs to make itself
+//    we cannot return a nil through the deferred, we have to return a result object
+//    that can encapsulate the actual result of the call while still returning a 
+//    guarenteed value for Deferred
+
 private enum DeferredResult {
     case success
     case failure
