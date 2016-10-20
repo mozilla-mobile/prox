@@ -144,13 +144,7 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
             // Make sure we only call this once, for testing purposes.
             if !once {
                 FirebasePlacesDatabase().getPlaces(forLocation: TEST_LL).upon(DispatchQueue.main) { places in
-                    self.placeCarousel.places = places.flatMap { result in
-                        if result.isSuccess() {
-                            return result.successResult()
-                        }
-
-                        return nil
-                    }
+                    self.placeCarousel.places = places.flatMap { $0.successResult() }
                 }
                 once = true
             }

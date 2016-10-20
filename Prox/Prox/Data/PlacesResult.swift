@@ -44,8 +44,8 @@ class DatabaseResult<T> {
         return deferredResult == .failure
     }
 
-    func successResult() -> T {
-        return value!
+    func successResult() -> T? {
+        return value
     }
 
 }
