@@ -26,7 +26,6 @@ class FirebasePlacesDatabase: PlacesDatabase {
         geofire = GeoFire(firebaseRef: rootRef.child(GEOFIRE_PATH))
     }
 
-    // todo: handle errors (double-check every query)
     // TODO: handle version in DB
     /*
      * Queries GeoFire to get the place keys around the given location and then queries Firebase to
@@ -36,7 +35,6 @@ class FirebasePlacesDatabase: PlacesDatabase {
         let queue = DispatchQueue.global(qos: .userInitiated)
         let places = getPlaceKeys(aroundPoint: location).andThen(upon: queue) { (placeKeyToLoc) -> Future<[DatabaseResult<Place>]> in
             // TODO: limit the number of place details we look up. X closest places?
-            // TODO: can we assume all queries will finish?
             // TODO: These should be ordered by display order
             return self.getPlaceDetails(fromKeys: Array(placeKeyToLoc.keys)).allFilled()
         }
@@ -87,12 +85,15 @@ class FirebasePlacesDatabase: PlacesDatabase {
 
         let childRef = placeDetailsRef.child(placeKey)
         childRef.queryOrderedByKey().observeSingleEvent(of: .value) { (data: FIRDataSnapshot) in
+            guard data.exists() else {
+                deferred.fill(with: DatabaseResult.fail(withMessage: "Child place key does not exist: \(placeKey)"))
+                return
+            }
+
             if let place = Place(fromFirebaseSnapshot: data) {
                 deferred.fill(with: DatabaseResult.succeed(value: place))
             } else {
-                // TODO: make better than optional; handle correctly.
-                // Note: I tried to return an optional here and the Deferred lib crashes.
-                deferred.fill(with: DatabaseResult.fail(withMessage: "Unable to create place"))
+                deferred.fill(with: DatabaseResult.fail(withMessage: "Snapshot missing required Place data: \(data)"))
             }
         }
 
