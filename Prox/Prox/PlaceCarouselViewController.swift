@@ -135,7 +135,8 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Use last coord: we want to display where the user is now.
-        if let coord = locations.last?.coordinate {
+        if let location = locations.last {
+            let coord = location.coordinate
             // Offset center to display user's location below place cards.
             let center = CLLocationCoordinate2D(latitude: coord.latitude + MAP_LATITUDE_OFFSET, longitude: coord.longitude)
             let span = MKCoordinateSpan(latitudeDelta: MAP_SPAN_DELTA, longitudeDelta: 0.0)
@@ -143,7 +144,7 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
 
             // Make sure we only call this once, for testing purposes.
             if !once {
-                FirebasePlacesDatabase().getPlaces(forLocation: TEST_LL).upon(DispatchQueue.main) { places in
+                FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
                     self.placeCarousel.places = places.flatMap { $0.successResult() }
                 }
                 once = true

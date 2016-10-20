@@ -13,8 +13,6 @@ private let DETAILS_PATH = ROOT_PATH + "details/"
 
 private let SEARCH_RADIUS_KM = 4.0 // TODO: set distance
 
-let TEST_LL = CLLocation(latitude: 19.9263136, longitude: -155.8868328) // TODO: rm me!
-
 class FirebasePlacesDatabase: PlacesDatabase {
 
     private let placeDetailsRef: FIRDatabaseReference
