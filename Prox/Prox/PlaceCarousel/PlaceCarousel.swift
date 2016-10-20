@@ -72,39 +72,47 @@ extension PlaceCarousel: UICollectionViewDataSource {
         cell.tripAdvisorReview.numberOfReviewersLabel.text = "6,665 Reviews"
         cell.tripAdvisorReview.reviewSiteLogo.image = UIImage(named: "logo_ta")
 
-        if let currentLocation = self.currentLocation {
+        if let travelTimes = place.travelTimes {
+            self.setTravelTimes(travelTimes: travelTimes, forCell: cell)
+        } else if let currentLocation = self.currentLocation {
             TravelTimesProvider.travelTime(fromLocation: currentLocation.coordinate, toLocation: place.latLong) { travelTimes in
-                guard let travelTimes = travelTimes else {
-                    return
-                }
+                place.travelTimes = travelTimes
 
                 DispatchQueue.main.async {
-                    if let walkingTimeSeconds = travelTimes.walkingTime {
-                        let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
-                        if walkingTimeMinutes <= 30 {
-                            if walkingTimeMinutes < 3 {
-                                cell.locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
-                                cell.location.text = "You're here"
-                                cell.isSelected = true
-                            } else {
-                                cell.location.text = "\(walkingTimeMinutes) min walk away"
-                                cell.isSelected = false
-                            }
-                            return
-                        }
-                    }
-
-                    if let drivingTimeSeconds = travelTimes.drivingTime {
-                        let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
-                        cell.location.text = "\(drivingTimeMinutes) min drive away"
-                        cell.isSelected = false
-                    } else {
-                        return
-                    }
+                    self.setTravelTimes(travelTimes: travelTimes, forCell: cell)
                 }
             }
         }
         return cell
+    }
+
+    private func setTravelTimes(travelTimes: TravelTimes?, forCell cell: PlaceCarouselCollectionViewCell) {
+        guard let travelTimes = travelTimes else {
+            return
+        }
+
+        if let walkingTimeSeconds = travelTimes.walkingTime {
+            let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
+            if walkingTimeMinutes <= 30 {
+                if walkingTimeMinutes < 3 {
+                    cell.locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+                    cell.location.text = "You're here"
+                    cell.isSelected = true
+                } else {
+                    cell.location.text = "\(walkingTimeMinutes) min walk away"
+                    cell.isSelected = false
+                }
+                return
+            }
+        }
+
+        if let drivingTimeSeconds = travelTimes.drivingTime {
+            let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
+            cell.location.text = "\(drivingTimeMinutes) min drive away"
+            cell.isSelected = false
+        } else {
+            return
+        }
     }
 
 }

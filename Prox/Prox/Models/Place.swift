@@ -37,6 +37,8 @@ class Place {
      */
     let hours: [DayOfWeek:OpenHours]?
 
+    var travelTimes: TravelTimes?
+
     init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
         guard data.exists(), data.hasChildren(),
                 let value = data.value as? NSDictionary,
