@@ -26,7 +26,6 @@ class FirebasePlacesDatabase: PlacesDatabase {
         geofire = GeoFire(firebaseRef: rootRef.child(GEOFIRE_PATH))
     }
 
-    // TODO: handle version in DB
     /*
      * Queries GeoFire to get the place keys around the given location and then queries Firebase to
      * get the place details for the place keys.
