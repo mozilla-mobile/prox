@@ -4,6 +4,7 @@
 
 import Foundation
 import Firebase
+import CoreLocation
 
 private let PROVIDERS_PATH = "providers/"
 private let YELP_PATH = PROVIDERS_PATH + "yelp"

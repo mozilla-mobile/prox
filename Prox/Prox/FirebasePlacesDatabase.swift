@@ -5,6 +5,7 @@
 import Foundation
 import Firebase
 import Deferred
+import CoreLocation
 
 private let ROOT_PATH = "venues/"
 private let GEOFIRE_PATH = ROOT_PATH + "locations/"
