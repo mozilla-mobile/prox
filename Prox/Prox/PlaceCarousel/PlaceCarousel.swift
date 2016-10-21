@@ -7,6 +7,8 @@ import UIKit
 
 
 private let CellReuseIdentifier = "PlaceCarouselCell"
+private let MIN_WALKING_TIME = 30
+private let YOU_ARE_HERE_WALKING_TIME = 3
 
 class PlaceCarousel: NSObject {
 
@@ -93,8 +95,8 @@ extension PlaceCarousel: UICollectionViewDataSource {
 
         if let walkingTimeSeconds = travelTimes.walkingTime {
             let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
-            if walkingTimeMinutes <= 30 {
-                if walkingTimeMinutes < 3 {
+            if walkingTimeMinutes <= MIN_WALKING_TIME {
+                if walkingTimeMinutes < YOU_ARE_HERE_WALKING_TIME {
                     cell.locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
                     cell.location.text = "You're here"
                     cell.isSelected = true
@@ -110,8 +112,6 @@ extension PlaceCarousel: UICollectionViewDataSource {
             let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
             cell.location.text = "\(drivingTimeMinutes) min drive away"
             cell.isSelected = false
-        } else {
-            return
         }
     }
 
