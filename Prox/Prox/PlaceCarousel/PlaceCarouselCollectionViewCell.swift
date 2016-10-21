@@ -49,16 +49,14 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
     }()
 
     lazy var yelpReview: ReviewContainerView = {
-        let view = ReviewContainerView()
-        view.color = Colors.yelp
+        let view = ReviewContainerView(color: Colors.yelp)
         view.accessibilityIdentifier = "YelpReview"
 
         return view
     }()
 
     lazy var tripAdvisorReview: ReviewContainerView = {
-        let view = ReviewContainerView()
-        view.color = Colors.tripAdvisor
+        let view = ReviewContainerView(color: Colors.tripAdvisor)
         view.accessibilityIdentifier = "TripAdvisorReview"
         return view
     }()

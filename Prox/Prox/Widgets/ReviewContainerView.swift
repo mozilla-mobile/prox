@@ -7,7 +7,7 @@ import QuartzCore
 
 class ReviewContainerView: UIView {
 
-    var color: UIColor? {
+    var color: UIColor {
         didSet {
             self.reviewScore.color = color
         }
@@ -26,8 +26,7 @@ class ReviewContainerView: UIView {
     }()
 
     lazy var reviewScore: ReviewScoreView = {
-        let view = ReviewScoreView()
-        view.color = self.color
+        let view = ReviewScoreView(color: self.color)
         return view
     }()
 
@@ -39,13 +38,14 @@ class ReviewContainerView: UIView {
         return label
     }()
 
-    convenience init() {
-        self.init(score: 0)
+    convenience init(color: UIColor) {
+        self.init(score: 0, color: color)
     }
 
-    init(score: Float) {
-        super.init(frame: .zero)
+    init(score: Float, color: UIColor) {
         self.score = score
+        self.color = color
+        super.init(frame: .zero)
         setupSubviews()
     }
     

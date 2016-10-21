@@ -6,7 +6,7 @@ import UIKit
 
 class ReviewScoreView: UIStackView {
 
-    var color: UIColor? {
+    var color: UIColor {
         didSet {
             if color != oldValue {
                 updateReviewScore(score: self.score)
@@ -20,14 +20,15 @@ class ReviewScoreView: UIStackView {
         }
     }
 
-    convenience init() {
-        self.init(score: 0)
+    convenience init(color: UIColor) {
+        self.init(score: 0, color: color)
     }
 
-    init(score: Float) {
-        super.init(frame: .zero)
-
+    init(score: Float, color: UIColor) {
         self.score = score
+        self.color = color
+
+        super.init(frame: .zero)
 
         distribution = .equalSpacing
         axis = .horizontal
@@ -35,10 +36,10 @@ class ReviewScoreView: UIStackView {
         spacing = 0
 
         for index in 0..<5 {
-            let scoreItem = ReviewScoreItemView()
+            let scoreItem = ReviewScoreItemView(filledColor: self.color, unfilledColor: Colors.reviewScoreDefault)
             scoreItem.backgroundColor = .clear
-            let scoreLeft = self.score - Float(index)
-            setFillScore(score: scoreLeft, forView: scoreItem)
+            let scoreRemaining = self.score - Float(index)
+            setFillScore(score: scoreRemaining, forView: scoreItem)
             addArrangedSubview(scoreItem)
         }
     }
@@ -60,39 +61,54 @@ class ReviewScoreView: UIStackView {
     private func updateReviewScore(score: Float) {
         for (index, subview) in arrangedSubviews.enumerated() {
             if let scoreItem = subview as? ReviewScoreItemView {
-                let scoreLeft = self.score - Float(index)
-                setFillScore(score: scoreLeft, forView: scoreItem)
+                let scoreRemaining = self.score - Float(index)
+                setFillScore(score: scoreRemaining, forView: scoreItem)
             }
         }
     }
 
     private func setFillScore(score: Float, forView view: ReviewScoreItemView) {
         if score >= 1 {
-            view.leftColor = color
-            view.rightColor = color
+            view.fillType = .full
         } else if score > 0 {
-            view.leftColor = color
-            view.rightColor = Colors.reviewScoreDefault
+            view.fillType = .half
         } else {
-            view.leftColor = Colors.reviewScoreDefault
-            view.rightColor = Colors.reviewScoreDefault
+           view.fillType = .empty
         }
     }
 
 }
 
+private enum FillAmount {
+    case full
+    case half
+    case empty
+}
+
 private class ReviewScoreItemView: UIView {
 
-    var leftColor: UIColor? {
+    var filledColor: UIColor {
         didSet {
             setNeedsDisplay()
         }
     }
 
-    var rightColor: UIColor? {
+    var unfilledColor: UIColor {
         didSet {
             setNeedsDisplay()
         }
+    }
+
+    var fillType: FillAmount = .empty
+
+    init(filledColor: UIColor, unfilledColor: UIColor) {
+        self.filledColor = filledColor
+        self.unfilledColor = unfilledColor
+        super.init(frame: .zero)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func draw(_ rect: CGRect) {
@@ -100,14 +116,29 @@ private class ReviewScoreItemView: UIView {
 
         let width = rect.size.width / 2
 
+        let leftColor: UIColor
+        let rightColor: UIColor
+
+        switch fillType {
+        case .full:
+            leftColor = filledColor
+            rightColor = filledColor
+        case .half:
+            leftColor = filledColor
+            rightColor = unfilledColor
+        case .empty:
+            leftColor = unfilledColor
+            rightColor = unfilledColor
+        }
+
         let leftHalf = UIBezierPath(roundedRect: CGRect(x: rect.origin.x, y: rect.origin.x, width: width, height: rect.size.height), byRoundingCorners: [UIRectCorner.topLeft, UIRectCorner.bottomLeft], cornerRadii: CGSize(width: 10, height: 10))
         leftHalf.close()
-        (leftColor ?? UIColor.black).setFill()
+        leftColor.setFill()
         leftHalf.fill()
 
         let rightHalf = UIBezierPath(roundedRect: CGRect(x: rect.origin.x + width, y: rect.origin.x, width: width, height: rect.size.height), byRoundingCorners: [UIRectCorner.topRight, UIRectCorner.bottomRight], cornerRadii: CGSize(width: 10, height: 10))
         rightHalf.close()
-        (rightColor ?? UIColor.black).setFill()
+        rightColor.setFill()
         rightHalf.fill()
     }
 
