@@ -59,13 +59,13 @@ class Place {
 
         self.yelpProvider = ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: YELP_PATH))
 
+        self.photoURLs = value["images"] as? [String]
+
         // TODO: get data from DB. Below are currently using default values.
         self.categories = [String]()
         self.url = ""
 
         self.tripAdvisorProvider = nil
-
-        self.photoURLs = []
 
         self.hours = nil // TODO: verify dict is not empty
     }

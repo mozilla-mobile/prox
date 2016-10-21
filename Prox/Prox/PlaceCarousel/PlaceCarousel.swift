@@ -4,7 +4,7 @@
 
 import Foundation
 import UIKit
-
+import AFNetworking
 
 private let CellReuseIdentifier = "PlaceCarouselCell"
 private let MIN_WALKING_TIME = 30
@@ -18,6 +18,17 @@ class PlaceCarousel: NSObject {
             carousel.reloadData()
         }
     }
+
+    lazy var imageDownloader: AFImageDownloader = {
+        // TODO: Maybe we want more control over the configuration.
+        let sessionManager = AFHTTPSessionManager(sessionConfiguration: .default)
+        sessionManager.responseSerializer = AFImageResponseSerializer() // sets correct mime-type.
+
+        let activeDownloadCount = 4 // TODO: value?
+        let cache = AFAutoPurgingImageCache() // defaults 100 MB max -> 60 MB after purge
+        return AFImageDownloader(sessionManager: sessionManager, downloadPrioritization: .FIFO,
+                                 maximumActiveDownloads: activeDownloadCount, imageCache: cache)
+    }()
 
     var currentLocation: CLLocation?
 
@@ -59,9 +70,12 @@ extension PlaceCarousel: UICollectionViewDataSource {
         let place = places[indexPath.item]
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdentifier, for: indexPath) as! PlaceCarouselCollectionViewCell
-        cell.placeImage.image = UIImage(named: "place-placeholder")
         cell.category.text = "Hotel"
         cell.name.text = place.name
+
+        cell.placeImage.image = UIImage(named: "place-placeholder") // TODO: placeholder w/o pop-in
+        downloadAndSetImage(for: place, into: cell)
+
 
         if let yelp = place.yelpProvider {
             // TODO: handle optionals in UI
@@ -85,7 +99,32 @@ extension PlaceCarousel: UICollectionViewDataSource {
                 }
             }
         }
+
         return cell
+    }
+
+    private func downloadAndSetImage(for place: Place, into cell: PlaceCarouselCollectionViewCell) {
+        guard let urlStr = place.photoURLs?.first, let url = URL(string: urlStr) else {
+            print("lol unable to create URL from photo url")
+            return
+        }
+
+        let request = URLRequest(url: url)
+        imageDownloader.downloadImage(for: request, success: { (urlReq, urlRes, img) in
+            guard let res = urlRes else {
+                print("lol urlRes unexpectedly null")
+                return
+            }
+
+            guard res.statusCode == 200 else {
+                print("lol image status code unexpectedly \(res.statusCode)")
+                return
+            }
+
+            cell.placeImage.image = img
+        }, failure: { (urlReq, urlRes, err) in
+            print("lol unable to download photo: \(err)")
+        })
     }
 
     private func setTravelTimes(travelTimes: TravelTimes?, forCell cell: PlaceCarouselCollectionViewCell) {
