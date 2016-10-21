@@ -14,6 +14,9 @@ private let ONE_DAY: TimeInterval = (60 * 60) * 24
 
 class PlaceCarouselViewController: UIViewController {
 
+    fileprivate let MIN_SECS_BETWEEN_LOCATION_UPDATES: TimeInterval = 1
+    fileprivate var timeOfLastLocationUpdate: Date?
+
     lazy var locationManager: CLLocationManager = {
         let manager = CLLocationManager()
         manager.delegate = self
@@ -178,8 +181,6 @@ class PlaceCarouselViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    var once = false
 }
 
 extension PlaceCarouselViewController: MKMapViewDelegate {
@@ -198,40 +199,44 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Use last coord: we want to display where the user is now.
         if let location = locations.last {
-            let coord = location.coordinate
-            // Offset center to display user's location below place cards.
-            let center = CLLocationCoordinate2D(latitude: coord.latitude + MAP_LATITUDE_OFFSET, longitude: coord.longitude)
-            let span = MKCoordinateSpan(latitudeDelta: MAP_SPAN_DELTA, longitudeDelta: 0.0)
-            mapView.region = MKCoordinateRegion(center: center, span: span)
-            
-            self.placeCarousel.currentLocation = location
-
-            // Make sure we only call this once, for testing purposes.
-            if !once {
-                FirebasePlacesDatabase().getPlaces(forLocation: TEST_LL).upon(DispatchQueue.main) { places in
-                    // TODO: handle empty places
-                    self.placeCarousel.places = places.flatMap { $0.successResult() }
-                }
-                once = true
+            // In iOS9, didUpdateLocations can be unexpectedly called multiple
+            // times for a single `requestLocation`: we guard against that here.
+            let now = Date()
+            if timeOfLastLocationUpdate == nil ||
+                (now - MIN_SECS_BETWEEN_LOCATION_UPDATES) > timeOfLastLocationUpdate! {
+                timeOfLastLocationUpdate = now
+                updateLocation(manager, location: location)
             }
+        }
+    }
 
-            self.placeCarousel.currentLocation = location
+    private func updateLocation(_ manager: CLLocationManager, location: CLLocation) {
+        let coord = location.coordinate
+        // Offset center to display user's location below place cards.
+        let center = CLLocationCoordinate2D(latitude: coord.latitude + MAP_LATITUDE_OFFSET, longitude: coord.longitude)
+        let span = MKCoordinateSpan(latitudeDelta: MAP_SPAN_DELTA, longitudeDelta: 0.0)
+        mapView.region = MKCoordinateRegion(center: center, span: span)
 
-            // if we're running in the simulator, find the timezone of the current coordinates and calculate the sunrise/set times for then
-            // this is so that, if we're simulating our location, we still get sunset/sunrise times
-            #if (arch(i386) || arch(x86_64))
-                let geocoder = CLGeocoder()
-                geocoder.reverseGeocodeLocation(location) { placemarks, error in
-                    if let placemark = placemarks?.first {
-                        DispatchQueue.main.async() {
-                            self.sunriseSet = EDSunriseSet(timezone: placemark.timeZone, latitude: coord.latitude, longitude: coord.longitude)
-                        }
+        FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
+            self.placeCarousel.places = places.flatMap { $0.successResult() }
+        }
+
+        self.placeCarousel.currentLocation = location
+
+        // if we're running in the simulator, find the timezone of the current coordinates and calculate the sunrise/set times for then
+        // this is so that, if we're simulating our location, we still get sunset/sunrise times
+        #if (arch(i386) || arch(x86_64))
+            let geocoder = CLGeocoder()
+            geocoder.reverseGeocodeLocation(location) { placemarks, error in
+                if let placemark = placemarks?.first {
+                    DispatchQueue.main.async() {
+                        self.sunriseSet = EDSunriseSet(timezone: placemark.timeZone, latitude: coord.latitude, longitude: coord.longitude)
                     }
                 }
-            #else
-                sunriseSet = EDSunriseSet(timezone: NSTimeZone.local, latitude: coord.latitude, longitude: coord.longitude)
-            #endif
-        }
+            }
+        #else
+            sunriseSet = EDSunriseSet(timezone: NSTimeZone.local, latitude: coord.latitude, longitude: coord.longitude)
+        #endif
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
