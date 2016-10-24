@@ -10,6 +10,15 @@ private let CellReuseIdentifier = "PlaceCarouselCell"
 private let MIN_WALKING_TIME = 30
 private let YOU_ARE_HERE_WALKING_TIME = 3
 
+protocol PlaceCarouselDelegate: class {
+    func placeCarousel(placeProvider: PlaceDataSource, didSelectPlace place: Place, atIndex index: Int)
+}
+
+protocol PlaceDataSource: class {
+    func nextPlaceForPlace(place: Place) -> Place?
+    func previousPlaceForPlace(place: Place) -> Place?
+}
+
 class PlaceCarousel: NSObject {
 
     var places: [Place] = [Place]() {
@@ -33,6 +42,8 @@ class PlaceCarousel: NSObject {
     var currentLocation: CLLocation?
 
     let defaultPadding: CGFloat = 15.0
+
+    weak var delegate: PlaceCarouselDelegate?
 
     private lazy var carouselLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -162,4 +173,31 @@ extension PlaceCarousel: UICollectionViewDelegateFlowLayout {
         return CGSize(width: 200, height: 275)
     }
 
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let place = places[indexPath.item]
+        print("Selected place \(place.name)")
+        delegate?.placeCarousel(placeProvider: self, didSelectPlace: place, atIndex: indexPath.row)
+    }
+
+}
+
+extension PlaceCarousel: PlaceDataSource {
+    
+    func nextPlaceForPlace(place: Place) -> Place? {
+        guard let currentPlaceIndex = places.index(where: {$0 == place}),
+            currentPlaceIndex < places.endIndex else {
+            return nil
+        }
+
+        return places[places.index(after: currentPlaceIndex)]
+    }
+
+    func previousPlaceForPlace(place: Place) -> Place? {
+        guard let currentPlaceIndex = places.index(where: {$0 == place}),
+            currentPlaceIndex > places.startIndex else {
+                return nil
+        }
+
+        return places[places.index(before: currentPlaceIndex)]
+    }
 }

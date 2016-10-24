@@ -63,7 +63,11 @@ class PlaceCarouselViewController: UIViewController {
         return label
     }()
 
-    lazy var placeCarousel = PlaceCarousel()
+    lazy var placeCarousel: PlaceCarousel = {
+        let carousel = PlaceCarousel()
+        carousel.delegate = self
+        return carousel
+    }()
 
     var sunriseSet: EDSunriseSet? {
         didSet {
@@ -248,6 +252,15 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         // TODO: handle
         print("lol-location \(error.localizedDescription)")
+    }
+}
+
+extension PlaceCarouselViewController: PlaceCarouselDelegate {
+    func placeCarousel(placeProvider: PlaceDataSource, didSelectPlace place: Place, atIndex index: Int) {
+        let placeDetailViewController = PlaceDetailViewController(place: place)
+        placeDetailViewController.dataSource = placeProvider
+        let navigationController = UINavigationController(rootViewController: placeDetailViewController)
+        self.present(navigationController, animated: true, completion: nil)
     }
 }
 

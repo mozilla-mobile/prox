@@ -9,9 +9,17 @@ import CoreLocation
 private let PROVIDERS_PATH = "providers/"
 private let YELP_PATH = PROVIDERS_PATH + "yelp"
 
-class Place {
+class Place: Hashable {
+
+    var hashValue : Int {
+        get {
+            return id.hashValue
+        }
+    }
 
     private let transitTypes: [MKDirectionsTransportType] = [.automobile, .walking]
+
+    let id: String
 
     let name: String
     let summary: String
@@ -43,11 +51,14 @@ class Place {
         guard data.exists(), data.hasChildren(),
                 let value = data.value as? NSDictionary,
                 let summary = value["description"] as? String ?? value["pullQuote"] as? String,
+                let id = value["id"] as? String,
                 let name = value["id"] as? String, // TODO: change to name from id
                 let coords = value["coordinates"] as? [String:Double],
                 let lat = coords["lat"], let lon = coords["lon"] else {
             return nil
         }
+
+        self.id = id
 
         self.name = name
 
@@ -68,6 +79,11 @@ class Place {
         self.tripAdvisorProvider = nil
 
         self.hours = nil // TODO: verify dict is not empty
+    }
+
+
+    static func ==(lhs: Place, rhs: Place) -> Bool {
+        return lhs.id == rhs.id
     }
 }
 

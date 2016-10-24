@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		4F00E2C2201E3A088D934AE0 /* Pods_Prox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29190FCA903C1D1AF4C77316 /* Pods_Prox.framework */; };
 		7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */; };
-		7B29E7C51DA3EC360099AF38 /* PlaceCarouselViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7C41DA3EC360099AF38 /* PlaceCarouselViewController.swift */; };
 		7B29E7CA1DA3EC360099AF38 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7C91DA3EC360099AF38 /* Assets.xcassets */; };
 		7B29E7CD1DA3EC360099AF38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */; };
 		7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7D71DA3EC360099AF38 /* ProxTests.swift */; };
@@ -30,6 +29,10 @@
 		7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */; };
 		7B561BBA1DAC02B90096D8BC /* hilton_location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7B561BB91DAC02B90096D8BC /* hilton_location.gpx */; };
 		7B9DA14B1DBE332E00A68C82 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */; };
+		7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA1521DBE6ED300A68C82 /* FirebasePlacesDatabase.swift */; };
+		7B9DA1551DBE6ED300A68C82 /* PlacesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA1531DBE6ED300A68C82 /* PlacesDatabase.swift */; };
+		7B9DA1571DBE6EE300A68C82 /* PlaceCarouselViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA1561DBE6EE300A68C82 /* PlaceCarouselViewController.swift */; };
+		7B9DA15A1DBE6F7500A68C82 /* PlaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */; };
 		7BD5CC7D1DAFF07E00BCF50D /* GeoFire.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC741DAFF07E00BCF50D /* GeoFire.m */; };
 		7BD5CC7E1DAFF07E00BCF50D /* GFBase32Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC761DAFF07E00BCF50D /* GFBase32Utils.m */; };
 		7BD5CC7F1DAFF07E00BCF50D /* GFGeoHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC781DAFF07E00BCF50D /* GFGeoHash.m */; };
@@ -40,8 +43,6 @@
 		7BD5CC8B1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7C79B23D6CD1B1AC5A860E9E /* Pods_ProxTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */; };
 		E65857DE1DB69F4200CD18F8 /* ReviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65857DD1DB69F4200CD18F8 /* ReviewProvider.swift */; };
-		E65857E01DB69F7600CD18F8 /* FirebasePlacesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65857DF1DB69F7600CD18F8 /* FirebasePlacesDatabase.swift */; };
-		E65857E21DB6A72D00CD18F8 /* PlacesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65857E11DB6A72D00CD18F8 /* PlacesDatabase.swift */; };
 		E67146361DB54896007A99E4 /* CLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67146351DB54896007A99E4 /* CLLocationManager.swift */; };
 		EC42FE32127D2BD0FE36402D /* Pods_ProxUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */; };
 /* End PBXBuildFile section */
@@ -75,7 +76,6 @@
 		75091F0A7DE7F3D6E008D07B /* Pods-Prox.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.debug.xcconfig"; sourceTree = "<group>"; };
 		7B29E7BF1DA3EC360099AF38 /* Prox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		7B29E7C41DA3EC360099AF38 /* PlaceCarouselViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceCarouselViewController.swift; sourceTree = "<group>"; };
 		7B29E7C91DA3EC360099AF38 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7B29E7CC1DA3EC360099AF38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7B29E7CE1DA3EC360099AF38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -100,6 +100,10 @@
 		7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselHeaderView.swift; path = PlaceCarousel/PlaceCarouselHeaderView.swift; sourceTree = "<group>"; };
 		7B561BB91DAC02B90096D8BC /* hilton_location.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hilton_location.gpx; sourceTree = "<group>"; };
 		7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		7B9DA1521DBE6ED300A68C82 /* FirebasePlacesDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FirebasePlacesDatabase.swift; path = Data/FirebasePlacesDatabase.swift; sourceTree = "<group>"; };
+		7B9DA1531DBE6ED300A68C82 /* PlacesDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlacesDatabase.swift; path = Data/PlacesDatabase.swift; sourceTree = "<group>"; };
+		7B9DA1561DBE6EE300A68C82 /* PlaceCarouselViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselViewController.swift; path = PlaceCarousel/PlaceCarouselViewController.swift; sourceTree = "<group>"; };
+		7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailViewController.swift; sourceTree = "<group>"; };
 		7BD5CC6D1DAFF07E00BCF50D /* GeoFire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoFire.h; sourceTree = "<group>"; };
 		7BD5CC6E1DAFF07E00BCF50D /* GFCircleQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFCircleQuery.h; sourceTree = "<group>"; };
 		7BD5CC6F1DAFF07E00BCF50D /* GFQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFQuery.h; sourceTree = "<group>"; };
@@ -121,8 +125,6 @@
 		D4ACFAE1468306F6BC08DB51 /* Pods-ProxUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProxUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E65857DD1DB69F4200CD18F8 /* ReviewProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewProvider.swift; sourceTree = "<group>"; };
-		E65857DF1DB69F7600CD18F8 /* FirebasePlacesDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebasePlacesDatabase.swift; sourceTree = "<group>"; };
-		E65857E11DB6A72D00CD18F8 /* PlacesDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlacesDatabase.swift; sourceTree = "<group>"; };
 		E67146351DB54896007A99E4 /* CLLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLLocationManager.swift; path = Extensions/CLLocationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -190,19 +192,20 @@
 		7B29E7C11DA3EC360099AF38 /* Prox */ = {
 			isa = PBXGroup;
 			children = (
+				7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */,
+				7B29E7C91DA3EC360099AF38 /* Assets.xcassets */,
+				7B5095791DB64EA1007C54F0 /* DataAccess */,
 				E65857E31DB6A75400CD18F8 /* Database */,
+				7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */,
 				E67146341DB5488D007A99E4 /* Extensions */,
+				7B29E7CE1DA3EC360099AF38 /* Info.plist */,
+				7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */,
+				7B5095631DB531CA007C54F0 /* Models */,
+				7B561BB11DABD5730096D8BC /* Place Carousel */,
+				7B9DA1581DBE6F0A00A68C82 /* PlaceDetails */,
+				7BD5CC601DAFF02100BCF50D /* ThirdParty */,
 				7B50956F1DB5352E007C54F0 /* Utilities */,
 				7B5095681DB53382007C54F0 /* Widgets */,
-				7B5095631DB531CA007C54F0 /* Models */,
-				7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */,
-				7BD5CC601DAFF02100BCF50D /* ThirdParty */,
-				7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */,
-				7B561BB11DABD5730096D8BC /* Place Carousel */,
-				7B29E7C91DA3EC360099AF38 /* Assets.xcassets */,
-				7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */,
-				7B29E7CE1DA3EC360099AF38 /* Info.plist */,
-				7B5095791DB64EA1007C54F0 /* DataAccess */,
 			);
 			path = Prox;
 			sourceTree = "<group>";
@@ -266,12 +269,20 @@
 		7B561BB11DABD5730096D8BC /* Place Carousel */ = {
 			isa = PBXGroup;
 			children = (
+				7B9DA1561DBE6EE300A68C82 /* PlaceCarouselViewController.swift */,
 				7B5095661DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift */,
 				7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */,
-				7B29E7C41DA3EC360099AF38 /* PlaceCarouselViewController.swift */,
 				7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */,
 			);
 			name = "Place Carousel";
+			sourceTree = "<group>";
+		};
+		7B9DA1581DBE6F0A00A68C82 /* PlaceDetails */ = {
+			isa = PBXGroup;
+			children = (
+				7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */,
+			);
+			path = PlaceDetails;
 			sourceTree = "<group>";
 		};
 		7BD5CC601DAFF02100BCF50D /* ThirdParty */ = {
@@ -340,8 +351,8 @@
 		E65857E31DB6A75400CD18F8 /* Database */ = {
 			isa = PBXGroup;
 			children = (
-				E65857DF1DB69F7600CD18F8 /* FirebasePlacesDatabase.swift */,
-				E65857E11DB6A72D00CD18F8 /* PlacesDatabase.swift */,
+				7B9DA1521DBE6ED300A68C82 /* FirebasePlacesDatabase.swift */,
+				7B9DA1531DBE6ED300A68C82 /* PlacesDatabase.swift */,
 				7B5095841DB903B7007C54F0 /* DatabaseResult.swift */,
 			);
 			name = Database;
@@ -558,7 +569,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		6729F4AA6A17117FF7E684CC /* [CP] Check Pods Manifest.lock */ = {
@@ -573,7 +584,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		DFBE10C041A9079EC4DBA2FF /* [CP] Copy Pods Resources */ = {
@@ -618,7 +629,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		FD98667ED4EB26FD0CEF79F8 /* [CP] Embed Pods Frameworks */ = {
@@ -645,27 +656,28 @@
 			files = (
 				7B5095731DB5352E007C54F0 /* Fonts.swift in Sources */,
 				7B5095621DB531C0007C54F0 /* PlaceCarousel.swift in Sources */,
-				E65857E21DB6A72D00CD18F8 /* PlacesDatabase.swift in Sources */,
 				7B5095721DB5352E007C54F0 /* Colors.swift in Sources */,
 				7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */,
+				7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */,
 				7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */,
 				7B50956B1DB53382007C54F0 /* ReviewContainerView.swift in Sources */,
 				7BD5CC7E1DAFF07E00BCF50D /* GFBase32Utils.m in Sources */,
 				7B50956C1DB53382007C54F0 /* ReviewScoreView.swift in Sources */,
+				7B9DA15A1DBE6F7500A68C82 /* PlaceDetailViewController.swift in Sources */,
 				7BD5CC801DAFF07E00BCF50D /* GFGeoHashQuery.m in Sources */,
-				E65857E01DB69F7600CD18F8 /* FirebasePlacesDatabase.swift in Sources */,
+				7B9DA1571DBE6EE300A68C82 /* PlaceCarouselViewController.swift in Sources */,
 				7B5095671DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift in Sources */,
 				7B5095751DB62590007C54F0 /* NSLayoutConstraint.swift in Sources */,
 				7BD5CC7D1DAFF07E00BCF50D /* GeoFire.m in Sources */,
 				E67146361DB54896007A99E4 /* CLLocationManager.swift in Sources */,
 				E65857DE1DB69F4200CD18F8 /* ReviewProvider.swift in Sources */,
-				7B29E7C51DA3EC360099AF38 /* PlaceCarouselViewController.swift in Sources */,
 				7BD5CC7F1DAFF07E00BCF50D /* GFGeoHash.m in Sources */,
 				7B50956E1DB53429007C54F0 /* HorizontalLineView.swift in Sources */,
 				7B9DA14B1DBE332E00A68C82 /* AppConstants.swift in Sources */,
 				7B5095781DB64E76007C54F0 /* TravelTimesProvider.swift in Sources */,
 				7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */,
 				7BD5CC811DAFF07E00BCF50D /* GFQuery.m in Sources */,
+				7B9DA1551DBE6ED300A68C82 /* PlacesDatabase.swift in Sources */,
 				7B5095651DB531CA007C54F0 /* Place.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
