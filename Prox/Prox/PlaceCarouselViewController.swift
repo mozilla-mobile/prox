@@ -198,13 +198,18 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Use last coord: we want to display where the user is now.
-        if let location = locations.last {
+        if var location = locations.last {
             // In iOS9, didUpdateLocations can be unexpectedly called multiple
             // times for a single `requestLocation`: we guard against that here.
             let now = Date()
             if timeOfLastLocationUpdate == nil ||
                 (now - MIN_SECS_BETWEEN_LOCATION_UPDATES) > timeOfLastLocationUpdate! {
                 timeOfLastLocationUpdate = now
+
+                if AppConstants.MOZ_LOCATION_FAKING {
+                    location = CLLocation(latitude: 19.9263136, longitude: -155.8868328)
+                }
+
                 updateLocation(manager, location: location)
             }
         }

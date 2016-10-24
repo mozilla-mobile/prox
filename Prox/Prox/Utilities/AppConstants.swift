@@ -52,4 +52,17 @@ public struct AppConstants {
             return false
         #endif
     }()
+
+    // Enables/disables location faking for Hawaii
+    public static let MOZ_LOCATION_FAKING: Bool = {
+        #if MOZ_CHANNEL_DEBUG
+            return false
+        #elseif MOZ_CHANNEL_ENTERPRISE
+            return true
+        #elseif MOZ_CHANNEL_RELEASE
+            return false
+        #else
+            return false
+        #endif
+    }()
 }
