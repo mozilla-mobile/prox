@@ -29,6 +29,7 @@
 		7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095841DB903B7007C54F0 /* DatabaseResult.swift */; };
 		7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */; };
 		7B561BBA1DAC02B90096D8BC /* hilton_location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7B561BB91DAC02B90096D8BC /* hilton_location.gpx */; };
+		7B9DA14B1DBE332E00A68C82 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */; };
 		7BD5CC7D1DAFF07E00BCF50D /* GeoFire.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC741DAFF07E00BCF50D /* GeoFire.m */; };
 		7BD5CC7E1DAFF07E00BCF50D /* GFBase32Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC761DAFF07E00BCF50D /* GFBase32Utils.m */; };
 		7BD5CC7F1DAFF07E00BCF50D /* GFGeoHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC781DAFF07E00BCF50D /* GFGeoHash.m */; };
@@ -98,6 +99,7 @@
 		7B5095841DB903B7007C54F0 /* DatabaseResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatabaseResult.swift; path = Data/DatabaseResult.swift; sourceTree = "<group>"; };
 		7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselHeaderView.swift; path = PlaceCarousel/PlaceCarouselHeaderView.swift; sourceTree = "<group>"; };
 		7B561BB91DAC02B90096D8BC /* hilton_location.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hilton_location.gpx; sourceTree = "<group>"; };
+		7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		7BD5CC6D1DAFF07E00BCF50D /* GeoFire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoFire.h; sourceTree = "<group>"; };
 		7BD5CC6E1DAFF07E00BCF50D /* GFCircleQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFCircleQuery.h; sourceTree = "<group>"; };
 		7BD5CC6F1DAFF07E00BCF50D /* GFQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFQuery.h; sourceTree = "<group>"; };
@@ -248,6 +250,7 @@
 			children = (
 				7B5095701DB5352E007C54F0 /* Colors.swift */,
 				7B5095711DB5352E007C54F0 /* Fonts.swift */,
+				7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -430,7 +433,7 @@
 				TargetAttributes = {
 					7B29E7BE1DA3EC360099AF38 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 43AQ936H96;
+						DevelopmentTeam = 9G8J6YA743;
 						ProvisioningStyle = Automatic;
 					};
 					7B29E7D21DA3EC360099AF38 = {
@@ -659,6 +662,7 @@
 				7B29E7C51DA3EC360099AF38 /* PlaceCarouselViewController.swift in Sources */,
 				7BD5CC7F1DAFF07E00BCF50D /* GFGeoHash.m in Sources */,
 				7B50956E1DB53429007C54F0 /* HorizontalLineView.swift in Sources */,
+				7B9DA14B1DBE332E00A68C82 /* AppConstants.swift in Sources */,
 				7B5095781DB64E76007C54F0 /* TravelTimesProvider.swift in Sources */,
 				7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */,
 				7BD5CC811DAFF07E00BCF50D /* GFQuery.m in Sources */,
@@ -813,6 +817,7 @@
 				DEVELOPMENT_TEAM = 43AQ936H96;
 				INFOPLIST_FILE = Prox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/GeoFire/Geofire-Bridging-Header.h";
@@ -829,6 +834,7 @@
 				DEVELOPMENT_TEAM = 43AQ936H96;
 				INFOPLIST_FILE = Prox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/GeoFire/Geofire-Bridging-Header.h";
@@ -952,6 +958,7 @@
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = Prox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_ENTERPRISE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/GeoFire/Geofire-Bridging-Header.h";
