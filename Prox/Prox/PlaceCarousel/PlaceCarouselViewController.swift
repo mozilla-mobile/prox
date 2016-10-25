@@ -20,6 +20,10 @@ protocol PlaceDataSource: class {
     func place(forIndex: Int) throws -> Place
 }
 
+struct PlaceDataSourceError: Error {
+    let message: String
+}
+
 class PlaceCarouselViewController: UIViewController {
 
     fileprivate let MIN_SECS_BETWEEN_LOCATION_UPDATES: TimeInterval = 1
@@ -82,6 +86,7 @@ class PlaceCarouselViewController: UIViewController {
     lazy var placeCarousel: PlaceCarousel = {
         let carousel = PlaceCarousel()
         carousel.delegate = self
+        carousel.dataSource = self
         return carousel
     }()
 
@@ -292,11 +297,15 @@ extension PlaceCarouselViewController: PlaceDataSource {
     }
 
     func numberOfPlaces() -> Int {
-        return 0
+        return places.count
     }
 
-    func place(forIndex: Int) throws -> Place {
-        throw NSError()
+    func place(forIndex index: Int) throws -> Place {
+        guard index < places.endIndex else {
+            throw PlaceDataSourceError(message: "There is no place at index: \(index)")
+        }
+
+        return places[index]
     }
 }
 
