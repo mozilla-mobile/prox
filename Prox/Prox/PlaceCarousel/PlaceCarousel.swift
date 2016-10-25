@@ -11,22 +11,10 @@ private let MIN_WALKING_TIME = 30
 private let YOU_ARE_HERE_WALKING_TIME = 3
 
 protocol PlaceCarouselDelegate: class {
-    func placeCarousel(placeProvider: PlaceDataSource, didSelectPlace place: Place, atIndex index: Int)
-}
-
-protocol PlaceDataSource: class {
-    func nextPlaceForPlace(place: Place) -> Place?
-    func previousPlaceForPlace(place: Place) -> Place?
+    func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int)
 }
 
 class PlaceCarousel: NSObject {
-
-    var places: [Place] = [Place]() {
-        didSet {
-            // TODO: how do we make sure the user wasn't interacting?
-            carousel.reloadData()
-        }
-    }
 
     lazy var imageDownloader: AFImageDownloader = {
         // TODO: Maybe we want more control over the configuration.
@@ -44,6 +32,7 @@ class PlaceCarousel: NSObject {
     let defaultPadding: CGFloat = 15.0
 
     weak var delegate: PlaceCarouselDelegate?
+    weak var dataSource: PlaceDataSource?
 
     private lazy var carouselLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -64,6 +53,10 @@ class PlaceCarousel: NSObject {
         return collectionView
     }()
 
+    func refresh() {
+        carousel.reloadData()
+    }
+
 }
 
 extension PlaceCarousel: UICollectionViewDataSource {
@@ -73,14 +66,17 @@ extension PlaceCarousel: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return places.count
+        return dataSource?.numberOfPlaces() ?? 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        // TODO: this view is only partially filled in
-        let place = places[indexPath.item]
-
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdentifier, for: indexPath) as! PlaceCarouselCollectionViewCell
+        // TODO: this view is only partially filled in
+        guard let dataSource = dataSource,
+            let place = try? dataSource.place(forIndex: indexPath.row) else {
+            return cell
+        }
+
         cell.category.text = "Hotel"
         cell.name.text = place.name
 
@@ -174,30 +170,7 @@ extension PlaceCarousel: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let place = places[indexPath.item]
-        print("Selected place \(place.name)")
-        delegate?.placeCarousel(placeProvider: self, didSelectPlace: place, atIndex: indexPath.row)
+        delegate?.placeCarousel(placeCarousel: self, didSelectPlaceAtIndex: indexPath.row)
     }
 
-}
-
-extension PlaceCarousel: PlaceDataSource {
-    
-    func nextPlaceForPlace(place: Place) -> Place? {
-        guard let currentPlaceIndex = places.index(where: {$0 == place}),
-            currentPlaceIndex < places.endIndex else {
-            return nil
-        }
-
-        return places[places.index(after: currentPlaceIndex)]
-    }
-
-    func previousPlaceForPlace(place: Place) -> Place? {
-        guard let currentPlaceIndex = places.index(where: {$0 == place}),
-            currentPlaceIndex > places.startIndex else {
-                return nil
-        }
-
-        return places[places.index(before: currentPlaceIndex)]
-    }
 }

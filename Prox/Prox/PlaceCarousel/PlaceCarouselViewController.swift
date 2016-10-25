@@ -12,6 +12,14 @@ private let MAP_LATITUDE_OFFSET = 0.015
 
 private let ONE_DAY: TimeInterval = (60 * 60) * 24
 
+
+protocol PlaceDataSource: class {
+    func nextPlace(forPlace place: Place) -> Place?
+    func previousPlace(forPlace place: Place) -> Place?
+    func numberOfPlaces() -> Int
+    func place(forIndex: Int) throws -> Place
+}
+
 class PlaceCarouselViewController: UIViewController {
 
     fileprivate let MIN_SECS_BETWEEN_LOCATION_UPDATES: TimeInterval = 1
@@ -23,6 +31,14 @@ class PlaceCarouselViewController: UIViewController {
         manager.desiredAccuracy = kCLLocationAccuracyBest
         return manager
     }()
+
+
+    var places: [Place] = [Place]() {
+        didSet {
+            // TODO: how do we make sure the user wasn't interacting?
+            placeCarousel.refresh()
+        }
+    }
 
     // the top part of the background. Contains Number of Places, horizontal line & (soon to be) Current Location button
     lazy var headerView: PlaceCarouselHeaderView = {
@@ -228,7 +244,7 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
         mapView.region = MKCoordinateRegion(center: center, span: span)
 
         FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
-            self.placeCarousel.places = places.flatMap { $0.successResult() }
+            self.places = places.flatMap { $0.successResult() }
         }
 
         self.placeCarousel.currentLocation = location
@@ -255,10 +271,39 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
     }
 }
 
+extension PlaceCarouselViewController: PlaceDataSource {
+
+    func nextPlace(forPlace place: Place) -> Place? {
+        guard let currentPlaceIndex = places.index(where: {$0 == place}),
+            currentPlaceIndex + 1 < places.endIndex else {
+                return nil
+        }
+
+        return places[places.index(after: currentPlaceIndex + 1)]
+    }
+
+    func previousPlace(forPlace place: Place) -> Place? {
+        guard let currentPlaceIndex = places.index(where: {$0 == place}),
+            currentPlaceIndex > places.startIndex else {
+                return nil
+        }
+
+        return places[places.index(before: currentPlaceIndex)]
+    }
+
+    func numberOfPlaces() -> Int {
+        return 0
+    }
+
+    func place(forIndex: Int) throws -> Place {
+        throw NSError()
+    }
+}
+
 extension PlaceCarouselViewController: PlaceCarouselDelegate {
-    func placeCarousel(placeProvider: PlaceDataSource, didSelectPlace place: Place, atIndex index: Int) {
-        let placeDetailViewController = PlaceDetailViewController(place: place)
-        placeDetailViewController.dataSource = placeProvider
+    func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int) {
+        let placeDetailViewController = PlaceDetailViewController(place: places[index])
+        placeDetailViewController.dataSource = self
         let navigationController = UINavigationController(rootViewController: placeDetailViewController)
         self.present(navigationController, animated: true, completion: nil)
     }
