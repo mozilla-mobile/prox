@@ -22,7 +22,7 @@ class Place: Hashable {
     let id: String
 
     let name: String
-    let summary: String
+    let description: String
     let latLong: CLLocationCoordinate2D
 
     // Optional values.
@@ -48,10 +48,10 @@ class Place: Hashable {
     var travelTimes: TravelTimes?
 
 
-    init(id: String, name: String, summary: String, latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil, address: String? = nil, yelpProvider: ReviewProvider?  = nil, tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String]? = nil, hours: [DayOfWeek: OpenHours]? = nil) {
+    init(id: String, name: String, description: String, latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil, address: String? = nil, yelpProvider: ReviewProvider?  = nil, tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String]? = nil, hours: [DayOfWeek: OpenHours]? = nil) {
         self.id = id
         self.name = name
-        self.summary = summary
+        self.description = description
         self.latLong = latLong
         self.categories = categories
         self.url = url
@@ -65,7 +65,7 @@ class Place: Hashable {
     convenience init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
         guard data.exists(), data.hasChildren(),
                 let value = data.value as? NSDictionary,
-                let summary = value["description"] as? String ?? value["pullQuote"] as? String,
+                let description = value["description"] as? String ?? value["pullQuote"] as? String,
                 let id = value["id"] as? String,
                 let name = value["id"] as? String, // TODO: change to name from id
                 let coords = value["coordinates"] as? [String:Double],
@@ -75,7 +75,7 @@ class Place: Hashable {
 
         self.init(id: id,
                   name: name,
-                  summary: summary,
+                  description: description,
                   latLong: CLLocationCoordinate2D(latitude: lat, longitude: lon),
                   categories: [String](),
                   url: "",
