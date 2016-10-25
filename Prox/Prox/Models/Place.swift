@@ -8,6 +8,7 @@ import CoreLocation
 
 private let PROVIDERS_PATH = "providers/"
 private let YELP_PATH = PROVIDERS_PATH + "yelp"
+private let TRIP_ADVISOR_PATH = PROVIDERS_PATH + "tripAdvisor"
 
 class Place: Hashable {
 
@@ -65,24 +66,35 @@ class Place: Hashable {
     convenience init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
         guard data.exists(), data.hasChildren(),
                 let value = data.value as? NSDictionary,
-                let description = value["description"] as? String ?? value["pullQuote"] as? String,
+                let descriptionDict = value["description"] as? [String:String],
+                let description = descriptionDict["text"],
                 let id = value["id"] as? String,
-                let name = value["id"] as? String, // TODO: change to name from id
+                let name = value["name"] as? String,
                 let coords = value["coordinates"] as? [String:Double],
-                let lat = coords["lat"], let lon = coords["lon"] else {
+                let lat = coords["lat"], let lng = coords["lng"] else {
             return nil
         }
+
+        // TODO: keys to deal with
+        //  - version
+        //  - description: utilize provider
+        //  - phone
+        //  - images: get metadata rather than just urls
+        //  - categories: if we need it, get the ID
+        //  - hours
+        let categoryNames = (value["categories"] as? [[String:String]])?.flatMap { $0["text"] }
+        let photoURLs = (value["images"] as? [[String:String]])?.flatMap { $0["src"] }
 
         self.init(id: id,
                   name: name,
                   description: description,
-                  latLong: CLLocationCoordinate2D(latitude: lat, longitude: lon),
-                  categories: [String](),
-                  url: "",
+                  latLong: CLLocationCoordinate2D(latitude: lat, longitude: lng),
+                  categories: categoryNames,
+                  url: value["url"] as? String,
                   address: (value["address"] as? [String])?.joined(separator: " "),
                   yelpProvider: ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: YELP_PATH)),
-                  tripAdvisorProvider: nil,
-                  photoURLs: value["images"] as? [String],
+                  tripAdvisorProvider: ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: TRIP_ADVISOR_PATH)),
+                  photoURLs: photoURLs,
                   hours: nil)
     }
 

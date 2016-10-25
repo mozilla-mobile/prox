@@ -25,7 +25,7 @@ class ReviewProvider {
         self.url = url
 
         self.rating = value["rating"] as? Double
-        self.totalReviewCount = value["reviewCount"] as? Int
+        self.totalReviewCount = value["totalReviewCount"] as? Int
 
         // TODO: get values from DB (these are default).
         self.reviews = []
