@@ -207,6 +207,7 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
                 timeOfLastLocationUpdate = now
 
                 if AppConstants.MOZ_LOCATION_FAKING {
+                    // fake the location to Hilton Waikaloa Village, Kona, Hawaii
                     location = CLLocation(latitude: 19.9263136, longitude: -155.8868328)
                 }
 
