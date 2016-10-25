@@ -47,7 +47,22 @@ class Place: Hashable {
 
     var travelTimes: TravelTimes?
 
-    init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
+
+    init(id: String, name: String, summary: String, latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil, address: String? = nil, yelpProvider: ReviewProvider?  = nil, tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String]? = nil, hours: [DayOfWeek: OpenHours]? = nil) {
+        self.id = id
+        self.name = name
+        self.summary = summary
+        self.latLong = latLong
+        self.categories = categories
+        self.url = url
+        self.address = address
+        self.yelpProvider = yelpProvider
+        self.tripAdvisorProvider = tripAdvisorProvider
+        self.photoURLs = photoURLs
+        self.hours = hours
+    }
+
+    convenience init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
         guard data.exists(), data.hasChildren(),
                 let value = data.value as? NSDictionary,
                 let summary = value["description"] as? String ?? value["pullQuote"] as? String,
@@ -58,27 +73,17 @@ class Place: Hashable {
             return nil
         }
 
-        self.id = id
-
-        self.name = name
-
-        self.summary = summary
-
-        self.latLong = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-
-        self.address = (value["address"] as? [String])?.joined(separator: " ")
-
-        self.yelpProvider = ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: YELP_PATH))
-
-        self.photoURLs = value["images"] as? [String]
-
-        // TODO: get data from DB. Below are currently using default values.
-        self.categories = [String]()
-        self.url = ""
-
-        self.tripAdvisorProvider = nil
-
-        self.hours = nil // TODO: verify dict is not empty
+        self.init(id: id,
+                  name: name,
+                  summary: summary,
+                  latLong: CLLocationCoordinate2D(latitude: lat, longitude: lon),
+                  categories: [String](),
+                  url: "",
+                  address: (value["address"] as? [String])?.joined(separator: " "),
+                  yelpProvider: ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: YELP_PATH)),
+                  tripAdvisorProvider: nil,
+                  photoURLs: value["images"] as? [String],
+                  hours: nil)
     }
 
 

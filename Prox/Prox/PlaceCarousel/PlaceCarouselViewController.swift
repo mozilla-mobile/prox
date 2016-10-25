@@ -284,7 +284,7 @@ extension PlaceCarouselViewController: PlaceDataSource {
                 return nil
         }
 
-        return places[places.index(after: currentPlaceIndex + 1)]
+        return places[places.index(after: currentPlaceIndex)]
     }
 
     func previousPlace(forPlace place: Place) -> Place? {
