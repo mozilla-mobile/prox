@@ -6,6 +6,7 @@ import UIKit
 import MapKit
 import QuartzCore
 import EDSunriseSet
+import Deferred
 
 private let MAP_SPAN_DELTA = 0.05
 private let MAP_LATITUDE_OFFSET = 0.015
@@ -41,6 +42,7 @@ class PlaceCarouselViewController: UIViewController {
         didSet {
             // TODO: how do we make sure the user wasn't interacting?
             placeCarousel.refresh()
+            openClosestPlace()
         }
     }
 
@@ -206,6 +208,43 @@ class PlaceCarouselViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+
+    func openClosestPlace() {
+        guard places.count > 0 else {
+            return
+        }
+        openDetail(forPlace: places[0])
+    }
+
+    func openDetail(forPlace place: Place) {
+        // if we are already displaying a place detail, don't try and display another one
+        // places should be able to update beneath without affecting what the user currently sees
+        if let _ = self.presentedViewController {
+            return
+        }
+        let placeDetailViewController = PlaceDetailViewController(place: place)
+        placeDetailViewController.dataSource = self
+        let navigationController = UINavigationController(rootViewController: placeDetailViewController)
+        self.present(navigationController, animated: true, completion: nil)
+    }
+
+    // sort by distance
+    // we should probably figure out how to sort by travel time too, 
+    // but seeing as that is async, let's stick with crow flies distance instead
+    // question: are we better off creating a PlaceCollection and moving sorting/filtering logic there?
+    // or even a static function on Place itself...
+    func sort(places: [Place], byDistanceFromLocation location: CLLocation, ascending: Bool = true) -> [Place] {
+        return places.sorted { (placeA, placeB) -> Bool in
+            let placeADistance = location.distance(from: CLLocation(latitude: placeA.latLong.latitude, longitude: placeA.latLong.longitude))
+            let placeBDistance = location.distance(from: CLLocation(latitude: placeB.latLong.latitude, longitude: placeB.latLong.longitude))
+
+            if ascending {
+                return placeADistance < placeBDistance
+            }
+
+            return placeBDistance < placeADistance
+        }
+    }
 }
 
 extension PlaceCarouselViewController: MKMapViewDelegate {
@@ -249,7 +288,7 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
         mapView.region = MKCoordinateRegion(center: center, span: span)
 
         FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
-            self.places = places.flatMap { $0.successResult() }
+            self.places = self.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
         }
 
         self.placeCarousel.currentLocation = location
@@ -311,10 +350,7 @@ extension PlaceCarouselViewController: PlaceDataSource {
 
 extension PlaceCarouselViewController: PlaceCarouselDelegate {
     func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int) {
-        let placeDetailViewController = PlaceDetailViewController(place: places[index])
-        placeDetailViewController.dataSource = self
-        let navigationController = UINavigationController(rootViewController: placeDetailViewController)
-        self.present(navigationController, animated: true, completion: nil)
+        openDetail(forPlace: places[index])
     }
 }
 
