@@ -90,6 +90,7 @@ class Place: Hashable {
     static func ==(lhs: Place, rhs: Place) -> Bool {
         return lhs.id == rhs.id
     }
+
 }
 
 enum DayOfWeek: Int {

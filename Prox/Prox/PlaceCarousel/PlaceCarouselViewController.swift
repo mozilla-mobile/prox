@@ -227,24 +227,6 @@ class PlaceCarouselViewController: UIViewController {
         let navigationController = UINavigationController(rootViewController: placeDetailViewController)
         self.present(navigationController, animated: true, completion: nil)
     }
-
-    // sort by distance
-    // we should probably figure out how to sort by travel time too, 
-    // but seeing as that is async, let's stick with crow flies distance instead
-    // question: are we better off creating a PlaceCollection and moving sorting/filtering logic there?
-    // or even a static function on Place itself...
-    func sort(places: [Place], byDistanceFromLocation location: CLLocation, ascending: Bool = true) -> [Place] {
-        return places.sorted { (placeA, placeB) -> Bool in
-            let placeADistance = location.distance(from: CLLocation(latitude: placeA.latLong.latitude, longitude: placeA.latLong.longitude))
-            let placeBDistance = location.distance(from: CLLocation(latitude: placeB.latLong.latitude, longitude: placeB.latLong.longitude))
-
-            if ascending {
-                return placeADistance < placeBDistance
-            }
-
-            return placeBDistance < placeADistance
-        }
-    }
 }
 
 extension PlaceCarouselViewController: MKMapViewDelegate {
@@ -288,7 +270,7 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
         mapView.region = MKCoordinateRegion(center: center, span: span)
 
         FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
-            self.places = self.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
+            self.places = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
         }
 
         self.placeCarousel.currentLocation = location
