@@ -42,7 +42,10 @@ class PlaceCarouselViewController: UIViewController {
         didSet {
             // TODO: how do we make sure the user wasn't interacting?
             placeCarousel.refresh()
-            openClosestPlace()
+
+            if oldValue.count == 0 {
+                openClosestPlace()
+            }
         }
     }
 
