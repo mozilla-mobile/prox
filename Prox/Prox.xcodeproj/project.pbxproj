@@ -28,6 +28,7 @@
 		7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095841DB903B7007C54F0 /* DatabaseResult.swift */; };
 		7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */; };
 		7B561BBA1DAC02B90096D8BC /* hilton_location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7B561BB91DAC02B90096D8BC /* hilton_location.gpx */; };
+		7B8651901DBF8544002A666A /* PlaceCarouselViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B86518F1DBF8544002A666A /* PlaceCarouselViewControllerTests.swift */; };
 		7B9DA14B1DBE332E00A68C82 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */; };
 		7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA1521DBE6ED300A68C82 /* FirebasePlacesDatabase.swift */; };
 		7B9DA1551DBE6ED300A68C82 /* PlacesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA1531DBE6ED300A68C82 /* PlacesDatabase.swift */; };
@@ -99,6 +100,7 @@
 		7B5095841DB903B7007C54F0 /* DatabaseResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatabaseResult.swift; path = Data/DatabaseResult.swift; sourceTree = "<group>"; };
 		7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselHeaderView.swift; path = PlaceCarousel/PlaceCarouselHeaderView.swift; sourceTree = "<group>"; };
 		7B561BB91DAC02B90096D8BC /* hilton_location.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hilton_location.gpx; sourceTree = "<group>"; };
+		7B86518F1DBF8544002A666A /* PlaceCarouselViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCarouselViewControllerTests.swift; sourceTree = "<group>"; };
 		7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		7B9DA1521DBE6ED300A68C82 /* FirebasePlacesDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FirebasePlacesDatabase.swift; path = Data/FirebasePlacesDatabase.swift; sourceTree = "<group>"; };
 		7B9DA1531DBE6ED300A68C82 /* PlacesDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlacesDatabase.swift; path = Data/PlacesDatabase.swift; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 				7B29E7D71DA3EC360099AF38 /* ProxTests.swift */,
 				7B29E7D91DA3EC360099AF38 /* Info.plist */,
 				7B5095801DB65FD4007C54F0 /* TravelTimesTests.swift */,
+				7B86518F1DBF8544002A666A /* PlaceCarouselViewControllerTests.swift */,
 			);
 			path = ProxTests;
 			sourceTree = "<group>";
@@ -444,7 +447,7 @@
 				TargetAttributes = {
 					7B29E7BE1DA3EC360099AF38 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 9G8J6YA743;
+						DevelopmentTeam = 43AQ936H96;
 						ProvisioningStyle = Automatic;
 					};
 					7B29E7D21DA3EC360099AF38 = {
@@ -569,7 +572,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		6729F4AA6A17117FF7E684CC /* [CP] Check Pods Manifest.lock */ = {
@@ -584,7 +587,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		DFBE10C041A9079EC4DBA2FF /* [CP] Copy Pods Resources */ = {
@@ -629,7 +632,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		FD98667ED4EB26FD0CEF79F8 /* [CP] Embed Pods Frameworks */ = {
@@ -686,6 +689,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B8651901DBF8544002A666A /* PlaceCarouselViewControllerTests.swift in Sources */,
 				7B5095811DB65FD4007C54F0 /* TravelTimesTests.swift in Sources */,
 				7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */,
 				7B50957A1DB65342007C54F0 /* TravelTimesProvider.swift in Sources */,
@@ -824,6 +828,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 75091F0A7DE7F3D6E008D07B /* Pods-Prox.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -841,6 +846,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 246E3C4ADD7C4DD2150C111B /* Pods-Prox.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -858,7 +864,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 64E189E4D93A85A43CF269E2 /* Pods-ProxTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = ProxTests/Info.plist;
@@ -875,7 +881,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0EA57261799D082127AF0A24 /* Pods-ProxTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = ProxTests/Info.plist;
@@ -892,7 +898,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D4ACFAE1468306F6BC08DB51 /* Pods-ProxUITests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = ProxUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(FRAMEWORK_SEARCH_PATHS)";
@@ -907,7 +913,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 324CE3415A3E66A0F7F7CF54 /* Pods-ProxUITests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = ProxUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(FRAMEWORK_SEARCH_PATHS)";
@@ -965,6 +971,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 55740F6C4426324FDA569848 /* Pods-Prox.enterprise.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
@@ -982,7 +989,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A62868128BA3BDA4EF8E22F1 /* Pods-ProxTests.enterprise.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = ProxTests/Info.plist;
@@ -999,7 +1006,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 18F1C6CC1D18EC45A9072FF1 /* Pods-ProxUITests.enterprise.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = ProxUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(FRAMEWORK_SEARCH_PATHS)";
