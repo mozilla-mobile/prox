@@ -147,6 +147,7 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
 
         placeImage.addSubview(category)
         constraints.append(contentsOf: [category.leadingAnchor.constraint(equalTo: name.leadingAnchor),
+                                        category.trailingAnchor.constraint(equalTo: name.trailingAnchor),
                                         category.bottomAnchor.constraint(equalTo: name.topAnchor, constant: -9)])
 
         let lineView = HorizontalLineView()

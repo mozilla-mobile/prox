@@ -77,7 +77,7 @@ extension PlaceCarousel: UICollectionViewDataSource {
             return cell
         }
 
-        cell.category.text = "Hotel"
+        cell.category.text = place.categories?.joined(separator: " | ")
         cell.name.text = place.name
 
         cell.placeImage.image = UIImage(named: "place-placeholder") // TODO: placeholder w/o pop-in
