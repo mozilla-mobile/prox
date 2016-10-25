@@ -41,6 +41,7 @@ class PlaceCarouselViewController: UIViewController {
     var places: [Place] = [Place]() {
         didSet {
             // TODO: how do we make sure the user wasn't interacting?
+            headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
             placeCarousel.refresh()
 
             if oldValue.count == 0 {
@@ -185,8 +186,7 @@ class PlaceCarouselViewController: UIViewController {
         constraints.append(sunriseSetTimesLabel.leadingAnchor.constraint(equalTo: sunView.leadingAnchor, constant: 20))
         constraints.append(sunriseSetTimesLabel.topAnchor.constraint(equalTo: sunView.topAnchor, constant: 14))
 
-        // placeholder text for the labels
-        headerView.numberOfPlacesLabel.text = "4 places"
+        headerView.numberOfPlacesLabel.text = "" // placeholder
 
         view.addSubview(placeCarousel.carousel)
         constraints.append(contentsOf: [placeCarousel.carousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
