@@ -59,7 +59,7 @@ class ReviewContainerView: UIView {
             scoreHorizontalMargin = 16
 
         case .detailsView:
-            verticalMargin = 8
+            verticalMargin = 9
             logoHeight = 28
             scoreHorizontalMargin = 0
         }

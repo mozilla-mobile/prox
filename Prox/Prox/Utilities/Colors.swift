@@ -25,5 +25,7 @@ extension Colors {
 
 // Place Details Colors
 extension Colors {
+    public static let detailsViewCardBackground = UIColor.white
+    public static let detailsViewCardPrimaryText = UIColor.black
     public static let detailsViewCardSecondaryText = UIColor(colorLiteralRed: 0, green: 0, blue: 0, alpha: 0.5)
 }

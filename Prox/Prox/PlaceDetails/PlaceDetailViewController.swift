@@ -9,6 +9,18 @@ class PlaceDetailViewController: UIViewController {
     private let place: Place
     weak var dataSource: PlaceDataSource?
 
+    // TODO: make carousel
+    lazy var headerImageView: UIImageView = {
+        let image = UIImage(named: "place-placeholder") // TODO: placeholder
+        let view = UIImageView(image: image)
+        return view
+    }()
+
+    lazy var cardView: PlaceDetailsCardView = {
+        let view = PlaceDetailsCardView()
+        return view
+    }()
+
     init(place: Place) {
         self.place = place
         super.init(nibName: nil, bundle: nil)
@@ -21,11 +33,20 @@ class PlaceDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(close))
-    }
+        view.backgroundColor = UIColor(white: 0.5, alpha: 1) // TODO: blurred image background
 
-    func close() {
-        self.navigationController?.dismiss(animated: true, completion: nil)
+        view.addSubview(headerImageView)
+        var constraints = [headerImageView.topAnchor.constraint(equalTo: view.topAnchor),
+                           headerImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                           headerImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                           headerImageView.heightAnchor.constraint(equalToConstant: 240)]
+
+        view.addSubview(cardView)
+        constraints += [cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: 204),
+                        cardView.widthAnchor.constraint(equalToConstant: 343),
+                        cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor)]
+
+        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
 
     override func didReceiveMemoryWarning() {

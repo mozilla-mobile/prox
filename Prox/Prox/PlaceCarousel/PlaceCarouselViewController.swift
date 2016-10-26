@@ -226,8 +226,16 @@ class PlaceCarouselViewController: UIViewController {
         }
         let placeDetailViewController = PlaceDetailViewController(place: place)
         placeDetailViewController.dataSource = self
+        placeDetailViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(dismissDetails))
+
         let navigationController = UINavigationController(rootViewController: placeDetailViewController)
         self.present(navigationController, animated: true, completion: nil)
+    }
+
+    @objc private func dismissDetails() {
+        dismiss(animated: true) {
+            // TODO: alert navigationController to animate dismiss.
+        }
     }
 }
 
