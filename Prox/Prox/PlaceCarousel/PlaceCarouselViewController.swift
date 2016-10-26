@@ -197,7 +197,6 @@ class PlaceCarouselViewController: UIViewController {
         // apply the constraints
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
-
     func refreshLocation() {
         if (CLLocationManager.hasLocationPermissionAndEnabled()) {
             locationManager.requestLocation()
