@@ -325,7 +325,8 @@ extension PlaceCarouselViewController: PlaceDataSource {
     }
 
     func place(forIndex index: Int) throws -> Place {
-        guard index < places.endIndex else {
+        guard index < places.endIndex,
+            index >= places.startIndex else {
             throw PlaceDataSourceError(message: "There is no place at index: \(index)")
         }
 

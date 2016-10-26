@@ -73,7 +73,7 @@ extension PlaceCarousel: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdentifier, for: indexPath) as! PlaceCarouselCollectionViewCell
         // TODO: this view is only partially filled in
         guard let dataSource = dataSource,
-            let place = try? dataSource.place(forIndex: indexPath.row) else {
+            let place = try? dataSource.place(forIndex: indexPath.item) else {
             return cell
         }
 
@@ -170,7 +170,7 @@ extension PlaceCarousel: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegate?.placeCarousel(placeCarousel: self, didSelectPlaceAtIndex: indexPath.row)
+        delegate?.placeCarousel(placeCarousel: self, didSelectPlaceAtIndex: indexPath.item)
     }
 
 }
