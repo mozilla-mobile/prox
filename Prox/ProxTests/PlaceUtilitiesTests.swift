@@ -27,11 +27,11 @@ class PlaceUtilitiesTests: XCTestCase {
         let currentLocation = CLLocation(latitude: 51.5046323, longitude: -0.0992547)
 
         // London Bridge Station
-        let place1 = Place(id: "1", name: "Place 1", summary: "Here is a summary of Place 1", latLong: CLLocationCoordinate2D(latitude: 51.5054704, longitude: -0.0943248))
+        let place1 = Place(id: "1", name: "Place 1", description: "Here is a summary of Place 1", latLong: CLLocationCoordinate2D(latitude: 51.5054704, longitude: -0.0943248))
         // old Mozilla London office
-        let place2 = Place(id: "2", name: "Place 2", summary: "Here is a summary of Place 2", latLong: CLLocationCoordinate2D(latitude: 51.5100773, longitude: -0.1257861))
+        let place2 = Place(id: "2", name: "Place 2", description: "Here is a summary of Place 2", latLong: CLLocationCoordinate2D(latitude: 51.5100773, longitude: -0.1257861))
         // Kensington Palace
-        let place3 = Place(id: "3", name: "Place 3", summary: "Here is a summary of Place 3", latLong: CLLocationCoordinate2D(latitude: 51.4998605, longitude: -0.177838))
+        let place3 = Place(id: "3", name: "Place 3", description: "Here is a summary of Place 3", latLong: CLLocationCoordinate2D(latitude: 51.4998605, longitude: -0.177838))
         let places = [place1, place2, place3]
 
         let sortedAscending = PlaceUtilities.sort(places: places, byDistanceFromLocation: currentLocation, ascending: true)
