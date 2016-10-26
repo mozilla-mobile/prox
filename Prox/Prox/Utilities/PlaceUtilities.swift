@@ -14,7 +14,7 @@ struct PlaceUtilities {
                 return placeADistance < placeBDistance
             }
 
-            return placeBDistance < placeADistance
+            return placeADistance > placeBDistance
         }
     }
 }
