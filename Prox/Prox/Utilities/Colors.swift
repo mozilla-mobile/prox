@@ -22,3 +22,8 @@ extension Colors {
     public static let reviewsNumberOfReviewers = UIColor(colorLiteralRed: 0.0, green: 0.0, blue: 0.0, alpha: 0.4)
     public static let reviewScoreDefault = UIColor.lightGray
 }
+
+// Place Details Colors
+extension Colors {
+    public static let detailsViewCardSecondaryText = UIColor(colorLiteralRed: 0, green: 0, blue: 0, alpha: 0.5)
+}

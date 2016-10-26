@@ -5,7 +5,15 @@
 import UIKit
 import QuartzCore
 
+enum ReviewContainerViewMode {
+    case carouselView, detailsView
+}
+
 class ReviewContainerView: UIView {
+
+    let verticalMargin: CGFloat
+    let logoHeight: CGFloat
+    let scoreHorizontalMargin: CGFloat
 
     var color: UIColor {
         didSet {
@@ -32,21 +40,45 @@ class ReviewContainerView: UIView {
 
     lazy var numberOfReviewersLabel: UILabel = {
         let label = UILabel()
-        label.font = Fonts.reviewsNumberOfReviewers
-        label.textColor = Colors.reviewsNumberOfReviewers
         label.textAlignment = .center
         return label
     }()
 
-    convenience init(color: UIColor) {
-        self.init(score: 0, color: color)
+    convenience init(color: UIColor, mode: ReviewContainerViewMode) {
+        self.init(score: 0, color: color, mode: mode)
     }
 
-    init(score: Float, color: UIColor) {
+    init(score: Float, color: UIColor, mode: ReviewContainerViewMode) {
         self.score = score
         self.color = color
+
+        switch mode {
+        case .carouselView:
+            verticalMargin = 4
+            logoHeight = 19
+            scoreHorizontalMargin = 16
+
+        case .detailsView:
+            verticalMargin = 8
+            logoHeight = 28
+            scoreHorizontalMargin = 0
+        }
+
         super.init(frame: .zero)
         setupSubviews()
+        configure(byMode: mode) // must be called after super.init: references self.
+    }
+
+    private func configure(byMode mode: ReviewContainerViewMode) {
+        switch mode {
+        case .carouselView:
+            numberOfReviewersLabel.font = Fonts.reviewsNumberOfReviewers
+            numberOfReviewersLabel.textColor = Colors.reviewsNumberOfReviewers
+
+        case.detailsView:
+            numberOfReviewersLabel.font = Fonts.detailsViewReviewerText
+            numberOfReviewersLabel.textColor = Colors.detailsViewCardSecondaryText
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -58,17 +90,19 @@ class ReviewContainerView: UIView {
         var constraints = [reviewSiteLogo.topAnchor.constraint(equalTo: self.topAnchor),
                            reviewSiteLogo.leadingAnchor.constraint(equalTo: self.leadingAnchor),
                            reviewSiteLogo.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-                           reviewSiteLogo.heightAnchor.constraint(equalToConstant: 19.0)]
+                           reviewSiteLogo.heightAnchor.constraint(equalToConstant: logoHeight)]
         addSubview(reviewScore)
-        constraints.append(contentsOf: [reviewScore.topAnchor.constraint(equalTo: reviewSiteLogo.bottomAnchor),
-                                        reviewScore.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-                                        reviewScore.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
-                                        reviewScore.heightAnchor.constraint(equalToConstant: 12.0)])
+        constraints.append(contentsOf: [reviewScore.topAnchor.constraint(equalTo: reviewSiteLogo.bottomAnchor, constant: verticalMargin),
+                                        reviewScore.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: scoreHorizontalMargin),
+                                        reviewScore.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -scoreHorizontalMargin),
+                                        reviewScore.heightAnchor.constraint(equalToConstant: 4)])
         addSubview(numberOfReviewersLabel)
-        constraints.append(contentsOf: [numberOfReviewersLabel.topAnchor.constraint(equalTo: reviewScore.bottomAnchor),
+        constraints.append(contentsOf: [numberOfReviewersLabel.topAnchor.constraint(equalTo: reviewScore.bottomAnchor, constant: verticalMargin),
                                         numberOfReviewersLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
                                         numberOfReviewersLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
                                         numberOfReviewersLabel.heightAnchor.constraint(equalToConstant: 18.0)])
+        // Note: setting a height on the label may affect margins but, by not including it,
+        // the view will collapse if no review score is present
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }

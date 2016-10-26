@@ -17,3 +17,8 @@ extension Fonts {
 extension Fonts {
     public static let reviewsNumberOfReviewers = UIFont.systemFont(ofSize: 12.0)
 }
+
+// Place Details View
+extension Fonts {
+    public static let detailsViewReviewerText = UIFont.systemFont(ofSize: 14)
+}

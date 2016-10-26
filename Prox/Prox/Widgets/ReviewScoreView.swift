@@ -4,6 +4,8 @@
 
 import UIKit
 
+private let ItemSeparation: CGFloat = 2
+
 class ReviewScoreView: UIStackView {
 
     var color: UIColor {
@@ -50,8 +52,8 @@ class ReviewScoreView: UIStackView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        let width: CGFloat = frame.width / 6
-        let height: CGFloat = frame.height / 3
+        let width: CGFloat = (frame.width - ItemSeparation * 4) / 5
+        let height: CGFloat = frame.height
         for subview in arrangedSubviews {
             subview.widthAnchor.constraint(equalToConstant: width).isActive = true
             subview.heightAnchor.constraint(equalToConstant: height).isActive = true
