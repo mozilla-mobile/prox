@@ -125,9 +125,10 @@
 		7BD5CC7A1DAFF07E00BCF50D /* GFGeoHashQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFGeoHashQuery.m; sourceTree = "<group>"; };
 		7BD5CC7B1DAFF07E00BCF50D /* GFQuery+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GFQuery+Private.h"; sourceTree = "<group>"; };
 		7BD5CC7C1DAFF07E00BCF50D /* GFQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFQuery.m; sourceTree = "<group>"; };
-		7BD5CC871DAFF11100BCF50D /* Geofire-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Geofire-Bridging-Header.h"; sourceTree = "<group>"; };
 		7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A62868128BA3BDA4EF8E22F1 /* Pods-ProxTests.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.enterprise.xcconfig"; sourceTree = "<group>"; };
+		D3DA777E1DC2776C009C114E /* BuddyBuildSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BuddyBuildSDK.framework; path = ../Pods/BuddyBuildSDK/BuddyBuildSDK.framework; sourceTree = "<group>"; };
+		D3DA77821DC289A4009C114E /* Prox-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Prox-Bridging-Header.h"; sourceTree = "<group>"; };
 		D4ACFAE1468306F6BC08DB51 /* Pods-ProxUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProxUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E65857DD1DB69F4200CD18F8 /* ReviewProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewProvider.swift; sourceTree = "<group>"; };
@@ -165,6 +166,7 @@
 		2FBD246F5822237F9BDC246D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D3DA777E1DC2776C009C114E /* BuddyBuildSDK.framework */,
 				29190FCA903C1D1AF4C77316 /* Pods_Prox.framework */,
 				032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */,
 				D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */,
@@ -209,6 +211,7 @@
 				7B5095631DB531CA007C54F0 /* Models */,
 				7B561BB11DABD5730096D8BC /* Place Carousel */,
 				7B9DA1581DBE6F0A00A68C82 /* PlaceDetails */,
+				D3DA77821DC289A4009C114E /* Prox-Bridging-Header.h */,
 				7BD5CC601DAFF02100BCF50D /* ThirdParty */,
 				7B50956F1DB5352E007C54F0 /* Utilities */,
 				7B5095681DB53382007C54F0 /* Widgets */,
@@ -308,7 +311,6 @@
 				7BD5CC6C1DAFF07E00BCF50D /* API */,
 				7BD5CC711DAFF07E00BCF50D /* GeoFire-Prefix.pch */,
 				7BD5CC721DAFF07E00BCF50D /* Implementation */,
-				7BD5CC871DAFF11100BCF50D /* Geofire-Bridging-Header.h */,
 			);
 			path = GeoFire;
 			sourceTree = "<group>";
@@ -845,7 +847,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/GeoFire/Geofire-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -863,7 +865,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/GeoFire/Geofire-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -879,7 +881,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/GeoFire/Geofire-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
 			};
@@ -896,7 +897,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/GeoFire/Geofire-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
 			};
@@ -988,7 +988,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_ENTERPRISE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/GeoFire/Geofire-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Enterprise;
@@ -1004,7 +1004,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/GeoFire/Geofire-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
 			};

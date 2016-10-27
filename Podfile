@@ -10,6 +10,7 @@ target 'Prox' do
 	pod 'Firebase/Database'
 	pod 'Firebase/Auth'
 	pod 'EDSunriseSet'
+	pod 'BuddyBuildSDK'
 end
 
 target 'ProxTests' do

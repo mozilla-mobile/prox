@@ -2,12 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef Geofire_Bridging_Header_h
-#define Geofire_Bridging_Header_h
+#ifndef Prox_Bridging_Header_h
+#define Prox_Bridging_Header_h
 
 #import <Foundation/Foundation.h>
 
 #import "Geofire.h"
 
+#import <BuddyBuildSDK/BuddyBuildSDK.h>
 
-#endif /* Geofire_Bridging_Header_h */
+#endif /* Prox_Bridging_Header_h */

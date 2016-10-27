@@ -30,6 +30,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         setupFirebase()
 
+        BuddyBuildSDK.setup()
+
         return true
     }
 
