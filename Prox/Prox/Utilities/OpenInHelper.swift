@@ -11,6 +11,9 @@ struct OpenInHelper {
     static let gmapsAppSchemeString: String = "comgooglemaps://"
     static let gmapsWebSchemeString: String = "https://www.google.com/maps"
     static let appleMapsSchemeString: String = "http://maps.apple.com/"
+    static let yelpAppURLSchemeString: String = "yelp://"
+    static let tripAdvisorAppURLSchemeString: String = "tripadvisor://"
+    static let wikipediaAppURLSchemeString: String = "wikipedia://"
 
     //MARK: Open URL in Browser
     static func openURLInBrowser(url: URL) -> Bool {
@@ -33,6 +36,31 @@ struct OpenInHelper {
 
         return false
     }
+
+    fileprivate static func open(url: URL, withAppScheme appScheme: String) -> Bool {
+        guard let appSchemeURL = URL(string: appScheme),
+            UIApplication.shared.canOpenURL(appSchemeURL),
+            openURL(url: url) else {
+                return openURLInBrowser(url: url)
+        }
+
+        return true
+    }
+
+    //MARK: Open Reviews
+    static func openInYelp(url: URL) -> Bool {
+        return open(url: url, withAppScheme: yelpAppURLSchemeString)
+    }
+
+    static func openInTripAdvisor(url: URL) -> Bool {
+        return open(url: url, withAppScheme: tripAdvisorAppURLSchemeString)
+    }
+
+    //MARK: Open Wikipedia
+    static func openInWikipedia(url: URL) -> Bool {
+        return open(url: url, withAppScheme: wikipediaAppURLSchemeString)
+    }
+
 
     //MARK: Open route in maps
 

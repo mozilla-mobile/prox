@@ -43,6 +43,9 @@
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>wikipedia</string>
+		<string>tripadvisor</string>
+		<string>yelp</string>
 		<string>comgooglemaps</string>
 		<string>firefox</string>
 	</array>
