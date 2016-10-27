@@ -6,6 +6,12 @@
 import Foundation
 import MapKit
 
+private enum Schemes: String {
+    case yelp = "www.yelp.com"
+    case tripAdvisor = "www.tripadvisor.co.uk"
+    case wikipedia = "en.wikipedia.org"
+}
+
 struct OpenInHelper {
 
     static let gmapsAppSchemeString: String = "comgooglemaps://"
@@ -15,8 +21,24 @@ struct OpenInHelper {
     static let tripAdvisorAppURLSchemeString: String = "tripadvisor://"
     static let wikipediaAppURLSchemeString: String = "wikipedia://"
 
+    static func open(url: URL) -> Bool {
+        guard let host = url.host,
+            let scheme = Schemes(rawValue: host) else {
+            return openURLInBrowser(url: url)
+        }
+
+        switch scheme {
+        case .yelp:
+            return open(url: url, withAppScheme: yelpAppURLSchemeString)
+        case .tripAdvisor:
+            return open(url: url, withAppScheme: tripAdvisorAppURLSchemeString)
+        case .wikipedia:
+            return open(url: url, withAppScheme: wikipediaAppURLSchemeString)
+        }
+    }
+
     //MARK: Open URL in Browser
-    static func openURLInBrowser(url: URL) -> Bool {
+    fileprivate static func openURLInBrowser(url: URL) -> Bool {
         // check to see if Firefox is available
         // Open in Firefox or Safari
         let controller = OpenInFirefoxControllerSwift()
@@ -47,19 +69,19 @@ struct OpenInHelper {
         return true
     }
 
-    //MARK: Open Reviews
-    static func openInYelp(url: URL) -> Bool {
-        return open(url: url, withAppScheme: yelpAppURLSchemeString)
-    }
-
-    static func openInTripAdvisor(url: URL) -> Bool {
-        return open(url: url, withAppScheme: tripAdvisorAppURLSchemeString)
-    }
-
-    //MARK: Open Wikipedia
-    static func openInWikipedia(url: URL) -> Bool {
-        return open(url: url, withAppScheme: wikipediaAppURLSchemeString)
-    }
+//    //MARK: Open Reviews
+//    static func openInYelp(url: URL) -> Bool {
+//        return open(url: url, withAppScheme: yelpAppURLSchemeString)
+//    }
+//
+//    static func openInTripAdvisor(url: URL) -> Bool {
+//        return open(url: url, withAppScheme: tripAdvisorAppURLSchemeString)
+//    }
+//
+//    //MARK: Open Wikipedia
+//    static func openInWikipedia(url: URL) -> Bool {
+//        return open(url: url, withAppScheme: wikipediaAppURLSchemeString)
+//    }
 
 
     //MARK: Open route in maps
