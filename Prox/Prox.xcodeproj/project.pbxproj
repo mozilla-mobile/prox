@@ -108,7 +108,7 @@
 		7B8651911DBFAF19002A666A /* PlaceUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceUtilities.swift; sourceTree = "<group>"; };
 		7B8651931DBFAFA8002A666A /* PlaceUtilitiesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceUtilitiesTests.swift; sourceTree = "<group>"; };
 		7B9D15C51DC0D2E70051B760 /* OpenInHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenInHelper.swift; sourceTree = "<group>"; };
-		7B9D15C71DC0D51C0051B760 /* OpenInFirefoxControllerSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenInFirefoxControllerSwift.swift; sourceTree = "<group>"; };
+		7B9D15C71DC0D51C0051B760 /* OpenInFirefoxControllerSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OpenInFirefoxControllerSwift.swift; path = Utilities/OpenInFirefoxControllerSwift.swift; sourceTree = "<group>"; };
 		7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		7B9DA1521DBE6ED300A68C82 /* FirebasePlacesDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FirebasePlacesDatabase.swift; path = Data/FirebasePlacesDatabase.swift; sourceTree = "<group>"; };
 		7B9DA1531DBE6ED300A68C82 /* PlacesDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlacesDatabase.swift; path = Data/PlacesDatabase.swift; sourceTree = "<group>"; };
@@ -266,7 +266,6 @@
 		7B50956F1DB5352E007C54F0 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				7B9D15C71DC0D51C0051B760 /* OpenInFirefoxControllerSwift.swift */,
 				7B5095701DB5352E007C54F0 /* Colors.swift */,
 				7B5095711DB5352E007C54F0 /* Fonts.swift */,
 				7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */,
@@ -295,6 +294,14 @@
 			name = "Place Carousel";
 			sourceTree = "<group>";
 		};
+		7B9D15C91DC35E530051B760 /* OpenInFirefoxClient */ = {
+			isa = PBXGroup;
+			children = (
+				7B9D15C71DC0D51C0051B760 /* OpenInFirefoxControllerSwift.swift */,
+			);
+			name = OpenInFirefoxClient;
+			sourceTree = "<group>";
+		};
 		7B9DA1581DBE6F0A00A68C82 /* PlaceDetails */ = {
 			isa = PBXGroup;
 			children = (
@@ -306,6 +313,7 @@
 		7BD5CC601DAFF02100BCF50D /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				7B9D15C91DC35E530051B760 /* OpenInFirefoxClient */,
 				7BD5CC6B1DAFF07E00BCF50D /* GeoFire */,
 			);
 			name = ThirdParty;
