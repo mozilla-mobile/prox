@@ -6,7 +6,7 @@
 import Foundation
 import MapKit
 
-private enum Schemes: String {
+private enum Scheme: String {
     case yelp = "www.yelp.com"
     case tripAdvisor = "www.tripadvisor.co.uk"
     case wikipedia = "en.wikipedia.org"
@@ -23,17 +23,24 @@ struct OpenInHelper {
 
     static func open(url: URL) -> Bool {
         guard let host = url.host,
-            let scheme = Schemes(rawValue: host) else {
+            let scheme = Scheme(rawValue: host),
+            let schemeURL = schemeURL(forScheme: scheme),
+            UIApplication.shared.canOpenURL(schemeURL),
+            UIApplication.shared.openURL(url) else {
             return openURLInBrowser(url: url)
         }
 
+        return true
+    }
+
+    fileprivate static func schemeURL(forScheme scheme: Scheme) -> URL? {
         switch scheme {
         case .yelp:
-            return open(url: url, withAppScheme: yelpAppURLSchemeString)
+            return URL(string: yelpAppURLSchemeString)
         case .tripAdvisor:
-            return open(url: url, withAppScheme: tripAdvisorAppURLSchemeString)
+            return URL(string: tripAdvisorAppURLSchemeString)
         case .wikipedia:
-            return open(url: url, withAppScheme: wikipediaAppURLSchemeString)
+            return URL(string: wikipediaAppURLSchemeString)
         }
     }
 
@@ -42,60 +49,28 @@ struct OpenInHelper {
         // check to see if Firefox is available
         // Open in Firefox or Safari
         let controller = OpenInFirefoxControllerSwift()
-        if !(controller.isFirefoxInstalled() && controller.openInFirefox(url)) {
+        if !controller.openInFirefox(url) {
             return UIApplication.shared.openURL(url)
         }
 
         return true
     }
-
-    //MARK: Open URL general
-    fileprivate static func openURL(url: URL) -> Bool {
-        // check to see if we can open in Google Maps
-        if UIApplication.shared.canOpenURL(url) {
-            return UIApplication.shared.openURL(url)
-        }
-
-        return false
-    }
-
-    fileprivate static func open(url: URL, withAppScheme appScheme: String) -> Bool {
-        guard let appSchemeURL = URL(string: appScheme),
-            UIApplication.shared.canOpenURL(appSchemeURL),
-            openURL(url: url) else {
-                return openURLInBrowser(url: url)
-        }
-
-        return true
-    }
-
-//    //MARK: Open Reviews
-//    static func openInYelp(url: URL) -> Bool {
-//        return open(url: url, withAppScheme: yelpAppURLSchemeString)
-//    }
-//
-//    static func openInTripAdvisor(url: URL) -> Bool {
-//        return open(url: url, withAppScheme: tripAdvisorAppURLSchemeString)
-//    }
-//
-//    //MARK: Open Wikipedia
-//    static func openInWikipedia(url: URL) -> Bool {
-//        return open(url: url, withAppScheme: wikipediaAppURLSchemeString)
-//    }
-
 
     //MARK: Open route in maps
 
     static func openRoute(fromLocation: CLLocationCoordinate2D, toPlace place: Place, by transportType: MKDirectionsTransportType) -> Bool {
         // try and open in Google Maps app
-        if let gmapsRoutingRequestURL = gmapsAppURLForRoute(fromLocation: fromLocation, toLocation: place.latLong, by: transportType),
-            openURL(url: gmapsRoutingRequestURL) {
+        if let schemeURL = URL(string: gmapsAppSchemeString),
+            UIApplication.shared.canOpenURL(schemeURL),
+            let gmapsRoutingRequestURL = gmapsAppURLForRoute(fromLocation: fromLocation, toLocation: place.latLong, by: transportType),
+            UIApplication.shared.openURL(gmapsRoutingRequestURL) {
             return true
         // open in Apple maps app
-        } else if let address = place.address,
+        } else if  let schemeURL = URL(string: appleMapsSchemeString),
+            UIApplication.shared.canOpenURL(schemeURL),
+            let address = place.address,
             let appleMapsRoutingRequest = appleMapsURLForRoute(fromLocation: fromLocation, toAddress: address, by: transportType),
-            openURL(url: appleMapsRoutingRequest)
-        {
+            UIApplication.shared.openURL(appleMapsRoutingRequest) {
             return true
         // open google maps in a browser
         } else if let gmapsRoutingRequestURL = gmapsWebURLForRoute(fromLocation: fromLocation, toLocation: place.latLong, by: transportType),
@@ -107,18 +82,9 @@ struct OpenInHelper {
     }
 
     fileprivate static func gmapsAppURLForRoute(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, by transportType: MKDirectionsTransportType) -> URL? {
-        let directionsMode: String
-        switch transportType {
-        case MKDirectionsTransportType.automobile:
-            directionsMode = "driving"
-        case MKDirectionsTransportType.transit:
-            directionsMode = "transit"
-        case MKDirectionsTransportType.walking:
-            directionsMode = "walking"
-        default:
-            directionsMode = ""
-            return nil
-        }
+
+        guard let directionsMode = transportType.directionsMode() else { return nil }
+
         let queryParams = ["saddr=\(fromLocation.latitude),\(fromLocation.longitude)", "daddr=\(toLocation.latitude),\(toLocation.longitude)", "directionsMode=\(directionsMode)"]
 
         let gmapsRoutingRequestURLString = gmapsAppSchemeString + "?" + queryParams.joined(separator: "&")
@@ -127,7 +93,7 @@ struct OpenInHelper {
 
 
     fileprivate static func gmapsWebURLForRoute(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, by transportType: MKDirectionsTransportType) -> URL? {
-        guard let dirFlg = dirFlgForTransportType(transportType: transportType) else {
+        guard let dirFlg = transportType.dirFlg() else {
             return nil
         }
         let queryParams = ["saddr=\(fromLocation.latitude),\(fromLocation.longitude)", "daddr=\(toLocation.latitude),\(toLocation.longitude)", "dirflg=\(dirFlg)"]
@@ -138,7 +104,7 @@ struct OpenInHelper {
 
 
     fileprivate static func appleMapsURLForRoute(fromLocation: CLLocationCoordinate2D, toAddress: String, by transportType: MKDirectionsTransportType) -> URL? {
-        guard let dirFlg = dirFlgForTransportType(transportType: transportType) else {
+        guard let dirFlg = transportType.dirFlg() else {
             return nil
         }
 
@@ -148,8 +114,15 @@ struct OpenInHelper {
         return URL(string: appleMapsRoutingRequestURLString)
     }
 
-    fileprivate static func dirFlgForTransportType(transportType: MKDirectionsTransportType) -> String? {
-        switch transportType {
+    //MARK: Helper functions
+    fileprivate static func encodeByAddingPercentEscapes(_ input: String) -> String {
+        return NSString(string: input).addingPercentEncoding(withAllowedCharacters: CharacterSet(charactersIn: "!*'();:@&=+$,/?%#[]"))!
+    }
+}
+
+fileprivate extension MKDirectionsTransportType {
+    func dirFlg() -> String? {
+        switch self {
         case MKDirectionsTransportType.automobile:
             return "d"
         case MKDirectionsTransportType.transit:
@@ -161,8 +134,16 @@ struct OpenInHelper {
         }
     }
 
-    //MARK: Helper functions
-    fileprivate static func encodeByAddingPercentEscapes(_ input: String) -> String {
-        return NSString(string: input).addingPercentEncoding(withAllowedCharacters: CharacterSet(charactersIn: "!*'();:@&=+$,/?%#[]"))!
+    func directionsMode() -> String? {
+        switch self {
+        case MKDirectionsTransportType.automobile:
+            return "driving"
+        case MKDirectionsTransportType.transit:
+            return "transit"
+        case MKDirectionsTransportType.walking:
+            return "walking"
+        default:
+            return nil
+        }
     }
 }
