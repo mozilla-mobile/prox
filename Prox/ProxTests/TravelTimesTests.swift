@@ -9,6 +9,8 @@ import MapKit
 
 class TravelTimesTests: XCTestCase {
 
+    let timeout = 30.0
+
     let testSource = CLLocationCoordinate2D(latitude: 51.5046323, longitude: -0.0992547)
     let testDestination = CLLocationCoordinate2D(latitude: 51.5100773, longitude: -0.1257861)
 
@@ -32,7 +34,7 @@ class TravelTimesTests: XCTestCase {
             waitQuery.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: timeout)
 
     }
 
@@ -48,7 +50,7 @@ class TravelTimesTests: XCTestCase {
             waitQuery.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: timeout)
         
     }
 
@@ -64,7 +66,7 @@ class TravelTimesTests: XCTestCase {
             waitQuery.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: timeout)
         
     }
 
@@ -80,7 +82,7 @@ class TravelTimesTests: XCTestCase {
             waitQuery.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: timeout)
         
     }
 
@@ -94,7 +96,7 @@ class TravelTimesTests: XCTestCase {
             waitQuery.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: timeout)
     }
 
     func testMultipleTravelTypes() {
@@ -111,7 +113,7 @@ class TravelTimesTests: XCTestCase {
             waitQuery.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: timeout)
     }
 
     func testMultipleTravelTypesInvalidRoute() {
@@ -125,7 +127,7 @@ class TravelTimesTests: XCTestCase {
             waitQuery.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: timeout)
     }
     
 }
