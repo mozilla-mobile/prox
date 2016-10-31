@@ -50,13 +50,21 @@ class ReviewScoreView: UIStackView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    fileprivate var reviewScoreWidth: CGFloat?
+    fileprivate var reviewScoreHeight: CGFloat?
+
     override func layoutSubviews() {
         super.layoutSubviews()
-        let width: CGFloat = (frame.width - ItemSeparation * 4) / 5
-        let height: CGFloat = frame.height
-        for subview in arrangedSubviews {
-            subview.widthAnchor.constraint(equalToConstant: width).isActive = true
-            subview.heightAnchor.constraint(equalToConstant: height).isActive = true
+
+        if reviewScoreWidth == nil || reviewScoreHeight == nil {
+            let width: CGFloat = (frame.width - ItemSeparation * 4) / 5
+            let height: CGFloat = frame.height
+            for subview in arrangedSubviews {
+                subview.widthAnchor.constraint(equalToConstant: width).isActive = true
+                subview.heightAnchor.constraint(equalToConstant: height).isActive = true
+            }
+            reviewScoreHeight = height
+            reviewScoreWidth = width
         }
     }
 
