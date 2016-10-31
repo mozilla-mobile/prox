@@ -6,8 +6,16 @@ import UIKit
 import AFNetworking
 import BadgeSwift
 
-private let CellReuseIdentifier = "ImageCarouselCell"
+/**
+ * This class has essentially implemented it's own version of a paging collection view
 
+ * The reason we have done this and not used either a UIPageViewController or a UICollectionViewController is as follows
+ * * UIPageViewController does not allow for pages with width < screen size, so there is no option to have the edges of previous
+ *   and next view controllers showing at the same time as the current view controller
+ * * UICollectionViewController will give us the previous, but will not allow us to specify custom paging transition animations
+ *
+ *  By rolling this view controller by hand we get both the layout we want AND the custom paging animation
+ **/
 class PlaceDetailViewController: UIViewController {
 
     weak var dataSource: PlaceDataSource? {
@@ -26,39 +34,6 @@ class PlaceDetailViewController: UIViewController {
         return AFImageDownloader(sessionManager: sessionManager, downloadPrioritization: .FIFO,
                                  maximumActiveDownloads: activeDownloadCount, imageCache: cache)
     }()
-
-    // TODO: make carousel
-    private lazy var imageCarouselLayout: UICollectionViewFlowLayout = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
-        return layout
-    }()
-
-    lazy var imageCarousel: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.imageCarouselLayout)
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(ImageCarouselCollectionViewCell.self, forCellWithReuseIdentifier: CellReuseIdentifier)
-        collectionView.backgroundColor = .clear
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.isPagingEnabled = true
-        return collectionView
-    }()
-
-    lazy var pageControl: UIPageControl = {
-        let pageControl = UIPageControl()
-        pageControl.pageIndicatorTintColor = Colors.pageIndicatorTintColor
-        pageControl.currentPageIndicatorTintColor = Colors.currentPageIndicatorTintColor
-        pageControl.addTarget(self, action: #selector(self.pageControlDidPage(sender:)), for: UIControlEvents.valueChanged)
-        return pageControl
-    }()
-
-    fileprivate var previousCardViewController: PlaceDetailsCardViewController?
-    fileprivate var currentCardViewController: PlaceDetailsCardViewController
-    fileprivate var nextCardViewController: PlaceDetailsCardViewController?
 
     fileprivate lazy var panGestureRecognizer: UIPanGestureRecognizer = {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.didPan(gestureRecognizer:)))
@@ -87,16 +62,20 @@ class PlaceDetailViewController: UIViewController {
         return badge
     }()
 
+    fileprivate var previousCardViewController: PlaceDetailsCardViewController?
+    fileprivate var currentCardViewController: PlaceDetailsCardViewController
+    fileprivate var nextCardViewController: PlaceDetailsCardViewController?
+    fileprivate var unusedPlaceCardViewControllers = [PlaceDetailsCardViewController]()
+
     fileprivate var currentCardViewCenterXConstraint: NSLayoutConstraint?
     fileprivate var previousCardViewTrailingConstraint: NSLayoutConstraint?
     fileprivate var nextCardViewLeadingConstraint: NSLayoutConstraint?
 
+    var imageCarousel: UIView!
 
     init(place: Place) {
         self.currentCardViewController = PlaceDetailsCardViewController(place: place)
         super.init(nibName: nil, bundle: nil)
-
-        pageControl.numberOfPages = place.photoURLs?.count ?? 0
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -108,15 +87,12 @@ class PlaceDetailViewController: UIViewController {
 
         view.backgroundColor = UIColor(white: 0.5, alpha: 1) // TODO: blurred image background
 
+        imageCarousel = currentCardViewController.imageCarousel
         view.addSubview(imageCarousel)
         var constraints = [imageCarousel.topAnchor.constraint(equalTo: view.topAnchor),
                            imageCarousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                            imageCarousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                            imageCarousel.heightAnchor.constraint(equalToConstant: 240)]
-
-        view.addSubview(pageControl)
-        constraints += [pageControl.bottomAnchor.constraint(equalTo: imageCarousel.bottomAnchor, constant: -40),
-            pageControl.centerXAnchor.constraint(equalTo: imageCarousel.centerXAnchor)]
 
         view.addSubview(currentCardViewController.cardView)
         currentCardViewCenterXConstraint = currentCardViewController.cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
@@ -130,8 +106,7 @@ class PlaceDetailViewController: UIViewController {
 
 
         if let previousPlace = dataSource?.previousPlace(forPlace: currentCardViewController.place) {
-            previousCardViewController = PlaceDetailsCardViewController(place: previousPlace)
-            previousCardViewController?.setPlace(place: previousPlace)
+            previousCardViewController = dequeuePlaceCardViewController(forPlace: previousPlace)
             view.addSubview(previousCardViewController!.cardView)
             previousCardViewTrailingConstraint = previousCardViewController!.cardView.trailingAnchor.constraint(equalTo: currentCardViewController.cardView.leadingAnchor, constant: -6)
             constraints += [previousCardViewController!.cardView.topAnchor.constraint(equalTo: currentCardViewController.cardView.topAnchor),
@@ -140,8 +115,7 @@ class PlaceDetailViewController: UIViewController {
         }
 
         if let nextPlace = dataSource?.nextPlace(forPlace: currentCardViewController.place) {
-            nextCardViewController = PlaceDetailsCardViewController(place: nextPlace)
-            nextCardViewController?.setPlace(place: nextPlace)
+            nextCardViewController = dequeuePlaceCardViewController(forPlace: nextPlace)
             view.addSubview(nextCardViewController!.cardView)
             nextCardViewLeadingConstraint = nextCardViewController!.cardView.leadingAnchor.constraint(equalTo: currentCardViewController.cardView.trailingAnchor, constant: 6)
             constraints += [nextCardViewController!.cardView.topAnchor.constraint(equalTo: currentCardViewController.cardView.topAnchor),
@@ -170,6 +144,16 @@ class PlaceDetailViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    fileprivate func dequeuePlaceCardViewController(forPlace place: Place) -> PlaceDetailsCardViewController {
+        if let placeCardVC = unusedPlaceCardViewControllers.last {
+            unusedPlaceCardViewControllers.removeLast()
+            placeCardVC.place = place
+            return placeCardVC
+        }
+
+        return PlaceDetailsCardViewController(place: place)
+    }
+
     var startConstant: CGFloat!
 
     func didPan(gestureRecognizer: UIPanGestureRecognizer) {
@@ -182,186 +166,205 @@ class PlaceDetailViewController: UIViewController {
 
         if gestureRecognizer.state == .ended {
             let velocityX = (0.2 * gestureRecognizer.velocity(in: self.view).x)
-            let finalX = translationX + velocityX
 
-            let newCenter = currentCardViewCenterXConstraint?.constant ?? 0
-
-            let animationDuration = (abs(velocityX) * 0.002) + 0.2
-
-            let animationCompletion: ((Bool) -> ())?
-
-            if newCenter < -(self.view.frame.width * 0.5),
-                let nextCardViewController = nextCardViewController {
-                print("Over threshold. Scroll should autocomplete left")
-                // check to see if there is a next card to the next card
-                // add a new view controller to next card view controller
-                // if so, remove currentCardViewController centerX constraint
-                // add center x constraint to nextCardViewController
-
-                var newNextCardViewController: PlaceDetailsCardViewController? = nil
-
-                var constraintsToActivate = [NSLayoutConstraint]()
-                var constraintsToDeactivate = [NSLayoutConstraint]()
-
-                // deactivate and remove current view controller center constraint
-                if let currentCardViewCenterXConstraint = currentCardViewCenterXConstraint {
-                    constraintsToDeactivate += [currentCardViewCenterXConstraint]
-                }
-                self.currentCardViewCenterXConstraint = nextCardViewController.cardView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
-                constraintsToActivate += [self.currentCardViewCenterXConstraint!]
-                // deactivate and remove next view controller leading constraint
-                if let nextCardViewLeadingConstraint = nextCardViewLeadingConstraint {
-                    constraintsToDeactivate += [nextCardViewLeadingConstraint]
-                }
-
-                if let newNext = dataSource?.nextPlace(forPlace: nextCardViewController.place) {
-                    newNextCardViewController = PlaceDetailsCardViewController(place:newNext)
-                    self.view.addSubview(newNextCardViewController!.cardView)
-                    self.addChildViewController(newNextCardViewController!)
-                    self.nextCardViewLeadingConstraint = newNextCardViewController!.cardView.leadingAnchor.constraint(equalTo: nextCardViewController.cardView.trailingAnchor, constant: 6)
-                    constraintsToActivate += [self.nextCardViewLeadingConstraint!]
-                } else {
-                    nextCardViewLeadingConstraint = nil
-                }
-                // create new previous view controller trailing constraint
-                if let previousCardViewTrailingConstraint = previousCardViewTrailingConstraint {
-                    constraintsToDeactivate += [previousCardViewTrailingConstraint]
-                }
-                self.previousCardViewTrailingConstraint = currentCardViewController.cardView.trailingAnchor.constraint(equalTo: nextCardViewController.cardView.leadingAnchor, constant: -6)
-                constraintsToActivate += [self.previousCardViewTrailingConstraint!]
-                NSLayoutConstraint.deactivate(constraintsToDeactivate)
-                NSLayoutConstraint.activate(constraintsToActivate, translatesAutoresizingMaskIntoConstraints: false)
-
-                animationCompletion = { finished in
-                    if finished {
-                        self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
-                        self.previousCardViewController?.cardView.removeFromSuperview()
-                        self.previousCardViewController?.removeFromParentViewController()
-                        self.previousCardViewController = self.currentCardViewController
-                        self.currentCardViewController = nextCardViewController
-                        self.currentCardViewController.cardView.addGestureRecognizer(self.panGestureRecognizer)
-                        self.nextCardViewController = newNextCardViewController
-                    }
-                }
-            } else if newCenter > self.view.frame.width * 0.5,
-                let previousCardViewController = previousCardViewController {
-                print("Over threshold. Scroll should autocomplete left")
-                // check to see if there is a previous card to the previous card
-                // add a new view controller to previous card view controller
-                // if so, remove currentCardViewController centerX constraint
-                // add center x constraint to previousCardViewController
-                var newPreviousCardViewController: PlaceDetailsCardViewController? = nil
-
-                var constraintsToActivate = [NSLayoutConstraint]()
-                var constraintsToDeactivate = [NSLayoutConstraint]()
-
-                // deactivate and remove current view controller center constraint
-                if let currentCardViewCenterXConstraint = currentCardViewCenterXConstraint {
-                    constraintsToDeactivate += [currentCardViewCenterXConstraint]
-                }
-                self.currentCardViewCenterXConstraint = previousCardViewController.cardView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
-                constraintsToActivate += [self.currentCardViewCenterXConstraint!]
-                // deactivate and remove next view controller leading constraint
-                if let nextCardViewLeadingConstraint = nextCardViewLeadingConstraint {
-                    constraintsToDeactivate += [nextCardViewLeadingConstraint]
-                }
-                self.nextCardViewLeadingConstraint = currentCardViewController.cardView.leadingAnchor.constraint(equalTo: previousCardViewController.cardView.trailingAnchor, constant: 6)
-                constraintsToActivate += [self.nextCardViewLeadingConstraint!]
-                // create new previous view controller trailing constraint
-                if let previousCardViewTrailingConstraint = previousCardViewTrailingConstraint {
-                    constraintsToDeactivate += [previousCardViewTrailingConstraint]
-                }
-
-                if let newNext = dataSource?.previousPlace(forPlace: previousCardViewController.place) {
-                    newPreviousCardViewController = PlaceDetailsCardViewController(place:newNext)
-                    self.view.addSubview(newPreviousCardViewController!.cardView)
-                    self.addChildViewController(newPreviousCardViewController!)
-                    self.previousCardViewTrailingConstraint = newPreviousCardViewController!.cardView.trailingAnchor.constraint(equalTo: previousCardViewController.cardView.leadingAnchor, constant: -6)
-                    constraintsToActivate += [self.previousCardViewTrailingConstraint!]
-                } else {
-                    previousCardViewTrailingConstraint = nil
-                }
-
-                NSLayoutConstraint.deactivate(constraintsToDeactivate)
-                NSLayoutConstraint.activate(constraintsToActivate, translatesAutoresizingMaskIntoConstraints: false)
-
-                animationCompletion = { finished in
-                    if finished {
-                        self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
-                        self.nextCardViewController?.cardView.removeFromSuperview()
-                        self.nextCardViewController?.removeFromParentViewController()
-                        self.nextCardViewController = self.currentCardViewController
-                        self.currentCardViewController = previousCardViewController
-                        self.currentCardViewController.cardView.addGestureRecognizer(self.panGestureRecognizer)
-                        self.previousCardViewController = newPreviousCardViewController
-                    }
-                }
+            let animationDuration = TimeInterval((abs(velocityX) * 0.002) + 0.2)
+            if canPageToNextPlaceCard() {
+                pageToNextPlaceCard(animateWithDuration: animationDuration)
+            } else if canPageToPreviousPlaceCard() {
+                pageToPreviousPlaceCard(animateWithDuration: animationDuration)
             } else {
-                print("Under threshold. Scroll should unwind")
-                currentCardViewCenterXConstraint?.constant = startConstant
-                animationCompletion = nil
+                unwindToCurrentPlaceCard(animateWithDuration: animationDuration)
             }
-
-
-            UIView.animate(withDuration: TimeInterval(animationDuration), delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
-                self.view.layoutIfNeeded()
-                }, completion: animationCompletion )
         } else {
             currentCardViewCenterXConstraint?.constant = startConstant + translationX
             view.updateConstraints()
         }
     }
 
+    func canPageToNextPlaceCard() -> Bool {
+        return (currentCardViewCenterXConstraint?.constant ?? 0) < -(self.view.frame.width * 0.5) && self.nextCardViewController != nil
+    }
 
-    func pageControlDidPage(sender: AnyObject) {
-        let pageSize = imageCarousel.bounds.size
-        let xOffset = pageSize.width * CGFloat(pageControl.currentPage)
-        imageCarousel.setContentOffset(CGPoint(x: xOffset, y: 0), animated: true)
+    func pageToNextPlaceCard(animateWithDuration animationDuration: TimeInterval) {
+        guard let nextCardViewController = nextCardViewController  else {
+            return
+        }
+        // check to see if there is a next card to the next card
+        // add a new view controller to next card view controller
+        // if so, remove currentCardViewController centerX constraint
+        // add center x constraint to nextCardViewController
+        var newNextCardViewController: PlaceDetailsCardViewController? = nil
+
+        // add the image carousel for the next place card underneath the existing carousel
+        // we need to ensure these constraints are applied and rendered before we animate the rest, otherwise we end
+        // up with a very odd looking fade transition
+        let nextCardImageCarousel = nextCardViewController.imageCarousel
+        view.insertSubview(nextCardImageCarousel, belowSubview: imageCarousel)
+        NSLayoutConstraint.activate([nextCardImageCarousel.topAnchor.constraint(equalTo: view.topAnchor),
+                                     nextCardImageCarousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                                     nextCardImageCarousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                                     nextCardImageCarousel.heightAnchor.constraint(equalToConstant: 240)], translatesAutoresizingMaskIntoConstraints: false)
+        view.layoutIfNeeded()
+
+        var constraintsToActivate = [NSLayoutConstraint]()
+        var constraintsToDeactivate = [NSLayoutConstraint]()
+
+        // setup constraints for new central card
+        if let currentCardViewCenterXConstraint = currentCardViewCenterXConstraint {
+            constraintsToDeactivate += [currentCardViewCenterXConstraint]
+        }
+        self.currentCardViewCenterXConstraint = nextCardViewController.cardView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+        constraintsToActivate += [self.currentCardViewCenterXConstraint!]
+        // deactivate and remove next view controller leading constraint
+        if let nextCardViewLeadingConstraint = nextCardViewLeadingConstraint {
+            constraintsToDeactivate += [nextCardViewLeadingConstraint]
+        }
+
+        // setup constratints for new next card if there is one
+        if let newNext = dataSource?.nextPlace(forPlace: nextCardViewController.place) {
+            newNextCardViewController = dequeuePlaceCardViewController(forPlace:newNext)
+            self.view.addSubview(newNextCardViewController!.cardView)
+            self.addChildViewController(newNextCardViewController!)
+            self.nextCardViewLeadingConstraint = newNextCardViewController!.cardView.leadingAnchor.constraint(equalTo: nextCardViewController.cardView.trailingAnchor, constant: 6)
+            constraintsToActivate += [self.nextCardViewLeadingConstraint!]
+        } else {
+            nextCardViewLeadingConstraint = nil
+        }
+
+        // setup constraints for new previous card
+        if let previousCardViewTrailingConstraint = previousCardViewTrailingConstraint {
+            constraintsToDeactivate += [previousCardViewTrailingConstraint]
+        }
+        self.previousCardViewTrailingConstraint = currentCardViewController.cardView.trailingAnchor.constraint(equalTo: nextCardViewController.cardView.leadingAnchor, constant: -6)
+        constraintsToActivate += [self.previousCardViewTrailingConstraint!]
+
+        NSLayoutConstraint.deactivate(constraintsToDeactivate)
+        NSLayoutConstraint.activate(constraintsToActivate, translatesAutoresizingMaskIntoConstraints: false)
+
+        nextCardImageCarousel.layoutIfNeeded()
+
+        // animate the constraint changes
+        UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
+            self.imageCarousel.alpha = 0
+            nextCardImageCarousel.alpha = 1
+            self.view.layoutIfNeeded()
+        }, completion: { finished in
+            if finished {
+                // ensure that the correct current, previous and next view controller references are set
+                self.imageCarousel.removeFromSuperview()
+                self.imageCarousel = nextCardImageCarousel
+                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
+                if let previousCardViewController = self.previousCardViewController {
+                    previousCardViewController.cardView.removeFromSuperview()
+                    previousCardViewController.removeFromParentViewController()
+                    self.unusedPlaceCardViewControllers.append(previousCardViewController)
+                }
+                self.previousCardViewController = self.currentCardViewController
+                self.currentCardViewController = nextCardViewController
+                self.currentCardViewController.cardView.addGestureRecognizer(self.panGestureRecognizer)
+                self.nextCardViewController = newNextCardViewController
+            }
+        })
+    }
+
+    func canPageToPreviousPlaceCard() -> Bool {
+        return (currentCardViewCenterXConstraint?.constant ?? 0) > (self.view.frame.width * 0.5) && self.previousCardViewController != nil
+    }
+
+    func pageToPreviousPlaceCard(animateWithDuration animationDuration: TimeInterval) {
+        guard let previousCardViewController = previousCardViewController else {
+            return
+        }
+        // check to see if there is a previous card to the previous card
+        // add a new view controller to previous card view controller
+        // if so, remove currentCardViewController centerX constraint
+        // add center x constraint to previousCardViewController
+        var newPreviousCardViewController: PlaceDetailsCardViewController? = nil
+
+        // add the image carousel for the previous place card underneath the existing carousel
+        // we need to ensure these constraints are applied and rendered before we animate the rest, otherwise we end
+        // up with a very odd looking fade transition
+        let previousCardImageCarousel = previousCardViewController.imageCarousel
+        view.insertSubview(previousCardImageCarousel, belowSubview: imageCarousel)
+        NSLayoutConstraint.activate([previousCardImageCarousel.topAnchor.constraint(equalTo: view.topAnchor),
+                                     previousCardImageCarousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                                     previousCardImageCarousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                                     previousCardImageCarousel.heightAnchor.constraint(equalToConstant: 240)], translatesAutoresizingMaskIntoConstraints: false)
+        view.layoutIfNeeded()
+
+
+        var constraintsToActivate = [NSLayoutConstraint]()
+        var constraintsToDeactivate = [NSLayoutConstraint]()
+
+        // deactivate and remove current view controller center constraint
+        if let currentCardViewCenterXConstraint = currentCardViewCenterXConstraint {
+            constraintsToDeactivate += [currentCardViewCenterXConstraint]
+        }
+        self.currentCardViewCenterXConstraint = previousCardViewController.cardView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+        constraintsToActivate += [self.currentCardViewCenterXConstraint!]
+        // deactivate and remove next view controller leading constraint
+        if let nextCardViewLeadingConstraint = nextCardViewLeadingConstraint {
+            constraintsToDeactivate += [nextCardViewLeadingConstraint]
+        }
+        self.nextCardViewLeadingConstraint = currentCardViewController.cardView.leadingAnchor.constraint(equalTo: previousCardViewController.cardView.trailingAnchor, constant: 6)
+        constraintsToActivate += [self.nextCardViewLeadingConstraint!]
+        // create new previous view controller trailing constraint
+        if let previousCardViewTrailingConstraint = previousCardViewTrailingConstraint {
+            constraintsToDeactivate += [previousCardViewTrailingConstraint]
+        }
+
+        if let newNext = dataSource?.previousPlace(forPlace: previousCardViewController.place) {
+            newPreviousCardViewController = dequeuePlaceCardViewController(forPlace:newNext)
+            self.view.addSubview(newPreviousCardViewController!.cardView)
+            self.addChildViewController(newPreviousCardViewController!)
+            self.previousCardViewTrailingConstraint = newPreviousCardViewController!.cardView.trailingAnchor.constraint(equalTo: previousCardViewController.cardView.leadingAnchor, constant: -6)
+            constraintsToActivate += [self.previousCardViewTrailingConstraint!]
+        } else {
+            previousCardViewTrailingConstraint = nil
+        }
+
+        NSLayoutConstraint.deactivate(constraintsToDeactivate)
+        NSLayoutConstraint.activate(constraintsToActivate, translatesAutoresizingMaskIntoConstraints: false)
+
+
+        UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
+            self.view.layoutIfNeeded()
+            }, completion: { finished in
+            if finished {
+                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
+                if let nextCardViewController = self.nextCardViewController {
+                    nextCardViewController.cardView.removeFromSuperview()
+                    nextCardViewController.removeFromParentViewController()
+                    self.unusedPlaceCardViewControllers.append(nextCardViewController)
+                }
+                self.nextCardViewController = self.currentCardViewController
+                self.currentCardViewController = previousCardViewController
+                self.currentCardViewController.cardView.addGestureRecognizer(self.panGestureRecognizer)
+                self.previousCardViewController = newPreviousCardViewController
+            }
+        })
+
+
+        UIView.animate(withDuration: animationDuration, animations: {
+            self.imageCarousel.alpha = 0
+            previousCardImageCarousel.alpha = 1
+        }) { finished in
+            if finished {
+                self.imageCarousel.removeFromSuperview()
+                self.imageCarousel = previousCardImageCarousel
+            }
+        }
+    }
+
+    func unwindToCurrentPlaceCard(animateWithDuration animationDuration: TimeInterval) {
+        currentCardViewCenterXConstraint?.constant = 0
+        UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
+            self.view.layoutIfNeeded()
+            }, completion: nil )
     }
 
     func close() {
         self.dismiss(animated: true, completion: nil)
     }
-    
-}
 
-extension PlaceDetailViewController: UICollectionViewDataSource {
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return currentCardViewController.place.photoURLs?.count ?? 1
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdentifier, for: indexPath) as! ImageCarouselCollectionViewCell
-        if let photoURLs = currentCardViewController.place.photoURLs,
-            let photoURL = URL(string: photoURLs[indexPath.item]) {
-            cell.imageView.setImageWith(photoURL)
-
-        } else {
-            cell.imageView.image = UIImage(named: "place-placeholder")
-        }
-        return cell
-    }
-}
-
-extension PlaceDetailViewController: UICollectionViewDelegateFlowLayout {
-
-    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAt: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    }
-    
-}
-
-extension PlaceDetailViewController: UIScrollViewDelegate {
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let pageSize = imageCarousel.bounds.size
-        let selectedPageIndex = Int(floor((scrollView.contentOffset.x-pageSize.width/2)/pageSize.width))+1
-        pageControl.currentPage = Int(selectedPageIndex)
-    }
 }
