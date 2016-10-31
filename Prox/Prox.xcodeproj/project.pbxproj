@@ -40,6 +40,7 @@
 		7B9DA15A1DBE6F7500A68C82 /* PlaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */; };
 		7BB1CA451DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */; };
 		7BB1CA491DC8C6C5004AEE56 /* MapButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB1CA481DC8C6C5004AEE56 /* MapButton.swift */; };
+		7BB1CA471DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */; };
 		7BD5CC7D1DAFF07E00BCF50D /* GeoFire.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC741DAFF07E00BCF50D /* GeoFire.m */; };
 		7BD5CC7E1DAFF07E00BCF50D /* GFBase32Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC761DAFF07E00BCF50D /* GFBase32Utils.m */; };
 		7BD5CC7F1DAFF07E00BCF50D /* GFGeoHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC781DAFF07E00BCF50D /* GFGeoHash.m */; };
@@ -121,6 +122,7 @@
 		7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailViewController.swift; sourceTree = "<group>"; };
 		7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCarouselCollectionViewCell.swift; sourceTree = "<group>"; };
 		7BB1CA481DC8C6C5004AEE56 /* MapButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapButton.swift; sourceTree = "<group>"; };
+		7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsCardViewController.swift; sourceTree = "<group>"; };
 		7BD5CC6D1DAFF07E00BCF50D /* GeoFire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoFire.h; sourceTree = "<group>"; };
 		7BD5CC6E1DAFF07E00BCF50D /* GFCircleQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFCircleQuery.h; sourceTree = "<group>"; };
 		7BD5CC6F1DAFF07E00BCF50D /* GFQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFQuery.h; sourceTree = "<group>"; };
@@ -321,6 +323,7 @@
 				E662FF4D1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift */,
 				7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */,
 				7BB1CA481DC8C6C5004AEE56 /* MapButton.swift */,
+				7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */,
 			);
 			path = PlaceDetails;
 			sourceTree = "<group>";
@@ -696,6 +699,7 @@
 			files = (
 				7B9D15C61DC0D2E70051B760 /* OpenInHelper.swift in Sources */,
 				7B5095731DB5352E007C54F0 /* Fonts.swift in Sources */,
+				7BB1CA471DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift in Sources */,
 				7B9D15C81DC0D51C0051B760 /* OpenInFirefoxControllerSwift.swift in Sources */,
 				7B5095621DB531C0007C54F0 /* PlaceCarousel.swift in Sources */,
 				7B5095721DB5352E007C54F0 /* Colors.swift in Sources */,
