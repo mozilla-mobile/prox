@@ -414,4 +414,5 @@ extension PlaceDetailViewController: PlaceDetailsImageDelegate {
             self.backgroundImage.setImageWith(newImageURL)
         }
     }
+
 }
