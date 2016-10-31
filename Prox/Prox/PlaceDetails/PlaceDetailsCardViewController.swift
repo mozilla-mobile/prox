@@ -4,7 +4,7 @@
 
 import UIKit
 
-let  PlaceDetailsCardCellReuseIdentifier = "ImageCarouselCell"
+private let  PlaceDetailsCardCellReuseIdentifier = "ImageCarouselCell"
 
 class PlaceDetailsCardViewController: UIViewController {
 
