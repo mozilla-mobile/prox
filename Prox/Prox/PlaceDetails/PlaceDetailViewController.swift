@@ -142,7 +142,6 @@ class PlaceDetailViewController: UIViewController {
                         mapButtonBadge.heightAnchor.constraint(equalToConstant: 20.0),
                         mapButtonBadge.widthAnchor.constraint(greaterThanOrEqualToConstant: 20.0)]
 
-
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
 
