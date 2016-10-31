@@ -165,24 +165,26 @@ class PlaceDetailViewController: UIViewController {
         let translationX = gestureRecognizer.translation(in: self.view).x
 
         if gestureRecognizer.state == .ended {
+            // figure out where the view would stop based on the velocity with which the user is panning
+            // this is so that paging quickly feels natural
             let velocityX = (0.2 * gestureRecognizer.velocity(in: self.view).x)
+            let finalX = startConstant + translationX + velocityX;
+            let animationDuration = 0.5
 
-            let animationDuration = TimeInterval((abs(velocityX) * 0.002) + 0.2)
-            if canPageToNextPlaceCard() {
+            if canPageToNextPlaceCard(finalXPosition: finalX) {
                 pageToNextPlaceCard(animateWithDuration: animationDuration)
-            } else if canPageToPreviousPlaceCard() {
+            } else if canPageToPreviousPlaceCard(finalXPosition: finalX) {
                 pageToPreviousPlaceCard(animateWithDuration: animationDuration)
             } else {
                 unwindToCurrentPlaceCard(animateWithDuration: animationDuration)
             }
         } else {
             currentCardViewCenterXConstraint?.constant = startConstant + translationX
-            view.updateConstraints()
         }
     }
 
-    func canPageToNextPlaceCard() -> Bool {
-        return (currentCardViewCenterXConstraint?.constant ?? 0) < -(self.view.frame.width * 0.5) && self.nextCardViewController != nil
+    func canPageToNextPlaceCard(finalXPosition: CGFloat) -> Bool {
+        return finalXPosition < -(self.view.frame.width * 0.5) && self.nextCardViewController != nil
     }
 
     func pageToNextPlaceCard(animateWithDuration animationDuration: TimeInterval) {
@@ -267,8 +269,8 @@ class PlaceDetailViewController: UIViewController {
         })
     }
 
-    func canPageToPreviousPlaceCard() -> Bool {
-        return (currentCardViewCenterXConstraint?.constant ?? 0) > (self.view.frame.width * 0.5) && self.previousCardViewController != nil
+    func canPageToPreviousPlaceCard(finalXPosition: CGFloat) -> Bool {
+        return finalXPosition > (self.view.frame.width * 0.5) && self.previousCardViewController != nil
     }
 
     func pageToPreviousPlaceCard(animateWithDuration animationDuration: TimeInterval) {
