@@ -9,7 +9,6 @@ class PlaceDetailsIconInfoView: UIView {
     lazy var iconView: UIImageView = {
         let view = UIImageView()
         // TODO: view.contentMode (scaling)
-        view.alpha = 0.5
         return view
     }()
 
