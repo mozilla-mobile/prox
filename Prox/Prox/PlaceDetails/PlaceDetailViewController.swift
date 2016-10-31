@@ -330,6 +330,8 @@ class PlaceDetailViewController: UIViewController {
 
 
         UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
+            self.imageCarousel.alpha = 0
+            previousCardImageCarousel.alpha = 1
             self.view.layoutIfNeeded()
             }, completion: { finished in
             if finished {
@@ -339,23 +341,14 @@ class PlaceDetailViewController: UIViewController {
                     nextCardViewController.removeFromParentViewController()
                     self.unusedPlaceCardViewControllers.append(nextCardViewController)
                 }
+                self.imageCarousel.removeFromSuperview()
+                self.imageCarousel = previousCardImageCarousel
                 self.nextCardViewController = self.currentCardViewController
                 self.currentCardViewController = previousCardViewController
                 self.currentCardViewController.cardView.addGestureRecognizer(self.panGestureRecognizer)
                 self.previousCardViewController = newPreviousCardViewController
             }
         })
-
-
-        UIView.animate(withDuration: animationDuration, animations: {
-            self.imageCarousel.alpha = 0
-            previousCardImageCarousel.alpha = 1
-        }) { finished in
-            if finished {
-                self.imageCarousel.removeFromSuperview()
-                self.imageCarousel = previousCardImageCarousel
-            }
-        }
     }
 
     func unwindToCurrentPlaceCard(animateWithDuration animationDuration: TimeInterval) {
