@@ -92,6 +92,7 @@ class PlaceDetailViewController: UIViewController {
     }()
 
     init(place: Place) {
+
         super.init(nibName: nil, bundle: nil)
         self.currentCardViewController = dequeuePlaceCardViewController(forPlace: place)
         setBackgroundImage(toPhotoAtURL: place.photoURLs?.first)

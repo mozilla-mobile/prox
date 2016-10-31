@@ -19,7 +19,7 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     weak var placeImageDelegate: PlaceDetailsImageDelegate?
-    
+
     lazy var cardView: PlaceDetailsCardView = {
         let view = PlaceDetailsCardView()
         return view
