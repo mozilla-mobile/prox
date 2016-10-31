@@ -13,12 +13,12 @@ class PlaceDetailsCardViewController: UIViewController {
             setPlace(place: place)
         }
     }
+
     lazy var cardView: PlaceDetailsCardView = {
         let view = PlaceDetailsCardView()
         return view
     }()
 
-    // TODO: make carousel
     fileprivate lazy var imageCarouselLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
