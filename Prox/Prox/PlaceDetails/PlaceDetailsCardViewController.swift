@@ -13,7 +13,7 @@ class PlaceDetailsCardViewController: UIViewController {
             setPlace(place: place)
         }
     }
-
+    
     lazy var cardView: PlaceDetailsCardView = {
         let view = PlaceDetailsCardView()
         return view

@@ -300,7 +300,6 @@ class PlaceDetailViewController: UIViewController {
         })
     }
 
-
     fileprivate func insertNewCardViewController(forPlace place: Place?) -> PlaceDetailsCardViewController? {
         guard let newPlace = place else {
             return nil
@@ -366,6 +365,7 @@ class PlaceDetailViewController: UIViewController {
 
     func close() {
         self.dismiss(animated: true, completion: nil)
+
     }
 
 }
