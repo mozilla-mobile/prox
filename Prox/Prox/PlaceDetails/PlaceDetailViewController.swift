@@ -300,7 +300,6 @@ class PlaceDetailViewController: UIViewController {
         })
     }
 
-
     fileprivate func insertNewCardViewController(forPlace place: Place?) -> PlaceDetailsCardViewController? {
         guard let newPlace = place else {
             return nil
@@ -324,6 +323,7 @@ class PlaceDetailViewController: UIViewController {
         }
         if let previousCard = newPreviousCard {
             self.previousCardViewTrailingConstraint = previousCard.cardView.trailingAnchor.constraint(equalTo: newCurrentCard.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
+
             constraintsToActivate += [self.previousCardViewTrailingConstraint!]
         } else {
             previousCardViewTrailingConstraint = nil
