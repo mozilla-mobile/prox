@@ -4,7 +4,7 @@
 
 import Foundation
 
-class PlaceDetailsDescriptionView: UIView {
+class PlaceDetailsDescriptionView: HorizontalLineView {
 
     let horizontalMargin: CGFloat
 
@@ -28,6 +28,7 @@ class PlaceDetailsDescriptionView: UIView {
         super.init(frame: .zero)
         logoView.image = icon
         label.text = labelText
+        backgroundColor = .clear
 
         setupSubviews()
     }
@@ -56,5 +57,18 @@ class PlaceDetailsDescriptionView: UIView {
                         expandButton.bottomAnchor.constraint(equalTo: logoView.bottomAnchor)]
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setupLine()
+    }
+
+    private func setupLine() {
+        color = Colors.detailsViewCardSeparator
+        startX = bounds.minX
+        endX = bounds.maxX
+        startY = bounds.minY
+        endY = bounds.minY
     }
 }
