@@ -65,7 +65,6 @@ class PlaceCarouselViewController: UIViewController {
         view.layer.shadowOpacity = 0.25
         view.layer.shadowOffset = CGSize(width: 0, height: 2)
         view.layer.shadowRadius = 2
-        view.layer.shouldRasterize = true
 
         return view
     }()
