@@ -110,7 +110,7 @@ class PlaceDetailsCardView: UIScrollView {
     }()
 
     lazy var wikiDescriptionView = PlaceDetailsDescriptionView(labelText: "Wikipedia summary",
-                                                               icon: nil,
+                                                               icon: UIImage(named: "logo_wikipedia"),
                                                                horizontalMargin: 16)
 
     lazy var yelpDescriptionView = PlaceDetailsDescriptionView(labelText: "Yelp top review",
