@@ -11,6 +11,7 @@ target 'Prox' do
 	pod 'Firebase/Auth'
 	pod 'EDSunriseSet'
 	pod 'BuddyBuildSDK'
+	pod 'BadgeSwift', '~> 3.0'
 end
 
 target 'ProxTests' do
@@ -20,6 +21,7 @@ target 'ProxTests' do
 	pod 'Firebase/Database'
 	pod 'Firebase/Auth'
 	pod 'EDSunriseSet'
+	pod 'BadgeSwift', '~> 3.0'
 end
 
 target 'ProxUITests' do
@@ -29,4 +31,5 @@ target 'ProxUITests' do
 	pod 'Firebase/Database'
 	pod 'Firebase/Auth'
 	pod 'EDSunriseSet'
+	pod 'BadgeSwift', '~> 3.0'
 end

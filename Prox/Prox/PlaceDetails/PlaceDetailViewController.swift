@@ -4,14 +4,18 @@
 
 import UIKit
 import AFNetworking
-
+import BadgeSwift
 
 private let CellReuseIdentifier = "ImageCarouselCell"
 
 class PlaceDetailViewController: UIViewController {
 
     fileprivate let place: Place
-    weak var dataSource: PlaceDataSource?
+    weak var dataSource: PlaceDataSource? {
+        didSet {
+            mapButtonBadge.text = "\(dataSource?.numberOfPlaces() ?? 0)"
+        }
+    }
 
     lazy var imageDownloader: AFImageDownloader = {
         // TODO: Maybe we want more control over the configuration.
@@ -58,6 +62,26 @@ class PlaceDetailViewController: UIViewController {
         return view
     }()
 
+    lazy var mapButton: MapButton = {
+        let button = MapButton()
+        button.setImage(UIImage(named: "icon_mapview"), for: .normal)
+        button.addTarget(self, action: #selector(self.close), for: .touchUpInside)
+        button.clipsToBounds = false
+        return button
+    }()
+
+    lazy var mapButtonBadge: BadgeSwift = {
+        let badge = BadgeSwift()
+        badge.font = UIFont.systemFont(ofSize: 14)
+        badge.badgeColor = UIColor(colorLiteralRed: 0.07, green: 0.40, blue: 0.98, alpha: 1.0)
+        badge.textColor = UIColor.white
+        badge.shadowOpacityBadge = 0.5
+        badge.shadowOffsetBadge = CGSize(width: 0, height: 0)
+        badge.shadowRadiusBadge = 1.0
+        badge.shadowColorBadge = UIColor.black
+        return badge
+    }()
+
     init(place: Place) {
         self.place = place
         super.init(nibName: nil, bundle: nil)
@@ -89,6 +113,19 @@ class PlaceDetailViewController: UIViewController {
                         cardView.widthAnchor.constraint(equalToConstant: 343),
                         cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor)]
 
+        view.addSubview(mapButton)
+        constraints += [mapButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 36),
+                        mapButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                        mapButton.heightAnchor.constraint(equalToConstant: 48),
+                        mapButton.widthAnchor.constraint(equalToConstant: 48)]
+
+        view.addSubview(mapButtonBadge)
+        constraints += [mapButtonBadge.leadingAnchor.constraint(equalTo: mapButton.trailingAnchor, constant: -10),
+                        mapButtonBadge.topAnchor.constraint(equalTo: mapButton.topAnchor),
+                        mapButtonBadge.heightAnchor.constraint(equalToConstant: 20.0),
+                        mapButtonBadge.widthAnchor.constraint(greaterThanOrEqualToConstant: 20.0)]
+
+
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
 
@@ -102,6 +139,10 @@ class PlaceDetailViewController: UIViewController {
         let pageSize = imageCarousel.bounds.size
         let xOffset = pageSize.width * CGFloat(pageControl.currentPage)
         imageCarousel.setContentOffset(CGPoint(x: xOffset, y: 0), animated: true)
+    }
+
+    func close() {
+        self.dismiss(animated: true, completion: nil)
     }
     
 }
