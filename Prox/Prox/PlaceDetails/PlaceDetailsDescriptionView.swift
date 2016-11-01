@@ -8,8 +8,11 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
 
     let horizontalMargin: CGFloat
 
-    // TODO: scale fit
-    lazy var logoView: UIImageView = UIImageView()
+    lazy var logoView: UIImageView = {
+        let view = UIImageView()
+        view.contentMode = .scaleAspectFit
+        return view
+    }()
 
     lazy var label: UILabel = {
         let view = UILabel()
@@ -39,7 +42,7 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
 
     private func setupSubviews() {
         addSubview(logoView)
-        var constraints = [logoView.topAnchor.constraint(equalTo: topAnchor), // TODO: will this scale correctly?
+        var constraints = [logoView.topAnchor.constraint(equalTo: topAnchor),
                            logoView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalMargin),
                            logoView.widthAnchor.constraint(equalToConstant: 16),
                            logoView.bottomAnchor.constraint(equalTo: bottomAnchor)]
