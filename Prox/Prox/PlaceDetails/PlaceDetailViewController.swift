@@ -63,7 +63,7 @@ class PlaceDetailViewController: UIViewController {
     }()
 
     fileprivate var previousCardViewController: PlaceDetailsCardViewController?
-    fileprivate var currentCardViewController: PlaceDetailsCardViewController
+    fileprivate var currentCardViewController: PlaceDetailsCardViewController!
     fileprivate var nextCardViewController: PlaceDetailsCardViewController?
     fileprivate var unusedPlaceCardViewControllers = [PlaceDetailsCardViewController]()
 
@@ -92,12 +92,12 @@ class PlaceDetailViewController: UIViewController {
     }()
 
     init(place: Place) {
-        self.currentCardViewController = PlaceDetailsCardViewController(place: place)
         super.init(nibName: nil, bundle: nil)
+        self.currentCardViewController = dequeuePlaceCardViewController(forPlace: place)
 
-        if let imageURL = place.photoURLs?.first,
-            let url = URL(string: imageURL) {
-            backgroundImage.setImageWith(url)
+        if let imageURLString = place.photoURLs?.first,
+            let imageURL = URL(string: imageURLString) {
+            self.backgroundImage.setImageWith(imageURL)
         } else {
             backgroundImage.image = UIImage(named: "place-placeholder")
         }
@@ -115,7 +115,7 @@ class PlaceDetailViewController: UIViewController {
         backgroundImage.addSubview(backgroundBlurEffect)
         view.addSubview(imageCarousel)
 
-        var constraints = [backgroundImage.topAnchor.constraint(equalTo: imageCarousel.topAnchor),
+        var constraints = [backgroundImage.topAnchor.constraint(equalTo: view.topAnchor, constant: imageCarouselHeightConstant),
                            backgroundImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                            backgroundImage.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                            backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor)]
@@ -187,7 +187,9 @@ class PlaceDetailViewController: UIViewController {
             return placeCardVC
         }
 
-        return PlaceDetailsCardViewController(place: place)
+        let newController = PlaceDetailsCardViewController(place: place)
+        newController.placeImageDelegate = self
+        return newController
     }
 
     func didPan(gestureRecognizer: UIPanGestureRecognizer) {
@@ -251,6 +253,12 @@ class PlaceDetailViewController: UIViewController {
         UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
             self.imageCarousel.alpha = 0
             nextCardImageCarousel.alpha = 1
+            if let imageURLString = nextCardViewController.place.photoURLs?.first,
+                let imageURL = URL(string: imageURLString) {
+                self.backgroundImage.setImageWith(imageURL)
+            } else {
+                self.backgroundImage.image = UIImage(named: "place-placeholder")
+            }
             self.view.layoutIfNeeded()
         }, completion: { finished in
             if finished {
@@ -310,8 +318,14 @@ class PlaceDetailViewController: UIViewController {
         UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
             self.imageCarousel.alpha = 0
             previousCardImageCarousel.alpha = 1
+            if let imageURLString = previousCardViewController.place.photoURLs?.first,
+                let imageURL = URL(string: imageURLString) {
+                self.backgroundImage.setImageWith(imageURL)
+            } else {
+                self.backgroundImage.image = UIImage(named: "place-placeholder")
+            }
             self.view.layoutIfNeeded()
-            }, completion: { finished in
+        }, completion: { finished in
             if finished {
                 self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
                 if let nextCardViewController = self.nextCardViewController {
@@ -398,4 +412,12 @@ class PlaceDetailViewController: UIViewController {
 
     }
 
+}
+
+extension PlaceDetailViewController: PlaceDetailsImageDelegate {
+    func imageCarousel(imageCarousel: UIView, placeImageDidChange newImageURL: URL) {
+        if imageCarousel == self.imageCarousel {
+            self.backgroundImage.setImageWith(newImageURL)
+        }
+    }
 }
