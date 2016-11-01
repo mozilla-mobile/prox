@@ -4,11 +4,63 @@
 
 import Foundation
 
-// TODO: make this scroll!
-class PlaceDetailsCardView: UIView {
+class PlaceDetailsCardView: UIScrollView {
 
+    let TopMargin: CGFloat = 24
+    let CardMarginBottom: CGFloat = 24 // TODO: name
+
+    lazy var containingStackView: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [self.labelContainer,
+                                                  self.iconInfoViewContainer,
+                                                  self.reviewViewContainer,
+                                                  self.descriptionViewContainer])
+        view.axis = .vertical
+        view.spacing = 24
+
+        view.layoutMargins = UIEdgeInsets(top: 24, left: 0, bottom: 0, right: 0)
+        view.isLayoutMarginsRelativeArrangement = true
+        return view
+    }()
+
+    // MARK: Outer views.
     // TODO: accessibility labels (and parent view)
     // TODO: set line height on all text. http://stackoverflow.com/a/5513730
+    lazy var labelContainer: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [self.titleLabel,
+                                                  self.categoryLabel,
+                                                  self.urlLabel])
+        view.axis = .vertical
+        view.spacing = 4
+
+        view.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        view.isLayoutMarginsRelativeArrangement = true
+        return view
+    }()
+
+    lazy var iconInfoViewContainer: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [self.travelTimeView,
+                                                  self.hoursView])
+        view.axis = .horizontal
+        view.distribution = .fillEqually
+
+        view.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        view.isLayoutMarginsRelativeArrangement = true
+        return view
+    }()
+
+    // Ideally we also use a UIStackView but the review dots stretched too
+    // far across the screen and it was faster to do it this way.
+    lazy var reviewViewContainer = UIView()
+
+    // Prevents spacing between views from parent stack view.
+    lazy var descriptionViewContainer: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [self.wikiDescriptionView,
+                                                  self.yelpDescriptionView])
+        view.axis = .vertical
+        return view
+    }()
+
+    // MARK: Inner views
     lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.textColor = Colors.detailsViewCardPrimaryText
@@ -44,6 +96,7 @@ class PlaceDetailsCardView: UIView {
         return view
     }()
 
+
     lazy var yelpReviewView: ReviewContainerView = {
         let view = ReviewContainerView(color: Colors.yelp, mode: .detailsView)
         view.reviewSiteLogo.image = UIImage(named: "logo_yelp")
@@ -74,8 +127,9 @@ class PlaceDetailsCardView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // TODO: can't set shadow on scroll view to allow masking contents.
     private func setupShadow() {
-        layer.masksToBounds = false
+        layer.masksToBounds = true
         layer.shadowOffset = CGSize(width: 0, height: 2)
         layer.shadowRadius = 5
         layer.shadowOpacity = 0.4
@@ -85,66 +139,54 @@ class PlaceDetailsCardView: UIView {
         setTestData() // TODO: rm
         backgroundColor = Colors.detailsViewCardBackground
         layer.cornerRadius = 10
-        clipsToBounds = true
 
-        addSubview(titleLabel)
-        var constraints = [titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 24),
-                           titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-                           titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24)]
+        // Note: The constraints of subviews broke when I used leading/trailing, rather than
+        // centerX & width. The parent constraints are set with centerX & width - related?
+        addSubview(containingStackView)
+        var constraints = [containingStackView.topAnchor.constraint(equalTo: topAnchor),
+                           containingStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+                           containingStackView.widthAnchor.constraint(equalTo: widthAnchor),
+                           containingStackView.bottomAnchor.constraint(equalTo: bottomAnchor)]
 
-        addSubview(categoryLabel)
-        constraints += [categoryLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
-                        categoryLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-                        categoryLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor)]
+        // Already added to stack view.
+        constraints += [reviewViewContainer.bottomAnchor.constraint(equalTo: yelpReviewView.bottomAnchor)]
 
-        addSubview(urlLabel)
-        constraints += [urlLabel.topAnchor.constraint(equalTo: categoryLabel.bottomAnchor, constant: 4),
-                        urlLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-                        urlLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor)]
-
-        addSubview(travelTimeView)
-        constraints += [travelTimeView.topAnchor.constraint(equalTo: urlLabel.bottomAnchor, constant: 24),
-                        travelTimeView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-                        travelTimeView.trailingAnchor.constraint(equalTo: centerXAnchor),
-                        travelTimeView.heightAnchor.constraint(equalToConstant: 48)]
-
-        addSubview(hoursView)
-        constraints += [hoursView.topAnchor.constraint(equalTo: travelTimeView.topAnchor),
-                        hoursView.leadingAnchor.constraint(equalTo: centerXAnchor),
-                        hoursView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-                        hoursView.bottomAnchor.constraint(equalTo: travelTimeView.bottomAnchor)]
-
-        addSubview(yelpReviewView)
-        constraints += [yelpReviewView.topAnchor.constraint(equalTo: travelTimeView.bottomAnchor, constant: 24),
+        reviewViewContainer.addSubview(yelpReviewView)
+        constraints += [yelpReviewView.topAnchor.constraint(equalTo: reviewViewContainer.topAnchor),
                         yelpReviewView.centerXAnchor.constraint(equalTo: travelTimeView.centerXAnchor),
-                        yelpReviewView.widthAnchor.constraint(equalToConstant: 128),
-                        yelpReviewView.bottomAnchor.constraint(equalTo: yelpReviewView.numberOfReviewersLabel.bottomAnchor)]
-        // TODO: heightAnchor. I'd like to leave out the constraint and use the intrinsic content height.
-        // However, if I leave it out, the bottom anchor is too high and cuts off the subviews.
-        // Using the subview bottom anchor is really bad. :(
+                        yelpReviewView.widthAnchor.constraint(equalToConstant: 128)]
 
-        addSubview(tripAdvisorReviewView)
-        constraints += [tripAdvisorReviewView.topAnchor.constraint(equalTo: travelTimeView.bottomAnchor, constant: 24),
+        reviewViewContainer.addSubview(tripAdvisorReviewView)
+        constraints += [tripAdvisorReviewView.topAnchor.constraint(equalTo: yelpReviewView.topAnchor),
                         tripAdvisorReviewView.centerXAnchor.constraint(equalTo: hoursView.centerXAnchor),
-                        tripAdvisorReviewView.widthAnchor.constraint(equalTo: yelpReviewView.widthAnchor),
-                        tripAdvisorReviewView.bottomAnchor.constraint(equalTo: yelpReviewView.bottomAnchor)]
+                        tripAdvisorReviewView.widthAnchor.constraint(equalTo: yelpReviewView.widthAnchor)]
 
-        addSubview(wikiDescriptionView)
-        constraints += [wikiDescriptionView.topAnchor.constraint(equalTo: yelpReviewView.bottomAnchor, constant: 24),
-                        wikiDescriptionView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                        wikiDescriptionView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                        wikiDescriptionView.heightAnchor.constraint(equalToConstant: 56)]
-
-        addSubview(yelpDescriptionView)
-        constraints += [yelpDescriptionView.topAnchor.constraint(equalTo: wikiDescriptionView.bottomAnchor),
-                        yelpDescriptionView.leadingAnchor.constraint(equalTo: wikiDescriptionView.leadingAnchor),
-                        yelpDescriptionView.trailingAnchor.constraint(equalTo: wikiDescriptionView.trailingAnchor),
-                        yelpDescriptionView.heightAnchor.constraint(equalTo: wikiDescriptionView.heightAnchor)]
-
-        // TODO: have to be flexible to rm bottom views if data not available
-        constraints += [bottomAnchor.constraint(equalTo: yelpDescriptionView.bottomAnchor)]
+       constraints += [wikiDescriptionView.heightAnchor.constraint(equalToConstant: 56),
+                       yelpDescriptionView.heightAnchor.constraint(equalTo: wikiDescriptionView.heightAnchor)]
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateViewSize()
+    }
+
+    // TODO: when else can we call this? layoutSubviews is called when we scroll and we don't want to calculate all this each time...
+    private func updateViewSize() {
+        let widthFromConstraints = bounds.width
+
+        let contentHeight = containingStackView.bounds.height
+        let newContentSize = CGSize(width: widthFromConstraints, height: contentHeight)
+
+        let cardMinY = frame.minY
+        let cardMaxY = (window?.frame.maxY)! - CardMarginBottom
+        let cardHeight = min(contentHeight, cardMaxY - cardMinY) // grow with content until margin
+        let newFrame = CGRect(origin: frame.origin, size: CGSize(width: widthFromConstraints, height: cardHeight))
+
+        // Re-setting the frame on every layoutSubview cancels bounce, via http://stackoverflow.com/a/3231675
+        if contentSize != newContentSize { contentSize = newContentSize }
+        if frame != newFrame { frame = newFrame }
     }
 
     private func setTestData() {
