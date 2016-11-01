@@ -72,13 +72,13 @@ class PlaceDetailViewController: UIViewController {
 
     lazy var mapButtonBadge: BadgeSwift = {
         let badge = BadgeSwift()
-        badge.font = UIFont.systemFont(ofSize: 14)
-        badge.badgeColor = UIColor(colorLiteralRed: 0.07, green: 0.40, blue: 0.98, alpha: 1.0)
-        badge.textColor = UIColor.white
+        badge.font = Fonts.detailsViewMapButtonBadgeText
+        badge.badgeColor = Colors.detailsViewMapButtonBadgeBackground
+        badge.textColor = Colors.detailsViewMapButtonBadgeFont
         badge.shadowOpacityBadge = 0.5
         badge.shadowOffsetBadge = CGSize(width: 0, height: 0)
         badge.shadowRadiusBadge = 1.0
-        badge.shadowColorBadge = UIColor.black
+        badge.shadowColorBadge = Colors.detailsViewMapButtonShadow
         return badge
     }()
 

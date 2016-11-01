@@ -30,4 +30,8 @@ extension Colors {
     public static let detailsViewCardSecondaryText = UIColor.black.withAlphaComponent(0.5)
     public static let pageIndicatorTintColor = UIColor.black.withAlphaComponent(0.5)
     public static let currentPageIndicatorTintColor = UIColor.white
+    public static let detailsViewMapButtonBadgeBackground = UIColor(colorLiteralRed: 0.07, green: 0.40, blue: 0.98, alpha: 1.0)
+    public static let detailsViewMapButtonBadgeFont = UIColor.white
+    public static let detailsViewMapButtonShadow = UIColor.black.withAlphaComponent(0.4)
+    public static let detailsViewMapButtonBackground = UIColor.white
 }

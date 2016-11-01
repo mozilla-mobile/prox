@@ -8,12 +8,10 @@ class MapButton: UIButton {
 
     private let shadowRadius: CGFloat = 3
 
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
     override func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
         let shadow = NSShadow()
-        shadow.shadowColor = UIColor.black.withAlphaComponent(0.4)
+        shadow.shadowColor = Colors.detailsViewMapButtonShadow
         shadow.shadowOffset = CGSize(width: 0.5, height: 0.75)
         shadow.shadowBlurRadius = shadowRadius
 
@@ -21,7 +19,7 @@ class MapButton: UIButton {
         let ovalPath = UIBezierPath(ovalIn: CGRect(x: (shadowRadius / 2) - shadow.shadowOffset.width, y: (shadowRadius / 2)  - shadow.shadowOffset.height, width: rect.width - shadowRadius, height: rect.height - shadowRadius))
         context.saveGState()
         context.setShadow(offset: shadow.shadowOffset, blur: shadow.shadowBlurRadius, color: (shadow.shadowColor as! UIColor).cgColor)
-        UIColor.white.setFill()
+        Colors.detailsViewMapButtonBackground.setFill()
         ovalPath.fill()
         context.restoreGState()
     }
