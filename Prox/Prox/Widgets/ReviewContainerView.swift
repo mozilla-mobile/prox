@@ -104,6 +104,8 @@ class ReviewContainerView: UIView {
         // Note: setting a height on the label may affect margins but, by not including it,
         // the view will collapse if no review score is present
 
+        constraints += [bottomAnchor.constraint(equalTo: numberOfReviewersLabel.bottomAnchor)]
+
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
 
