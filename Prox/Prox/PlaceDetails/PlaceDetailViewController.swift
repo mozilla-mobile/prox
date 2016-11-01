@@ -80,9 +80,27 @@ class PlaceDetailViewController: UIViewController {
     fileprivate let animationDurationConstant = 0.5
     fileprivate var startConstant: CGFloat!
 
+    lazy var backgroundImage: UIImageView = {
+        let view = UIImageView()
+        return view
+    }()
+
+    lazy var backgroundBlurEffect: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        return blurEffectView
+    }()
+
     init(place: Place) {
         self.currentCardViewController = PlaceDetailsCardViewController(place: place)
         super.init(nibName: nil, bundle: nil)
+
+        if let imageURL = place.photoURLs?.first,
+            let url = URL(string: imageURL) {
+            backgroundImage.setImageWith(url)
+        } else {
+            backgroundImage.image = UIImage(named: "place-placeholder")
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -92,11 +110,23 @@ class PlaceDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor(white: 0.5, alpha: 1) // TODO: blurred image background
-
         imageCarousel = currentCardViewController.imageCarousel
+        view.addSubview(backgroundImage)
+        backgroundImage.addSubview(backgroundBlurEffect)
         view.addSubview(imageCarousel)
-        var constraints = [imageCarousel.topAnchor.constraint(equalTo: view.topAnchor),
+
+        var constraints = [backgroundImage.topAnchor.constraint(equalTo: imageCarousel.topAnchor),
+                           backgroundImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                           backgroundImage.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                           backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor)]
+
+        backgroundImage.addSubview(backgroundBlurEffect)
+        constraints += [backgroundBlurEffect.topAnchor.constraint(equalTo: backgroundImage.topAnchor),
+                       backgroundBlurEffect.leadingAnchor.constraint(equalTo: backgroundImage.leadingAnchor),
+                       backgroundBlurEffect.bottomAnchor.constraint(equalTo: backgroundImage.bottomAnchor),
+                       backgroundBlurEffect.trailingAnchor.constraint(equalTo: backgroundImage.trailingAnchor)]
+
+        constraints += [imageCarousel.topAnchor.constraint(equalTo: view.topAnchor),
                            imageCarousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                            imageCarousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                            imageCarousel.heightAnchor.constraint(equalToConstant: imageCarouselHeightConstant)]
