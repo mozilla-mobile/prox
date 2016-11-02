@@ -161,9 +161,6 @@ class PlaceDetailsCardView: UIScrollView {
                         tripAdvisorReviewView.centerXAnchor.constraint(equalTo: hoursView.centerXAnchor),
                         tripAdvisorReviewView.widthAnchor.constraint(equalTo: yelpReviewView.widthAnchor)]
 
-       constraints += [wikiDescriptionView.heightAnchor.constraint(equalToConstant: 56),
-                       yelpDescriptionView.heightAnchor.constraint(equalTo: wikiDescriptionView.heightAnchor)]
-
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
 
@@ -202,5 +199,8 @@ class PlaceDetailsCardView: UIScrollView {
         yelpReviewView.numberOfReviewersLabel.text = "567 Reviews"
         tripAdvisorReviewView.score = 3
         tripAdvisorReviewView.numberOfReviewersLabel.text = "123 reviews"
+        let descriptionText = "The Hilton Waikoloa Village is bulit on 62 acres (250,000 m2) and has 1240 rooms and suites with tropical gardens, waterfalls, lagoons and waterways. The resort features gardens, artworks, and status. It was originally...\n\nIt also serves as the setting for the Nickelodeon game show Paradise Run.\n\nLast updated on May 16th, 2016\n\nRead more on Wikipedia"
+        wikiDescriptionView.expandableLabel.text = descriptionText
+        yelpDescriptionView.expandableLabel.text = descriptionText
     }
 }
