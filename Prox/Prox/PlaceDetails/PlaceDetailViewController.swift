@@ -202,12 +202,11 @@ class PlaceDetailViewController: UIViewController {
         
         let nextCardImageCarousel = addImageCarousel(forNextCard: nextCardViewController)
 
-        let newNextCardViewController = insertNewNextViewController(toNextCard: nextCardViewController)
-        let springDamping:CGFloat = newNextCardViewController == nil ? 0.8 : 1.0
-
         previousCardViewController?.cardView.isHidden = true
 
-        setupConstraints(forNewPreviousCard: currentCardViewController, toNewCurrentCard: nextCardViewController)
+        let newNextCardViewController = insertNewCardViewController(forPlace: dataSource?.nextPlace(forPlace: nextCardViewController.place))
+        let springDamping:CGFloat = newNextCardViewController == nil ? 0.8 : 1.0
+        setupConstraints(forNewPreviousCard: currentCardViewController, newCurrentCard: nextCardViewController, newNextCard: newNextCardViewController)
 
         view.layoutIfNeeded()
 
@@ -244,37 +243,6 @@ class PlaceDetailViewController: UIViewController {
         })
     }
 
-    fileprivate func insertNewNextViewController(toNextCard nextCardViewController: PlaceDetailsCardViewController) -> PlaceDetailsCardViewController? {
-        // deactivate and remove next view controller leading constraint
-        if let nextCardViewLeadingConstraint = nextCardViewLeadingConstraint {
-            NSLayoutConstraint.deactivate([nextCardViewLeadingConstraint])
-        }
-
-        guard let newNext = dataSource?.nextPlace(forPlace: nextCardViewController.place) else {
-            nextCardViewLeadingConstraint = nil
-            return nil
-        }
-
-        let newNextCardViewController = dequeuePlaceCardViewController(forPlace:newNext)
-        self.view.addSubview(newNextCardViewController.cardView)
-        self.addChildViewController(newNextCardViewController)
-        self.nextCardViewLeadingConstraint = newNextCardViewController.cardView.leadingAnchor.constraint(equalTo: nextCardViewController.cardView.trailingAnchor, constant: cardViewSpacingConstant)
-        NSLayoutConstraint.activate([newNextCardViewController.cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: cardViewTopAnchorConstant),
-                                  newNextCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidthConstant),
-                                  self.nextCardViewLeadingConstraint!], translatesAutoresizingMaskIntoConstraints: false)
-
-        return newNextCardViewController
-    }
-
-    fileprivate func setupConstraints(forNewPreviousCard newPreviousCard: PlaceDetailsCardViewController, toNewCurrentCard newCurrentCard: PlaceDetailsCardViewController) {
-        // setup constraints for new previous card
-        if let previousCardViewTrailingConstraint = previousCardViewTrailingConstraint {
-            NSLayoutConstraint.deactivate([previousCardViewTrailingConstraint])
-        }
-        self.previousCardViewTrailingConstraint = newPreviousCard.cardView.trailingAnchor.constraint(equalTo: newCurrentCard.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
-        NSLayoutConstraint.activate([self.previousCardViewTrailingConstraint!])
-    }
-
     fileprivate func canPageToPreviousPlaceCard(finalXPosition: CGFloat) -> Bool {
         return finalXPosition > (self.view.frame.width * 0.5) && self.previousCardViewController != nil
     }
@@ -295,9 +263,9 @@ class PlaceDetailViewController: UIViewController {
 
         nextCardViewController?.cardView.isHidden = true
 
-        let newPreviousCardViewController = insertNewPreviousViewController(toPreviousCard: previousCardViewController)
+        let newPreviousCardViewController = insertNewCardViewController(forPlace: dataSource?.previousPlace(forPlace: previousCardViewController.place))
         let springDamping:CGFloat = newPreviousCardViewController == nil ? 0.8 : 1.0
-        setupConstraints(forNewNextCard: currentCardViewController, toNewCurrentCard: previousCardViewController)
+        setupConstraints(forNewPreviousCard: newPreviousCardViewController, newCurrentCard: previousCardViewController, newNextCard: currentCardViewController)
 
         view.layoutIfNeeded()
 
@@ -334,35 +302,46 @@ class PlaceDetailViewController: UIViewController {
     }
 
 
-    fileprivate func insertNewPreviousViewController(toPreviousCard previousCardViewController: PlaceDetailsCardViewController) -> PlaceDetailsCardViewController? {
-        // deactivate and remove previous view controller trailing constraint
-        if let previousCardViewTrailingConstraint = previousCardViewTrailingConstraint {
-            NSLayoutConstraint.deactivate([previousCardViewTrailingConstraint])
-        }
-
-        guard let newPrevious = dataSource?.previousPlace(forPlace: previousCardViewController.place) else {
-            previousCardViewTrailingConstraint = nil
+    fileprivate func insertNewCardViewController(forPlace place: Place?) -> PlaceDetailsCardViewController? {
+        guard let newPlace = place else {
             return nil
         }
 
-        let newPreviousCardViewController = dequeuePlaceCardViewController(forPlace:newPrevious)
-        self.view.addSubview(newPreviousCardViewController.cardView)
-        self.addChildViewController(newPreviousCardViewController)
-        self.previousCardViewTrailingConstraint = newPreviousCardViewController.cardView.trailingAnchor.constraint(equalTo: previousCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
-        NSLayoutConstraint.activate([newPreviousCardViewController.cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: cardViewTopAnchorConstant),
-                                     newPreviousCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidthConstant),
-                                     self.previousCardViewTrailingConstraint!], translatesAutoresizingMaskIntoConstraints: false)
+        let newCardViewController = dequeuePlaceCardViewController(forPlace:newPlace)
+        self.view.addSubview(newCardViewController.cardView)
+        self.addChildViewController(newCardViewController)
+        NSLayoutConstraint.activate([newCardViewController.cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: cardViewTopAnchorConstant),
+                                     newCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidthConstant)], translatesAutoresizingMaskIntoConstraints: false)
 
-        return newPreviousCardViewController
+        return newCardViewController
     }
 
-    fileprivate func setupConstraints(forNewNextCard newNextCard: PlaceDetailsCardViewController, toNewCurrentCard newCurrentCard: PlaceDetailsCardViewController) {
-        // setup constraints for new previous card
-        if let nextCardViewLeadingConstraint = nextCardViewLeadingConstraint {
-            NSLayoutConstraint.deactivate([nextCardViewLeadingConstraint])
+    fileprivate func setupConstraints(forNewPreviousCard newPreviousCard: PlaceDetailsCardViewController?, newCurrentCard: PlaceDetailsCardViewController, newNextCard: PlaceDetailsCardViewController?) {
+        var constraintsToDeactivate = [NSLayoutConstraint]()
+        var constraintsToActivate = [NSLayoutConstraint]()
+
+        if let previousCardViewTrailingConstraint = previousCardViewTrailingConstraint {
+            constraintsToDeactivate += [previousCardViewTrailingConstraint]
         }
-        self.nextCardViewLeadingConstraint = newNextCard.cardView.leadingAnchor.constraint(equalTo: newCurrentCard.cardView.trailingAnchor, constant: cardViewSpacingConstant)
-        NSLayoutConstraint.activate([self.nextCardViewLeadingConstraint!])
+        if let previousCard = newPreviousCard {
+            self.previousCardViewTrailingConstraint = previousCard.cardView.trailingAnchor.constraint(equalTo: newCurrentCard.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
+            constraintsToActivate += [self.previousCardViewTrailingConstraint!]
+        } else {
+            previousCardViewTrailingConstraint = nil
+        }
+
+        if let nextCardViewLeadingConstraint = nextCardViewLeadingConstraint {
+            constraintsToDeactivate += [nextCardViewLeadingConstraint]
+        }
+        if let nextCard = newNextCard {
+            self.nextCardViewLeadingConstraint = nextCard.cardView.leadingAnchor.constraint(equalTo: newCurrentCard.cardView.trailingAnchor, constant: cardViewSpacingConstant)
+            constraintsToActivate += [self.nextCardViewLeadingConstraint!]
+        } else {
+            nextCardViewLeadingConstraint = nil
+        }
+
+        NSLayoutConstraint.deactivate(constraintsToDeactivate)
+        NSLayoutConstraint.activate(constraintsToActivate, translatesAutoresizingMaskIntoConstraints: false)
     }
 
     fileprivate func unwindToCurrentPlaceCard(animateWithDuration animationDuration: TimeInterval) {

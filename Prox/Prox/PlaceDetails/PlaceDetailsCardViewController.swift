@@ -91,7 +91,6 @@ class PlaceDetailsCardViewController: UIViewController {
 
     // TODO: set the view values in cardView to values in place
     fileprivate func setPlace(place: Place?) {
-        print("setting place")
         guard let place = place else {
             return
         }
