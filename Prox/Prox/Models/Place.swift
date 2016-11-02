@@ -109,6 +109,25 @@ enum DayOfWeek: Int {
     case monday = 0 // matches server representation
     case tuesday, wednesday, thursday, friday
     case saturday, sunday
+
+    static func forDate(_ date: Date) -> DayOfWeek {
+        let iOSWeekday = getiOSWeekday(forDate: date)
+        return weekday(fromiOSWeekday: iOSWeekday)
+    }
+
+    private static func getiOSWeekday(forDate date: Date) -> Int {
+        let cal = Calendar(identifier: .gregorian)
+        return cal.component(.weekday, from: date)
+    }
+
+    private static func weekday(fromiOSWeekday iOSWeekday: Int) -> DayOfWeek {
+        // iOSWeekday is 1-7 where Sun = 1; we are 0-6 where Mon = 0
+        var dayInt = iOSWeekday - 2
+        if dayInt < 0 { // only Sunday
+            dayInt = 6
+        }
+        return DayOfWeek(rawValue: dayInt)!
+    }
 }
 
 struct OpenHours {
