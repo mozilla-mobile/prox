@@ -94,17 +94,20 @@ class PlaceDetailViewController: UIViewController {
     init(place: Place) {
         super.init(nibName: nil, bundle: nil)
         self.currentCardViewController = dequeuePlaceCardViewController(forPlace: place)
+        setFirstBackgroundImageForPlace(place: place)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
+    fileprivate func setFirstBackgroundImageForPlace(place: Place) {
         if let imageURLString = place.photoURLs?.first,
             let imageURL = URL(string: imageURLString) {
             self.backgroundImage.setImageWith(imageURL)
         } else {
             backgroundImage.image = UIImage(named: "place-placeholder")
         }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
@@ -253,12 +256,7 @@ class PlaceDetailViewController: UIViewController {
         UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
             self.imageCarousel.alpha = 0
             nextCardImageCarousel.alpha = 1
-            if let imageURLString = nextCardViewController.place.photoURLs?.first,
-                let imageURL = URL(string: imageURLString) {
-                self.backgroundImage.setImageWith(imageURL)
-            } else {
-                self.backgroundImage.image = UIImage(named: "place-placeholder")
-            }
+            self.setFirstBackgroundImageForPlace(place: nextCardViewController.place)
             self.view.layoutIfNeeded()
         }, completion: { finished in
             if finished {
@@ -318,12 +316,7 @@ class PlaceDetailViewController: UIViewController {
         UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
             self.imageCarousel.alpha = 0
             previousCardImageCarousel.alpha = 1
-            if let imageURLString = previousCardViewController.place.photoURLs?.first,
-                let imageURL = URL(string: imageURLString) {
-                self.backgroundImage.setImageWith(imageURL)
-            } else {
-                self.backgroundImage.image = UIImage(named: "place-placeholder")
-            }
+            self.setFirstBackgroundImageForPlace(place: previousCardViewController.place)
             self.view.layoutIfNeeded()
         }, completion: { finished in
             if finished {
