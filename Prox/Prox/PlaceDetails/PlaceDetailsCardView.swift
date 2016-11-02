@@ -4,7 +4,13 @@
 
 import Foundation
 
-class PlaceDetailsCardView: UIScrollView {
+protocol PlaceDetailsCardDelegate: class {
+    func placeDetailsCardView(cardView: PlaceDetailsCardView, heightDidChange newHeight: CGFloat)
+}
+
+class PlaceDetailsCardView: UIView {
+
+    weak var delegate: PlaceDetailsCardDelegate?
 
     let TopMargin: CGFloat = 24
     let CardMarginBottom: CGFloat = 24 // TODO: name
@@ -174,15 +180,14 @@ class PlaceDetailsCardView: UIScrollView {
         let widthFromConstraints = bounds.width
 
         let contentHeight = containingStackView.bounds.height
-        let newContentSize = CGSize(width: widthFromConstraints, height: contentHeight)
+
+        delegate?.placeDetailsCardView(cardView: self, heightDidChange: contentHeight)
 
         let cardMinY = frame.minY
         let cardMaxY = (window?.frame.maxY)! - CardMarginBottom
         let cardHeight = min(contentHeight, cardMaxY - cardMinY) // grow with content until margin
         let newFrame = CGRect(origin: frame.origin, size: CGSize(width: widthFromConstraints, height: cardHeight))
 
-        // Re-setting the frame on every layoutSubview cancels bounce, via http://stackoverflow.com/a/3231675
-        if contentSize != newContentSize { contentSize = newContentSize }
         if frame != newFrame { frame = newFrame }
     }
 

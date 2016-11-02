@@ -24,6 +24,11 @@ class PlaceDetailViewController: UIViewController {
         }
     }
 
+    lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        return scrollView
+    }()
+
     lazy var imageDownloader: AFImageDownloader = {
         // TODO: Maybe we want more control over the configuration.
         let sessionManager = AFHTTPSessionManager(sessionConfiguration: .default)
@@ -113,15 +118,22 @@ class PlaceDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        imageCarousel = currentCardViewController.imageCarousel
-        view.addSubview(backgroundImage)
-        backgroundImage.addSubview(backgroundBlurEffect)
-        view.addSubview(imageCarousel)
+        view.addSubview(scrollView)
+        scrollView.contentSize = view.bounds.size
+        var constraints = [scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+                           scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                           scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                           scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor)]
 
-        var constraints = [backgroundImage.topAnchor.constraint(equalTo: view.topAnchor, constant: imageCarouselHeightConstant),
-                           backgroundImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                           backgroundImage.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                           backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor)]
+        imageCarousel = currentCardViewController.imageCarousel
+        scrollView.addSubview(backgroundImage)
+        backgroundImage.addSubview(backgroundBlurEffect)
+        scrollView.addSubview(imageCarousel)
+
+        constraints += [backgroundImage.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageCarouselHeightConstant),
+                           backgroundImage.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+                           backgroundImage.heightAnchor.constraint(equalToConstant: scrollView.contentSize.height),
+                           backgroundImage.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)]
 
         backgroundImage.addSubview(backgroundBlurEffect)
         constraints += [backgroundBlurEffect.topAnchor.constraint(equalTo: backgroundImage.topAnchor),
@@ -129,14 +141,14 @@ class PlaceDetailViewController: UIViewController {
                        backgroundBlurEffect.bottomAnchor.constraint(equalTo: backgroundImage.bottomAnchor),
                        backgroundBlurEffect.trailingAnchor.constraint(equalTo: backgroundImage.trailingAnchor)]
 
-        constraints += [imageCarousel.topAnchor.constraint(equalTo: view.topAnchor),
-                           imageCarousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+        constraints += [imageCarousel.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                           imageCarousel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
                            imageCarousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                            imageCarousel.heightAnchor.constraint(equalToConstant: imageCarouselHeightConstant)]
 
-        view.addSubview(currentCardViewController.cardView)
+        scrollView.addSubview(currentCardViewController.cardView)
         currentCardViewCenterXConstraint = currentCardViewController.cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        constraints += [currentCardViewController.cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: cardViewTopAnchorConstant),
+        constraints += [currentCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
                         currentCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidthConstant),
                         currentCardViewCenterXConstraint!]
         self.addChildViewController(currentCardViewController)
@@ -147,18 +159,18 @@ class PlaceDetailViewController: UIViewController {
 
         if let previousPlace = dataSource?.previousPlace(forPlace: currentCardViewController.place) {
             previousCardViewController = dequeuePlaceCardViewController(forPlace: previousPlace)
-            view.addSubview(previousCardViewController!.cardView)
+            scrollView.addSubview(previousCardViewController!.cardView)
             previousCardViewTrailingConstraint = previousCardViewController!.cardView.trailingAnchor.constraint(equalTo: currentCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
-            constraints += [previousCardViewController!.cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: cardViewTopAnchorConstant),
+            constraints += [previousCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
                             previousCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidthConstant),
                             previousCardViewTrailingConstraint!]
         }
 
         if let nextPlace = dataSource?.nextPlace(forPlace: currentCardViewController.place) {
             nextCardViewController = dequeuePlaceCardViewController(forPlace: nextPlace)
-            view.addSubview(nextCardViewController!.cardView)
+            scrollView.addSubview(nextCardViewController!.cardView)
             nextCardViewLeadingConstraint = nextCardViewController!.cardView.leadingAnchor.constraint(equalTo: currentCardViewController.cardView.trailingAnchor, constant: cardViewSpacingConstant)
-            constraints += [nextCardViewController!.cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: cardViewTopAnchorConstant),
+            constraints += [nextCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
                             nextCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidthConstant),
                             nextCardViewLeadingConstraint!]
         }
@@ -192,10 +204,15 @@ class PlaceDetailViewController: UIViewController {
 
         let newController = PlaceDetailsCardViewController(place: place)
         newController.placeImageDelegate = self
+        newController.cardView.delegate = self
         return newController
     }
 
     func didPan(gestureRecognizer: UIPanGestureRecognizer) {
+
+        // TODO: detect whether we are scrolling up & down, or left to right.
+        // if scrolling up and down, simply set content offset for scrollview
+        // otherwise do the below
 
         if gestureRecognizer.state == .began {
             startConstant = currentCardViewCenterXConstraint?.constant ?? 0
@@ -343,9 +360,9 @@ class PlaceDetailViewController: UIViewController {
         }
 
         let newCardViewController = dequeuePlaceCardViewController(forPlace:newPlace)
-        self.view.addSubview(newCardViewController.cardView)
+        self.scrollView.addSubview(newCardViewController.cardView)
         self.addChildViewController(newCardViewController)
-        NSLayoutConstraint.activate([newCardViewController.cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: cardViewTopAnchorConstant),
+        NSLayoutConstraint.activate([newCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
                                      newCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidthConstant)], translatesAutoresizingMaskIntoConstraints: false)
 
         return newCardViewController
@@ -391,9 +408,9 @@ class PlaceDetailViewController: UIViewController {
         // we need to ensure these constraints are applied and rendered before we animate the rest, otherwise we end
         // up with a very odd looking fade transition
         let nextCardImageCarousel = nextCard.imageCarousel
-        view.insertSubview(nextCardImageCarousel, belowSubview: imageCarousel)
-        NSLayoutConstraint.activate([nextCardImageCarousel.topAnchor.constraint(equalTo: view.topAnchor),
-                                     nextCardImageCarousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+        scrollView.insertSubview(nextCardImageCarousel, belowSubview: imageCarousel)
+        NSLayoutConstraint.activate([nextCardImageCarousel.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                                     nextCardImageCarousel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
                                      nextCardImageCarousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                                      nextCardImageCarousel.heightAnchor.constraint(equalToConstant: imageCarouselHeightConstant)], translatesAutoresizingMaskIntoConstraints: false)
 
@@ -414,4 +431,14 @@ extension PlaceDetailViewController: PlaceDetailsImageDelegate {
         }
     }
 
+}
+
+extension PlaceDetailViewController: PlaceDetailsCardDelegate {
+    func placeDetailsCardView(cardView: PlaceDetailsCardView, heightDidChange newHeight: CGFloat) {
+        guard cardView == currentCardViewController.cardView else {
+            return
+        }
+        let totalViewHeight = newHeight + cardViewTopAnchorConstant
+        scrollView.contentSize = CGSize(width: view.bounds.width, height: totalViewHeight)
+    }
 }
