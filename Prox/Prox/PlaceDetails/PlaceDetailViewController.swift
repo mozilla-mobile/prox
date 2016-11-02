@@ -77,6 +77,8 @@ class PlaceDetailViewController: UIViewController {
     fileprivate let cardViewSpacingConstant: CGFloat = 6
     fileprivate let cardViewWidthConstant: CGFloat = 343
     fileprivate let imageCarouselHeightConstant: CGFloat = 240
+    fileprivate let animationDurationConstant = 0.5
+    fileprivate var startConstant: CGFloat!
 
     init(place: Place) {
         self.currentCardViewController = PlaceDetailsCardViewController(place: place)
@@ -159,8 +161,6 @@ class PlaceDetailViewController: UIViewController {
         return PlaceDetailsCardViewController(place: place)
     }
 
-    var startConstant: CGFloat!
-
     func didPan(gestureRecognizer: UIPanGestureRecognizer) {
 
         if gestureRecognizer.state == .began {
@@ -174,14 +174,13 @@ class PlaceDetailViewController: UIViewController {
             // this is so that paging quickly feels natural
             let velocityX = (0.2 * gestureRecognizer.velocity(in: self.view).x)
             let finalX = startConstant + translationX + velocityX;
-            let animationDuration = 0.5
 
             if canPageToNextPlaceCard(finalXPosition: finalX) {
-                pageToNextPlaceCard(animateWithDuration: animationDuration)
+                pageToNextPlaceCard(animateWithDuration: animationDurationConstant)
             } else if canPageToPreviousPlaceCard(finalXPosition: finalX) {
-                pageToPreviousPlaceCard(animateWithDuration: animationDuration)
+                pageToPreviousPlaceCard(animateWithDuration: animationDurationConstant)
             } else {
-                unwindToCurrentPlaceCard(animateWithDuration: animationDuration)
+                unwindToCurrentPlaceCard(animateWithDuration: animationDurationConstant)
             }
         } else {
             currentCardViewCenterXConstraint?.constant = startConstant + translationX
@@ -341,12 +340,12 @@ class PlaceDetailViewController: UIViewController {
             NSLayoutConstraint.deactivate([previousCardViewTrailingConstraint])
         }
 
-        guard let newNext = dataSource?.previousPlace(forPlace: previousCardViewController.place) else {
+        guard let newPrevious = dataSource?.previousPlace(forPlace: previousCardViewController.place) else {
             previousCardViewTrailingConstraint = nil
             return nil
         }
 
-        let newPreviousCardViewController = dequeuePlaceCardViewController(forPlace:newNext)
+        let newPreviousCardViewController = dequeuePlaceCardViewController(forPlace:newPrevious)
         self.view.addSubview(newPreviousCardViewController.cardView)
         self.addChildViewController(newPreviousCardViewController)
         self.previousCardViewTrailingConstraint = newPreviousCardViewController.cardView.trailingAnchor.constraint(equalTo: previousCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
@@ -370,7 +369,7 @@ class PlaceDetailViewController: UIViewController {
         currentCardViewCenterXConstraint?.constant = 0
         UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
             self.view.layoutIfNeeded()
-            }, completion: nil )
+        }, completion: nil )
     }
 
     fileprivate func addImageCarousel(forNextCard nextCard: PlaceDetailsCardViewController) -> UIView {
