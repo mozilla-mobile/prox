@@ -210,15 +210,21 @@ class PlaceDetailViewController: UIViewController {
 
     func didPan(gestureRecognizer: UIPanGestureRecognizer) {
 
-        // TODO: detect whether we are scrolling up & down, or left to right.
-        // if scrolling up and down, simply set content offset for scrollview
-        // otherwise do the below
-
         if gestureRecognizer.state == .began {
             startConstant = currentCardViewCenterXConstraint?.constant ?? 0
         }
 
         let translationX = gestureRecognizer.translation(in: self.view).x
+
+        // detect whether we are scrolling up & down, or left to right.
+        // if scrolling up and down, simply set content offset for scrollview
+        // otherwise pan and page
+        let translationInScrollView = gestureRecognizer.translation(in: self.scrollView)
+        if scrollView.contentSize.height > view.bounds.height
+            && abs(translationInScrollView.y) > abs(translationInScrollView.x) {
+            self.scrollView.contentOffset = CGPoint(x: 0, y: -translationInScrollView.y)
+            return
+        }
 
         if gestureRecognizer.state == .ended {
             // figure out where the view would stop based on the velocity with which the user is panning
@@ -291,6 +297,7 @@ class PlaceDetailViewController: UIViewController {
                 self.currentCardViewController = nextCardViewController
                 self.currentCardViewController.cardView.addGestureRecognizer(self.panGestureRecognizer)
                 self.nextCardViewController = newNextCardViewController
+                self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
             }
         })
     }
@@ -350,6 +357,7 @@ class PlaceDetailViewController: UIViewController {
                 self.currentCardViewController = previousCardViewController
                 self.currentCardViewController.cardView.addGestureRecognizer(self.panGestureRecognizer)
                 self.previousCardViewController = newPreviousCardViewController
+                self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
             }
         })
     }
