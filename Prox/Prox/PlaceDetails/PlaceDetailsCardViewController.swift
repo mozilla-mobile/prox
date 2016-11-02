@@ -107,7 +107,11 @@ class PlaceDetailsCardViewController: UIViewController {
         let pageSize = imageCarousel.bounds.size
         let xOffset = pageSize.width * CGFloat(pageControl.currentPage)
         imageCarouselCollectionView.setContentOffset(CGPoint(x: xOffset, y: 0), animated: true)
-        if let imageURLString = place.photoURLs?[pageControl.currentPage],
+        notifyDelegateOfChangeOfImageToURL(atIndex: pageControl.currentPage)
+    }
+
+    fileprivate func notifyDelegateOfChangeOfImageToURL(atIndex index: Int) {
+        if let imageURLString = place.photoURLs?[index],
             let imageURL = URL(string: imageURLString) {
             placeImageDelegate?.imageCarousel(imageCarousel: imageCarousel, placeImageDidChange: imageURL)
         }
@@ -153,9 +157,6 @@ extension PlaceDetailsCardViewController: UIScrollViewDelegate {
         let selectedPageIndex = Int(floor((scrollView.contentOffset.x-pageSize.width/2)/pageSize.width))+1
         pageControl.currentPage = Int(selectedPageIndex)
 
-        if let imageURLString = place.photoURLs?[selectedPageIndex],
-            let imageURL = URL(string: imageURLString) {
-            placeImageDelegate?.imageCarousel(imageCarousel: imageCarousel, placeImageDidChange: imageURL)
-        }
+        notifyDelegateOfChangeOfImageToURL(atIndex: selectedPageIndex)
     }
 }

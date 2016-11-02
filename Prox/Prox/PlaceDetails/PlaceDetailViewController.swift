@@ -94,15 +94,15 @@ class PlaceDetailViewController: UIViewController {
     init(place: Place) {
         super.init(nibName: nil, bundle: nil)
         self.currentCardViewController = dequeuePlaceCardViewController(forPlace: place)
-        setFirstBackgroundImageForPlace(place: place)
+        setBackgroundImage(toPhotoAtURL: place.photoURLs?.first)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    fileprivate func setFirstBackgroundImageForPlace(place: Place) {
-        if let imageURLString = place.photoURLs?.first,
+    fileprivate func setBackgroundImage(toPhotoAtURL photoURLString: String?) {
+        if let imageURLString = photoURLString,
             let imageURL = URL(string: imageURLString) {
             self.backgroundImage.setImageWith(imageURL)
         } else {
@@ -256,7 +256,7 @@ class PlaceDetailViewController: UIViewController {
         UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
             self.imageCarousel.alpha = 0
             nextCardImageCarousel.alpha = 1
-            self.setFirstBackgroundImageForPlace(place: nextCardViewController.place)
+            self.setBackgroundImage(toPhotoAtURL: nextCardViewController.place.photoURLs?.first)
             self.view.layoutIfNeeded()
         }, completion: { finished in
             if finished {
@@ -316,7 +316,7 @@ class PlaceDetailViewController: UIViewController {
         UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
             self.imageCarousel.alpha = 0
             previousCardImageCarousel.alpha = 1
-            self.setFirstBackgroundImageForPlace(place: previousCardViewController.place)
+            self.setBackgroundImage(toPhotoAtURL: previousCardViewController.place.photoURLs?.first)
             self.view.layoutIfNeeded()
         }, completion: { finished in
             if finished {
