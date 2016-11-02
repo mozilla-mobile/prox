@@ -23,7 +23,8 @@ extension Fonts {
     public static let detailsViewTitleText = UIFont.systemFont(ofSize: 24, weight: UIFontWeightSemibold)
     public static let detailsViewCategoryText = UIFont.systemFont(ofSize: 14)
     public static let detailsViewReviewerText = UIFont.systemFont(ofSize: 14)
-    public static let detailsViewDescriptionText = UIFont.systemFont(ofSize: 16)
+    public static let detailsViewDescriptionTitle = UIFont.systemFont(ofSize: 16)
+    public static let detailsViewDescriptionText = UIFont.systemFont(ofSize: 14)
 
     public static let detailsViewIconInfoPrimaryText = UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight)
     public static let detailsViewIconInfoSecondaryText = UIFont.systemFont(ofSize: 14)
