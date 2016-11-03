@@ -65,7 +65,7 @@ class PlaceDetailsCardView: UIView {
         reviewStackView.spacing = 25
         reviewStackView.axis = .horizontal
         reviewStackView.isLayoutMarginsRelativeArrangement = true
-        reviewStackView.distribution = .fillProportionally
+        reviewStackView.distribution = .fillEqually
         return reviewStackView
     }()
 

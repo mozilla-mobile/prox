@@ -100,7 +100,7 @@ class ReviewContainerView: UIView {
         constraints.append(contentsOf: [numberOfReviewersLabel.topAnchor.constraint(equalTo: reviewScore.bottomAnchor, constant: verticalMargin),
                                         numberOfReviewersLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
                                         numberOfReviewersLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-                                        numberOfReviewersLabel.heightAnchor.constraint(equalToConstant: 18.0)])
+                                        numberOfReviewersLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor)])
         // Note: setting a height on the label may affect margins but, by not including it,
         // the view will collapse if no review score is present
 
