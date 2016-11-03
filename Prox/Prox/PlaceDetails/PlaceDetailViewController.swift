@@ -6,6 +6,10 @@ import UIKit
 import AFNetworking
 import BadgeSwift
 
+enum PanDirection {
+    case vertical, horizontal, none
+}
+
 /**
  * This class has essentially implemented it's own version of a paging collection view
 
@@ -26,6 +30,7 @@ class PlaceDetailViewController: UIViewController {
 
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
+        scrollView.isScrollEnabled = false
         return scrollView
     }()
 
@@ -44,6 +49,7 @@ class PlaceDetailViewController: UIViewController {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.didPan(gestureRecognizer:)))
         panGesture.maximumNumberOfTouches = 1
         panGesture.minimumNumberOfTouches = 1
+        panGesture.delegate = self
         return panGesture
     }()
     
@@ -67,6 +73,18 @@ class PlaceDetailViewController: UIViewController {
         return badge
     }()
 
+    fileprivate lazy var leftSwipeGestureRecognizer: UISwipeGestureRecognizer = {
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipeLeft(gestureRecognizer:)))
+        swipe.direction = .left
+        return swipe
+    }()
+
+    fileprivate lazy var rightSwipeGestureRecognizer: UISwipeGestureRecognizer = {
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipeRight(gestureRecognizer:)))
+        swipe.direction = .right
+        return swipe
+    }()
+
     fileprivate var previousCardViewController: PlaceDetailsCardViewController?
     fileprivate var currentCardViewController: PlaceDetailsCardViewController!
     fileprivate var nextCardViewController: PlaceDetailsCardViewController?
@@ -75,6 +93,7 @@ class PlaceDetailViewController: UIViewController {
     fileprivate var currentCardViewCenterXConstraint: NSLayoutConstraint?
     fileprivate var previousCardViewTrailingConstraint: NSLayoutConstraint?
     fileprivate var nextCardViewLeadingConstraint: NSLayoutConstraint?
+    fileprivate var backgroundImageHeightConstraint: NSLayoutConstraint?
 
     var imageCarousel: UIView!
 
@@ -95,6 +114,8 @@ class PlaceDetailViewController: UIViewController {
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         return blurEffectView
     }()
+
+    fileprivate var panDirection: PanDirection = .none
 
     init(place: Place) {
         super.init(nibName: nil, bundle: nil)
@@ -119,7 +140,7 @@ class PlaceDetailViewController: UIViewController {
         super.viewDidLoad()
 
         view.addSubview(scrollView)
-        scrollView.contentSize = view.bounds.size
+        scrollView.contentSize = CGSize(width: 1, height: view.bounds.height)
         var constraints = [scrollView.topAnchor.constraint(equalTo: view.topAnchor),
                            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -130,9 +151,11 @@ class PlaceDetailViewController: UIViewController {
         backgroundImage.addSubview(backgroundBlurEffect)
         scrollView.addSubview(imageCarousel)
 
+        backgroundImageHeightConstraint = backgroundImage.heightAnchor.constraint(equalToConstant: scrollView.contentSize.height)
+
         constraints += [backgroundImage.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageCarouselHeightConstant),
                            backgroundImage.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-                           backgroundImage.heightAnchor.constraint(equalToConstant: scrollView.contentSize.height),
+                           backgroundImageHeightConstraint!,
                            backgroundImage.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)]
 
         backgroundImage.addSubview(backgroundBlurEffect)
@@ -154,7 +177,7 @@ class PlaceDetailViewController: UIViewController {
         self.addChildViewController(currentCardViewController)
 
         // add a pan gesture recognizer to the current place card
-        currentCardViewController.cardView.addGestureRecognizer(panGestureRecognizer)
+        addGestureRecognizers(toViewController: currentCardViewController)
 
 
         if let previousPlace = dataSource?.previousPlace(forPlace: currentCardViewController.place) {
@@ -190,6 +213,12 @@ class PlaceDetailViewController: UIViewController {
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
 
+    func addGestureRecognizers(toViewController viewController: PlaceDetailsCardViewController) {
+        //     viewController.cardView.addGestureRecognizer(leftSwipeGestureRecognizer)
+        //      viewController.cardView.addGestureRecognizer(rightSwipeGestureRecognizer)
+        viewController.cardView.addGestureRecognizer(panGestureRecognizer)
+    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -208,40 +237,69 @@ class PlaceDetailViewController: UIViewController {
         return newController
     }
 
+    func didSwipeLeft(gestureRecognizer: UISwipeGestureRecognizer) {
+        print("Did Swipe Left")
+    }
+
+    func didSwipeRight(gestureRecognizer: UISwipeGestureRecognizer) {
+        print("Did Swipe Right")
+    }
+
     func didPan(gestureRecognizer: UIPanGestureRecognizer) {
+
+        defer {
+            if gestureRecognizer.state == .ended {
+                panDirection = .none
+            }
+        }
+
+        let translationInScrollView = gestureRecognizer.translation(in: self.scrollView)
 
         if gestureRecognizer.state == .began {
             startConstant = currentCardViewCenterXConstraint?.constant ?? 0
+
+            // detect whether we are scrolling up & down, or left to right.
+            // if scrolling up and down, simply set content offset for scrollview
+            // otherwise pan and page
+            if scrollView.contentSize.height > view.bounds.height
+                && abs(translationInScrollView.y) > abs(translationInScrollView.x) {
+                panDirection = .vertical
+            } else {
+                panDirection = .horizontal
+            }
         }
+        switch panDirection {
+            //        case .vertical:
+            //            let contentOffsetY = -translationInScrollView.y
+            //            if contentOffsetY > 0 && contentOffsetY < scrollView.contentSize.height {
+            //                print("\ncontentOffsetY = \(contentOffsetY)")
+            //                print("scrollView.contentSize.height = \(scrollView.contentSize.height)")
+            //                self.scrollView.contentOffset = CGPoint(x: 0, y: -translationInScrollView.y)
+        //            }
+        case .horizontal:
+            let translationX = gestureRecognizer.translation(in: self.view).x
 
-        let translationX = gestureRecognizer.translation(in: self.view).x
+            if gestureRecognizer.state == .ended {
+                // figure out where the view would stop based on the velocity with which the user is panning
+                // this is so that paging quickly feels natural
+                let velocityX = (0.2 * gestureRecognizer.velocity(in: self.view).x)
+                let finalX = startConstant + translationX + velocityX;
+                let animationDuration = 0.5
 
-        // detect whether we are scrolling up & down, or left to right.
-        // if scrolling up and down, simply set content offset for scrollview
-        // otherwise pan and page
-        let translationInScrollView = gestureRecognizer.translation(in: self.scrollView)
-        if scrollView.contentSize.height > view.bounds.height
-            && abs(translationInScrollView.y) > abs(translationInScrollView.x) {
-            self.scrollView.contentOffset = CGPoint(x: 0, y: -translationInScrollView.y)
+                if canPageToNextPlaceCard(finalXPosition: finalX) {
+                    pageToNextPlaceCard(animateWithDuration: animationDuration)
+                } else if canPageToPreviousPlaceCard(finalXPosition: finalX) {
+                    pageToPreviousPlaceCard(animateWithDuration: animationDuration)
+                } else {
+                    unwindToCurrentPlaceCard(animateWithDuration: animationDuration)
+                }
+            } else {
+                currentCardViewCenterXConstraint?.constant = startConstant + translationX
+            }
+        default:
             return
         }
 
-        if gestureRecognizer.state == .ended {
-            // figure out where the view would stop based on the velocity with which the user is panning
-            // this is so that paging quickly feels natural
-            let velocityX = (0.2 * gestureRecognizer.velocity(in: self.view).x)
-            let finalX = startConstant + translationX + velocityX;
-
-            if canPageToNextPlaceCard(finalXPosition: finalX) {
-                pageToNextPlaceCard(animateWithDuration: animationDurationConstant)
-            } else if canPageToPreviousPlaceCard(finalXPosition: finalX) {
-                pageToPreviousPlaceCard(animateWithDuration: animationDurationConstant)
-            } else {
-                unwindToCurrentPlaceCard(animateWithDuration: animationDurationConstant)
-            }
-        } else {
-            currentCardViewCenterXConstraint?.constant = startConstant + translationX
-        }
     }
 
     fileprivate func canPageToNextPlaceCard(finalXPosition: CGFloat) -> Bool {
@@ -286,7 +344,9 @@ class PlaceDetailViewController: UIViewController {
                 // ensure that the correct current, previous and next view controller references are set
                 self.imageCarousel.removeFromSuperview()
                 self.imageCarousel = nextCardImageCarousel
-                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
+                self.currentCardViewController.cardView.removeGestureRecognizer(self.leftSwipeGestureRecognizer)
+                self.currentCardViewController.cardView.removeGestureRecognizer(self.rightSwipeGestureRecognizer)
+                //                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
                 if let previousCardViewController = self.previousCardViewController {
                     previousCardViewController.cardView.removeFromSuperview()
                     previousCardViewController.cardView.isHidden = false
@@ -295,7 +355,7 @@ class PlaceDetailViewController: UIViewController {
                 }
                 self.previousCardViewController = self.currentCardViewController
                 self.currentCardViewController = nextCardViewController
-                self.currentCardViewController.cardView.addGestureRecognizer(self.panGestureRecognizer)
+                self.addGestureRecognizers(toViewController: self.currentCardViewController)
                 self.nextCardViewController = newNextCardViewController
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
             }
@@ -344,7 +404,9 @@ class PlaceDetailViewController: UIViewController {
             self.view.layoutIfNeeded()
         }, completion: { finished in
             if finished {
-                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
+                self.currentCardViewController.cardView.removeGestureRecognizer(self.leftSwipeGestureRecognizer)
+                self.currentCardViewController.cardView.removeGestureRecognizer(self.rightSwipeGestureRecognizer)
+                //                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
                 if let nextCardViewController = self.nextCardViewController {
                     nextCardViewController.cardView.removeFromSuperview()
                     nextCardViewController.cardView.isHidden = false
@@ -355,7 +417,7 @@ class PlaceDetailViewController: UIViewController {
                 self.imageCarousel = previousCardImageCarousel
                 self.nextCardViewController = self.currentCardViewController
                 self.currentCardViewController = previousCardViewController
-                self.currentCardViewController.cardView.addGestureRecognizer(self.panGestureRecognizer)
+                self.addGestureRecognizers(toViewController: self.currentCardViewController)
                 self.previousCardViewController = newPreviousCardViewController
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
             }
@@ -447,6 +509,19 @@ extension PlaceDetailViewController: PlaceDetailsCardDelegate {
             return
         }
         let totalViewHeight = newHeight + cardViewTopAnchorConstant
-        scrollView.contentSize = CGSize(width: view.bounds.width, height: totalViewHeight)
+        scrollView.contentSize = CGSize(width: 1, height: totalViewHeight)
+        backgroundImageHeightConstraint?.constant = totalViewHeight
+        self.updateViewConstraints()
+        if totalViewHeight > view.bounds.height {
+            scrollView.isScrollEnabled = true
+        } else {
+            scrollView.isScrollEnabled = false
+        }
+    }
+}
+extension PlaceDetailViewController: UIGestureRecognizerDelegate {
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return gestureRecognizer == panGestureRecognizer && otherGestureRecognizer == scrollView.panGestureRecognizer
     }
 }

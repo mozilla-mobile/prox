@@ -41,6 +41,8 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
         return view
     }()
 
+    lazy var descriptionTitleView: UIView = UIView()
+
     init(labelText: String,
          icon: UIImage?, // TODO: non-optional
          horizontalMargin: CGFloat) {
@@ -52,66 +54,85 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
         backgroundColor = .clear
 
         setupSubviews()
-        setupGestureRecognizer()
+        setupLine()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupGestureRecognizer() {
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
-        addGestureRecognizer(gestureRecognizer)
-    }
+    lazy var expandableLabelHeightConstraint: NSLayoutConstraint = {
+        return self.expandableLabel.heightAnchor.constraint(equalToConstant: 0)
+    }()
+
+    lazy var expandableLabelBottomConstraint: NSLayoutConstraint = {
+        return self.expandableLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+    }()
+
+    lazy var logoBottomConstraint: NSLayoutConstraint = {
+        return self.logoView.bottomAnchor.constraint(equalTo: self.descriptionTitleView.bottomAnchor)
+    }()
 
     private func setupSubviews() {
-        addSubview(logoView)
-        var constraints = [logoView.topAnchor.constraint(equalTo: topAnchor),
-                           logoView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalMargin),
+        addSubview(descriptionTitleView)
+        var constraints = [descriptionTitleView.topAnchor.constraint(equalTo: topAnchor),
+                           descriptionTitleView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalMargin),
+                           descriptionTitleView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: horizontalMargin)]
+
+        descriptionTitleView.addSubview(logoView)
+        constraints += [logoView.leadingAnchor.constraint(equalTo: descriptionTitleView.leadingAnchor),
                            logoView.widthAnchor.constraint(equalToConstant: 16),
-                           logoView.bottomAnchor.constraint(equalTo: label.bottomAnchor)]
+                           logoView.heightAnchor.constraint(equalToConstant: 16),
+                           logoView.topAnchor.constraint(equalTo: descriptionTitleView.topAnchor, constant: 20),
+                           logoBottomConstraint]
 
-        addSubview(label)
-        constraints += [label.topAnchor.constraint(equalTo: logoView.topAnchor),
+        descriptionTitleView.addSubview(label)
+        constraints += [label.centerYAnchor.constraint(equalTo: logoView.centerYAnchor),
                         label.leadingAnchor.constraint(equalTo: logoView.trailingAnchor, constant: horizontalMargin),
-                        label.trailingAnchor.constraint(equalTo: expandButton.leadingAnchor, constant: -horizontalMargin),
-                        label.heightAnchor.constraint(equalToConstant: 56)]
+                        label.trailingAnchor.constraint(equalTo: expandButton.leadingAnchor, constant: -horizontalMargin)]
 
-        addSubview(expandButton)
-        constraints += [expandButton.topAnchor.constraint(equalTo: logoView.topAnchor),
-                        expandButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -horizontalMargin),
+        descriptionTitleView.addSubview(expandButton)
+        constraints += [expandButton.centerYAnchor.constraint(equalTo: logoView.centerYAnchor),
+                        expandButton.trailingAnchor.constraint(equalTo: descriptionTitleView.trailingAnchor, constant: -horizontalMargin),
                         expandButton.widthAnchor.constraint(equalToConstant: 16),
-                        expandButton.bottomAnchor.constraint(equalTo: logoView.bottomAnchor)]
+                        expandButton.heightAnchor.constraint(equalToConstant: 16)]
 
-        collapsedConstraints = [bottomAnchor.constraint(equalTo: label.bottomAnchor)]
-        constraints += collapsedConstraints
+        addSubview(expandableLabel)
+        constraints += [expandableLabel.topAnchor.constraint(equalTo: descriptionTitleView.bottomAnchor),
+                        expandableLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalMargin),
+                        expandableLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
+                        expandableLabelHeightConstraint,
+                        expandableLabelBottomConstraint]
+//        expandableLabel.isHidden = true
 
-        expandedConstraints = getExpandedConstraints()
+//        collapsedConstraints = [bottomAnchor.constraint(equalTo: label.bottomAnchor)]
+//        constraints += collapsedConstraints
+//
+//        expandedConstraints = getExpandedConstraints()
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
+//
+//    private func getExpandedConstraints() -> [NSLayoutConstraint] {
+//        return [expandableLabel.topAnchor.constraint(equalTo: label.bottomAnchor),
+//                expandableLabel.leadingAnchor.constraint(equalTo: logoView.leadingAnchor),
+//                expandableLabel.trailingAnchor.constraint(equalTo: expandButton.trailingAnchor),
+//                bottomAnchor.constraint(equalTo: expandableLabel.bottomAnchor)]
+//    }
 
-    private func getExpandedConstraints() -> [NSLayoutConstraint] {
-        return [expandableLabel.topAnchor.constraint(equalTo: label.bottomAnchor),
-                expandableLabel.leadingAnchor.constraint(equalTo: logoView.leadingAnchor),
-                expandableLabel.trailingAnchor.constraint(equalTo: expandButton.trailingAnchor),
-                bottomAnchor.constraint(equalTo: expandableLabel.bottomAnchor)]
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        setupLine()
-    }
+//    override func layoutSubviews() {
+//        super.layoutSubviews()
+//        setupLine()
+//    }
 
     private func setupLine() {
         color = Colors.detailsViewCardSeparator
-        startX = bounds.minX
-        endX = bounds.maxX
-        startY = bounds.minY
-        endY = bounds.minY // TODO: divide by pixel scaling to ensure 1px
+        startX = 0.0
+        startY = 0.0
+        endY = 0.0
     }
 
-    @objc private func didTap() {
+    func didTap() {
         switch uiMode {
         case .collapsed:
             uiMode = .expanded
@@ -123,20 +144,16 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
     }
 
     private func expandView() {
-        layoutIfNeeded()
-
-        NSLayoutConstraint.deactivate(collapsedConstraints)
-        addSubview(expandableLabel)
-        NSLayoutConstraint.activate(expandedConstraints, translatesAutoresizingMaskIntoConstraints: false)
+        expandableLabelHeightConstraint.isActive = false
+        expandableLabelBottomConstraint.constant = -10
+        logoBottomConstraint.constant = -20
         self.layoutIfNeeded()
     }
 
     private func collapseView() {
-        layoutIfNeeded()
-
-        expandableLabel.removeFromSuperview()
-        NSLayoutConstraint.deactivate(expandedConstraints)
-        NSLayoutConstraint.activate(collapsedConstraints)
+        expandableLabelBottomConstraint.constant = 0
+        expandableLabelHeightConstraint.isActive = true
+        logoBottomConstraint.constant = 0
         self.layoutIfNeeded()
     }
 }

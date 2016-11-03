@@ -16,14 +16,16 @@ class PlaceDetailsCardView: UIView {
     let CardMarginBottom: CGFloat = 24 // TODO: name
 
     lazy var containingStackView: UIStackView = {
-        let view = UIStackView(arrangedSubviews: [self.labelContainer,
-                                                  self.iconInfoViewContainer,
-                                                  self.reviewViewContainer,
-                                                  self.descriptionViewContainer])
+        let view = UIStackView(arrangedSubviews:[self.labelContainer,
+                                                 self.iconInfoViewContainer,
+                                                 self.reviewViewContainer,
+                                                 self.wikiDescriptionView,
+                                                 self.yelpDescriptionView
+            ])
         view.axis = .vertical
         view.spacing = 24
 
-        view.layoutMargins = UIEdgeInsets(top: 24, left: 0, bottom: 0, right: 0)
+        view.layoutMargins = UIEdgeInsets(top: 24, left: 0, bottom: 20, right: 0)
         view.isLayoutMarginsRelativeArrangement = true
         return view
     }()
@@ -56,13 +58,23 @@ class PlaceDetailsCardView: UIView {
 
     // Ideally we also use a UIStackView but the review dots stretched too
     // far across the screen and it was faster to do it this way.
-    lazy var reviewViewContainer = UIView()
+    lazy var reviewViewContainer: UIStackView = {
+        let reviewStackView = UIStackView(arrangedSubviews: [self.yelpReviewView,
+                                          self.tripAdvisorReviewView])
+        reviewStackView.layoutMargins = UIEdgeInsets(top: 0, left: 25, bottom: 0, right: 25)
+        reviewStackView.spacing = 25
+        reviewStackView.axis = .horizontal
+        reviewStackView.isLayoutMarginsRelativeArrangement = true
+        reviewStackView.distribution = .fillProportionally
+        return reviewStackView
+    }()
 
     // Prevents spacing between views from parent stack view.
     lazy var descriptionViewContainer: UIStackView = {
         let view = UIStackView(arrangedSubviews: [self.wikiDescriptionView,
                                                   self.yelpDescriptionView])
         view.axis = .vertical
+        view.distribution = .fillProportionally
         return view
     }()
 
@@ -149,31 +161,34 @@ class PlaceDetailsCardView: UIView {
         // Note: The constraints of subviews broke when I used leading/trailing, rather than
         // centerX & width. The parent constraints are set with centerX & width - related?
         addSubview(containingStackView)
-        var constraints = [containingStackView.topAnchor.constraint(equalTo: topAnchor),
-                           containingStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-                           containingStackView.widthAnchor.constraint(equalTo: widthAnchor),
-                           containingStackView.bottomAnchor.constraint(equalTo: bottomAnchor)]
+         NSLayoutConstraint.activate([containingStackView.topAnchor.constraint(equalTo: topAnchor),
+                           containingStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                           containingStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+                           containingStackView.trailingAnchor.constraint(equalTo: trailingAnchor)], translatesAutoresizingMaskIntoConstraints: false)
 
-        // Already added to stack view.
-        constraints += [reviewViewContainer.bottomAnchor.constraint(equalTo: yelpReviewView.bottomAnchor)]
-
-        reviewViewContainer.addSubview(yelpReviewView)
-        constraints += [yelpReviewView.topAnchor.constraint(equalTo: reviewViewContainer.topAnchor),
-                        yelpReviewView.centerXAnchor.constraint(equalTo: travelTimeView.centerXAnchor),
-                        yelpReviewView.widthAnchor.constraint(equalToConstant: 128)]
-
-        reviewViewContainer.addSubview(tripAdvisorReviewView)
-        constraints += [tripAdvisorReviewView.topAnchor.constraint(equalTo: yelpReviewView.topAnchor),
-                        tripAdvisorReviewView.centerXAnchor.constraint(equalTo: hoursView.centerXAnchor),
-                        tripAdvisorReviewView.widthAnchor.constraint(equalTo: yelpReviewView.widthAnchor)]
-
-        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
+
+    private func setupGestureRecognizers() {
+        wikiDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
+        yelpDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
+    }
+
+    @objc private func didTap(gestureRecognizer: UITapGestureRecognizer) {
+        guard gestureRecognizer.state == .ended,
+            let descriptionView = gestureRecognizer.view as? PlaceDetailsDescriptionView else {
+                return
+        }
+
+        descriptionView.didTap()
         updateViewSize()
+
     }
+
+    //    override func layoutSubviews() {
+    //       super.layoutSubviews()
+    //  updateViewSize()
+    //}
 
     // TODO: when else can we call this? layoutSubviews is called when we scroll and we don't want to calculate all this each time...
     private func updateViewSize() {
@@ -183,12 +198,14 @@ class PlaceDetailsCardView: UIView {
 
         delegate?.placeDetailsCardView(cardView: self, heightDidChange: contentHeight)
 
-        let cardMinY = frame.minY
-        let cardMaxY = (window?.frame.maxY)! - CardMarginBottom
-        let cardHeight = min(contentHeight, cardMaxY - cardMinY) // grow with content until margin
-        let newFrame = CGRect(origin: frame.origin, size: CGSize(width: widthFromConstraints, height: cardHeight))
+        self.layoutIfNeeded()
 
-        if frame != newFrame { frame = newFrame }
+        //        let cardMinY = frame.minY
+        //       let cardMaxY = (window?.frame.maxY)! - CardMarginBottom
+        //       let cardHeight = min(contentHeight, cardMaxY - cardMinY) // grow with content until margin
+        //       let newFrame = CGRect(origin: frame.origin, size: CGSize(width: widthFromConstraints, height: cardHeight))
+
+        //        if frame != newFrame { frame = newFrame }
     }
 
     private func setTestData() {
