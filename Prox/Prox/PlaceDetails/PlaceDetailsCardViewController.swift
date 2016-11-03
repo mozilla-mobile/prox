@@ -100,6 +100,7 @@ class PlaceDetailsCardViewController: UIViewController {
         guard let place = place else {
             return
         }
+        cardView.updateUI(forPlace: place)
         pageControl.numberOfPages = place.photoURLs?.count ?? 0
     }
 

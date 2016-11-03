@@ -75,7 +75,10 @@ class Place: Hashable {
             return nil
         }
 
-        // TODO: keys to deal with
+        // TODO:
+        // * validate incoming data
+        // * b/c ^, tests
+        // * keys to deal with
         //  - version
         //  - description: utilize provider
         //  - phone
@@ -109,9 +112,67 @@ enum DayOfWeek: Int {
     case monday = 0 // matches server representation
     case tuesday, wednesday, thursday, friday
     case saturday, sunday
+
+    static func forDate(_ date: Date) -> DayOfWeek {
+        let iOSWeekday = getiOSWeekday(forDate: date)
+        return weekday(fromiOSWeekday: iOSWeekday)
+    }
+
+    private static func getiOSWeekday(forDate date: Date) -> Int {
+        let cal = Calendar(identifier: .gregorian)
+        return cal.component(.weekday, from: date)
+    }
+
+    private static func weekday(fromiOSWeekday iOSWeekday: Int) -> DayOfWeek {
+        // iOSWeekday is 1-7 where Sun = 1; we are 0-6 where Mon = 0
+        var dayInt = iOSWeekday - 2
+        if dayInt < 0 { // only Sunday
+            dayInt = 6
+        }
+        return DayOfWeek(rawValue: dayInt)!
+    }
 }
 
 struct OpenHours {
     let startTime: Int
     let endTime: Int
+
+    private static let inputFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HHmm"
+        return formatter
+    }()
+
+    private static let outputFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short // Time will appear in users' clock config: 12hr or 24hr.
+        return formatter
+    }()
+
+    func getStringForStartTime() -> String {
+        return getString(forTime: startTime)
+    }
+
+    func getStringForEndTime() -> String {
+        return getString(forTime: endTime)
+    }
+
+    private func getString(forTime time: Int) -> String {
+        var inputStr = String(time)
+        let len = inputStr.characters.count
+        guard len == 3 || len == 4 else {
+            fatalError("Invalid date str: \(inputStr)")
+        }
+
+        // We expect len 4.
+        if len == 3 {
+            inputStr.insert("0", at: inputStr.startIndex)
+        }
+
+        guard let date = OpenHours.inputFormatter.date(from: inputStr) else {
+            fatalError("Unable to convert input: \(time)")
+        }
+        return OpenHours.outputFormatter.string(from: date)
+    }
 }

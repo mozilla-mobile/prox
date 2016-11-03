@@ -55,6 +55,8 @@
 		E662FF4C1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */; };
 		E662FF4E1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662FF4D1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift */; };
 		E67146361DB54896007A99E4 /* CLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67146351DB54896007A99E4 /* CLLocationManager.swift */; };
+		E68BD90D1DCA9E8E007B51A3 /* DayOfWeekTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68BD90C1DCA9E8E007B51A3 /* DayOfWeekTests.swift */; };
+		E68BD90F1DCAAD6B007B51A3 /* OpenHoursTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68BD90E1DCAAD6B007B51A3 /* OpenHoursTests.swift */; };
 		EC42FE32127D2BD0FE36402D /* Pods_ProxUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -149,6 +151,8 @@
 		E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsIconInfoView.swift; sourceTree = "<group>"; };
 		E662FF4D1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsDescriptionView.swift; sourceTree = "<group>"; };
 		E67146351DB54896007A99E4 /* CLLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLLocationManager.swift; path = Extensions/CLLocationManager.swift; sourceTree = "<group>"; };
+		E68BD90C1DCA9E8E007B51A3 /* DayOfWeekTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayOfWeekTests.swift; sourceTree = "<group>"; };
+		E68BD90E1DCAAD6B007B51A3 /* OpenHoursTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenHoursTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -238,6 +242,8 @@
 		7B29E7D61DA3EC360099AF38 /* ProxTests */ = {
 			isa = PBXGroup;
 			children = (
+				E68BD90E1DCAAD6B007B51A3 /* OpenHoursTests.swift */,
+				E68BD90C1DCA9E8E007B51A3 /* DayOfWeekTests.swift */,
 				7B29E7D71DA3EC360099AF38 /* ProxTests.swift */,
 				7B29E7D91DA3EC360099AF38 /* Info.plist */,
 				7B5095801DB65FD4007C54F0 /* TravelTimesTests.swift */,
@@ -743,6 +749,8 @@
 				7B8651941DBFAFA8002A666A /* PlaceUtilitiesTests.swift in Sources */,
 				7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */,
 				7B50957A1DB65342007C54F0 /* TravelTimesProvider.swift in Sources */,
+				E68BD90D1DCA9E8E007B51A3 /* DayOfWeekTests.swift in Sources */,
+				E68BD90F1DCAAD6B007B51A3 /* OpenHoursTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

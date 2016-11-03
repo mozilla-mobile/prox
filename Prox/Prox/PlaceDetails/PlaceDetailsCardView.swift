@@ -15,6 +15,8 @@ class PlaceDetailsCardView: UIView {
     let margin: CGFloat = 24
     let CardMarginBottom: CGFloat = 20 // TODO: name
 
+    let MaxDisplayedCategories = 3 // TODO: value
+
     lazy var containingStackView: UIStackView = {
         let view = UIStackView(arrangedSubviews:[self.labelContainer,
                                                  self.iconInfoViewContainer,
@@ -188,19 +190,57 @@ class PlaceDetailsCardView: UIView {
         delegate?.placeDetailsCardView(cardView: self, heightDidChange: containingStackView.bounds.height)
     }
 
+    // TODO: don't duplicate PlaceCarousel code
+    func updateUI(forPlace place: Place) {
+        // Labels will gracefully collapse on nil.
+        titleLabel.text = place.name
+        categoryLabel.text = place.categories?.prefix(MaxDisplayedCategories).joined(separator: " • ")
+        urlLabel.text = place.url ?? nil
+
+        // TODO: error states for missing data.
+        updateHoursUI(place.hours)
+
+        updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
+        updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)
+    }
+
+    private func updateReviewUI(fromProvider provider: ReviewProvider?, onView view: ReviewContainerView) {
+        guard let provider = provider else {
+            view.score = 0
+            view.numberOfReviewersLabel.text = "No data found" // TODO: error state.
+            return
+        }
+
+        // TODO: error states
+        view.score = provider.rating ?? 0
+        view.numberOfReviewersLabel.text = "\(provider.totalReviewCount ?? 0) Reviews"
+    }
+
+    private func updateHoursUI(_ hours: [DayOfWeek:OpenHours]?) {
+        let todayDayOfWeek = DayOfWeek.forDate(Date())
+
+        let primaryText: String
+        let secondaryText: String
+        if hours == nil {
+            primaryText = "Unknown"
+            secondaryText = "No hours data :("
+        } else if let todaysHours = hours![todayDayOfWeek] {
+            // TODO: figure out if it's past closing time. or rather filter out place sooner?
+            primaryText = todaysHours.getStringForEndTime()
+            secondaryText = "Closing time"
+        } else {
+            primaryText = "Unknown"
+            secondaryText = "Missing today's hours"
+        }
+
+        hoursView.primaryTextLabel.text = primaryText
+        hoursView.secondaryTextLabel.text = secondaryText
+    }
+
     private func setTestData() {
-        titleLabel.text = "The Location Title"
-        categoryLabel.text = ["Hotel", "Bar", "Pool"].joined(separator: " • ") // TODO: dot is too thick
-        urlLabel.text = "http://mozilla.org"
         travelTimeView.primaryTextLabel.text = "18 min"
         travelTimeView.secondaryTextLabel.text = "Walking"
         travelTimeView.iconView.image = UIImage(named: "icon_walkingdist")
-        hoursView.primaryTextLabel.text = "10:00 pm"
-        hoursView.secondaryTextLabel.text = "Closing time"
-        yelpReviewView.score = 3
-        yelpReviewView.numberOfReviewersLabel.text = "567 Reviews"
-        tripAdvisorReviewView.score = 3
-        tripAdvisorReviewView.numberOfReviewersLabel.text = "123 reviews"
         let descriptionText = "The Hilton Waikoloa Village is bulit on 62 acres (250,000 m2) and has 1240 rooms and suites with tropical gardens, waterfalls, lagoons and waterways. The resort features gardens, artworks, and status. It was originally...\n\nIt also serves as the setting for the Nickelodeon game show Paradise Run.\n\nLast updated on May 16th, 2016\n\nRead more on Wikipedia"
         wikiDescriptionView.expandableLabel.text = descriptionText
         yelpDescriptionView.expandableLabel.text = descriptionText
