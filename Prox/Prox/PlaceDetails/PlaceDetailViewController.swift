@@ -247,13 +247,6 @@ class PlaceDetailViewController: UIViewController {
             }
         }
         switch panDirection {
-            //        case .vertical:
-            //            let contentOffsetY = -translationInScrollView.y
-            //            if contentOffsetY > 0 && contentOffsetY < scrollView.contentSize.height {
-            //                print("\ncontentOffsetY = \(contentOffsetY)")
-            //                print("scrollView.contentSize.height = \(scrollView.contentSize.height)")
-            //                self.scrollView.contentOffset = CGPoint(x: 0, y: -translationInScrollView.y)
-        //            }
         case .horizontal:
             let translationX = gestureRecognizer.translation(in: self.view).x
 
