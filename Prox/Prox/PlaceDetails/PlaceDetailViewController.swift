@@ -73,18 +73,6 @@ class PlaceDetailViewController: UIViewController {
         return badge
     }()
 
-    fileprivate lazy var leftSwipeGestureRecognizer: UISwipeGestureRecognizer = {
-        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipeLeft(gestureRecognizer:)))
-        swipe.direction = .left
-        return swipe
-    }()
-
-    fileprivate lazy var rightSwipeGestureRecognizer: UISwipeGestureRecognizer = {
-        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipeRight(gestureRecognizer:)))
-        swipe.direction = .right
-        return swipe
-    }()
-
     fileprivate var previousCardViewController: PlaceDetailsCardViewController?
     fileprivate var currentCardViewController: PlaceDetailsCardViewController!
     fileprivate var nextCardViewController: PlaceDetailsCardViewController?
@@ -214,8 +202,6 @@ class PlaceDetailViewController: UIViewController {
     }
 
     func addGestureRecognizers(toViewController viewController: PlaceDetailsCardViewController) {
-        //     viewController.cardView.addGestureRecognizer(leftSwipeGestureRecognizer)
-        //      viewController.cardView.addGestureRecognizer(rightSwipeGestureRecognizer)
         viewController.cardView.addGestureRecognizer(panGestureRecognizer)
     }
 
@@ -235,14 +221,6 @@ class PlaceDetailViewController: UIViewController {
         newController.placeImageDelegate = self
         newController.cardView.delegate = self
         return newController
-    }
-
-    func didSwipeLeft(gestureRecognizer: UISwipeGestureRecognizer) {
-        print("Did Swipe Left")
-    }
-
-    func didSwipeRight(gestureRecognizer: UISwipeGestureRecognizer) {
-        print("Did Swipe Right")
     }
 
     func didPan(gestureRecognizer: UIPanGestureRecognizer) {
@@ -344,9 +322,7 @@ class PlaceDetailViewController: UIViewController {
                 // ensure that the correct current, previous and next view controller references are set
                 self.imageCarousel.removeFromSuperview()
                 self.imageCarousel = nextCardImageCarousel
-                self.currentCardViewController.cardView.removeGestureRecognizer(self.leftSwipeGestureRecognizer)
-                self.currentCardViewController.cardView.removeGestureRecognizer(self.rightSwipeGestureRecognizer)
-                //                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
+                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
                 if let previousCardViewController = self.previousCardViewController {
                     previousCardViewController.cardView.removeFromSuperview()
                     previousCardViewController.cardView.isHidden = false
@@ -404,9 +380,7 @@ class PlaceDetailViewController: UIViewController {
             self.view.layoutIfNeeded()
         }, completion: { finished in
             if finished {
-                self.currentCardViewController.cardView.removeGestureRecognizer(self.leftSwipeGestureRecognizer)
-                self.currentCardViewController.cardView.removeGestureRecognizer(self.rightSwipeGestureRecognizer)
-                //                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
+                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
                 if let nextCardViewController = self.nextCardViewController {
                     nextCardViewController.cardView.removeFromSuperview()
                     nextCardViewController.cardView.isHidden = false
