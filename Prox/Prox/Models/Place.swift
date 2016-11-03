@@ -75,7 +75,10 @@ class Place: Hashable {
             return nil
         }
 
-        // TODO: keys to deal with
+        // TODO:
+        // * validate incoming data
+        // * b/c ^, tests
+        // * keys to deal with
         //  - version
         //  - description: utilize provider
         //  - phone
