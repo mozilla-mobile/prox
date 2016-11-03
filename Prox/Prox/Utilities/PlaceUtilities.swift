@@ -5,6 +5,9 @@
 import Foundation
 
 struct PlaceUtilities {
+
+    private static let MaxDisplayedCategories = 3 // via #54
+
     static func sort(places: [Place], byDistanceFromLocation location: CLLocation, ascending: Bool = true) -> [Place] {
         return places.sorted { (placeA, placeB) -> Bool in
             let placeADistance = location.distance(from: CLLocation(latitude: placeA.latLong.latitude, longitude: placeA.latLong.longitude))
@@ -16,6 +19,10 @@ struct PlaceUtilities {
 
             return placeADistance > placeBDistance
         }
+    }
+
+    static func getString(forCategories categories: [String]?) -> String? {
+        return categories?.prefix(MaxDisplayedCategories).joined(separator: " • ")
     }
 
     static func updateReviewUI(fromProvider provider: ReviewProvider?, onView view: ReviewContainerView) {

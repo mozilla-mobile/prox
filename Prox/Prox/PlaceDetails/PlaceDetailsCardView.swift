@@ -15,8 +15,6 @@ class PlaceDetailsCardView: UIView {
     let margin: CGFloat = 24
     let CardMarginBottom: CGFloat = 20 // TODO: name
 
-    let MaxDisplayedCategories = 3 // TODO: value
-
     lazy var containingStackView: UIStackView = {
         let view = UIStackView(arrangedSubviews:[self.labelContainer,
                                                  self.iconInfoViewContainer,
@@ -190,11 +188,10 @@ class PlaceDetailsCardView: UIView {
         delegate?.placeDetailsCardView(cardView: self, heightDidChange: containingStackView.bounds.height)
     }
 
-    // TODO: don't duplicate PlaceCarousel code
     func updateUI(forPlace place: Place) {
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
-        categoryLabel.text = place.categories?.prefix(MaxDisplayedCategories).joined(separator: " • ")
+        categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories)
         urlLabel.text = place.url ?? nil
 
         // TODO: error states for missing data.
