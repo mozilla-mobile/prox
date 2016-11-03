@@ -103,27 +103,9 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
                         expandableLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
                         expandableLabelHeightConstraint,
                         expandableLabelBottomConstraint]
-//        expandableLabel.isHidden = true
-
-//        collapsedConstraints = [bottomAnchor.constraint(equalTo: label.bottomAnchor)]
-//        constraints += collapsedConstraints
-//
-//        expandedConstraints = getExpandedConstraints()
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
-//
-//    private func getExpandedConstraints() -> [NSLayoutConstraint] {
-//        return [expandableLabel.topAnchor.constraint(equalTo: label.bottomAnchor),
-//                expandableLabel.leadingAnchor.constraint(equalTo: logoView.leadingAnchor),
-//                expandableLabel.trailingAnchor.constraint(equalTo: expandButton.trailingAnchor),
-//                bottomAnchor.constraint(equalTo: expandableLabel.bottomAnchor)]
-//    }
-
-//    override func layoutSubviews() {
-//        super.layoutSubviews()
-//        setupLine()
-//    }
 
     private func setupLine() {
         color = Colors.detailsViewCardSeparator

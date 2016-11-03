@@ -12,8 +12,8 @@ class PlaceDetailsCardView: UIView {
 
     weak var delegate: PlaceDetailsCardDelegate?
 
-    let TopMargin: CGFloat = 24
-    let CardMarginBottom: CGFloat = 24 // TODO: name
+    let margin: CGFloat = 24
+    let CardMarginBottom: CGFloat = 20 // TODO: name
 
     lazy var containingStackView: UIStackView = {
         let view = UIStackView(arrangedSubviews:[self.labelContainer,
@@ -23,9 +23,9 @@ class PlaceDetailsCardView: UIView {
                                                  self.yelpDescriptionView
             ])
         view.axis = .vertical
-        view.spacing = 24
+        view.spacing = self.margin
 
-        view.layoutMargins = UIEdgeInsets(top: 24, left: 0, bottom: 20, right: 0)
+        view.layoutMargins = UIEdgeInsets(top: self.margin, left: 0, bottom: self.CardMarginBottom, right: 0)
         view.isLayoutMarginsRelativeArrangement = true
         return view
     }()
@@ -40,7 +40,7 @@ class PlaceDetailsCardView: UIView {
         view.axis = .vertical
         view.spacing = 4
 
-        view.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        view.layoutMargins = UIEdgeInsets(top: 0, left: self.margin, bottom: 0, right: self.margin)
         view.isLayoutMarginsRelativeArrangement = true
         return view
     }()
@@ -61,21 +61,12 @@ class PlaceDetailsCardView: UIView {
     lazy var reviewViewContainer: UIStackView = {
         let reviewStackView = UIStackView(arrangedSubviews: [self.yelpReviewView,
                                           self.tripAdvisorReviewView])
-        reviewStackView.layoutMargins = UIEdgeInsets(top: 0, left: 25, bottom: 0, right: 25)
+        reviewStackView.layoutMargins = UIEdgeInsets(top: 0, left: self.margin, bottom: 0, right: self.margin)
         reviewStackView.spacing = 25
         reviewStackView.axis = .horizontal
         reviewStackView.isLayoutMarginsRelativeArrangement = true
         reviewStackView.distribution = .fillProportionally
         return reviewStackView
-    }()
-
-    // Prevents spacing between views from parent stack view.
-    lazy var descriptionViewContainer: UIStackView = {
-        let view = UIStackView(arrangedSubviews: [self.wikiDescriptionView,
-                                                  self.yelpDescriptionView])
-        view.axis = .vertical
-        view.distribution = .fillProportionally
-        return view
     }()
 
     // MARK: Inner views
@@ -166,6 +157,8 @@ class PlaceDetailsCardView: UIView {
                            containingStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
                            containingStackView.trailingAnchor.constraint(equalTo: trailingAnchor)], translatesAutoresizingMaskIntoConstraints: false)
 
+        setupGestureRecognizers()
+
     }
 
 
@@ -181,31 +174,18 @@ class PlaceDetailsCardView: UIView {
         }
 
         descriptionView.didTap()
-        updateViewSize()
+        self.layoutIfNeeded()
 
     }
 
-    //    override func layoutSubviews() {
-    //       super.layoutSubviews()
-    //  updateViewSize()
-    //}
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateViewSize()
+    }
 
     // TODO: when else can we call this? layoutSubviews is called when we scroll and we don't want to calculate all this each time...
     private func updateViewSize() {
-        let widthFromConstraints = bounds.width
-
-        let contentHeight = containingStackView.bounds.height
-
-        delegate?.placeDetailsCardView(cardView: self, heightDidChange: contentHeight)
-
-        self.layoutIfNeeded()
-
-        //        let cardMinY = frame.minY
-        //       let cardMaxY = (window?.frame.maxY)! - CardMarginBottom
-        //       let cardHeight = min(contentHeight, cardMaxY - cardMinY) // grow with content until margin
-        //       let newFrame = CGRect(origin: frame.origin, size: CGSize(width: widthFromConstraints, height: cardHeight))
-
-        //        if frame != newFrame { frame = newFrame }
+        delegate?.placeDetailsCardView(cardView: self, heightDidChange: containingStackView.bounds.height)
     }
 
     private func setTestData() {
