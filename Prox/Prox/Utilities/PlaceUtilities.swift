@@ -17,4 +17,23 @@ struct PlaceUtilities {
             return placeADistance > placeBDistance
         }
     }
+
+    static func updateReviewUI(fromProvider provider: ReviewProvider?, onView view: ReviewContainerView) {
+        guard let provider = provider else {
+            setSubviewAlpha(0.4, forParent: view)
+            view.score = 0
+            view.numberOfReviewersLabel.text = "No data available"
+            return
+        }
+
+        setSubviewAlpha(1.0, forParent: view)
+        view.score = provider.rating ?? 0 // TODO: error state (& next line)
+        view.numberOfReviewersLabel.text = "\(provider.totalReviewCount ?? 0) Reviews"
+    }
+
+    private static func setSubviewAlpha(_ alpha: CGFloat, forParent parentView: ReviewContainerView) {
+        for view in parentView.subviews {
+            view.alpha = alpha
+        }
+    }
 }

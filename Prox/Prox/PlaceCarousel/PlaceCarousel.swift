@@ -71,6 +71,12 @@ extension PlaceCarousel: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdentifier, for: indexPath) as! PlaceCarouselCollectionViewCell
+
+        if !isCellReused(cell) {
+            cell.yelpReview.reviewSiteLogo.image = UIImage(named: "logo_yelp")
+            cell.tripAdvisorReview.reviewSiteLogo.image = UIImage(named: "logo_ta")
+        }
+
         // TODO: this view is only partially filled in
         guard let dataSource = dataSource,
             let place = try? dataSource.place(forIndex: indexPath.item) else {
@@ -83,25 +89,8 @@ extension PlaceCarousel: UICollectionViewDataSource {
         cell.placeImage.image = UIImage(named: "place-placeholder") // TODO: placeholder w/o pop-in
         downloadAndSetImage(for: place, into: cell)
 
-
-        if let yelp = place.yelpProvider {
-            // TODO: handle optionals in UI
-            cell.yelpReview.score = Float(yelp.rating ?? -1)  // TODO: type
-            cell.yelpReview.reviewSiteLogo.image = UIImage(named: "logo_yelp")
-
-            // TODO: default value
-            let reviewCountText: String?
-            if let reviewCount = yelp.totalReviewCount {
-                reviewCountText = "\(reviewCount) Reviews"
-            } else {
-                reviewCountText = nil
-            }
-            cell.yelpReview.numberOfReviewersLabel.text = reviewCountText
-        }
-
-        cell.tripAdvisorReview.score = 3.5
-        cell.tripAdvisorReview.numberOfReviewersLabel.text = "6,665 Reviews"
-        cell.tripAdvisorReview.reviewSiteLogo.image = UIImage(named: "logo_ta")
+        PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: cell.yelpReview)
+        PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: cell.tripAdvisorReview)
 
         if let travelTimes = place.travelTimes {
             self.setTravelTimes(travelTimes: travelTimes, forCell: cell)
@@ -116,6 +105,10 @@ extension PlaceCarousel: UICollectionViewDataSource {
         }
 
         return cell
+    }
+
+    private func isCellReused(_ cell: PlaceCarouselCollectionViewCell) -> Bool {
+        return cell.yelpReview.reviewSiteLogo.image != nil
     }
 
     private func downloadAndSetImage(for place: Place, into cell: PlaceCarouselCollectionViewCell) {

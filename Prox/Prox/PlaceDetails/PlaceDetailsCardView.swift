@@ -200,20 +200,8 @@ class PlaceDetailsCardView: UIView {
         // TODO: error states for missing data.
         updateHoursUI(place.hours)
 
-        updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
-        updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)
-    }
-
-    private func updateReviewUI(fromProvider provider: ReviewProvider?, onView view: ReviewContainerView) {
-        guard let provider = provider else {
-            view.score = 0
-            view.numberOfReviewersLabel.text = "No data found" // TODO: error state.
-            return
-        }
-
-        // TODO: error states
-        view.score = provider.rating ?? 0
-        view.numberOfReviewersLabel.text = "\(provider.totalReviewCount ?? 0) Reviews"
+        PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
+        PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)
     }
 
     private func updateHoursUI(_ hours: [DayOfWeek:OpenHours]?) {
