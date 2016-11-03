@@ -133,4 +133,43 @@ enum DayOfWeek: Int {
 struct OpenHours {
     let startTime: Int
     let endTime: Int
+
+    private static let inputFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HHmm"
+        return formatter
+    }()
+
+    private static let outputFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short // Time will appear in users' clock config: 12hr or 24hr.
+        return formatter
+    }()
+
+    func getStringForStartTime() -> String {
+        return getString(forTime: startTime)
+    }
+
+    func getStringForEndTime() -> String {
+        return getString(forTime: endTime)
+    }
+
+    private func getString(forTime time: Int) -> String {
+        var inputStr = String(time)
+        let len = inputStr.characters.count
+        guard len == 3 || len == 4 else {
+            fatalError("Invalid date str: \(inputStr)")
+        }
+
+        // We expect len 4.
+        if len == 3 {
+            inputStr.insert("0", at: inputStr.startIndex)
+        }
+
+        guard let date = OpenHours.inputFormatter.date(from: inputStr) else {
+            fatalError("Unable to convert input: \(time)")
+        }
+        return OpenHours.outputFormatter.string(from: date)
+    }
 }
