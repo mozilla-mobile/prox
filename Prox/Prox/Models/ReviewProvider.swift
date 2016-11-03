@@ -10,7 +10,7 @@ class ReviewProvider {
     let url: String
 
     // Optional values.
-    let rating: Double?
+    let rating: Float?
     let reviews: [String]?
     let totalReviewCount: Int?
 
@@ -24,7 +24,7 @@ class ReviewProvider {
 
         self.url = url
 
-        self.rating = value["rating"] as? Double
+        self.rating = value["rating"] as? Float
         self.totalReviewCount = value["totalReviewCount"] as? Int
 
         // TODO: get values from DB (these are default).
