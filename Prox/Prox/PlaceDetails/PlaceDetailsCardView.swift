@@ -189,7 +189,6 @@ class PlaceDetailsCardView: UIView {
     }
 
     func updateUI(forPlace place: Place) {
-        setTestData() // TODO: rm
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories)
@@ -269,11 +268,5 @@ class PlaceDetailsCardView: UIView {
 
         let openTimeStr = openHours.getOpenTimeString(forDate: date)
         return ("Closed", "Opens at \(openTimeStr)")
-    }
-
-    private func setTestData() {
-        travelTimeView.primaryTextLabel.text = nil
-        travelTimeView.secondaryTextLabel.text = nil
-        travelTimeView.iconView.image = nil
     }
 }
