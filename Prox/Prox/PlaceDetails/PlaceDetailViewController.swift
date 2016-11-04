@@ -28,9 +28,17 @@ class PlaceDetailViewController: UIViewController {
         }
     }
 
+    weak var locationProvider: LocationProvider? {
+        didSet {
+            self.currentCardViewController.locationProvider = locationProvider
+        }
+    }
+
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.isScrollEnabled = false
+        scrollView.contentSize = CGSize(width: 1, height: self.view.bounds.height)
+        scrollView.bounces = false
         return scrollView
     }()
 
@@ -128,7 +136,6 @@ class PlaceDetailViewController: UIViewController {
         super.viewDidLoad()
 
         view.addSubview(scrollView)
-        scrollView.contentSize = CGSize(width: 1, height: view.bounds.height)
         var constraints = [scrollView.topAnchor.constraint(equalTo: view.topAnchor),
                            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -144,7 +151,7 @@ class PlaceDetailViewController: UIViewController {
         constraints += [backgroundImage.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageCarouselHeightConstant),
                            backgroundImage.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
                            backgroundImageHeightConstraint!,
-                           backgroundImage.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)]
+                           backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor)]
 
         backgroundImage.addSubview(backgroundBlurEffect)
         constraints += [backgroundBlurEffect.topAnchor.constraint(equalTo: backgroundImage.topAnchor),
@@ -220,6 +227,7 @@ class PlaceDetailViewController: UIViewController {
         let newController = PlaceDetailsCardViewController(place: place)
         newController.placeImageDelegate = self
         newController.cardView.delegate = self
+        newController.locationProvider = locationProvider
         return newController
     }
 
@@ -324,7 +332,6 @@ class PlaceDetailViewController: UIViewController {
                 }
                 self.previousCardViewController = self.currentCardViewController
                 self.currentCardViewController = nextCardViewController
-                self.addGestureRecognizers(toViewController: self.currentCardViewController)
                 self.nextCardViewController = newNextCardViewController
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
             }
@@ -384,7 +391,6 @@ class PlaceDetailViewController: UIViewController {
                 self.imageCarousel = previousCardImageCarousel
                 self.nextCardViewController = self.currentCardViewController
                 self.currentCardViewController = previousCardViewController
-                self.addGestureRecognizers(toViewController: self.currentCardViewController)
                 self.previousCardViewController = newPreviousCardViewController
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
             }
@@ -431,6 +437,8 @@ class PlaceDetailViewController: UIViewController {
 
         NSLayoutConstraint.deactivate(constraintsToDeactivate)
         NSLayoutConstraint.activate(constraintsToActivate, translatesAutoresizingMaskIntoConstraints: false)
+
+        self.addGestureRecognizers(toViewController: newCurrentCard)
     }
 
     fileprivate func unwindToCurrentPlaceCard(animateWithDuration animationDuration: TimeInterval) {
@@ -475,7 +483,7 @@ extension PlaceDetailViewController: PlaceDetailsCardDelegate {
         guard cardView == currentCardViewController.cardView else {
             return
         }
-        let totalViewHeight = newHeight + cardViewTopAnchorConstant
+        let totalViewHeight = newHeight + cardViewTopAnchorConstant + 25
         scrollView.contentSize = CGSize(width: 1, height: totalViewHeight)
         backgroundImageHeightConstraint?.constant = totalViewHeight
         self.updateViewConstraints()

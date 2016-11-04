@@ -30,6 +30,7 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
 
     lazy var placeImage: UIImageView = {
         let imageView = UIImageView()
+        imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.accessibilityIdentifier = "Image"
 

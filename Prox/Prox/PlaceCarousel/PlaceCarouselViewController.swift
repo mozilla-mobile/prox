@@ -21,6 +21,10 @@ protocol PlaceDataSource: class {
     func place(forIndex: Int) throws -> Place
 }
 
+protocol LocationProvider: class {
+    func getCurrentLocation() -> CLLocation?
+}
+
 struct PlaceDataSourceError: Error {
     let message: String
 }
@@ -69,17 +73,6 @@ class PlaceCarouselViewController: UIViewController {
         return view
     }()
 
-    // the map view
-    lazy var mapView: MKMapView = {
-        let view = MKMapView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-
-        view.showsUserLocation = true
-        view.isUserInteractionEnabled = false
-        view.delegate = self
-        return view
-    }()
-
     // label displaying sunrise and sunset times
     lazy var sunriseSetTimesLabel: UILabel = {
         let label = UILabel()
@@ -92,6 +85,7 @@ class PlaceCarouselViewController: UIViewController {
         let carousel = PlaceCarousel()
         carousel.delegate = self
         carousel.dataSource = self
+        carousel.locationProvider = self
         return carousel
     }()
 
@@ -158,6 +152,15 @@ class PlaceCarouselViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if let backgroundImage = UIImage(named: "map_background") {
+            self.view.backgroundColor = UIColor(patternImage: backgroundImage)
+        }
+
+        let gradient: CAGradientLayer = CAGradientLayer()
+        gradient.frame = view.bounds
+        gradient.colors = [Colors.carouselViewBackgroundGradientStart.cgColor, Colors.carouselViewBackgroundGradientEnd.cgColor]
+        view.layer.insertSublayer(gradient, at: 0)
+
         // add the views to the stack view
         view.addSubview(headerView)
 
@@ -172,12 +175,6 @@ class PlaceCarouselViewController: UIViewController {
                                         sunView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                         sunView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                                         sunView.heightAnchor.constraint(equalToConstant: 90)])
-
-        view.insertSubview(mapView, belowSubview: sunView)
-        constraints.append(contentsOf: [mapView.topAnchor.constraint(equalTo: sunView.bottomAnchor),
-                                        mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                                        mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                                        mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)])
 
 
         // set up the subviews for the sunrise/set view
@@ -225,15 +222,9 @@ class PlaceCarouselViewController: UIViewController {
         }
         let placeDetailViewController = PlaceDetailViewController(place: place)
         placeDetailViewController.dataSource = self
+        placeDetailViewController.locationProvider = self
 
         self.present(placeDetailViewController, animated: true, completion: nil)
-    }
-}
-
-extension PlaceCarouselViewController: MKMapViewDelegate {
-    func mapViewDidFailLoadingMap(_ mapView: MKMapView, withError error: Error) {
-        // TODO: handle.
-        print("lol-map \(error.localizedDescription)")
     }
 }
 
@@ -265,16 +256,10 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
 
     private func updateLocation(_ manager: CLLocationManager, location: CLLocation) {
         let coord = location.coordinate
-        // Offset center to display user's location below place cards.
-        let center = CLLocationCoordinate2D(latitude: coord.latitude + MAP_LATITUDE_OFFSET, longitude: coord.longitude)
-        let span = MKCoordinateSpan(latitudeDelta: MAP_SPAN_DELTA, longitudeDelta: 0.0)
-        mapView.region = MKCoordinateRegion(center: center, span: span)
 
         FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
             self.places = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
         }
-
-        self.placeCarousel.currentLocation = location
 
         // if we're running in the simulator, find the timezone of the current coordinates and calculate the sunrise/set times for then
         // this is so that, if we're simulating our location, we still get sunset/sunrise times
@@ -335,6 +320,12 @@ extension PlaceCarouselViewController: PlaceDataSource {
 extension PlaceCarouselViewController: PlaceCarouselDelegate {
     func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int) {
         openDetail(forPlace: places[index])
+    }
+}
+
+extension PlaceCarouselViewController: LocationProvider {
+    func getCurrentLocation() -> CLLocation? {
+        return self.locationManager.location
     }
 }
 

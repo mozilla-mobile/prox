@@ -32,6 +32,13 @@ class PlaceDetailsIconInfoView: UIView {
         return view
     }()
 
+
+    lazy var loadingSpinner: UIActivityIndicatorView = {
+        let indicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+        indicatorView.hidesWhenStopped = true
+        return indicatorView
+    }()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -51,6 +58,13 @@ class PlaceDetailsIconInfoView: UIView {
         addSubview(iconView)
         constraints += [iconView.centerYAnchor.constraint(equalTo: labelContainer.centerYAnchor),
                         iconView.trailingAnchor.constraint(equalTo: labelContainer.leadingAnchor, constant: -9)]
+
+
+        addSubview(loadingSpinner)
+        constraints += [loadingSpinner.centerXAnchor.constraint(equalTo: centerXAnchor),
+                                     loadingSpinner.centerYAnchor.constraint(equalTo: centerYAnchor),
+                                     loadingSpinner.widthAnchor.constraint(equalToConstant: 20),
+                                     loadingSpinner.heightAnchor.constraint(equalToConstant: 20)]
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }

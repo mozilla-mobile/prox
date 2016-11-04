@@ -7,8 +7,6 @@ import UIKit
 import AFNetworking
 
 private let CellReuseIdentifier = "PlaceCarouselCell"
-private let MIN_WALKING_TIME = 30
-private let YOU_ARE_HERE_WALKING_TIME = 3
 
 protocol PlaceCarouselDelegate: class {
     func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int)
@@ -27,12 +25,11 @@ class PlaceCarousel: NSObject {
                                  maximumActiveDownloads: activeDownloadCount, imageCache: cache)
     }()
 
-    var currentLocation: CLLocation?
-
     let defaultPadding: CGFloat = 15.0
 
     weak var delegate: PlaceCarouselDelegate?
     weak var dataSource: PlaceDataSource?
+    weak var locationProvider: LocationProvider?
 
     private lazy var carouselLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -86,22 +83,15 @@ extension PlaceCarousel: UICollectionViewDataSource {
         cell.category.text = PlaceUtilities.getString(forCategories: place.categories)
         cell.name.text = place.name
 
-        cell.placeImage.image = UIImage(named: "place-placeholder") // TODO: placeholder w/o pop-in
         downloadAndSetImage(for: place, into: cell)
 
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: cell.yelpReview)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: cell.tripAdvisorReview)
 
-        if let travelTimes = place.travelTimes {
-            self.setTravelTimes(travelTimes: travelTimes, forCell: cell)
-        } else if let currentLocation = self.currentLocation {
-            TravelTimesProvider.travelTime(fromLocation: currentLocation.coordinate, toLocation: place.latLong) { travelTimes in
-                place.travelTimes = travelTimes
-
-                DispatchQueue.main.async {
-                    self.setTravelTimes(travelTimes: travelTimes, forCell: cell)
-                }
-            }
+        if let location = locationProvider?.getCurrentLocation() {
+            place.travelTimes(fromLocation: location, withCallback: { travelTimes in
+                self.setTravelTimes(travelTimes: travelTimes, forCell: cell)
+            })
         }
 
         return cell
@@ -114,25 +104,11 @@ extension PlaceCarousel: UICollectionViewDataSource {
     private func downloadAndSetImage(for place: Place, into cell: PlaceCarouselCollectionViewCell) {
         guard let urlStr = place.photoURLs?.first, let url = URL(string: urlStr) else {
             print("lol unable to create URL from photo url")
+            cell.placeImage.image = UIImage(named: "place-placeholder")
             return
         }
 
-        let request = URLRequest(url: url)
-        imageDownloader.downloadImage(for: request, success: { (urlReq, urlRes, img) in
-            guard let res = urlRes else {
-                print("lol urlRes unexpectedly null")
-                return
-            }
-
-            guard res.statusCode == 200 else {
-                print("lol image status code unexpectedly \(res.statusCode)")
-                return
-            }
-
-            cell.placeImage.image = img
-        }, failure: { (urlReq, urlRes, err) in
-            print("lol unable to download photo: \(err)")
-        })
+        cell.placeImage.setImageWith(url)
     }
 
     private func setTravelTimes(travelTimes: TravelTimes?, forCell cell: PlaceCarouselCollectionViewCell) {
@@ -142,8 +118,8 @@ extension PlaceCarousel: UICollectionViewDataSource {
 
         if let walkingTimeSeconds = travelTimes.walkingTime {
             let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
-            if walkingTimeMinutes <= MIN_WALKING_TIME {
-                if walkingTimeMinutes < YOU_ARE_HERE_WALKING_TIME {
+            if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
+                if walkingTimeMinutes < TravelTimesProvider.YOU_ARE_HERE_WALKING_TIME {
                     cell.locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
                     cell.location.text = "You're here"
                     cell.isSelected = true
