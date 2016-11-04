@@ -73,17 +73,6 @@ class PlaceCarouselViewController: UIViewController {
         return view
     }()
 
-    // the map view
-    lazy var mapView: MKMapView = {
-        let view = MKMapView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-
-        view.showsUserLocation = true
-        view.isUserInteractionEnabled = false
-        view.delegate = self
-        return view
-    }()
-
     // label displaying sunrise and sunset times
     lazy var sunriseSetTimesLabel: UILabel = {
         let label = UILabel()
@@ -163,6 +152,15 @@ class PlaceCarouselViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if let backgroundImage = UIImage(named: "map_background") {
+            self.view.backgroundColor = UIColor(patternImage: backgroundImage)
+        }
+
+        let gradient: CAGradientLayer = CAGradientLayer()
+        gradient.frame = view.bounds
+        gradient.colors = [Colors.carouselViewBackgroundGradientStart.cgColor, Colors.carouselViewBackgroundGradientEnd.cgColor]
+        view.layer.insertSublayer(gradient, at: 0)
+
         // add the views to the stack view
         view.addSubview(headerView)
 
@@ -177,12 +175,6 @@ class PlaceCarouselViewController: UIViewController {
                                         sunView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                         sunView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                                         sunView.heightAnchor.constraint(equalToConstant: 90)])
-
-        view.insertSubview(mapView, belowSubview: sunView)
-        constraints.append(contentsOf: [mapView.topAnchor.constraint(equalTo: sunView.bottomAnchor),
-                                        mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                                        mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                                        mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)])
 
 
         // set up the subviews for the sunrise/set view
@@ -236,13 +228,6 @@ class PlaceCarouselViewController: UIViewController {
     }
 }
 
-extension PlaceCarouselViewController: MKMapViewDelegate {
-    func mapViewDidFailLoadingMap(_ mapView: MKMapView, withError error: Error) {
-        // TODO: handle.
-        print("lol-map \(error.localizedDescription)")
-    }
-}
-
 extension PlaceCarouselViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -271,10 +256,6 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
 
     private func updateLocation(_ manager: CLLocationManager, location: CLLocation) {
         let coord = location.coordinate
-        // Offset center to display user's location below place cards.
-        let center = CLLocationCoordinate2D(latitude: coord.latitude + MAP_LATITUDE_OFFSET, longitude: coord.longitude)
-        let span = MKCoordinateSpan(latitudeDelta: MAP_SPAN_DELTA, longitudeDelta: 0.0)
-        mapView.region = MKCoordinateRegion(center: center, span: span)
 
         FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
             self.places = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
