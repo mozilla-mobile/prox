@@ -44,7 +44,7 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
     lazy var descriptionTitleView: UIView = UIView()
 
     init(labelText: String,
-         icon: UIImage?, // TODO: non-optional
+         icon: UIImage?,
          horizontalMargin: CGFloat) {
         self.horizontalMargin = horizontalMargin
         super.init(frame: .zero)

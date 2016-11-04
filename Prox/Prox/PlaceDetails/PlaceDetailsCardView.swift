@@ -125,7 +125,7 @@ class PlaceDetailsCardView: UIView {
                                                                horizontalMargin: 16)
 
     lazy var yelpDescriptionView = PlaceDetailsDescriptionView(labelText: "Yelp top review",
-                                                               icon: nil,
+                                                               icon: UIImage(named: "logo_yelp_small"),
                                                                horizontalMargin: 16)
 
     override init(frame: CGRect) {
