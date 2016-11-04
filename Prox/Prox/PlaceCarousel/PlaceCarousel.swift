@@ -83,7 +83,6 @@ extension PlaceCarousel: UICollectionViewDataSource {
         cell.category.text = PlaceUtilities.getString(forCategories: place.categories)
         cell.name.text = place.name
 
-        cell.placeImage.image = UIImage(named: "place-placeholder") // TODO: placeholder w/o pop-in
         downloadAndSetImage(for: place, into: cell)
 
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: cell.yelpReview)
@@ -105,25 +104,11 @@ extension PlaceCarousel: UICollectionViewDataSource {
     private func downloadAndSetImage(for place: Place, into cell: PlaceCarouselCollectionViewCell) {
         guard let urlStr = place.photoURLs?.first, let url = URL(string: urlStr) else {
             print("lol unable to create URL from photo url")
+            cell.placeImage.image = UIImage(named: "place-placeholder")
             return
         }
 
-        let request = URLRequest(url: url)
-        imageDownloader.downloadImage(for: request, success: { (urlReq, urlRes, img) in
-            guard let res = urlRes else {
-                print("lol urlRes unexpectedly null")
-                return
-            }
-
-            guard res.statusCode == 200 else {
-                print("lol image status code unexpectedly \(res.statusCode)")
-                return
-            }
-
-            cell.placeImage.image = img
-        }, failure: { (urlReq, urlRes, err) in
-            print("lol unable to download photo: \(err)")
-        })
+        cell.placeImage.setImageWith(url)
     }
 
     private func setTravelTimes(travelTimes: TravelTimes?, forCell cell: PlaceCarouselCollectionViewCell) {
