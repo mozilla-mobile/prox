@@ -18,12 +18,16 @@ class Place: Hashable {
         }
     }
 
+    // TODO: remove this backup text which is here for the demo if we fail to finish in time.
+    private static let BackupDescription = "Backup text.\n\nThe Hilton Waikoloa Village is bulit on 62 acres (250,000 m2) and has 1240 rooms and suites with tropical gardens, waterfalls, lagoons and waterways. The resort features gardens, artworks, and status. It was originally...\n\nIt also serves as the setting for the Nickelodeon game show Paradise Run.\n\nLast updated on May 16th, 2016\n\nRead more on Wikipedia"
+
     private let transitTypes: [MKDirectionsTransportType] = [.automobile, .walking]
 
     let id: String
 
     let name: String
-    let description: String
+    let wikiDescription: String // TODO: make optional, handle UI changes
+    let yelpDescription: String
     let latLong: CLLocationCoordinate2D
 
     // Optional values.
@@ -42,10 +46,14 @@ class Place: Hashable {
     var travelTimes: TravelTimes?
 
 
-    init(id: String, name: String, description: String, latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil, address: String? = nil, yelpProvider: ReviewProvider?  = nil, tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String]? = nil, hours: OpenHours? = nil) {
+    init(id: String, name: String, wikiDescription: String, yelpDescription: String,
+         latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil,
+         address: String? = nil, yelpProvider: ReviewProvider?  = nil,
+         tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String]? = nil, hours: OpenHours? = nil) {
         self.id = id
         self.name = name
-        self.description = description
+        self.wikiDescription = wikiDescription
+        self.yelpDescription = yelpDescription
         self.latLong = latLong
         self.categories = categories
         self.url = url
@@ -59,14 +67,46 @@ class Place: Hashable {
     convenience init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
         guard data.exists(), data.hasChildren(),
                 let value = data.value as? NSDictionary,
-                let descriptionDict = value["description"] as? [String:String],
-                let description = descriptionDict["text"],
                 let id = value["id"] as? String,
                 let name = value["name"] as? String,
                 let coords = value["coordinates"] as? [String:Double],
                 let lat = coords["lat"], let lng = coords["lng"] else {
             return nil
         }
+
+        // TODO: make description required (in guard) again
+        // TODO: remove old format
+        let wikiDescription: String
+        let yelpDescription: String
+        if let descDict = value["description"] as? [String:String],
+                let text = descDict["text"] { // old format, still in DB
+            wikiDescription = text
+            yelpDescription = text
+
+        } else if let descArr = value["description"] as? [[String:String]] { // new format
+            var tempWikiDesc: String? = nil
+            var tempYelpDesc: String? = nil
+            for providerDict in descArr {
+                if let provider = providerDict["provider"],
+                        let text = providerDict["text"] {
+                    switch provider {
+                    case "yelp":
+                        tempYelpDesc = text
+                    case "wikipedia":
+                        tempWikiDesc = text
+                    default:
+                        break
+                    }
+                }
+            }
+
+            yelpDescription = tempYelpDesc ?? Place.BackupDescription
+            wikiDescription = tempWikiDesc ?? Place.BackupDescription
+        } else {
+            yelpDescription = Place.BackupDescription
+            wikiDescription = Place.BackupDescription
+        }
+
 
         // TODO:
         // * validate incoming data
@@ -95,7 +135,8 @@ class Place: Hashable {
 
         self.init(id: id,
                   name: name,
-                  description: description,
+                  wikiDescription: wikiDescription,
+                  yelpDescription: yelpDescription,
                   latLong: CLLocationCoordinate2D(latitude: lat, longitude: lng),
                   categories: categoryNames,
                   url: value["url"] as? String,
