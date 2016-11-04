@@ -195,10 +195,10 @@ class PlaceDetailsCardView: UIView {
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories)
         urlLabel.text = place.url ?? nil
 
-        wikiDescriptionView.expandableLabel.text = place.wikiDescription
-        yelpDescriptionView.expandableLabel.text = place.yelpDescription
-
         updateHoursUI(place.hours)
+
+        updateDescriptionViewUI(forText: place.wikiDescription, onView: wikiDescriptionView)
+        updateDescriptionViewUI(forText: place.yelpDescription, onView: yelpDescriptionView)
 
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)
@@ -210,6 +210,15 @@ class PlaceDetailsCardView: UIView {
         hoursView.secondaryTextLabel.text = secondaryText
     }
 
+    private func updateDescriptionViewUI(forText text: String?, onView view: PlaceDetailsDescriptionView) {
+        if let text = text {
+            view.isHidden = false
+            view.expandableLabel.text = text
+        } else {
+            view.isHidden = true
+            view.expandableLabel.text = nil
+        }
+    }
 
     func updateTravelTimesUI(travelTimes: TravelTimes) {
         if let walkingTimeSeconds = travelTimes.walkingTime {
