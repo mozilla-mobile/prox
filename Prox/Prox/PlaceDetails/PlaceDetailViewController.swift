@@ -483,7 +483,7 @@ extension PlaceDetailViewController: PlaceDetailsCardDelegate {
         guard cardView == currentCardViewController.cardView else {
             return
         }
-        let totalViewHeight = newHeight + cardViewTopAnchorConstant
+        let totalViewHeight = newHeight + cardViewTopAnchorConstant + 25
         scrollView.contentSize = CGSize(width: 1, height: totalViewHeight)
         backgroundImageHeightConstraint?.constant = totalViewHeight
         self.updateViewConstraints()
