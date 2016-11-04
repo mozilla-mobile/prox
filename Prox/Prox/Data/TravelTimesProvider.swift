@@ -8,7 +8,7 @@ import MapKit
 struct TravelTimesProvider {
 
     static let MIN_WALKING_TIME = 30
-    static let YOU_ARE_HERE_WALKING_TIME = 3
+    static let YOU_ARE_HERE_WALKING_TIME = 1
 
     private static func directions(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType) -> MKDirections {
 

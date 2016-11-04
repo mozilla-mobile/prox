@@ -43,6 +43,8 @@ class Place: Hashable {
 
     let hours: OpenHours? // if nil, there are no listed hours for this place
 
+    var lastTravelTime: TravelTimes?
+
     init(id: String, name: String, wikiDescription: String, yelpDescription: String,
          latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil,
          address: String? = nil, yelpProvider: ReviewProvider?  = nil,
@@ -150,6 +152,7 @@ class Place: Hashable {
 
     func travelTimes(fromLocation location: CLLocation, withCallback callback: @escaping ((TravelTimes?) -> ())) {
         TravelTimesProvider.travelTime(fromLocation: location.coordinate, toLocation: latLong) { travelTimes in
+            self.lastTravelTime = travelTimes
             DispatchQueue.main.async {
                 callback(travelTimes)
             }
