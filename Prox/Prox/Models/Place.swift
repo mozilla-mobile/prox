@@ -127,8 +127,7 @@ class Place: Hashable {
                     let hoursFromServer = OpenHours.fromFirebaseValue(hoursDictFromServer) {
                 hours = hoursFromServer
             } else {
-//                return nil // malformed hours object: fail to make the Place
-                hours = nil // TODO: uncomment above when server has updated.
+                return nil // malformed hours object: fail to make the Place
             }
         }
 
