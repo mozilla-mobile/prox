@@ -325,7 +325,6 @@ class PlaceDetailViewController: UIViewController {
                 }
                 self.previousCardViewController = self.currentCardViewController
                 self.currentCardViewController = nextCardViewController
-                self.addGestureRecognizers(toViewController: self.currentCardViewController)
                 self.nextCardViewController = newNextCardViewController
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
             }
@@ -432,6 +431,8 @@ class PlaceDetailViewController: UIViewController {
 
         NSLayoutConstraint.deactivate(constraintsToDeactivate)
         NSLayoutConstraint.activate(constraintsToActivate, translatesAutoresizingMaskIntoConstraints: false)
+
+        self.addGestureRecognizers(toViewController: newCurrentCard)
     }
 
     fileprivate func unwindToCurrentPlaceCard(animateWithDuration animationDuration: TimeInterval) {
