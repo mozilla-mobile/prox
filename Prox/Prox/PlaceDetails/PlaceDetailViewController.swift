@@ -31,6 +31,8 @@ class PlaceDetailViewController: UIViewController {
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.isScrollEnabled = false
+        scrollView.contentSize = CGSize(width: 1, height: self.view.bounds.height)
+        scrollView.bounces = false
         return scrollView
     }()
 
@@ -128,7 +130,6 @@ class PlaceDetailViewController: UIViewController {
         super.viewDidLoad()
 
         view.addSubview(scrollView)
-        scrollView.contentSize = CGSize(width: 1, height: view.bounds.height)
         var constraints = [scrollView.topAnchor.constraint(equalTo: view.topAnchor),
                            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
