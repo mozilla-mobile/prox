@@ -91,6 +91,7 @@ class PlaceDetailsCardView: UIView {
         let view = UILabel()
         view.textColor = .blue
         view.font = Fonts.detailsViewCategoryText // TODO
+        view.isUserInteractionEnabled = true
         return view
     }()
 
