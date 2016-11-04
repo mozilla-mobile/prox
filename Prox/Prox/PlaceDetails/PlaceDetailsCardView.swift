@@ -86,11 +86,10 @@ class PlaceDetailsCardView: UIView {
         return view
     }()
 
-    // TODO: Set styling.
     lazy var urlLabel: UILabel = {
         let view = UILabel()
-        view.textColor = .blue
-        view.font = Fonts.detailsViewCategoryText // TODO
+        view.textColor = Colors.detailsViewCardLinkText
+        view.font = Fonts.detailsViewCategoryText
         view.isUserInteractionEnabled = true
         return view
     }()
@@ -192,7 +191,7 @@ class PlaceDetailsCardView: UIView {
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories)
-        urlLabel.text = place.url ?? nil
+        updateURLText(place.url)
 
         updateHoursUI(place.hours)
 
@@ -201,6 +200,17 @@ class PlaceDetailsCardView: UIView {
 
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)
+    }
+
+    private func updateURLText(_ url: String?) {
+        guard let url = url else {
+            urlLabel.text = nil
+            return
+        }
+
+        let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
+        let underlineAttributedString = NSAttributedString(string: url, attributes: underlineAttribute)
+        urlLabel.attributedText = underlineAttributedString
     }
 
     private func updateHoursUI(_ hours: OpenHours?) {

@@ -30,6 +30,7 @@ extension Colors {
     public static let detailsViewCardBackground = UIColor.white
     public static let detailsViewCardPrimaryText = UIColor.black
     public static let detailsViewCardSecondaryText = UIColor.black.withAlphaComponent(0.5)
+    public static let detailsViewCardLinkText = UIColor(red: 0.00, green: 0.48, blue: 1.00, alpha: 1.0)
     public static let pageIndicatorTintColor = UIColor.black.withAlphaComponent(0.8)
     public static let detailsViewCardSeparator = UIColor(hue: 0, saturation: 0, brightness: 0.94, alpha: 1)
     public static let currentPageIndicatorTintColor = UIColor.lightGray
