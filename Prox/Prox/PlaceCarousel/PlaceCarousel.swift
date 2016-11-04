@@ -7,8 +7,6 @@ import UIKit
 import AFNetworking
 
 private let CellReuseIdentifier = "PlaceCarouselCell"
-private let MIN_WALKING_TIME = 30
-private let YOU_ARE_HERE_WALKING_TIME = 3
 
 protocol PlaceCarouselDelegate: class {
     func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int)
@@ -27,12 +25,11 @@ class PlaceCarousel: NSObject {
                                  maximumActiveDownloads: activeDownloadCount, imageCache: cache)
     }()
 
-    var currentLocation: CLLocation?
-
     let defaultPadding: CGFloat = 15.0
 
     weak var delegate: PlaceCarouselDelegate?
     weak var dataSource: PlaceDataSource?
+    weak var locationProvider: LocationProvider?
 
     private lazy var carouselLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -92,16 +89,10 @@ extension PlaceCarousel: UICollectionViewDataSource {
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: cell.yelpReview)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: cell.tripAdvisorReview)
 
-        if let travelTimes = place.travelTimes {
-            self.setTravelTimes(travelTimes: travelTimes, forCell: cell)
-        } else if let currentLocation = self.currentLocation {
-            TravelTimesProvider.travelTime(fromLocation: currentLocation.coordinate, toLocation: place.latLong) { travelTimes in
-                place.travelTimes = travelTimes
-
-                DispatchQueue.main.async {
-                    self.setTravelTimes(travelTimes: travelTimes, forCell: cell)
-                }
-            }
+        if let location = locationProvider?.getCurrentLocation() {
+            place.travelTimes(fromLocation: location, withCallback: { travelTimes in
+                self.setTravelTimes(travelTimes: travelTimes, forCell: cell)
+            })
         }
 
         return cell
@@ -142,8 +133,8 @@ extension PlaceCarousel: UICollectionViewDataSource {
 
         if let walkingTimeSeconds = travelTimes.walkingTime {
             let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
-            if walkingTimeMinutes <= MIN_WALKING_TIME {
-                if walkingTimeMinutes < YOU_ARE_HERE_WALKING_TIME {
+            if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
+                if walkingTimeMinutes < TravelTimesProvider.YOU_ARE_HERE_WALKING_TIME {
                     cell.locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
                     cell.location.text = "You're here"
                     cell.isSelected = true

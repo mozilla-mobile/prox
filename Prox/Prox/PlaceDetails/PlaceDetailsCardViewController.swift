@@ -19,6 +19,11 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     weak var placeImageDelegate: PlaceDetailsImageDelegate?
+    weak var locationProvider: LocationProvider? {
+        didSet {
+            self.setLocation(location: locationProvider?.getCurrentLocation())
+        }
+    }
 
     lazy var cardView: PlaceDetailsCardView = {
         let view = PlaceDetailsCardView()
@@ -101,7 +106,20 @@ class PlaceDetailsCardViewController: UIViewController {
             return
         }
         cardView.updateUI(forPlace: place)
+        setLocation(location: locationProvider?.getCurrentLocation())
+
         pageControl.numberOfPages = place.photoURLs?.count ?? 0
+    }
+
+    private func setLocation(location: CLLocation?) {
+        self.cardView.travelTimeView.loadingSpinner.startAnimating()
+        if let location = location {
+            place.travelTimes(fromLocation: location, withCallback: { travelTimes in
+                guard let travelTimes = travelTimes else { return }
+                self.cardView.travelTimeView.loadingSpinner.stopAnimating()
+                self.cardView.updateTravelTimesUI(travelTimes: travelTimes)
+            })
+        }
     }
 
     func pageControlDidPage(sender: AnyObject) {

@@ -28,6 +28,12 @@ class PlaceDetailViewController: UIViewController {
         }
     }
 
+    weak var locationProvider: LocationProvider? {
+        didSet {
+            self.currentCardViewController.locationProvider = locationProvider
+        }
+    }
+
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.isScrollEnabled = false
@@ -221,6 +227,7 @@ class PlaceDetailViewController: UIViewController {
         let newController = PlaceDetailsCardViewController(place: place)
         newController.placeImageDelegate = self
         newController.cardView.delegate = self
+        newController.locationProvider = locationProvider
         return newController
     }
 
@@ -384,7 +391,6 @@ class PlaceDetailViewController: UIViewController {
                 self.imageCarousel = previousCardImageCarousel
                 self.nextCardViewController = self.currentCardViewController
                 self.currentCardViewController = previousCardViewController
-                self.addGestureRecognizers(toViewController: self.currentCardViewController)
                 self.previousCardViewController = newPreviousCardViewController
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
             }

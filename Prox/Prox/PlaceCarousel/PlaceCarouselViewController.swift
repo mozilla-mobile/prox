@@ -21,6 +21,10 @@ protocol PlaceDataSource: class {
     func place(forIndex: Int) throws -> Place
 }
 
+protocol LocationProvider: class {
+    func getCurrentLocation() -> CLLocation?
+}
+
 struct PlaceDataSourceError: Error {
     let message: String
 }
@@ -92,6 +96,7 @@ class PlaceCarouselViewController: UIViewController {
         let carousel = PlaceCarousel()
         carousel.delegate = self
         carousel.dataSource = self
+        carousel.locationProvider = self
         return carousel
     }()
 
@@ -225,6 +230,7 @@ class PlaceCarouselViewController: UIViewController {
         }
         let placeDetailViewController = PlaceDetailViewController(place: place)
         placeDetailViewController.dataSource = self
+        placeDetailViewController.locationProvider = self
 
         self.present(placeDetailViewController, animated: true, completion: nil)
     }
@@ -273,8 +279,6 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
         FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
             self.places = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
         }
-
-        self.placeCarousel.currentLocation = location
 
         // if we're running in the simulator, find the timezone of the current coordinates and calculate the sunrise/set times for then
         // this is so that, if we're simulating our location, we still get sunset/sunrise times
@@ -335,6 +339,12 @@ extension PlaceCarouselViewController: PlaceDataSource {
 extension PlaceCarouselViewController: PlaceCarouselDelegate {
     func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int) {
         openDetail(forPlace: places[index])
+    }
+}
+
+extension PlaceCarouselViewController: LocationProvider {
+    func getCurrentLocation() -> CLLocation? {
+        return self.locationManager.location
     }
 }
 

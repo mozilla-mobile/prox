@@ -145,7 +145,6 @@ class PlaceDetailsCardView: UIView {
     }
 
     private func setupViews() {
-        setTestData() // TODO: rm
         backgroundColor = Colors.detailsViewCardBackground
         layer.cornerRadius = 10
 
@@ -189,6 +188,7 @@ class PlaceDetailsCardView: UIView {
     }
 
     func updateUI(forPlace place: Place) {
+        setTestData() // TODO: rm
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories)
@@ -207,6 +207,32 @@ class PlaceDetailsCardView: UIView {
         let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date())
         hoursView.primaryTextLabel.text = primaryText
         hoursView.secondaryTextLabel.text = secondaryText
+    }
+
+
+    func updateTravelTimesUI(travelTimes: TravelTimes) {
+        if let walkingTimeSeconds = travelTimes.walkingTime {
+            let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
+            if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
+                if walkingTimeMinutes < TravelTimesProvider.YOU_ARE_HERE_WALKING_TIME {
+                    self.travelTimeView.primaryTextLabel.text = "You are here!"
+                    self.travelTimeView.secondaryTextLabel.text = nil
+                    self.travelTimeView.iconView.image = nil
+                } else {
+                    self.travelTimeView.primaryTextLabel.text = "\(walkingTimeMinutes) min"
+                    self.travelTimeView.secondaryTextLabel.text = "Walking"
+                    self.travelTimeView.iconView.image = UIImage(named: "icon_walkingdist")
+                }
+                return
+            }
+        }
+
+        if let drivingTimeSeconds = travelTimes.drivingTime {
+            let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
+            self.travelTimeView.primaryTextLabel.text = "\(drivingTimeMinutes) min"
+            self.travelTimeView.secondaryTextLabel.text = "Driving"
+            self.travelTimeView.iconView.image = UIImage(named: "icon_drivingdist")
+        }
     }
 
     private func getStringsForOpenHours(_ openHours: OpenHours?, forDate date: Date) -> (primary: String, secondary: String) {
@@ -236,8 +262,8 @@ class PlaceDetailsCardView: UIView {
     }
 
     private func setTestData() {
-        travelTimeView.primaryTextLabel.text = "18 min"
-        travelTimeView.secondaryTextLabel.text = "Walking"
-        travelTimeView.iconView.image = UIImage(named: "icon_walkingdist")
+        travelTimeView.primaryTextLabel.text = nil
+        travelTimeView.secondaryTextLabel.text = nil
+        travelTimeView.iconView.image = nil
     }
 }
