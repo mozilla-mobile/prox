@@ -145,7 +145,7 @@ class PlaceDetailViewController: UIViewController {
         constraints += [backgroundImage.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageCarouselHeightConstant),
                            backgroundImage.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
                            backgroundImageHeightConstraint!,
-                           backgroundImage.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)]
+                           backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor)]
 
         backgroundImage.addSubview(backgroundBlurEffect)
         constraints += [backgroundBlurEffect.topAnchor.constraint(equalTo: backgroundImage.topAnchor),
