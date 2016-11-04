@@ -194,32 +194,42 @@ class PlaceDetailsCardView: UIView {
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories)
         urlLabel.text = place.url ?? nil
 
-        // TODO: error states for missing data.
         updateHoursUI(place.hours)
 
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)
     }
 
-    private func updateHoursUI(_ hours: [DayOfWeek:OpenHours]?) {
-        let todayDayOfWeek = DayOfWeek.forDate(Date())
-
-        let primaryText: String
-        let secondaryText: String
-        if hours == nil {
-            primaryText = "Unknown"
-            secondaryText = "No hours data :("
-        } else if let todaysHours = hours![todayDayOfWeek] {
-            // TODO: figure out if it's past closing time. or rather filter out place sooner?
-            primaryText = todaysHours.getStringForEndTime()
-            secondaryText = "Closing time"
-        } else {
-            primaryText = "Unknown"
-            secondaryText = "Missing today's hours"
-        }
-
+    private func updateHoursUI(_ hours: OpenHours?) {
+        let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date())
         hoursView.primaryTextLabel.text = primaryText
         hoursView.secondaryTextLabel.text = secondaryText
+    }
+
+    private func getStringsForOpenHours(_ openHours: OpenHours?, forDate date: Date) -> (primary: String, secondary: String) {
+        guard let openHours = openHours else {
+            // if hours is nil, we assume this place has no listed hours (e.g. beach).
+            return ("Not sure", "Closing time")
+        }
+
+        let innerHours = openHours.hours
+        let day = DayOfWeek.forDate(date)
+        guard let (open, close) = innerHours[day] else {
+            print("lol unexpectedly no hours for \(date)")
+            return ("No hours", "For Today") // TODO: probably closed today - how best to handle?
+        }
+
+        if date > open {
+            let closeTimeStr = openHours.getCloseTimeString(forDate: date)
+            if date < close {
+                return (closeTimeStr, "Closing time")
+            }
+            print("lol venue unexpectedly already closed for \(date) and closing \(close)")
+            return ("Closed", "at \(closeTimeStr)") // TODO: already closed - how best to handle?
+        }
+
+        let openTimeStr = openHours.getOpenTimeString(forDate: date)
+        return ("Closed", "Opens at \(openTimeStr)")
     }
 
     private func setTestData() {

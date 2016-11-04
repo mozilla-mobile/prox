@@ -22,8 +22,16 @@ class DayOfWeekTests: XCTestCase {
 
         // We iterate from Monday Nov. 7th, 2016 to Sunday Nov. 13, 2016. A better implementation
         // might iterate over a date range or something but this is easier!
-        for (index, dayOfMonth) in (7...13).enumerated() {
-            let expectedDayOfWeek = DayOfWeek(rawValue: index)! // Monday is 0
+        for (expectedDayOfWeekStr, dayOfMonth) in ["monday":7,
+                                                   "tuesday":8,
+                                                   "wednesday":9,
+                                                   "thursday":10,
+                                                   "friday":11,
+                                                   "saturday":12,
+                                                   "sunday":13] {
+
+            // TODO: rawValue would be better suited to its own test but lets save time and do it here.
+            let expectedDayOfWeek = DayOfWeek(rawValue: expectedDayOfWeekStr)
             let dateForDayOfMonth = DateComponents(calendar: cal,
                                                    year: 2016,
                                                    month: 11,

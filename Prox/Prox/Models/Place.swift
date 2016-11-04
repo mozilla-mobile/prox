@@ -37,19 +37,12 @@ class Place: Hashable {
 
     let photoURLs: [String]?
 
-    /*
-     * Notes:
-     *   - Times are 24hr, e.g. 1400 for 2pm
-     *   - Times are in the timezone of the place
-     *   - "end" < "start" if a location is open overnight
-     *   - An entry for DayOfWeek will be missing if a location is not open that day
-     */
-    let hours: [DayOfWeek:OpenHours]?
+    let hours: OpenHours? // if nil, there are no listed hours for this place
 
     var travelTimes: TravelTimes?
 
 
-    init(id: String, name: String, description: String, latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil, address: String? = nil, yelpProvider: ReviewProvider?  = nil, tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String]? = nil, hours: [DayOfWeek: OpenHours]? = nil) {
+    init(id: String, name: String, description: String, latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil, address: String? = nil, yelpProvider: ReviewProvider?  = nil, tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String]? = nil, hours: OpenHours? = nil) {
         self.id = id
         self.name = name
         self.description = description
@@ -84,9 +77,21 @@ class Place: Hashable {
         //  - phone
         //  - images: get metadata rather than just urls
         //  - categories: if we need it, get the ID
-        //  - hours
         let categoryNames = (value["categories"] as? [[String:String]])?.flatMap { $0["text"] }
         let photoURLs = (value["images"] as? [[String:String]])?.flatMap { $0["src"] }
+
+        let hours: OpenHours?
+        if value["hours"] == nil {
+            hours = nil // no listed hours
+        } else {
+            if let hoursDictFromServer = value["hours"] as? [String : [[String]]],
+                    let hoursFromServer = OpenHours.fromFirebaseValue(hoursDictFromServer) {
+                hours = hoursFromServer
+            } else {
+//                return nil // malformed hours object: fail to make the Place
+                hours = nil // TODO: uncomment above when server has updated.
+            }
+        }
 
         self.init(id: id,
                   name: name,
@@ -98,9 +103,8 @@ class Place: Hashable {
                   yelpProvider: ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: YELP_PATH)),
                   tripAdvisorProvider: ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: TRIP_ADVISOR_PATH)),
                   photoURLs: photoURLs,
-                  hours: nil)
+                  hours: hours)
     }
-
 
     static func ==(lhs: Place, rhs: Place) -> Bool {
         return lhs.id == rhs.id
@@ -108,38 +112,44 @@ class Place: Hashable {
 
 }
 
-enum DayOfWeek: Int {
-    case monday = 0 // matches server representation
+enum DayOfWeek: String {
+    case monday
     case tuesday, wednesday, thursday, friday
     case saturday, sunday
 
+    private static let Cal: Calendar = {
+        var cal = Calendar(identifier: .gregorian)
+        cal.locale = Locale(identifier: "en_US")  // necessary for Calendar.weekdaySymbols to return long symbols.
+        return cal
+    }()
+
     static func forDate(_ date: Date) -> DayOfWeek {
-        let iOSWeekday = getiOSWeekday(forDate: date)
-        return weekday(fromiOSWeekday: iOSWeekday)
-    }
-
-    private static func getiOSWeekday(forDate date: Date) -> Int {
-        let cal = Calendar(identifier: .gregorian)
-        return cal.component(.weekday, from: date)
-    }
-
-    private static func weekday(fromiOSWeekday iOSWeekday: Int) -> DayOfWeek {
-        // iOSWeekday is 1-7 where Sun = 1; we are 0-6 where Mon = 0
-        var dayInt = iOSWeekday - 2
-        if dayInt < 0 { // only Sunday
-            dayInt = 6
-        }
-        return DayOfWeek(rawValue: dayInt)!
+        let weekdayInt = Cal.component(.weekday, from: date)
+        let weekdayStr = Cal.weekdaySymbols[weekdayInt - 1]
+        return DayOfWeek(rawValue: weekdayStr.lowercased())!
     }
 }
 
 struct OpenHours {
-    let startTime: Int
-    let endTime: Int
+
+    private static let TimeInDay: TimeInterval = 60 * 60 * 24 // specified in seconds.
+
+    /* Notes:
+     *   - An entry for DayOfWeek is missing if a location is not open that day.
+     *   - For simplicity, we just use the last open interval for a day.
+     *   - For simplicity, dates are normalized by a single day, allowing comparison but preventing
+     *     the stored dates from being correct (e.g. if today is Mon Nov 7, the stored date for Tues
+     *     isn't Nov 8).
+     *
+     * TODO:
+     *   - Use all open intervals
+     *   - Use accurate days of week in Date (maybe? It adds complexity for little gain).
+     */
+    let hours: [DayOfWeek : (open: Date, close: Date)]
 
     private static let inputFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "HHmm"
+        formatter.dateFormat = "HH:mm"
         return formatter
     }()
 
@@ -150,29 +160,81 @@ struct OpenHours {
         return formatter
     }()
 
-    func getStringForStartTime() -> String {
-        return getString(forTime: startTime)
+    /*
+     * Expected format: {"monday": [ ["7:00", "14:00"], ... ] }
+     * Notes:
+     *   - Times are 24hr, e.g. "14:00" for 2pm
+     *   - Times are in the timezone of the place
+     *   - "end" < "start" if a location is open overnight
+     *   - An entry for DayOfWeek will be missing if a location is not open that day
+     *
+     * Returns nil if data format is unexpected in any way.
+     * TODO: return nil ^ or just remove the days that are malformed?
+     */
+    static func fromFirebaseValue(_ hoursDict: [String : [[String]]]) -> OpenHours? {
+        var out = [DayOfWeek : (open: Date, close: Date)]()
+
+        // Note: we don't check if a day is missing because if it is,
+        // it's closed for the day and we're supposed to omit it anyway.
+        for dayFromServer in hoursDict.keys {
+            guard let day = DayOfWeek(rawValue: dayFromServer) else {
+                print("lol unknown day of week from server: \(dayFromServer)")
+                return nil
+            }
+
+            let hoursArr = hoursDict[dayFromServer]! // force unwrap: we're iterating over the keys.
+            guard let lastInterval = hoursArr.last else {
+                print("lol hours array for \(dayFromServer) unexpectedly empty")
+                return nil
+            }
+
+            guard lastInterval.count == 2 else {
+                print("lol last opening interval unexpectedly has \(lastInterval.count) entries")
+                return nil
+            }
+
+            guard let openTime = getDate(fromServerStr: lastInterval[0]),
+                    var closeTime = getDate(fromServerStr: lastInterval[1]) else {
+                print("lol unable to convert date str, \(lastInterval[0]) & \(lastInterval[1]), to Date")
+                return nil
+            }
+
+            if closeTime < openTime { // i.e. open overnight.
+                closeTime.addTimeInterval(TimeInDay) // Date defaults to today – this happens tomorrow.
+            }
+
+            out[day] = (open: openTime, close: closeTime)
+        }
+
+        return OpenHours(hours: out)
     }
 
-    func getStringForEndTime() -> String {
-        return getString(forTime: endTime)
+    private static func getDate(fromServerStr serverStr: String) -> Date? {
+        guard serverStr.characters.count != 4 || serverStr.characters.count != 5 else { // "1:00" or "10:00"
+            return nil // the calling function logs.
+        }
+
+        return inputFormatter.date(from: serverStr)
     }
 
-    private func getString(forTime time: Int) -> String {
-        var inputStr = String(time)
-        let len = inputStr.characters.count
-        guard len == 3 || len == 4 else {
-            fatalError("Invalid date str: \(inputStr)")
-        }
+    func isOpen(onDate date: Date) -> Bool {
+        return hours[DayOfWeek.forDate(date)] != nil
+    }
 
-        // We expect len 4.
-        if len == 3 {
-            inputStr.insert("0", at: inputStr.startIndex)
-        }
+    // Note: always call isOpen(onDate) or check if day exists in dict before calling.
+    func getOpenTimeString(forDate date: Date) -> String {
+        return getTimeString(forDate: date) { (interval: (open: Date, close: Date)) in interval.open }
+    }
 
-        guard let date = OpenHours.inputFormatter.date(from: inputStr) else {
-            fatalError("Unable to convert input: \(time)")
-        }
-        return OpenHours.outputFormatter.string(from: date)
+    // Note: always call isOpen(onDate) or check if day exists in dict before calling.
+    func getCloseTimeString(forDate date: Date) -> String {
+        return getTimeString(forDate: date) { (interval: (open: Date, close: Date)) in interval.close }
+    }
+
+    private func getTimeString(forDate date: Date,
+                               forIntervalDateGetter dateGetter: ((open: Date, close: Date)) -> Date) -> String {
+        let openInterval = hours[DayOfWeek.forDate(date)]! // force unwrap: expect isOpen to be called.
+        let desiredTime = dateGetter(openInterval)
+        return OpenHours.outputFormatter.string(from: desiredTime)
     }
 }
