@@ -91,10 +91,6 @@ class PlaceDetailsCardViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -107,6 +103,7 @@ class PlaceDetailsCardViewController: UIViewController {
         }
         cardView.updateUI(forPlace: place)
         setLocation(location: locationProvider?.getCurrentLocation())
+        setupCardInteractions()
 
         pageControl.numberOfPages = place.photoURLs?.count ?? 0
     }
@@ -119,6 +116,47 @@ class PlaceDetailsCardViewController: UIViewController {
                 self.cardView.travelTimeView.loadingSpinner.stopAnimating()
                 self.cardView.updateTravelTimesUI(travelTimes: travelTimes)
             })
+        }
+    }
+
+    private func setupCardInteractions() {
+        cardView.urlLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openPlaceURL(gestureRecgonizer:))))
+        cardView.yelpReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openYelpReview(gestureRecgonizer:))))
+        cardView.tripAdvisorReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTripAdvisorReview(gestureRecgonizer:))))
+        cardView.travelTimeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openDirections(gestureRecgonizer:))))
+    }
+
+    @objc private func openPlaceURL(gestureRecgonizer: UITapGestureRecognizer) {
+        guard let urlString = place.url,
+           let url = URL(string: urlString) else { return }
+        if !OpenInHelper.open(url: url) {
+            print("lol unable to open web address")
+        }
+    }
+
+    @objc private func openYelpReview(gestureRecgonizer: UITapGestureRecognizer) {
+        guard let yelpProvider = place.yelpProvider,
+            let url = URL(string: yelpProvider.url) else { return }
+        if !OpenInHelper.open(url: url) {
+            print("lol unable to open yelp review")
+        }
+    }
+
+    @objc private func openTripAdvisorReview(gestureRecgonizer: UITapGestureRecognizer) {
+        guard let tripAdvisorProvider = place.tripAdvisorProvider,
+            let url = URL(string: tripAdvisorProvider.url) else { return }
+        if !OpenInHelper.open(url: url) {
+            print("lol unable to open trip advisor review")
+        }
+    }
+
+    @objc private func openDirections(gestureRecgonizer: UITapGestureRecognizer) {
+        guard let location = locationProvider?.getCurrentLocation(),
+            let transportString = cardView.travelTimeView.secondaryTextLabel.text else { return }
+        let transportType = transportString == "Walking" ? MKDirectionsTransportType.walking : MKDirectionsTransportType.automobile
+
+        if !OpenInHelper.openRoute(fromLocation: location.coordinate, toPlace: place, by: transportType) {
+            print("lol unable to open travel directions")
         }
     }
 

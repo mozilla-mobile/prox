@@ -95,7 +95,7 @@ class PlaceDetailsCardView: UIView {
     }()
 
     lazy var travelTimeView: PlaceDetailsIconInfoView = {
-        let view = PlaceDetailsIconInfoView() // TODO: icon depending on walking/driving
+        let view = PlaceDetailsIconInfoView()
         return view
     }()
 
@@ -115,6 +115,7 @@ class PlaceDetailsCardView: UIView {
     lazy var tripAdvisorReviewView: ReviewContainerView = {
         let view = ReviewContainerView(color: Colors.tripAdvisor, mode: .detailsView)
         view.reviewSiteLogo.image = UIImage(named: "logo_ta")
+        view.isUserInteractionEnabled = true
         return view
     }()
 
