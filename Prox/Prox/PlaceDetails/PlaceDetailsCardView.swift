@@ -138,9 +138,8 @@ class PlaceDetailsCardView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // TODO: can't set shadow on scroll view to allow masking contents.
     private func setupShadow() {
-        layer.masksToBounds = true
+        layer.masksToBounds = false
         layer.shadowOffset = CGSize(width: 0, height: 2)
         layer.shadowRadius = 5
         layer.shadowOpacity = 0.4
