@@ -25,6 +25,8 @@ class Place: Hashable {
     let name: String
     let latLong: CLLocationCoordinate2D
 
+    let photoURLs: [String]
+
     // Optional values.
     let categories: [String]?
     let url: String?
@@ -33,8 +35,6 @@ class Place: Hashable {
 
     let yelpProvider: ReviewProvider?
     let tripAdvisorProvider: ReviewProvider?
-
-    let photoURLs: [String]?
 
     let hours: OpenHours? // if nil, there are no listed hours for this place
 
@@ -46,7 +46,7 @@ class Place: Hashable {
     init(id: String, name: String, wikiDescription: String?, yelpDescription: String?,
          latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil,
          address: String? = nil, yelpProvider: ReviewProvider?  = nil,
-         tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String]? = nil, hours: OpenHours? = nil) {
+         tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String], hours: OpenHours? = nil) {
         self.id = id
         self.name = name
         self.wikiDescription = wikiDescription
@@ -82,7 +82,13 @@ class Place: Hashable {
         //  - categories: if we need it, get the ID
         let (wikiDescription, yelpDescription) = Place.getDescriptions(fromFirebaseValue: value)
         let categoryNames = (value["categories"] as? [[String:String]])?.flatMap { $0["text"] }
-        let photoURLs = (value["images"] as? [[String:String]])?.flatMap { $0["src"] }
+        let photoURLs = (value["images"] as? [[String:String]])?.flatMap { $0["src"] } ?? []
+
+        guard photoURLs.count > 0 else {
+            // Photo json format may also be incorrect (we default to []) but only log this to keep it simple.
+            print("lol dropped place \"\(id)\": no photos")
+            return nil
+        }
 
         let hours: OpenHours?
         if value["hours"] == nil {
