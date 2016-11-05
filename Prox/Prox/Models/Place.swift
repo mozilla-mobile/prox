@@ -68,18 +68,13 @@ class Place: Hashable {
                 let name = value["name"] as? String,
                 let coords = value["coordinates"] as? [String:Double],
                 let lat = coords["lat"], let lng = coords["lng"] else {
+            print("lol dropping place: missing data, id, name, or coords")
             return nil
         }
 
         // TODO:
         // * validate incoming data
         // * b/c ^, tests
-        // * keys to deal with
-        //  - version
-        //  - description: utilize provider
-        //  - phone
-        //  - images: get metadata rather than just urls
-        //  - categories: if we need it, get the ID
         let (wikiDescription, yelpDescription) = Place.getDescriptions(fromFirebaseValue: value)
         let categoryNames = (value["categories"] as? [[String:String]])?.flatMap { $0["text"] }
         let photoURLs = (value["images"] as? [[String:String]])?.flatMap { $0["src"] } ?? []
