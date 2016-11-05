@@ -33,7 +33,7 @@ class Place: Hashable {
 
     let address: String?
 
-    let yelpProvider: ReviewProvider?
+    let yelpProvider: ReviewProvider
     let tripAdvisorProvider: ReviewProvider?
 
     let hours: OpenHours? // if nil, there are no listed hours for this place
@@ -45,7 +45,7 @@ class Place: Hashable {
 
     init(id: String, name: String, wikiDescription: String?, yelpDescription: String?,
          latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil,
-         address: String? = nil, yelpProvider: ReviewProvider?  = nil,
+         address: String? = nil, yelpProvider: ReviewProvider,
          tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String], hours: OpenHours? = nil) {
         self.id = id
         self.name = name
@@ -69,6 +69,14 @@ class Place: Hashable {
                 let coords = value["coordinates"] as? [String:Double],
                 let lat = coords["lat"], let lng = coords["lng"] else {
             print("lol dropping place: missing data, id, name, or coords")
+            return nil
+        }
+
+        // TODO: #38: we need to decide whether to handle having a rating OR a review. If so, don't
+        // forget to update the UI.
+        guard let yelpProvider = ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: YELP_PATH)),
+                (yelpProvider.rating != nil && yelpProvider.totalReviewCount != nil) else {
+            print("lol unable to init yelp provider for place: \(id)")
             return nil
         }
 
@@ -105,7 +113,7 @@ class Place: Hashable {
                   categories: categoryNames,
                   url: value["url"] as? String,
                   address: (value["address"] as? [String])?.joined(separator: " "),
-                  yelpProvider: ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: YELP_PATH)),
+                  yelpProvider: yelpProvider,
                   tripAdvisorProvider: ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: TRIP_ADVISOR_PATH)),
                   photoURLs: photoURLs,
                   hours: hours)

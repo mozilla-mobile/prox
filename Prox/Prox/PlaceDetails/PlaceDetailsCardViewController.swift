@@ -139,8 +139,7 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     @objc private func openYelpReview(gestureRecgonizer: UITapGestureRecognizer) {
-        guard let yelpProvider = place.yelpProvider,
-            let url = URL(string: yelpProvider.url) else { return }
+        guard let url = URL(string: place.yelpProvider.url) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open yelp review")
         }
