@@ -112,14 +112,13 @@ class PlaceDetailsCardViewController: UIViewController {
     private func setLocation(location: CLLocation?) {
         if let lastTravelTimes = place.lastTravelTime {
             self.cardView.updateTravelTimesUI(travelTimes: lastTravelTimes)
-            return
         } else {
             self.cardView.travelTimeView.loadingSpinner.startAnimating()
         }
         if let location = location {
             place.travelTimes(fromLocation: location, withCallback: { travelTimes in
-                guard let travelTimes = travelTimes else { return }
                 self.cardView.travelTimeView.loadingSpinner.stopAnimating()
+                guard let travelTimes = travelTimes else { return }
                 self.cardView.updateTravelTimesUI(travelTimes: travelTimes)
             })
         }
