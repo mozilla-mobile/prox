@@ -17,22 +17,12 @@ class HorizontalLineView: UIView {
         super.draw(rect)
         self.backgroundColor = .clear
 
-        // draw the line
-        if let context = UIGraphicsGetCurrentContext() {
-
-            // set the stroke color and width
-            context.setStrokeColor(color.cgColor);
-            context.setLineWidth(1.5);
-
-            // move to first point
-            context.move(to: CGPoint(x: startX ?? rect.width, y: startY ?? rect.height))
-
-            // add a line to  second point
-            context.addLine(to: CGPoint(x: endX ?? rect.width, y: endY ?? rect.height))
-
-            // draw the line
-            context.strokePath()
-        }
+        let bezier2Path = UIBezierPath()
+        bezier2Path.move(to: CGPoint(x: startX ?? rect.width, y: startY ?? rect.height))
+        bezier2Path.addLine(to: CGPoint(x: endX ?? rect.width, y: endY ?? rect.height))
+        color.setStroke()
+        bezier2Path.lineWidth = 1.5
+        bezier2Path.stroke()
     }
 
 }
