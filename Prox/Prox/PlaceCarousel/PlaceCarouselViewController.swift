@@ -156,7 +156,7 @@ class PlaceCarouselViewController: UIViewController {
         super.viewDidLoad()
 
         if let backgroundImage = UIImage(named: "map_background") {
-            self.view.backgroundColor = UIColor(patternImage: backgroundImage)
+            self.view.layer.contents = backgroundImage.cgImage
         }
 
         let gradient: CAGradientLayer = CAGradientLayer()
