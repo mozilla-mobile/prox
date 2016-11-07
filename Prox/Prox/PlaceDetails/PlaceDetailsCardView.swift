@@ -86,11 +86,10 @@ class PlaceDetailsCardView: UIView {
         return view
     }()
 
-    // TODO: Set styling.
     lazy var urlLabel: UILabel = {
         let view = UILabel()
-        view.textColor = .blue
-        view.font = Fonts.detailsViewCategoryText // TODO
+        view.textColor = Colors.detailsViewCardLinkText
+        view.font = Fonts.detailsViewCategoryText
         view.isUserInteractionEnabled = true
         return view
     }()
@@ -125,7 +124,7 @@ class PlaceDetailsCardView: UIView {
                                                                horizontalMargin: 16)
 
     lazy var yelpDescriptionView = PlaceDetailsDescriptionView(labelText: "Yelp top review",
-                                                               icon: nil,
+                                                               icon: UIImage(named: "logo_yelp_small"),
                                                                horizontalMargin: 16)
 
     override init(frame: CGRect) {
@@ -138,9 +137,8 @@ class PlaceDetailsCardView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // TODO: can't set shadow on scroll view to allow masking contents.
     private func setupShadow() {
-        layer.masksToBounds = true
+        layer.masksToBounds = false
         layer.shadowOffset = CGSize(width: 0, height: 2)
         layer.shadowRadius = 5
         layer.shadowOpacity = 0.4
@@ -190,19 +188,29 @@ class PlaceDetailsCardView: UIView {
     }
 
     func updateUI(forPlace place: Place) {
-        setTestData() // TODO: rm
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories)
-        urlLabel.text = place.url ?? nil
-
-        wikiDescriptionView.expandableLabel.text = place.wikiDescription
-        yelpDescriptionView.expandableLabel.text = place.yelpDescription
+        updateURLText(place.url)
 
         updateHoursUI(place.hours)
 
+        updateDescriptionViewUI(forText: place.wikiDescription, onView: wikiDescriptionView)
+        updateDescriptionViewUI(forText: place.yelpDescription, onView: yelpDescriptionView)
+
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)
+    }
+
+    private func updateURLText(_ url: String?) {
+        guard let url = url else {
+            urlLabel.text = nil
+            return
+        }
+
+        let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
+        let underlineAttributedString = NSAttributedString(string: url, attributes: underlineAttribute)
+        urlLabel.attributedText = underlineAttributedString
     }
 
     private func updateHoursUI(_ hours: OpenHours?) {
@@ -211,6 +219,15 @@ class PlaceDetailsCardView: UIView {
         hoursView.secondaryTextLabel.text = secondaryText
     }
 
+    private func updateDescriptionViewUI(forText text: String?, onView view: PlaceDetailsDescriptionView) {
+        if let text = text {
+            view.isHidden = false
+            view.expandableLabel.text = text
+        } else {
+            view.isHidden = true
+            view.expandableLabel.text = nil
+        }
+    }
 
     func updateTravelTimesUI(travelTimes: TravelTimes) {
         if let walkingTimeSeconds = travelTimes.walkingTime {
@@ -261,11 +278,5 @@ class PlaceDetailsCardView: UIView {
 
         let openTimeStr = openHours.getOpenTimeString(forDate: date)
         return ("Closed", "Opens at \(openTimeStr)")
-    }
-
-    private func setTestData() {
-        travelTimeView.primaryTextLabel.text = nil
-        travelTimeView.secondaryTextLabel.text = nil
-        travelTimeView.iconView.image = nil
     }
 }

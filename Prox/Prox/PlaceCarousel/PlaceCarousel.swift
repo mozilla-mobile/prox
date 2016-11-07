@@ -102,7 +102,7 @@ extension PlaceCarousel: UICollectionViewDataSource {
     }
 
     private func downloadAndSetImage(for place: Place, into cell: PlaceCarouselCollectionViewCell) {
-        guard let urlStr = place.photoURLs?.first, let url = URL(string: urlStr) else {
+        guard let urlStr = place.photoURLs.first, let url = URL(string: urlStr) else {
             print("lol unable to create URL from photo url")
             cell.placeImage.image = UIImage(named: "place-placeholder")
             return
