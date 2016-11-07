@@ -43,10 +43,10 @@ class Place: Hashable {
     let wikiDescription: String?
     let yelpDescription: String?
 
-    init(id: String, name: String, wikiDescription: String?, yelpDescription: String?,
+    init(id: String, name: String, wikiDescription: String? = nil, yelpDescription: String? = nil,
          latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil,
          address: String? = nil, yelpProvider: ReviewProvider,
-         tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String], hours: OpenHours? = nil) {
+         tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: OpenHours? = nil) {
         self.id = id
         self.name = name
         self.wikiDescription = wikiDescription

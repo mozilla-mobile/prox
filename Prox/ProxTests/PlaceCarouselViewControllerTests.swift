@@ -23,9 +23,12 @@ class PlaceCarouselViewControllerTests: XCTestCase {
 
     fileprivate func placesList(number: Int) -> [Place] {
         var places = [Place]()
+
+        let yelpProvider = ReviewProvider(url: "https://mozilla.org")
         for index in 0..<number {
             let placeID = index + 1
-            places.append(Place(id: "\(index)", name: "Place \(placeID)", wikiDescription: "Wiki Summary for place \(placeID)", yelpDescription: "Yelp Review for place \(placeID)", latLong: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)))
+
+            places.append(Place(id: "\(index)", name: "Place \(placeID)", latLong: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0), yelpProvider: yelpProvider))
         }
 
         return places

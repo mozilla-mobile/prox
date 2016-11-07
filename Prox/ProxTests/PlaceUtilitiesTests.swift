@@ -26,12 +26,14 @@ class PlaceUtilitiesTests: XCTestCase {
         // Mozilla London Office
         let currentLocation = CLLocation(latitude: 51.5046323, longitude: -0.0992547)
 
+        let yelpProvider = ReviewProvider(url: "https://mozilla.org")
         // London Bridge Station
-        let place1 = Place(id: "1", name: "Place 1", wikiDescription: "Wiki Summary", yelpDescription: "Yelp Review", latLong: CLLocationCoordinate2D(latitude: 51.5054704, longitude: -0.0943248))
+
+        let place1 = Place(id: "1", name: "Place 1", latLong: CLLocationCoordinate2D(latitude: 51.5054704, longitude: -0.0943248), yelpProvider: yelpProvider)
         // old Mozilla London office
-        let place2 = Place(id: "2", name: "Place 2", wikiDescription: "Wiki Summary", yelpDescription: "Yelp Review", latLong: CLLocationCoordinate2D(latitude: 51.5100773, longitude: -0.1257861))
+        let place2 = Place(id: "2", name: "Place 2", latLong: CLLocationCoordinate2D(latitude: 51.5100773, longitude: -0.1257861), yelpProvider: yelpProvider)
         // Kensington Palace
-        let place3 = Place(id: "3", name: "Place 3", wikiDescription: "Wiki Summary", yelpDescription: "Yelp Review", latLong: CLLocationCoordinate2D(latitude: 51.4998605, longitude: -0.177838))
+        let place3 = Place(id: "3", name: "Place 3", latLong: CLLocationCoordinate2D(latitude: 51.4998605, longitude: -0.177838), yelpProvider: yelpProvider)
         let places = [place1, place2, place3]
 
         let sortedAscending = PlaceUtilities.sort(places: places, byDistanceFromLocation: currentLocation, ascending: true)

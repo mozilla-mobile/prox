@@ -14,7 +14,14 @@ class ReviewProvider {
     let reviews: [String]?
     let totalReviewCount: Int?
 
-    init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
+    init(url: String, rating: Float? = nil, reviews: [String]? = nil, totalReviewCount: Int? = nil) {
+        self.url = url
+        self.rating = rating
+        self.reviews = reviews
+        self.totalReviewCount = totalReviewCount
+    }
+
+    convenience init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
         guard data.exists(), data.hasChildren(),
                 let value = data.value as? NSDictionary,
                 let url = value["url"] as? String else {
@@ -22,12 +29,6 @@ class ReviewProvider {
             return nil
         }
 
-        self.url = url
-
-        self.rating = value["rating"] as? Float
-        self.totalReviewCount = value["totalReviewCount"] as? Int
-
-        // TODO: get values from DB (these are default).
-        self.reviews = []
+        self.init(url: url, rating: value["rating"] as? Float, reviews: [], totalReviewCount: value["totalReviewCount"] as? Int)
     }
 }
