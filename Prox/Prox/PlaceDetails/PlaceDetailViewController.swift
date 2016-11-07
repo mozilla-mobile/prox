@@ -116,7 +116,7 @@ class PlaceDetailViewController: UIViewController {
     init(place: Place) {
         super.init(nibName: nil, bundle: nil)
         self.currentCardViewController = dequeuePlaceCardViewController(forPlace: place)
-        setBackgroundImage(toPhotoAtURL: place.photoURLs?.first)
+        setBackgroundImage(toPhotoAtURL: place.photoURLs.first)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -316,7 +316,7 @@ class PlaceDetailViewController: UIViewController {
         UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
             self.imageCarousel.alpha = 0
             nextCardImageCarousel.alpha = 1
-            self.setBackgroundImage(toPhotoAtURL: nextCardViewController.place.photoURLs?.first)
+            self.setBackgroundImage(toPhotoAtURL: nextCardViewController.place.photoURLs.first)
             self.view.layoutIfNeeded()
         }, completion: { finished in
             if finished {
@@ -376,7 +376,7 @@ class PlaceDetailViewController: UIViewController {
         UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
             self.imageCarousel.alpha = 0
             previousCardImageCarousel.alpha = 1
-            self.setBackgroundImage(toPhotoAtURL: previousCardViewController.place.photoURLs?.first)
+            self.setBackgroundImage(toPhotoAtURL: previousCardViewController.place.photoURLs.first)
             self.view.layoutIfNeeded()
         }, completion: { finished in
             if finished {

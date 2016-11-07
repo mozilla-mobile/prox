@@ -44,7 +44,7 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
     lazy var descriptionTitleView: UIView = UIView()
 
     init(labelText: String,
-         icon: UIImage?, // TODO: non-optional
+         icon: UIImage?,
          horizontalMargin: CGFloat) {
         self.horizontalMargin = horizontalMargin
         super.init(frame: .zero)
@@ -77,7 +77,7 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
         addSubview(descriptionTitleView)
         var constraints = [descriptionTitleView.topAnchor.constraint(equalTo: topAnchor),
                            descriptionTitleView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalMargin),
-                           descriptionTitleView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: horizontalMargin)]
+                           descriptionTitleView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -horizontalMargin)]
 
         descriptionTitleView.addSubview(logoView)
         constraints += [logoView.leadingAnchor.constraint(equalTo: descriptionTitleView.leadingAnchor),
@@ -93,14 +93,14 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
 
         descriptionTitleView.addSubview(expandButton)
         constraints += [expandButton.centerYAnchor.constraint(equalTo: logoView.centerYAnchor),
-                        expandButton.trailingAnchor.constraint(equalTo: descriptionTitleView.trailingAnchor, constant: -horizontalMargin),
+                        expandButton.trailingAnchor.constraint(equalTo: descriptionTitleView.trailingAnchor),
                         expandButton.widthAnchor.constraint(equalToConstant: 16),
                         expandButton.heightAnchor.constraint(equalToConstant: 16)]
 
         addSubview(expandableLabel)
         constraints += [expandableLabel.topAnchor.constraint(equalTo: descriptionTitleView.bottomAnchor),
                         expandableLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalMargin),
-                        expandableLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
+                        expandableLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -horizontalMargin),
                         expandableLabelHeightConstraint,
                         expandableLabelBottomConstraint]
 

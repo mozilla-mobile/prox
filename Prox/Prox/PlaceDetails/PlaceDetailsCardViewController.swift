@@ -105,12 +105,13 @@ class PlaceDetailsCardViewController: UIViewController {
         setLocation(location: locationProvider?.getCurrentLocation())
         setupCardInteractions()
 
-        pageControl.numberOfPages = place.photoURLs?.count ?? 0
+        pageControl.numberOfPages = place.photoURLs.count
     }
 
     private func setLocation(location: CLLocation?) {
         if let lastTravelTimes = place.lastTravelTime {
             self.cardView.updateTravelTimesUI(travelTimes: lastTravelTimes)
+            return
         } else {
             self.cardView.travelTimeView.loadingSpinner.startAnimating()
         }
@@ -139,8 +140,7 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     @objc private func openYelpReview(gestureRecgonizer: UITapGestureRecognizer) {
-        guard let yelpProvider = place.yelpProvider,
-            let url = URL(string: yelpProvider.url) else { return }
+        guard let url = URL(string: place.yelpProvider.url) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open yelp review")
         }
@@ -172,8 +172,7 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     fileprivate func notifyDelegateOfChangeOfImageToURL(atIndex index: Int) {
-        if let imageURLString = place.photoURLs?[index],
-            let imageURL = URL(string: imageURLString) {
+        if let imageURL = URL(string: place.photoURLs[index]) {
             placeImageDelegate?.imageCarousel(imageCarousel: imageCarousel, placeImageDidChange: imageURL)
         }
     }
@@ -185,13 +184,12 @@ extension PlaceDetailsCardViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return place.photoURLs?.count ?? 1
+        return place.photoURLs.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PlaceDetailsCardCellReuseIdentifier, for: indexPath) as! ImageCarouselCollectionViewCell
-        if let photoURLs = place.photoURLs,
-            let photoURL = URL(string: photoURLs[indexPath.item]) {
+        if let photoURL = URL(string: place.photoURLs[indexPath.item]) {
             cell.imageView.setImageWith(photoURL)
 
         } else {
