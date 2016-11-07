@@ -8,7 +8,7 @@ fileprivate enum UIMode {
     case collapsed, expanded
 }
 
-class PlaceDetailsDescriptionView: HorizontalLineView {
+class PlaceDetailsDescriptionView: UIView {
 
     private let CollapseExpandSeconds = 1.0
 
@@ -41,7 +41,15 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
         return view
     }()
 
-    lazy var descriptionTitleView: UIView = UIView()
+    lazy var descriptionTitleView: HorizontalLineView = {
+        let view = HorizontalLineView()
+        view.backgroundColor = .clear
+        view.color = Colors.detailsViewCardSeparator
+        view.startX = 0.0
+        view.startY = 0.0
+        view.endY = 0.0
+        return view
+    }()
 
     init(labelText: String,
          icon: UIImage?,
@@ -54,7 +62,6 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
         backgroundColor = .clear
 
         setupSubviews()
-        setupLine()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -76,11 +83,11 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
     private func setupSubviews() {
         addSubview(descriptionTitleView)
         var constraints = [descriptionTitleView.topAnchor.constraint(equalTo: topAnchor),
-                           descriptionTitleView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalMargin),
-                           descriptionTitleView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -horizontalMargin)]
+                           descriptionTitleView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                           descriptionTitleView.trailingAnchor.constraint(equalTo: trailingAnchor)]
 
         descriptionTitleView.addSubview(logoView)
-        constraints += [logoView.leadingAnchor.constraint(equalTo: descriptionTitleView.leadingAnchor),
+        constraints += [logoView.leadingAnchor.constraint(equalTo: descriptionTitleView.leadingAnchor, constant: horizontalMargin),
                            logoView.widthAnchor.constraint(equalToConstant: 16),
                            logoView.heightAnchor.constraint(equalToConstant: 16),
                            logoView.topAnchor.constraint(equalTo: descriptionTitleView.topAnchor, constant: 20),
@@ -93,7 +100,7 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
 
         descriptionTitleView.addSubview(expandButton)
         constraints += [expandButton.centerYAnchor.constraint(equalTo: logoView.centerYAnchor),
-                        expandButton.trailingAnchor.constraint(equalTo: descriptionTitleView.trailingAnchor),
+                        expandButton.trailingAnchor.constraint(equalTo: descriptionTitleView.trailingAnchor, constant: -horizontalMargin),
                         expandButton.widthAnchor.constraint(equalToConstant: 16),
                         expandButton.heightAnchor.constraint(equalToConstant: 16)]
 
@@ -105,13 +112,6 @@ class PlaceDetailsDescriptionView: HorizontalLineView {
                         expandableLabelBottomConstraint]
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
-    }
-
-    private func setupLine() {
-        color = Colors.detailsViewCardSeparator
-        startX = 0.0
-        startY = 0.0
-        endY = 0.0
     }
 
     func didTap() {
