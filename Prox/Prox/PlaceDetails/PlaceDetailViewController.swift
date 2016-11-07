@@ -95,9 +95,11 @@ class PlaceDetailViewController: UIViewController {
 
     fileprivate let cardViewTopAnchorConstant: CGFloat = 204
     fileprivate let cardViewSpacingConstant: CGFloat = 6
-    fileprivate let cardViewWidthConstant: CGFloat = 343
+    fileprivate let cardEdgeMarginConstant:CGFloat = 16
+    fileprivate var cardViewWidth: CGFloat = 0
     fileprivate let imageCarouselHeightConstant: CGFloat = 240
     fileprivate let animationDurationConstant = 0.5
+
     fileprivate var startConstant: CGFloat!
 
     lazy var backgroundImage: UIImageView = {
@@ -135,6 +137,8 @@ class PlaceDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        cardViewWidth = self.view.bounds.width - (2 * cardEdgeMarginConstant)
+
         view.addSubview(scrollView)
         var constraints = [scrollView.topAnchor.constraint(equalTo: view.topAnchor),
                            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -167,7 +171,7 @@ class PlaceDetailViewController: UIViewController {
         scrollView.addSubview(currentCardViewController.cardView)
         currentCardViewCenterXConstraint = currentCardViewController.cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         constraints += [currentCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
-                        currentCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidthConstant),
+                        currentCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
                         currentCardViewCenterXConstraint!]
         self.addChildViewController(currentCardViewController)
 
@@ -180,7 +184,7 @@ class PlaceDetailViewController: UIViewController {
             scrollView.addSubview(previousCardViewController!.cardView)
             previousCardViewTrailingConstraint = previousCardViewController!.cardView.trailingAnchor.constraint(equalTo: currentCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
             constraints += [previousCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
-                            previousCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidthConstant),
+                            previousCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
                             previousCardViewTrailingConstraint!]
         }
 
@@ -189,7 +193,7 @@ class PlaceDetailViewController: UIViewController {
             scrollView.addSubview(nextCardViewController!.cardView)
             nextCardViewLeadingConstraint = nextCardViewController!.cardView.leadingAnchor.constraint(equalTo: currentCardViewController.cardView.trailingAnchor, constant: cardViewSpacingConstant)
             constraints += [nextCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
-                            nextCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidthConstant),
+                            nextCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
                             nextCardViewLeadingConstraint!]
         }
 
@@ -406,7 +410,7 @@ class PlaceDetailViewController: UIViewController {
         self.scrollView.addSubview(newCardViewController.cardView)
         self.addChildViewController(newCardViewController)
         NSLayoutConstraint.activate([newCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
-                                     newCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidthConstant)], translatesAutoresizingMaskIntoConstraints: false)
+                                     newCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth)], translatesAutoresizingMaskIntoConstraints: false)
 
         return newCardViewController
     }
