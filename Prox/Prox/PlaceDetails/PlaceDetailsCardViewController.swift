@@ -101,6 +101,7 @@ class PlaceDetailsCardViewController: UIViewController {
         guard let place = place else {
             return
         }
+        imageCarouselCollectionView.reloadData()
         cardView.updateUI(forPlace: place)
         setLocation(location: locationProvider?.getCurrentLocation())
         setupCardInteractions()
