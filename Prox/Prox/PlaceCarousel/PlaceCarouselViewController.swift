@@ -213,7 +213,6 @@ class PlaceCarouselViewController: UIViewController {
     func refreshLocation() {
         if (CLLocationManager.hasLocationPermissionAndEnabled()) {
             locationManager.startMonitoringSignificantLocationChanges()
-            self.locationManager.startMonitoringVisits()
         } else {
             // requestLocation expected to be called on authorization status change.
             locationManager.maybeRequestLocationPermission(viewController: self)
