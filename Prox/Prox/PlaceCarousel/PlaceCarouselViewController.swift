@@ -159,11 +159,6 @@ class PlaceCarouselViewController: UIViewController {
             self.view.layer.contents = backgroundImage.cgImage
         }
 
-        let gradient: CAGradientLayer = CAGradientLayer()
-        gradient.frame = view.bounds
-        gradient.colors = [Colors.carouselViewBackgroundGradientStart.cgColor, Colors.carouselViewBackgroundGradientEnd.cgColor]
-        view.layer.insertSublayer(gradient, at: 0)
-
         // add the views to the stack view
         view.addSubview(headerView)
 
