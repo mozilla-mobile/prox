@@ -109,7 +109,11 @@ private class ReviewScoreItemView: UIView {
         }
     }
 
-    var fillType: FillAmount = .empty
+    var fillType: FillAmount = .empty {
+        didSet {
+            if oldValue != fillType { setNeedsDisplay() }
+        }
+    }
 
     init(filledColor: UIColor, unfilledColor: UIColor) {
         self.filledColor = filledColor
