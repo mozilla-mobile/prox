@@ -38,6 +38,9 @@ class PlaceCarouselViewController: UIViewController {
         let manager = CLLocationManager()
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
+        // TODO: update to a more sane distance value when testing is over.
+        // This is probably going to be around 100m
+        manager.distanceFilter = kCLDistanceFilterNone
         return manager
     }()
 
@@ -191,9 +194,26 @@ class PlaceCarouselViewController: UIViewController {
         // apply the constraints
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        guard let location = getCurrentLocation() else {
+            return
+        }
+
+        // this will update places when we first load, and whenever we show the place carousel
+        // but not update places while we are showing details, until we close the place details
+        // this ensures consistency between the place details and the carousel underneath
+        // and makes sure we don't end up providing weird data to users while they are scrolling
+        // through places details
+        updatePlaces(forLocation: location)
+    }
+
     func refreshLocation() {
         if (CLLocationManager.hasLocationPermissionAndEnabled()) {
-            locationManager.requestLocation()
+            locationManager.startMonitoringSignificantLocationChanges()
+            self.locationManager.startMonitoringVisits()
         } else {
             // requestLocation expected to be called on authorization status change.
             locationManager.maybeRequestLocationPermission(viewController: self)
@@ -224,6 +244,17 @@ class PlaceCarouselViewController: UIViewController {
 
         self.present(placeDetailViewController, animated: true, completion: nil)
     }
+
+    fileprivate func updatePlaces(forLocation location: CLLocation) {
+        FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
+            let newPlaces = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
+            // only update our places list if the places have changed
+            if newPlaces != self.places {
+                self.places = newPlaces
+                self.placeCarousel.refresh()
+            }
+        }
+    }
 }
 
 extension PlaceCarouselViewController: CLLocationManagerDelegate {
@@ -237,28 +268,27 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
         if var location = locations.last {
             // In iOS9, didUpdateLocations can be unexpectedly called multiple
             // times for a single `requestLocation`: we guard against that here.
-            let now = Date()
             if timeOfLastLocationUpdate == nil ||
-                (now - MIN_SECS_BETWEEN_LOCATION_UPDATES) > timeOfLastLocationUpdate! {
-                timeOfLastLocationUpdate = now
+                (location.timestamp - MIN_SECS_BETWEEN_LOCATION_UPDATES) > timeOfLastLocationUpdate! {
 
                 if AppConstants.MOZ_LOCATION_FAKING {
                     // fake the location to Hilton Waikaloa Village, Kona, Hawaii
                     location = fakeLocation
                 }
 
-                updateLocation(manager, location: location)
+                // only update places if this is our first location update
+                if timeOfLastLocationUpdate == nil {
+                    updateLocation(location: location)
+                }
+                timeOfLastLocationUpdate = location.timestamp
             }
         }
     }
 
-    private func updateLocation(_ manager: CLLocationManager, location: CLLocation) {
+    fileprivate func updateLocation(location: CLLocation) {
+        updatePlaces(forLocation: location)
+
         let coord = location.coordinate
-
-        FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
-            self.places = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
-        }
-
         // if we're running in the simulator, find the timezone of the current coordinates and calculate the sunrise/set times for then
         // this is so that, if we're simulating our location, we still get sunset/sunrise times
         #if (arch(i386) || arch(x86_64))
