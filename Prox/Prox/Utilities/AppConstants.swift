@@ -10,11 +10,10 @@ public enum AppBuildChannel {
     case Release
 }
 
-
-
 public struct AppConstants {
 
-    public static let IsRunningTest = NSClassFromString("XCTestCase") != nil
+    public static let isRunningTest = NSClassFromString("XCTestCase") != nil
+    public static let backgroundFetchInterval: TimeInterval = 15 * 60
 
     /// Build Channel.
     public static let BuildChannel: AppBuildChannel = {

@@ -32,6 +32,7 @@
 	<string>Location is used to find points of interest and events near your current location</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>fetch</string>
 		<string>location</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

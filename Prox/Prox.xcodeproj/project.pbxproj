@@ -13,6 +13,7 @@
 		7B29E7CD1DA3EC360099AF38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */; };
 		7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7D71DA3EC360099AF38 /* ProxTests.swift */; };
 		7B29E7E31DA3EC360099AF38 /* ProxUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7E21DA3EC360099AF38 /* ProxUITests.swift */; };
+		7B48EBDA1DD1F679005C36CB /* GeofenceRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B48EBD91DD1F679005C36CB /* GeofenceRegion.swift */; };
 		7B5095621DB531C0007C54F0 /* PlaceCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */; };
 		7B5095651DB531CA007C54F0 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095641DB531CA007C54F0 /* Place.swift */; };
 		7B5095671DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095661DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift */; };
@@ -99,6 +100,7 @@
 		7B29E7DE1DA3EC360099AF38 /* ProxUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProxUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B29E7E21DA3EC360099AF38 /* ProxUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxUITests.swift; sourceTree = "<group>"; };
 		7B29E7E41DA3EC360099AF38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7B48EBD91DD1F679005C36CB /* GeofenceRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeofenceRegion.swift; sourceTree = "<group>"; };
 		7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarousel.swift; path = PlaceCarousel/PlaceCarousel.swift; sourceTree = "<group>"; };
 		7B5095641DB531CA007C54F0 /* Place.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
 		7B5095661DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselCollectionViewCell.swift; path = PlaceCarousel/PlaceCarouselCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -108,7 +110,7 @@
 		7B5095701DB5352E007C54F0 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		7B5095711DB5352E007C54F0 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NSLayoutConstraint.swift; path = Extensions/NSLayoutConstraint.swift; sourceTree = "<group>"; };
-		7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TravelTimesProvider.swift; path = Data/TravelTimesProvider.swift; sourceTree = "<group>"; };
+		7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TravelTimesProvider.swift; path = ../Data/TravelTimesProvider.swift; sourceTree = "<group>"; };
 		7B5095801DB65FD4007C54F0 /* TravelTimesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TravelTimesTests.swift; sourceTree = "<group>"; };
 		7B5095841DB903B7007C54F0 /* DatabaseResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatabaseResult.swift; path = Data/DatabaseResult.swift; sourceTree = "<group>"; };
 		7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselHeaderView.swift; path = PlaceCarousel/PlaceCarouselHeaderView.swift; sourceTree = "<group>"; };
@@ -224,7 +226,6 @@
 			children = (
 				7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */,
 				7B29E7C91DA3EC360099AF38 /* Assets.xcassets */,
-				7B5095791DB64EA1007C54F0 /* DataAccess */,
 				E65857E31DB6A75400CD18F8 /* Database */,
 				7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */,
 				E67146341DB5488D007A99E4 /* Extensions */,
@@ -269,6 +270,7 @@
 			children = (
 				E65857DD1DB69F4200CD18F8 /* ReviewProvider.swift */,
 				7B5095641DB531CA007C54F0 /* Place.swift */,
+				7B48EBD91DD1F679005C36CB /* GeofenceRegion.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -286,6 +288,7 @@
 		7B50956F1DB5352E007C54F0 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */,
 				7B5095701DB5352E007C54F0 /* Colors.swift */,
 				7B5095711DB5352E007C54F0 /* Fonts.swift */,
 				7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */,
@@ -293,14 +296,6 @@
 				7B9D15C51DC0D2E70051B760 /* OpenInHelper.swift */,
 			);
 			path = Utilities;
-			sourceTree = "<group>";
-		};
-		7B5095791DB64EA1007C54F0 /* DataAccess */ = {
-			isa = PBXGroup;
-			children = (
-				7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */,
-			);
-			name = DataAccess;
 			sourceTree = "<group>";
 		};
 		7B561BB11DABD5730096D8BC /* Place Carousel */ = {
@@ -496,7 +491,7 @@
 				TargetAttributes = {
 					7B29E7BE1DA3EC360099AF38 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 43AQ936H96;
+						DevelopmentTeam = 9G8J6YA743;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -717,6 +712,7 @@
 				7B9D15C81DC0D51C0051B760 /* OpenInFirefoxControllerSwift.swift in Sources */,
 				7B5095621DB531C0007C54F0 /* PlaceCarousel.swift in Sources */,
 				7B5095721DB5352E007C54F0 /* Colors.swift in Sources */,
+				7B48EBDA1DD1F679005C36CB /* GeofenceRegion.swift in Sources */,
 				E662FF4A1DC022940042C4A9 /* PlaceDetailsCardView.swift in Sources */,
 				7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */,
 				7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */,

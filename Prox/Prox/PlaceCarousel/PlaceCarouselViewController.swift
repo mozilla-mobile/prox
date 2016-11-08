@@ -31,7 +31,10 @@ struct PlaceDataSourceError: Error {
 
 class PlaceCarouselViewController: UIViewController {
 
+
+    fileprivate let currentLocationIdentifier = "CURRENT_LOCATION"
     fileprivate let MIN_SECS_BETWEEN_LOCATION_UPDATES: TimeInterval = 1
+
     fileprivate var timeOfLastLocationUpdate: Date?
 
     lazy var locationManager: CLLocationManager = {
@@ -101,6 +104,9 @@ class PlaceCarouselViewController: UIViewController {
 
     // fake the location to Hilton Waikaloa Village, Kona, Hawaii
     fileprivate var fakeLocation: CLLocation = CLLocation(latitude: 19.924043, longitude: -155.887652)
+
+    fileprivate var monitoredRegions: [String: GeofenceRegion] = [String: GeofenceRegion]()
+    fileprivate var shouldFetchEvents: Bool = false
 
     private func setSunriseSetTimes() {
         let today = Date()
@@ -211,15 +217,6 @@ class PlaceCarouselViewController: UIViewController {
         updatePlaces(forLocation: location)
     }
 
-    func refreshLocation() {
-        if (CLLocationManager.hasLocationPermissionAndEnabled()) {
-            locationManager.startMonitoringSignificantLocationChanges()
-        } else {
-            // requestLocation expected to be called on authorization status change.
-            locationManager.maybeRequestLocationPermission(viewController: self)
-        }
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -245,6 +242,9 @@ class PlaceCarouselViewController: UIViewController {
         self.present(placeDetailViewController, animated: true, completion: nil)
     }
 
+
+    // MARK: Location Handling
+
     fileprivate func updatePlaces(forLocation location: CLLocation) {
         FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
             let newPlaces = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
@@ -254,6 +254,78 @@ class PlaceCarouselViewController: UIViewController {
                 self.placeCarousel.refresh()
             }
         }
+    }
+
+    func refreshLocation() {
+        if (CLLocationManager.hasLocationPermissionAndEnabled()) {
+            locationManager.startMonitoringSignificantLocationChanges()
+        } else {
+            // requestLocation expected to be called on authorization status change.
+            locationManager.maybeRequestLocationPermission(viewController: self)
+        }
+    }
+
+    fileprivate func updateLocation(location: CLLocation) {
+        self.shouldFetchEvents = true
+        startMonitoring(location: location, withIdentifier: currentLocationIdentifier, forEntry: nil, forExit: {
+            print("Exited location \(self.currentLocationIdentifier)")
+            self.shouldFetchEvents = false
+            self.stopMonitoringRegion(withIdentifier: self.currentLocationIdentifier)
+        })
+        fetchPlaces(forLocation: location)
+        updateSunRiseSetTimes(forLocation: location)
+    }
+
+    fileprivate func fetchPlaces(forLocation location: CLLocation) {
+        FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
+            self.places = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
+        }
+    }
+
+    fileprivate func updateSunRiseSetTimes(forLocation location: CLLocation) {
+        let coord = location.coordinate
+        // if we're running in the simulator, find the timezone of the current coordinates and calculate the sunrise/set times for then
+        // this is so that, if we're simulating our location, we still get sunset/sunrise times
+        #if (arch(i386) || arch(x86_64))
+            let geocoder = CLGeocoder()
+            geocoder.reverseGeocodeLocation(location) { placemarks, error in
+                if let placemark = placemarks?.first {
+                    DispatchQueue.main.async() {
+                        self.sunriseSet = EDSunriseSet(timezone: placemark.timeZone, latitude: coord.latitude, longitude: coord.longitude)
+                    }
+                }
+            }
+        #else
+            sunriseSet = EDSunriseSet(timezone: NSTimeZone.local, latitude: coord.latitude, longitude: coord.longitude)
+        #endif
+
+    }
+
+    fileprivate func startMonitoring(location: CLLocation, withIdentifier identifier: String, forEntry: (()->())?, forExit: (()->())?) {
+        let region = GeofenceRegion(location: location.coordinate, identifier: identifier, radius: 50.00, onEntry: forEntry, onExit: forExit)
+        monitoredRegions[identifier] = region
+
+        self.locationManager.startMonitoring(for: region.region)
+    }
+
+    fileprivate func stopMonitoringRegion(withIdentifier identifier: String) {
+        guard let monitoredRegion = monitoredRegions[identifier]?.region else {
+            return
+        }
+        self.locationManager.stopMonitoring(for: monitoredRegion)
+        monitoredRegions.removeValue(forKey: identifier)
+    }
+
+
+    // MARK: Events
+
+    func fetchEvents(completion: @escaping (UIBackgroundFetchResult) -> Void) {
+        if shouldFetchEvents {
+            print("Should fetch events")
+            return completion(.noData)
+        }
+        print("Should not fetch events")
+        completion(.noData)
     }
 }
 
@@ -284,30 +356,21 @@ extension PlaceCarouselViewController: CLLocationManagerDelegate {
             }
         }
     }
-
-    fileprivate func updateLocation(location: CLLocation) {
-        updatePlaces(forLocation: location)
-
-        let coord = location.coordinate
-        // if we're running in the simulator, find the timezone of the current coordinates and calculate the sunrise/set times for then
-        // this is so that, if we're simulating our location, we still get sunset/sunrise times
-        #if (arch(i386) || arch(x86_64))
-            let geocoder = CLGeocoder()
-            geocoder.reverseGeocodeLocation(location) { placemarks, error in
-                if let placemark = placemarks?.first {
-                    DispatchQueue.main.async() {
-                        self.sunriseSet = EDSunriseSet(timezone: placemark.timeZone, latitude: coord.latitude, longitude: coord.longitude)
-                    }
-                }
-            }
-        #else
-            sunriseSet = EDSunriseSet(timezone: NSTimeZone.local, latitude: coord.latitude, longitude: coord.longitude)
-        #endif
-    }
-
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         // TODO: handle
         print("lol-location \(error.localizedDescription)")
+    }
+
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        monitoredRegions[region.identifier]?.onEntry?()
+    }
+
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+        monitoredRegions[region.identifier]?.onExit?()
+    }
+
+    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+        print("lol-location region monitoring failed \(error.localizedDescription)")
     }
 }
 
