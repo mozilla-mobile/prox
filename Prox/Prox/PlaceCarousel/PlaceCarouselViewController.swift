@@ -329,11 +329,10 @@ extension PlaceCarouselViewController: PlaceCarouselDelegate {
 extension PlaceCarouselViewController: LocationProvider {
     func getCurrentLocation() -> CLLocation? {
         guard AppConstants.MOZ_LOCATION_FAKING else {
-            // fake the location to Hilton Waikaloa Village, Kona, Hawaii
-            return fakeLocation
+            return self.locationManager.location
         }
-
-        return self.locationManager.location
+        // fake the location to Hilton Waikaloa Village, Kona, Hawaii
+        return fakeLocation
     }
 }
 
