@@ -25,8 +25,10 @@ class OpenHoursTests: XCTestCase {
         for dayOfWeek in expected.hours.keys {
             let (actualOpen, actualClose) = actual.hours[dayOfWeek]!
             let (expectedOpen, expectedClose) = expected.hours[dayOfWeek]!
-            XCTAssertEqual(actualOpen, expectedOpen)
-            XCTAssertEqual(actualClose, expectedClose)
+            XCTAssertEqual(actualOpen.hour, expectedOpen.hour)
+            XCTAssertEqual(actualOpen.minute, expectedOpen.minute)
+            XCTAssertEqual(actualClose.hour, expectedClose.hour)
+            XCTAssertEqual(actualClose.minute, expectedClose.minute)
         }
     }
 
@@ -37,12 +39,24 @@ class OpenHoursTests: XCTestCase {
                         "wednesday" : [["21:00", "2:00"]]]
         let actual = OpenHours.fromFirebaseValue(firebase)
 
-        let monExpected = (open: getNormalizedDate(forHour: 7, forMin: 0)!,
-                           close: getNormalizedDate(forHour: 14, forMin: 30)!)
-        let tuesExpected = (open: getNormalizedDate(forHour: 21, forMin: 0)!,
-                            close: getNormalizedDate(forHour: 22, forMin: 0)!)
-        let wedExpected = (open: getNormalizedDate(forHour: 21, forMin: 0)!,
-                           close: getNormalizedDate(forHour: 2, forMin: 0, isTomorrow: true)!)
+        var openingDateComponents = DateComponents()
+        openingDateComponents.hour = 7
+        openingDateComponents.minute = 0
+        var closingDateComponents = DateComponents()
+        closingDateComponents.hour = 14
+        closingDateComponents.minute = 30
+        let monExpected = (openTime: openingDateComponents,
+                           closeTime: closingDateComponents)
+
+        openingDateComponents.hour = 21
+        closingDateComponents.hour = 22
+        closingDateComponents.minute = 0
+        let tuesExpected = (openTime: openingDateComponents,
+                            closeTime: closingDateComponents)
+
+        closingDateComponents.hour = 2
+        let wedExpected = (openTime: openingDateComponents,
+                            closeTime: closingDateComponents)
         let expected = OpenHours(hours: [DayOfWeek.monday : monExpected,
                                          DayOfWeek.tuesday : tuesExpected,
                                          DayOfWeek.wednesday : wedExpected])
@@ -50,11 +64,6 @@ class OpenHoursTests: XCTestCase {
         XCTAssertNotNil(actual)
         assertEquals(actual!, expected)
 
-        // Time comparisons
-        for day in actual!.hours.keys {
-            let (open, close) = actual!.hours[day]!
-            XCTAssertLessThan(open, close)
-        }
     }
 
     // Date is normalized to allow simple time comparisons, like OpenHours' stored dates.
@@ -70,26 +79,79 @@ class OpenHoursTests: XCTestCase {
     }
 
     func testIsOpen() {
-        let mondayDate = DateComponents.init(calendar: GregorianCalendar,
-                                             year: 2016, month: 11, day: 7).date! // Mon Nov. 7th 2016
-        let tuesdayDate = DateComponents.init(calendar: GregorianCalendar,
-                                              year: 2016, month: 11, day: 8).date!
+        var date = DateComponents.init(calendar: GregorianCalendar,
+                                             year: 2016, month: 11, day: 7)
+        date.hour = 6
+        date.minute = 59
 
-        let hours = OpenHours(hours: [.monday : (open: mondayDate, close: mondayDate)])
+        var opening = DateComponents()
+        opening.hour = 7
+        opening.minute = 0
+        var closing = DateComponents()
+        closing.hour = 21
+        closing.minute = 0
 
-        XCTAssertTrue(hours.isOpen(onDate: mondayDate), "Expected open for \(mondayDate)")
-        XCTAssertFalse(hours.isOpen(onDate: tuesdayDate), "Expected closed for \(tuesdayDate)")
+        var hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: closing)])
+
+        XCTAssertFalse(hours.isOpen(atTime: date.date!), "Expected closed for \(date)")
+
+        date.hour = 7
+        date.minute = 0
+        XCTAssertTrue(hours.isOpen(atTime: date.date!), "Expected open for \(date)")
+
+        date.hour = 21
+        date.minute = 0
+        XCTAssertFalse(hours.isOpen(atTime: date.date!), "Expected closed for \(date)")
+
+        closing.hour = 2
+        closing.minute = 0
+        hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: closing),
+                                  .tuesday : (openTime: opening, closeTime: closing)])
+
+        date.hour = 23
+        date.minute = 59
+        XCTAssertTrue(hours.isOpen(atTime: date.date!), "Expected open for \(date)")
+
+        date.hour = 0
+        date.minute = 0
+        XCTAssertFalse(hours.isOpen(atTime: date.date!), "Expected closed for \(date)")
+
+        date.day = 8
+        XCTAssertTrue(hours.isOpen(atTime: date.date!), "Expected open for \(date)")
+
+        date.hour = 2
+        date.minute = 0
+        XCTAssertFalse(hours.isOpen(atTime: date.date!), "Expected closed for \(date)")
     }
 
     func testGetTimeString() {
-        let openDate = getNormalizedDate(forHour: 7, forMin: 0)!
-        let closeDate = getNormalizedDate(forHour: 14, forMin: 30)!
-        let hours = OpenHours(hours: [.monday : (open: openDate, close: closeDate)])
+        var opening = DateComponents()
+        opening.hour = 7
+        opening.minute = 0
+        var closing = DateComponents()
+        closing.hour = 14
+        closing.minute = 30
+        var tuesdayOpening = DateComponents()
+        tuesdayOpening.hour = 10
+        tuesdayOpening.minute = 0
+        let hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: closing),
+                                      .tuesday : (openTime: tuesdayOpening, closeTime: closing)])
 
-        let testDate = DateComponents.init(calendar: GregorianCalendar,
-                                           year: 2016, month: 11, day: 7).date! // Mon Nov. 7th 2016
+        var testDateComponents = DateComponents.init(calendar: GregorianCalendar,
+                                           year: 2016, month: 11, day: 7) // Mon Nov. 7th 2016
 
-        XCTAssertEqual(hours.getOpenTimeString(forDate: testDate), "7:00 AM")
-        XCTAssertEqual(hours.getCloseTimeString(forDate: testDate), "2:30 PM")
+        testDateComponents.hour = 6
+        testDateComponents.minute = 59
+
+        var testDate = testDateComponents.date!
+
+        XCTAssertEqual(hours.nextOpeningTime(forTime: testDate), "7:00 AM")
+        XCTAssertEqual(hours.closingTime(forTime: testDate), "2:30 PM")
+
+
+        testDateComponents.hour = 14
+        testDateComponents.minute = 01
+        testDate = testDateComponents.date!
+        XCTAssertEqual(hours.nextOpeningTime(forTime: testDate), "10:00 AM")
     }
 }
