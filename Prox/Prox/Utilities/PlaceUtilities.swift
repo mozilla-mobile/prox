@@ -28,14 +28,14 @@ struct PlaceUtilities {
     static func updateReviewUI(fromProvider provider: ReviewProvider?, onView view: ReviewContainerView) {
         guard let provider = provider else {
             setSubviewAlpha(0.4, forParent: view)
-            view.score = 0
+            view.score = nil
             view.numberOfReviewersLabel.text = "No data available"
             return
         }
 
         setSubviewAlpha(1.0, forParent: view)
-        view.score = provider.rating ?? 0 // TODO: error state (& next line)
-        view.numberOfReviewersLabel.text = "\(provider.totalReviewCount ?? 0) Reviews"
+        view.score = provider.rating
+        view.numberOfReviewersLabel.text = provider.totalReviewCount != nil ? "\(provider.totalReviewCount!) Reviews" : nil
     }
 
     private static func setSubviewAlpha(_ alpha: CGFloat, forParent parentView: ReviewContainerView) {
