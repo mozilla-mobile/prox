@@ -234,10 +234,11 @@ class PlaceDetailsCardView: UIView {
             let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
             if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
                 if walkingTimeMinutes < TravelTimesProvider.YOU_ARE_HERE_WALKING_TIME {
-                    self.travelTimeView.primaryTextLabel.text = "You are here!"
-                    self.travelTimeView.secondaryTextLabel.text = nil
-                    self.travelTimeView.iconView.image = nil
+                    self.travelTimeView.isPrimaryTextLabelHidden = true
+                    self.travelTimeView.secondaryTextLabel.text = "You're here!"
+                    self.travelTimeView.iconView.image = UIImage(named: "icon_here")
                 } else {
+                    self.travelTimeView.isPrimaryTextLabelHidden = false
                     self.travelTimeView.primaryTextLabel.text = "\(walkingTimeMinutes) min"
                     self.travelTimeView.secondaryTextLabel.text = "Walking"
                     self.travelTimeView.iconView.image = UIImage(named: "icon_walkingdist")
@@ -248,6 +249,7 @@ class PlaceDetailsCardView: UIView {
 
         if let drivingTimeSeconds = travelTimes.drivingTime {
             let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
+            self.travelTimeView.isPrimaryTextLabelHidden = false
             self.travelTimeView.primaryTextLabel.text = "\(drivingTimeMinutes) min"
             self.travelTimeView.secondaryTextLabel.text = "Driving"
             self.travelTimeView.iconView.image = UIImage(named: "icon_drivingdist")

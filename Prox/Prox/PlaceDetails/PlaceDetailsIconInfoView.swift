@@ -32,12 +32,21 @@ class PlaceDetailsIconInfoView: UIView {
         return view
     }()
 
-
     lazy var loadingSpinner: UIActivityIndicatorView = {
         let indicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
         indicatorView.hidesWhenStopped = true
         return indicatorView
     }()
+
+    // We hide primary because we want secondary text style.
+    var isPrimaryTextLabelHidden = false {
+        didSet {
+            if oldValue != isPrimaryTextLabelHidden { setPrimaryTextLabelHidden(isPrimaryTextLabelHidden) }
+        }
+    }
+
+    fileprivate var secondaryTextLabelHalfHeightConstraint: NSLayoutConstraint!
+    fileprivate var secondaryTextLabelFullHeightConstraint: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -70,18 +79,33 @@ class PlaceDetailsIconInfoView: UIView {
     }
 
     private func setupLabelContainerSubviews() -> [NSLayoutConstraint] {
-        labelContainer.addSubview(primaryTextLabel)
-        var constraints = [primaryTextLabel.topAnchor.constraint(equalTo: labelContainer.topAnchor),
-                           primaryTextLabel.leadingAnchor.constraint(equalTo: labelContainer.leadingAnchor),
-                           primaryTextLabel.trailingAnchor.constraint(equalTo: labelContainer.trailingAnchor),
-                           primaryTextLabel.heightAnchor.constraint(equalTo: labelContainer.heightAnchor, multiplier: 0.5)]
+        secondaryTextLabelHalfHeightConstraint = secondaryTextLabel.heightAnchor.constraint(equalTo: labelContainer.heightAnchor, multiplier: 0.5)
+        secondaryTextLabelFullHeightConstraint = secondaryTextLabel.heightAnchor.constraint(equalTo: labelContainer.heightAnchor, multiplier: 1)
 
         labelContainer.addSubview(secondaryTextLabel)
-        constraints += [secondaryTextLabel.topAnchor.constraint(equalTo: primaryTextLabel.bottomAnchor),
-                        secondaryTextLabel.leadingAnchor.constraint(equalTo: primaryTextLabel.leadingAnchor),
-                        secondaryTextLabel.trailingAnchor.constraint(equalTo: primaryTextLabel.trailingAnchor),
-                        secondaryTextLabel.bottomAnchor.constraint(equalTo: labelContainer.bottomAnchor)]
+        var constraints: [NSLayoutConstraint] = [secondaryTextLabel.leadingAnchor.constraint(equalTo: labelContainer.leadingAnchor),
+                                                 secondaryTextLabel.trailingAnchor.constraint(equalTo: labelContainer.trailingAnchor),
+                                                 secondaryTextLabel.bottomAnchor.constraint(equalTo: labelContainer.bottomAnchor),
+                                                 secondaryTextLabelHalfHeightConstraint]
+
+        labelContainer.addSubview(primaryTextLabel)
+        constraints += [primaryTextLabel.topAnchor.constraint(equalTo: labelContainer.topAnchor),
+                        primaryTextLabel.leadingAnchor.constraint(equalTo: secondaryTextLabel.leadingAnchor),
+                        primaryTextLabel.trailingAnchor.constraint(equalTo: secondaryTextLabel.trailingAnchor),
+                        primaryTextLabel.bottomAnchor.constraint(equalTo: secondaryTextLabel.topAnchor)]
 
         return constraints
+    }
+
+    private func setPrimaryTextLabelHidden(_ isHidden: Bool) {
+        if isHidden {
+            primaryTextLabel.isHidden = true
+            secondaryTextLabelHalfHeightConstraint.isActive = false
+            secondaryTextLabelFullHeightConstraint.isActive = true
+        } else {
+            primaryTextLabel.isHidden = false
+            secondaryTextLabelHalfHeightConstraint.isActive = true
+            secondaryTextLabelFullHeightConstraint.isActive = false
+        }
     }
 }
