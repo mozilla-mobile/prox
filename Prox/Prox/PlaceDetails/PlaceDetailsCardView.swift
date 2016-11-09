@@ -305,23 +305,14 @@ class PlaceDetailsCardView: UIView {
             return ("Not sure", "Closing time")
         }
 
-        let innerHours = openHours.hours
-        let day = DayOfWeek.forDate(date)
-        guard let (open, close) = innerHours[day] else {
-            print("lol unexpectedly no hours for \(date)")
-            return ("No hours", "For Today") // TODO: probably closed today - how best to handle?
+        let now = Date()
+        if openHours.isOpen(atTime: now),
+            let closingTime = openHours.closingTime(forTime: now) {
+            return ("Open", "Closes at \(closingTime)")
+        } else if let openingTime = openHours.nextOpeningTime(forTime: now) {
+            return ("Closed", "Opens at \(openingTime)")
         }
 
-        if date > open {
-            let closeTimeStr = openHours.getCloseTimeString(forDate: date)
-            if date < close {
-                return (closeTimeStr, "Closing time")
-            }
-            print("lol venue unexpectedly already closed for \(date) and closing \(close)")
-            return ("Closed", "at \(closeTimeStr)") // TODO: already closed - how best to handle?
-        }
-
-        let openTimeStr = openHours.getOpenTimeString(forDate: date)
-        return ("Closed", "Opens at \(openTimeStr)")
+        return ("Not sure", "Closing time")
     }
 }

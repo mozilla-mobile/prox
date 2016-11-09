@@ -172,11 +172,24 @@ enum DayOfWeek: String {
         let weekdayStr = Cal.weekdaySymbols[weekdayInt - 1]
         return DayOfWeek(rawValue: weekdayStr.lowercased())!
     }
+
+    func nextWeekday() -> DayOfWeek {
+        switch(self) {
+        case .monday: return .tuesday
+        case .tuesday: return .wednesday
+        case .wednesday: return .thursday
+        case .thursday: return .friday
+        case .friday: return .saturday
+        case .saturday: return .sunday
+        case .sunday: return .monday
+        }
+    }
 }
 
 struct OpenHours {
 
-    private static let TimeInDay: TimeInterval = 60 * 60 * 24 // specified in seconds.
+    private static let calendar = Calendar(identifier: .gregorian)
+    private static let dateComponentsSet: Set<Calendar.Component> = [Calendar.Component.day, Calendar.Component.month, Calendar.Component.year]
 
     /* Notes:
      *   - An entry for DayOfWeek is missing if a location is not open that day.
@@ -189,18 +202,11 @@ struct OpenHours {
      *   - Use all open intervals
      *   - Use accurate days of week in Date (maybe? It adds complexity for little gain).
      */
-    let hours: [DayOfWeek : (open: Date, close: Date)]
+    let hours: [DayOfWeek : (openTime: DateComponents, closeTime: DateComponents)]
 
-    private static let inputFormatter: DateFormatter = {
+    private static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }()
-
-    private static let outputFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short // Time will appear in users' clock config: 12hr or 24hr.
+        formatter.dateFormat = "h:mm a"
         return formatter
     }()
 
@@ -216,7 +222,7 @@ struct OpenHours {
      * TODO: return nil ^ or just remove the days that are malformed?
      */
     static func fromFirebaseValue(_ hoursDict: [String : [[String]]]) -> OpenHours? {
-        var out = [DayOfWeek : (open: Date, close: Date)]()
+        var out = [DayOfWeek : (openTime: DateComponents, closeTime: DateComponents)]()
 
         // Note: we don't check if a day is missing because if it is,
         // it's closed for the day and we're supposed to omit it anyway.
@@ -237,48 +243,83 @@ struct OpenHours {
                 return nil
             }
 
-            guard let openTime = getDate(fromServerStr: lastInterval[0]),
-                    var closeTime = getDate(fromServerStr: lastInterval[1]) else {
+            guard let openTime = getTimeComponents(fromServerStr: lastInterval[0]),
+                    let closeTime = getTimeComponents(fromServerStr: lastInterval[1]) else {
                 print("lol unable to convert date str, \(lastInterval[0]) & \(lastInterval[1]), to Date")
                 return nil
             }
 
-            if closeTime < openTime { // i.e. open overnight.
-                closeTime.addTimeInterval(TimeInDay) // Date defaults to today – this happens tomorrow.
-            }
-
-            out[day] = (open: openTime, close: closeTime)
+            out[day] = (openTime: openTime, closeTime: closeTime)
         }
 
         return OpenHours(hours: out)
     }
 
-    private static func getDate(fromServerStr serverStr: String) -> Date? {
-        guard serverStr.characters.count != 4 || serverStr.characters.count != 5 else { // "1:00" or "10:00"
-            return nil // the calling function logs.
+    private static func getTimeComponents(fromServerStr serverStr: String) -> DateComponents? {
+        let timeComponents = serverStr.components(separatedBy: ":")
+        guard timeComponents.count == 2,
+            let hours = Int(timeComponents[0]), let minutes = Int(timeComponents[1]) else {
+            return nil
         }
 
-        return inputFormatter.date(from: serverStr)
+        let dateComponents = DateComponents(calendar: OpenHours.calendar, timeZone: nil, era: nil, year: nil, month: nil, day: nil, hour: hours, minute: minutes, second: nil, nanosecond: nil, weekday: nil, weekdayOrdinal: nil, quarter: nil, weekOfMonth: nil, weekOfYear: nil, yearForWeekOfYear: nil)
+
+        return dateComponents
     }
 
-    func isOpen(onDate date: Date) -> Bool {
-        return hours[DayOfWeek.forDate(date)] != nil
+    func isOpen(atTime time: Date) -> Bool {
+        let dayOfWeek = DayOfWeek.forDate(time)
+        guard let openTime = hours[dayOfWeek]?.openTime,
+            let openingTime = date(forTime: openTime, onDate: time),
+            let closeTime = hours[dayOfWeek]?.closeTime,
+            let closingTime = date(forTime: closeTime, onDate: time) else {
+            return false
+        }
+
+        // if a place has 24 hour opening, then opening time and closing time would be the same here
+        // detect this and return it as true
+        return (time >= openingTime && time < closingTime) || openingTime == closingTime
     }
 
-    // Note: always call isOpen(onDate) or check if day exists in dict before calling.
-    func getOpenTimeString(forDate date: Date) -> String {
-        return getTimeString(forDate: date) { (interval: (open: Date, close: Date)) in interval.open }
+    private func date(forTime time: DateComponents, onDate date: Date) -> Date? {
+        var timeDateComponents = dateComponents(fromDate: date)
+        timeDateComponents.hour = time.hour
+        timeDateComponents.minute = time.minute
+
+        return OpenHours.calendar.date(from: timeDateComponents)
     }
 
-    // Note: always call isOpen(onDate) or check if day exists in dict before calling.
-    func getCloseTimeString(forDate date: Date) -> String {
-        return getTimeString(forDate: date) { (interval: (open: Date, close: Date)) in interval.close }
+    func nextOpeningTime(forTime time: Date) -> String? {
+        let dayOfWeek = DayOfWeek.forDate(time)
+        guard let openTime = hours[dayOfWeek]?.openTime,
+            let openingTime = date(forTime: openTime, onDate: time) else {
+                return nil
+        }
+
+        if time < openingTime {
+            return timeString(forDate: openingTime)
+        }
+
+        if let tomorrowOpenHours = hours[dayOfWeek.nextWeekday()]?.openTime,
+            let tomorrowOpeningTime = date(forTime: tomorrowOpenHours, onDate: time) {
+            return timeString(forDate: tomorrowOpeningTime)
+        }
+        return nil
     }
 
-    private func getTimeString(forDate date: Date,
-                               forIntervalDateGetter dateGetter: ((open: Date, close: Date)) -> Date) -> String {
-        let openInterval = hours[DayOfWeek.forDate(date)]! // force unwrap: expect isOpen to be called.
-        let desiredTime = dateGetter(openInterval)
-        return OpenHours.outputFormatter.string(from: desiredTime)
+    func closingTime(forTime time: Date) -> String? {
+        guard let closeTime = hours[DayOfWeek.forDate(time)]?.closeTime,
+            let closingTime = date(forTime: closeTime, onDate: time) else {
+                return nil
+        }
+        return timeString(forDate: closingTime)
+    }
+
+    func timeString(forDate date: Date) -> String {
+        return OpenHours.timeFormatter.string(from: date)
+    }
+
+    private func dateComponents(fromDate date: Date) -> DateComponents {
+        return OpenHours.calendar.dateComponents(OpenHours.dateComponentsSet, from: date)
     }
 }
