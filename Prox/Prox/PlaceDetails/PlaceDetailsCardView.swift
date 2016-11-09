@@ -24,7 +24,8 @@ class PlaceDetailsCardView: UIView {
     lazy var eventView: PlaceDetailsEventView = PlaceDetailsEventView()
 
     lazy var containingStackView: UIStackView = {
-        let view = UIStackView(arrangedSubviews:[self.labelContainer,
+        let view = UIStackView(arrangedSubviews:[self.eventView,
+                                                 self.labelContainer,
                                                  self.iconInfoViewContainer,
                                                  self.reviewViewContainer,
                                                  self.wikiDescriptionView,
@@ -33,10 +34,17 @@ class PlaceDetailsCardView: UIView {
         view.axis = .vertical
         view.spacing = self.margin
 
-        view.layoutMargins = UIEdgeInsets(top: self.margin, left: 0, bottom: self.CardMarginBottom, right: 0)
+        view.layoutMargins = UIEdgeInsets(top: self.margin, left: 0,
+                                          bottom: self.CardMarginBottom, right: 0)
         view.isLayoutMarginsRelativeArrangement = true
         return view
     }()
+
+    func setContainingStackViewMargins(isTopMarginPresent: Bool) {
+        // Margins initialized in lazy init.
+        containingStackView.layoutMargins = UIEdgeInsets(top: isTopMarginPresent ? self.margin : 0, left: 0,
+                                                         bottom: self.CardMarginBottom, right: 0)
+    }
 
     // MARK: Outer views.
     // TODO: accessibility labels (and parent view)
@@ -152,9 +160,6 @@ class PlaceDetailsCardView: UIView {
         layer.shadowOpacity = 0.4
     }
 
-    var stackViewTopToEventViewBottomConstraint: NSLayoutConstraint!
-    var stackViewTopToContentViewTopConstraint: NSLayoutConstraint!
-
     private func setupViews() {
         backgroundColor = Colors.detailsViewCardBackground // cannot be transparent to display shadow
         contentView.backgroundColor = Colors.detailsViewCardBackground
@@ -169,18 +174,10 @@ class PlaceDetailsCardView: UIView {
                            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
                            contentView.bottomAnchor.constraint(equalTo: bottomAnchor)]
 
-        contentView.addSubview(eventView)
-        constraints += [eventView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                        eventView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                        eventView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)]
-
-        stackViewTopToEventViewBottomConstraint = containingStackView.topAnchor.constraint(equalTo: eventView.bottomAnchor)
-        stackViewTopToContentViewTopConstraint = containingStackView.topAnchor.constraint(equalTo: contentView.topAnchor)
-
         // Note: The constraints of subviews broke when I used leading/trailing, rather than
         // centerX & width. The parent constraints are set with centerX & width - related?
         contentView.addSubview(containingStackView)
-        constraints += [stackViewTopToEventViewBottomConstraint,
+        constraints += [containingStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
                         containingStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
                         containingStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
                         containingStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)]
@@ -266,13 +263,11 @@ class PlaceDetailsCardView: UIView {
         // TEMP: Show event on one item so we can test it.
         // TODO: bind real events
         if place.id == "tropics-ale-house-waikoloa-beach" {
-            NSLayoutConstraint.deactivate([stackViewTopToContentViewTopConstraint])
-            NSLayoutConstraint.activate([stackViewTopToEventViewBottomConstraint])
+            setContainingStackViewMargins(isTopMarginPresent: false)
             eventView.isHidden = false
             eventView.setText("Free Jazz Concert at The Bar in 1 hour!", underlined: "More info.")
         } else {
-            NSLayoutConstraint.deactivate([stackViewTopToEventViewBottomConstraint])
-            NSLayoutConstraint.activate([stackViewTopToContentViewTopConstraint])
+            setContainingStackViewMargins(isTopMarginPresent: true)
             eventView.isHidden = true
         }
     }
