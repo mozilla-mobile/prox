@@ -15,6 +15,14 @@ class PlaceDetailsCardView: UIView {
     let margin: CGFloat = 24
     let CardMarginBottom: CGFloat = 20 // TODO: name
 
+    // Contains the content: the outer view is used to display a shadow.
+    // This is necessary because the eventView drew its background color over the round corners.
+    // I tried a solution that added also rounded the top corners to the eventView, but there was a
+    // visual artifact where the card's white background shown through the corners.
+    lazy var contentView = UIView()
+
+    lazy var eventView: PlaceDetailsEventView = PlaceDetailsEventView()
+
     lazy var containingStackView: UIStackView = {
         let view = UIStackView(arrangedSubviews:[self.labelContainer,
                                                  self.iconInfoViewContainer,
@@ -144,17 +152,40 @@ class PlaceDetailsCardView: UIView {
         layer.shadowOpacity = 0.4
     }
 
+    var stackViewTopToEventViewBottomConstraint: NSLayoutConstraint!
+    var stackViewTopToContentViewTopConstraint: NSLayoutConstraint!
+
     private func setupViews() {
-        backgroundColor = Colors.detailsViewCardBackground
+        backgroundColor = Colors.detailsViewCardBackground // cannot be transparent to display shadow
+        contentView.backgroundColor = Colors.detailsViewCardBackground
+
         layer.cornerRadius = 10
+        contentView.layer.cornerRadius = 10
+        contentView.layer.masksToBounds = true
+
+        addSubview(contentView)
+        var constraints = [contentView.topAnchor.constraint(equalTo: topAnchor),
+                           contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                           contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                           contentView.bottomAnchor.constraint(equalTo: bottomAnchor)]
+
+        contentView.addSubview(eventView)
+        constraints += [eventView.topAnchor.constraint(equalTo: contentView.topAnchor),
+                        eventView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                        eventView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)]
+
+        stackViewTopToEventViewBottomConstraint = containingStackView.topAnchor.constraint(equalTo: eventView.bottomAnchor)
+        stackViewTopToContentViewTopConstraint = containingStackView.topAnchor.constraint(equalTo: contentView.topAnchor)
 
         // Note: The constraints of subviews broke when I used leading/trailing, rather than
         // centerX & width. The parent constraints are set with centerX & width - related?
-        addSubview(containingStackView)
-         NSLayoutConstraint.activate([containingStackView.topAnchor.constraint(equalTo: topAnchor),
-                           containingStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                           containingStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-                           containingStackView.trailingAnchor.constraint(equalTo: trailingAnchor)], translatesAutoresizingMaskIntoConstraints: false)
+        contentView.addSubview(containingStackView)
+        constraints += [stackViewTopToEventViewBottomConstraint,
+                        containingStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                        containingStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+                        containingStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)]
+
+        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
 
         setupGestureRecognizers()
 
@@ -188,6 +219,8 @@ class PlaceDetailsCardView: UIView {
     }
 
     func updateUI(forPlace place: Place) {
+        updateEventUI(forPlace: place)
+
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories)
@@ -226,6 +259,21 @@ class PlaceDetailsCardView: UIView {
         } else {
             view.isHidden = true
             view.expandableLabel.text = nil
+        }
+    }
+
+    private func updateEventUI(forPlace place: Place) {
+        // TEMP: Show event on one item so we can test it.
+        // TODO: bind real events
+        if place.id == "tropics-ale-house-waikoloa-beach" {
+            NSLayoutConstraint.deactivate([stackViewTopToContentViewTopConstraint])
+            NSLayoutConstraint.activate([stackViewTopToEventViewBottomConstraint])
+            eventView.isHidden = false
+            eventView.setText("Free Jazz Concert at The Bar in 1 hour!", underlined: "More info.")
+        } else {
+            NSLayoutConstraint.deactivate([stackViewTopToEventViewBottomConstraint])
+            NSLayoutConstraint.activate([stackViewTopToContentViewTopConstraint])
+            eventView.isHidden = true
         }
     }
 

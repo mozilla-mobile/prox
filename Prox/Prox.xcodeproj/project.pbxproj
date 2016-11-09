@@ -50,6 +50,7 @@
 		7BD5CC8A1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7BD5CC8B1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7C79B23D6CD1B1AC5A860E9E /* Pods_ProxTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */; };
+		E61972141DD28B7A00C9D093 /* PlaceDetailsEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */; };
 		E65857DE1DB69F4200CD18F8 /* ReviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65857DD1DB69F4200CD18F8 /* ReviewProvider.swift */; };
 		E662FF4A1DC022940042C4A9 /* PlaceDetailsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662FF491DC022940042C4A9 /* PlaceDetailsCardView.swift */; };
 		E662FF4C1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */; };
@@ -146,6 +147,7 @@
 		D3DA77821DC289A4009C114E /* Prox-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Prox-Bridging-Header.h"; sourceTree = "<group>"; };
 		D4ACFAE1468306F6BC08DB51 /* Pods-ProxUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProxUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsEventView.swift; sourceTree = "<group>"; };
 		E65857DD1DB69F4200CD18F8 /* ReviewProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewProvider.swift; sourceTree = "<group>"; };
 		E662FF491DC022940042C4A9 /* PlaceDetailsCardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsCardView.swift; sourceTree = "<group>"; };
 		E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsIconInfoView.swift; sourceTree = "<group>"; };
@@ -330,6 +332,7 @@
 				7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */,
 				7BB1CA481DC8C6C5004AEE56 /* MapButton.swift */,
 				7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */,
+				E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */,
 			);
 			path = PlaceDetails;
 			sourceTree = "<group>";
@@ -742,6 +745,7 @@
 				7BD5CC811DAFF07E00BCF50D /* GFQuery.m in Sources */,
 				7B9DA1551DBE6ED300A68C82 /* PlacesDatabase.swift in Sources */,
 				7B5095651DB531CA007C54F0 /* Place.swift in Sources */,
+				E61972141DD28B7A00C9D093 /* PlaceDetailsEventView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
