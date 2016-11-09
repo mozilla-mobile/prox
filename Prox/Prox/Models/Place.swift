@@ -184,6 +184,18 @@ enum DayOfWeek: String {
         case .sunday: return .monday
         }
     }
+
+    func previousWeekday() -> DayOfWeek {
+        switch(self) {
+        case .monday: return .sunday
+        case .tuesday: return .monday
+        case .wednesday: return .tuesday
+        case .thursday: return .wednesday
+        case .friday: return .thursday
+        case .saturday: return .friday
+        case .sunday: return .saturday
+        }
+    }
 }
 
 struct OpenHours {
@@ -269,16 +281,28 @@ struct OpenHours {
 
     func isOpen(atTime time: Date) -> Bool {
         let dayOfWeek = DayOfWeek.forDate(time)
+        print("hours \(hours)")
+        print("The day of the week is \(dayOfWeek)")
         guard let openTime = hours[dayOfWeek]?.openTime,
             let openingTime = date(forTime: openTime, onDate: time),
             let closeTime = hours[dayOfWeek]?.closeTime,
-            let closingTime = date(forTime: closeTime, onDate: time) else {
+            var closingTime = date(forTime: closeTime, onDate: time) else {
             return false
         }
 
-        // if a place has 24 hour opening, then opening time and closing time would be the same here
-        // detect this and return it as true
-        return (time >= openingTime && time < closingTime) || openingTime == closingTime
+        if time < openingTime {
+            print("The previous day of the week is \(dayOfWeek.previousWeekday())")
+            if let yesterdaysClosingHours = hours[dayOfWeek.previousWeekday()]?.closeTime,
+                let yesterdaysClosingTime = date(forTime: yesterdaysClosingHours, onDate: time) {
+                return time < yesterdaysClosingTime
+            }
+        }
+
+        if closingTime <= openingTime {
+            closingTime = closingTime.addingTimeInterval(AppConstants.ONE_DAY)
+        }
+
+        return time >= openingTime && time < closingTime
     }
 
     private func date(forTime time: DateComponents, onDate date: Date) -> Date? {

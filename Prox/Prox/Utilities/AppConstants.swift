@@ -17,6 +17,7 @@ public struct AppConstants {
     public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 15 * 60
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
     public static let currentLocationMonitoringRadius: CLLocationDistance = 50.0
+    public static let ONE_DAY: TimeInterval = (60 * 60) * 24
 
     /// Build Channel.
     public static let BuildChannel: AppBuildChannel = {

@@ -11,8 +11,6 @@ import Deferred
 private let MAP_SPAN_DELTA = 0.05
 private let MAP_LATITUDE_OFFSET = 0.015
 
-private let ONE_DAY: TimeInterval = (60 * 60) * 24
-
 
 protocol PlaceDataSource: class {
     func nextPlace(forPlace place: Place) -> Place?
@@ -159,7 +157,7 @@ class PlaceCarouselViewController: UIViewController {
             return self.sunriseSetTimesLabel.text = "Sunset is at \(timeAsString) today"
         }
 
-        let tomorrow = today.addingTimeInterval(ONE_DAY)
+        let tomorrow = today.addingTimeInterval(AppConstants.ONE_DAY)
         sunriseSet.calculateSunriseSunset(tomorrow)
         if let tomorrowSunrise = sunriseSet.localSunrise(),
             let tomorrowSunriseTime = calendar.date(from: tomorrowSunrise) {
