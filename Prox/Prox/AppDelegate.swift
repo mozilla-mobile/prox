@@ -75,7 +75,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        placeCarouselViewController?.fetchEvents(completion: completionHandler)
+        guard let currentLocation =  placeCarouselViewController?.getCurrentLocation() else { return completionHandler(.noData) }
+        placeCarouselViewController?.eventsManager.fetchEvents(forLocation: currentLocation) { (events, error) in
+            if let _ = error {
+                return completionHandler(.failed)
+            }
+
+            guard let events = events,
+                !events.isEmpty else {
+                return completionHandler(.noData)
+            }
+
+            completionHandler(.newData)
+        }
 
     }
 

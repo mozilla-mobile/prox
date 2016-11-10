@@ -31,20 +31,19 @@ struct PlaceDataSourceError: Error {
 
 class PlaceCarouselViewController: UIViewController {
 
-    fileprivate let minimumTimeAtLocationBeforeFetchingEvents: TimeInterval = 15 * 60
     fileprivate let currentLocationIdentifier = "CURRENT_LOCATION"
     fileprivate let MIN_SECS_BETWEEN_LOCATION_UPDATES: TimeInterval = 1
 
-    private let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
-
     fileprivate var timeOfLastLocationUpdate: Date? {
         get {
-            return UserDefaults.standard.value(forKey: timeOfLastLocationUpdateKey) as? Date
+            return UserDefaults.standard.value(forKey: AppConstants.timeOfLastLocationUpdateKey) as? Date
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: timeOfLastLocationUpdateKey)
+            UserDefaults.standard.set(newValue, forKey: AppConstants.timeOfLastLocationUpdateKey)
         }
     }
+
+    lazy var eventsManager: EventManager = EventManager()
 
     lazy var locationManager: CLLocationManager = {
         let manager = CLLocationManager()
@@ -116,14 +115,6 @@ class PlaceCarouselViewController: UIViewController {
     fileprivate var fakeLocation: CLLocation = CLLocation(latitude: 19.924043, longitude: -155.887652)
 
     fileprivate var monitoredRegions: [String: GeofenceRegion] = [String: GeofenceRegion]()
-    fileprivate var shouldFetchEvents: Bool {
-        guard var lastLocationFetchTime = timeOfLastLocationUpdate else {
-            return false
-        }
-        let now = Date()
-        lastLocationFetchTime += minimumTimeAtLocationBeforeFetchingEvents
-        return lastLocationFetchTime < now
-    }
     fileprivate var timeAtLocationTimer: Timer?
 
     private func setSunriseSetTimes() {
@@ -284,12 +275,15 @@ class PlaceCarouselViewController: UIViewController {
 
     func startTimeAtLocationTimer() {
         if timeAtLocationTimer == nil {
-            timeAtLocationTimer = Timer.scheduledTimer(timeInterval: minimumTimeAtLocationBeforeFetchingEvents, target: self, selector: #selector(timerFired(timer:)), userInfo: nil, repeats: true)
+            timeAtLocationTimer = Timer.scheduledTimer(timeInterval: AppConstants.minimumTimeAtLocationBeforeFetchingEvents, target: self, selector: #selector(timerFired(timer:)), userInfo: nil, repeats: true)
         }
     }
 
     @objc fileprivate func timerFired(timer: Timer) {
-        self.fetchEvents()
+        guard let currentLocation = getCurrentLocation() else { return }
+        eventsManager.fetchEvents(forLocation: currentLocation) { (events, error) in
+            print("events have been fetched \(events), \(error)")
+        }
     }
 
     fileprivate func updateLocation(location: CLLocation) {
@@ -349,16 +343,6 @@ class PlaceCarouselViewController: UIViewController {
 
 
     // MARK: Events
-
-    func fetchEvents(completion: ((UIBackgroundFetchResult) -> Void)? = nil) {
-        if shouldFetchEvents {
-            print("Should fetch events")
-            completion?(.noData)
-            return
-        }
-        print("Should not fetch events")
-        completion?(.noData)
-    }
 }
 
 extension PlaceCarouselViewController: CLLocationManagerDelegate {
@@ -453,6 +437,16 @@ extension PlaceCarouselViewController: LocationProvider {
         }
         // fake the location to Hilton Waikaloa Village, Kona, Hawaii
         return fakeLocation
+    }
+}
+
+extension PlaceCarouselViewController: EventsControllerDelegate {
+    func eventController(_ eventController: EventsController, didError error: Error) {
+
+    }
+
+    func eventController(_ eventController: EventsController, didUpdateEvents: [Event]) {
+
     }
 }
 
