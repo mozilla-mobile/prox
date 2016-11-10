@@ -202,6 +202,7 @@ struct OpenHours {
 
     private static let calendar = Calendar(identifier: .gregorian)
     private static let dateComponentsSet: Set<Calendar.Component> = [Calendar.Component.day, Calendar.Component.month, Calendar.Component.year]
+    private static let timeComponentsSet: Set<Calendar.Component> = [Calendar.Component.hour, Calendar.Component.minute]
 
     /* Notes:
      *   - An entry for DayOfWeek is missing if a location is not open that day.
@@ -216,7 +217,13 @@ struct OpenHours {
      */
     let hours: [DayOfWeek : (openTime: DateComponents, closeTime: DateComponents)]
 
-    private static let timeFormatter: DateFormatter = {
+    private static let inputTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter
+    }()
+
+    private static let outputTimeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
         return formatter
@@ -268,15 +275,11 @@ struct OpenHours {
     }
 
     private static func getTimeComponents(fromServerStr serverStr: String) -> DateComponents? {
-        let timeComponents = serverStr.components(separatedBy: ":")
-        guard timeComponents.count == 2,
-            let hours = Int(timeComponents[0]), let minutes = Int(timeComponents[1]) else {
+        guard let dateFromTime = inputTimeFormatter.date(from: serverStr) else {
             return nil
         }
 
-        let dateComponents = DateComponents(calendar: OpenHours.calendar, timeZone: nil, era: nil, year: nil, month: nil, day: nil, hour: hours, minute: minutes, second: nil, nanosecond: nil, weekday: nil, weekdayOrdinal: nil, quarter: nil, weekOfMonth: nil, weekOfYear: nil, yearForWeekOfYear: nil)
-
-        return dateComponents
+        return OpenHours.calendar.dateComponents(timeComponentsSet, from: dateFromTime)
     }
 
     func isOpen(atTime time: Date) -> Bool {
@@ -340,7 +343,7 @@ struct OpenHours {
     }
 
     func timeString(forDate date: Date) -> String {
-        return OpenHours.timeFormatter.string(from: date)
+        return OpenHours.outputTimeFormatter.string(from: date)
     }
 
     private func dateComponents(fromDate date: Date) -> DateComponents {
