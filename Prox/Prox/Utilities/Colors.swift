@@ -9,6 +9,7 @@ public struct Colors { }
 
 // Place Carousel Colors
 extension Colors {
+    public static let carouselViewHeaderBackground = UIColor.white
     public static let carouselViewHeaderHorizontalLine = UIColor(colorLiteralRed: 0.78, green: 0.78, blue: 0.78, alpha: 1.0)
     public static let carouselViewPlaceCardBackground = UIColor.white
     public static let carouselViewSunriseSetTimesLabelText = UIColor.black.withAlphaComponent(0.5)

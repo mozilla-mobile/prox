@@ -60,13 +60,14 @@ class PlaceCarouselViewController: UIViewController {
     // the top part of the background. Contains Number of Places, horizontal line & (soon to be) Current Location button
     lazy var headerView: PlaceCarouselHeaderView = {
         let view = PlaceCarouselHeaderView()
+        view.backgroundColor = Colors.carouselViewHeaderBackground
         return view
     }()
 
     // View that will display the sunset and sunrise times
     lazy var sunView: UIView = {
         let view = UIView()
-        view.backgroundColor = Colors.carouselViewPlaceCardBackground
+        view.backgroundColor = Colors.carouselViewHeaderBackground
 
         view.layer.shadowColor = UIColor.darkGray.cgColor
         view.layer.shadowOpacity = 0.25
