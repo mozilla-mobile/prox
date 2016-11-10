@@ -340,7 +340,7 @@ struct OpenHours {
         }
 
         if let tomorrowOpenHours = hours[dayOfWeek.nextWeekday()]?.openTime,
-            let tomorrowOpeningTime = date(forTime: tomorrowOpenHours, onDate: time) {
+            let tomorrowOpeningTime = date(forTime: tomorrowOpenHours, onDate: time.addingTimeInterval(AppConstants.ONE_DAY)) {
             return timeString(forDate: tomorrowOpeningTime)
         }
         return nil
