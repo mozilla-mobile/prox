@@ -37,4 +37,7 @@ extension Colors {
     public static let detailsViewMapButtonBadgeFont = UIColor.white
     public static let detailsViewMapButtonShadow = UIColor.black.withAlphaComponent(0.4)
     public static let detailsViewMapButtonBackground = UIColor.white
+
+    public static let detailsViewBackgroundGradientStart = UIColor(red: 0, green: 0.01, blue: 0.53, alpha: 0.5)
+    public static let detailsViewBackgroundGradientEnd = UIColor(red: 0, green: 0.48, blue: 1.00, alpha: 0.1)
 }

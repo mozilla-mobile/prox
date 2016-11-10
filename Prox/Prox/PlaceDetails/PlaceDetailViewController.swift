@@ -113,6 +113,13 @@ class PlaceDetailViewController: UIViewController {
         return blurEffectView
     }()
 
+    lazy var backgroundGradientLayer: CAGradientLayer = {
+        let layer = CAGradientLayer()
+        layer.colors = [Colors.detailsViewBackgroundGradientStart.cgColor,
+                        Colors.detailsViewBackgroundGradientEnd.cgColor]
+        return layer
+    }()
+
     fileprivate var panDirection: PanDirection = .none
 
     init(place: Place) {
@@ -162,6 +169,16 @@ class PlaceDetailViewController: UIViewController {
                        backgroundBlurEffect.bottomAnchor.constraint(equalTo: backgroundImage.bottomAnchor),
                        backgroundBlurEffect.trailingAnchor.constraint(equalTo: backgroundImage.trailingAnchor)]
 
+        // Using a separate gradient view allows us to apply the gradient after blur (as opposed to
+        // using a layer of the BG image or BlurEffect, which would apply it before the blur).
+        let gradientView = UIView()
+        gradientView.layer.addSublayer(backgroundGradientLayer)
+        backgroundImage.addSubview(gradientView)
+        constraints += [gradientView.topAnchor.constraint(equalTo: backgroundImage.topAnchor),
+                        gradientView.leadingAnchor.constraint(equalTo: backgroundImage.leadingAnchor),
+                        gradientView.bottomAnchor.constraint(equalTo: backgroundImage.bottomAnchor),
+                        gradientView.trailingAnchor.constraint(equalTo: backgroundImage.trailingAnchor)]
+
         constraints += [imageCarousel.topAnchor.constraint(equalTo: scrollView.topAnchor),
                            imageCarousel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
                            imageCarousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -209,6 +226,11 @@ class PlaceDetailViewController: UIViewController {
                         mapButtonBadge.widthAnchor.constraint(greaterThanOrEqualToConstant: 20.0)]
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        backgroundGradientLayer.frame = backgroundImage.bounds
     }
 
     func addGestureRecognizers(toViewController viewController: PlaceDetailsCardViewController) {
