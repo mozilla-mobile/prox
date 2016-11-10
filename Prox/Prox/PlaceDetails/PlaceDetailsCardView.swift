@@ -212,7 +212,7 @@ class PlaceDetailsCardView: UIView {
 
     // TODO: when else can we call this? layoutSubviews is called when we scroll and we don't want to calculate all this each time...
     private func updateViewSize() {
-        delegate?.placeDetailsCardView(cardView: self, heightDidChange: containingStackView.bounds.height)
+        delegate?.placeDetailsCardView(cardView: self, heightDidChange: bounds.height)
     }
 
     func updateUI(forPlace place: Place) {
