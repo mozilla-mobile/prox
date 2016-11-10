@@ -14,8 +14,6 @@ private let VENUES_PATH = ROOT_PATH + "venues/"
 private let GEOFIRE_PATH = VENUES_PATH + "locations/"
 private let DETAILS_PATH = VENUES_PATH + "details/"
 
-private let SEARCH_RADIUS_KM = 4.0 // TODO: set distance
-
 class FirebasePlacesDatabase: PlacesDatabase {
 
     private let placeDetailsRef: FIRDatabaseReference
@@ -31,9 +29,9 @@ class FirebasePlacesDatabase: PlacesDatabase {
      * Queries GeoFire to get the place keys around the given location and then queries Firebase to
      * get the place details for the place keys.
      */
-    func getPlaces(forLocation location: CLLocation) -> Future<[DatabaseResult<Place>]> {
+    func getPlaces(forLocation location: CLLocation, withRadius radius: Double) -> Future<[DatabaseResult<Place>]> {
         let queue = DispatchQueue.global(qos: .userInitiated)
-        let places = getPlaceKeys(aroundPoint: location).andThen(upon: queue) { (placeKeyToLoc) -> Future<[DatabaseResult<Place>]> in
+        let places = getPlaceKeys(aroundPoint: location, withRadius: radius).andThen(upon: queue) { (placeKeyToLoc) -> Future<[DatabaseResult<Place>]> in
             // TODO: limit the number of place details we look up. X closest places?
             // TODO: These should be ordered by display order
             return self.getPlaceDetails(fromKeys: Array(placeKeyToLoc.keys)).allFilled()
@@ -44,11 +42,11 @@ class FirebasePlacesDatabase: PlacesDatabase {
     /*
      * Queries GeoFire to find keys that represent locations around the given point.
      */
-    private func getPlaceKeys(aroundPoint location: CLLocation) -> Deferred<[String:CLLocation]> {
+    private func getPlaceKeys(aroundPoint location: CLLocation, withRadius radius: Double) -> Deferred<[String:CLLocation]> {
         let deferred = Deferred<[String:CLLocation]>()
         var placeKeyToLoc = [String:CLLocation]()
 
-        guard let circleQuery = geofire.query(at: location, withRadius: SEARCH_RADIUS_KM) else {
+        guard let circleQuery = geofire.query(at: location, withRadius: radius) else {
             deferred.fill(with: placeKeyToLoc)
             return deferred
         }

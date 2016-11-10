@@ -3,8 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import AFNetworking
-import Foundation
 import Deferred
+import FirebaseRemoteConfig
+import Foundation
 
 /*
  * Delegate methods for updating places asynchronously.
@@ -32,6 +33,11 @@ class PlacesController {
         let manager = AFHTTPSessionManager(sessionConfiguration: .default)
         manager.responseSerializer = AFHTTPResponseSerializer()
         return manager
+    }()
+
+    private lazy var radius: Double = {
+        let key = RemoteConfigKeys.searchRadiusInKm
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
     }()
 
     func updatePlaces(forLocation location: CLLocation) {
@@ -67,15 +73,15 @@ class PlacesController {
 
         // Immediately after we've told the server, we should start querying the firebase datastore,
         // because we may have already got something cached.
-        retryQueryPlaces(location: location, retriesLeft: numberOfRetries, lastCount: 0)
+        retryQueryPlaces(location: location, withRadius: radius, retriesLeft: numberOfRetries)
     }
 
-    private func retryQueryPlaces(location: CLLocation, retriesLeft: Int, lastCount: Int) {
+    private func retryQueryPlaces(location: CLLocation, withRadius radius: Double, retriesLeft: Int, lastCount: Int = -1) {
         // Fetch a stable list of places from firebase.
         // In the event of the server crawling (from a cold start, for example)
         // the server will be adding places to firebase.
         // We want to wait for the number of firebase results to stop changing.
-        database.getPlaces(forLocation: location).upon { results in
+        database.getPlaces(forLocation: location, withRadius: radius).upon { results in
             let places = results.flatMap { $0.successResult() }
             let placeCount = places.count
             // Check if we have a stable number of places.
@@ -95,7 +101,10 @@ class PlacesController {
                     self.displayPlaces(places: places, forLocation: location)
                 }
                 DispatchQueue.main.asyncAfter(wallDeadline: .now() + .seconds(timeBetweenRetries)) {
-                    self.retryQueryPlaces(location: location, retriesLeft: retriesLeft - 1, lastCount: placeCount)
+                    self.retryQueryPlaces(location: location,
+                                          withRadius: radius,
+                                          retriesLeft: retriesLeft - 1,
+                                          lastCount: placeCount)
                 }
             }
         }

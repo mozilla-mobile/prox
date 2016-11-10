@@ -27,4 +27,8 @@ class RemoteConfigKeys {
     // more than remoteConfigCacheExpiration seconds ago. Thus the next fetch would go to the server unless
     // throttling is in progress. The default expiration duration is 43200 (12 hours).
     public static let remoteConfigCacheExpiration = "remote_config_cache_expiration"
+
+    // The search radius the app will use to query the Firebase database.
+    // This is measured in kilometers. The default value is 4 km.
+    public static let searchRadiusInKm = "search_radius_in_km"
 }

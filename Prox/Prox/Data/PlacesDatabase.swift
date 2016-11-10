@@ -10,5 +10,5 @@ import CoreLocation
  * A listing of all the places we'd want to show a user.
  */
 protocol PlacesDatabase {
-    func getPlaces(forLocation location: CLLocation) -> Future<[DatabaseResult<Place>]>
+    func getPlaces(forLocation location: CLLocation, withRadius: Double) -> Future<[DatabaseResult<Place>]>
 }

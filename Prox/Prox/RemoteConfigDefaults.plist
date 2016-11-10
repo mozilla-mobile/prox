@@ -4,5 +4,7 @@
 <dict>
 	<key>remote_config_cache_expiration</key>
 	<integer>43200</integer>
+	<key>search_radius_in_km</key>
+	<integer>4</integer>
 </dict>
 </plist>
