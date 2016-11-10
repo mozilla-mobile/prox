@@ -282,12 +282,18 @@ class PlaceCarouselViewController: UIViewController {
         timeAtLocationTimer = nil
     }
 
+    func startTimeAtLocationTimer() {
+        if timeAtLocationTimer == nil {
+            timeAtLocationTimer = Timer.scheduledTimer(timeInterval: minimumTimeAtLocationBeforeFetchingEvents, target: self, selector: #selector(timerFired(timer:)), userInfo: nil, repeats: true)
+        }
+    }
+
     @objc fileprivate func timerFired(timer: Timer) {
         self.fetchEvents()
     }
 
     fileprivate func updateLocation(location: CLLocation) {
-        timeAtLocationTimer = Timer.scheduledTimer(timeInterval: minimumTimeAtLocationBeforeFetchingEvents, target: self, selector: #selector(timerFired(timer:)), userInfo: nil, repeats: true)
+        startTimeAtLocationTimer()
         startMonitoring(location: location, withIdentifier: currentLocationIdentifier, forEntry: nil, forExit: {
             self.cancelTimeAtLocationTimer()
             self.stopMonitoringRegion(withIdentifier: self.currentLocationIdentifier)
