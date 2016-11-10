@@ -147,7 +147,6 @@ class PlaceDetailViewController: UIViewController {
 
         imageCarousel = currentCardViewController.imageCarousel
         scrollView.addSubview(backgroundImage)
-        backgroundImage.addSubview(backgroundBlurEffect)
         scrollView.addSubview(imageCarousel)
 
         backgroundImageHeightConstraint = backgroundImage.heightAnchor.constraint(equalToConstant: scrollView.contentSize.height)
