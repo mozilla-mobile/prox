@@ -13,7 +13,7 @@ public enum AppBuildChannel {
 public struct AppConstants {
 
     public static let isRunningTest = NSClassFromString("XCTestCase") != nil
-    public static let backgroundFetchInterval: TimeInterval = 1 * 60
+    public static let backgroundFetchInterval: TimeInterval = 5 * 60
 
     /// Build Channel.
     public static let BuildChannel: AppBuildChannel = {
