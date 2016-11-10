@@ -284,25 +284,28 @@ struct OpenHours {
 
     func isOpen(atTime time: Date) -> Bool {
         let dayOfWeek = DayOfWeek.forDate(time)
-        print("hours \(hours)")
-        print("The day of the week is \(dayOfWeek)")
-        guard let openTime = hours[dayOfWeek]?.openTime,
-            let openingTime = date(forTime: openTime, onDate: time),
-            let closeTime = hours[dayOfWeek]?.closeTime,
-            var closingTime = date(forTime: closeTime, onDate: time) else {
+        guard let openDateComponents = hours[dayOfWeek]?.openTime,
+            let openingTime = date(forTime: openDateComponents, onDate: time),
+            let closeDateComponents = hours[dayOfWeek]?.closeTime,
+            var closingTime = date(forTime: closeDateComponents, onDate: time) else {
             return false
-        }
-
-        if time < openingTime {
-            print("The previous day of the week is \(dayOfWeek.previousWeekday())")
-            if let yesterdaysClosingHours = hours[dayOfWeek.previousWeekday()]?.closeTime,
-                let yesterdaysClosingTime = date(forTime: yesterdaysClosingHours, onDate: time) {
-                return time < yesterdaysClosingTime
-            }
         }
 
         if closingTime <= openingTime {
             closingTime = closingTime.addingTimeInterval(AppConstants.ONE_DAY)
+        }
+
+        // if the current time is before the opening time, find out when yesterdays closing time was and check to see if we are before that too
+        // if we are, then the venue is still open, otherwise the venue has not opened yet
+        if time < openingTime {
+            let yesterday = dayOfWeek.previousWeekday()
+            if let yesterdaysClosingDateComponents = hours[yesterday]?.closeTime,
+                var yesterdaysClosingTime = date(forTime: yesterdaysClosingDateComponents, onDate: time) {
+                if yesterdaysClosingTime > openingTime {
+                    yesterdaysClosingTime = yesterdaysClosingTime.addingTimeInterval(-AppConstants.ONE_DAY)
+                }
+                return time < yesterdaysClosingTime
+            }
         }
 
         return time >= openingTime && time < closingTime
