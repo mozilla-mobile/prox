@@ -100,7 +100,7 @@ class PlaceCarouselViewController: UIViewController {
     }
 
     // fake the location to Hilton Waikaloa Village, Kona, Hawaii
-    fileprivate var fakeLocation: CLLocation = CLLocation(latitude: 19.9263136, longitude: -155.8868328)
+    fileprivate var fakeLocation: CLLocation = CLLocation(latitude: 19.924043, longitude: -155.887652)
 
     private func setSunriseSetTimes() {
         let today = Date()
