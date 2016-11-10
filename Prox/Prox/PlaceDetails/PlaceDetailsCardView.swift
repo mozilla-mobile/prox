@@ -111,12 +111,12 @@ class PlaceDetailsCardView: UIView {
     }()
 
     lazy var travelTimeView: PlaceDetailsIconInfoView = {
-        let view = PlaceDetailsIconInfoView()
+        let view = PlaceDetailsIconInfoView(enableForwardArrow: true)
         return view
     }()
 
     lazy var hoursView: PlaceDetailsIconInfoView = {
-        let view = PlaceDetailsIconInfoView()
+        let view = PlaceDetailsIconInfoView(enableForwardArrow: false)
         view.iconView.image = UIImage(named: "icon_times")
         return view
     }()

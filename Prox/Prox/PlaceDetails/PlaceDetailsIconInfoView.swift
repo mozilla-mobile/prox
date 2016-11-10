@@ -32,11 +32,15 @@ class PlaceDetailsIconInfoView: UIView {
         return view
     }()
 
+    lazy var forwardArrowView = UIImageView(image: UIImage(named: "icon_forward"))
+
     lazy var loadingSpinner: UIActivityIndicatorView = {
         let indicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
         indicatorView.hidesWhenStopped = true
         return indicatorView
     }()
+
+    let enableForwardArrow: Bool
 
     // We hide primary because we want secondary text style.
     var isPrimaryTextLabelHidden = false {
@@ -48,8 +52,9 @@ class PlaceDetailsIconInfoView: UIView {
     fileprivate var secondaryTextLabelHalfHeightConstraint: NSLayoutConstraint!
     fileprivate var secondaryTextLabelFullHeightConstraint: NSLayoutConstraint!
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(enableForwardArrow: Bool) {
+        self.enableForwardArrow = enableForwardArrow
+        super.init(frame: .zero)
         setupViews()
     }
 
@@ -68,6 +73,11 @@ class PlaceDetailsIconInfoView: UIView {
         constraints += [iconView.centerYAnchor.constraint(equalTo: labelContainer.centerYAnchor),
                         iconView.trailingAnchor.constraint(equalTo: labelContainer.leadingAnchor, constant: -9)]
 
+        if enableForwardArrow {
+            addSubview(forwardArrowView)
+            constraints += [forwardArrowView.centerYAnchor.constraint(equalTo: labelContainer.centerYAnchor),
+                            forwardArrowView.leadingAnchor.constraint(equalTo: labelContainer.trailingAnchor, constant: 8)]
+        }
 
         addSubview(loadingSpinner)
         constraints += [loadingSpinner.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -99,10 +109,16 @@ class PlaceDetailsIconInfoView: UIView {
 
     private func setPrimaryTextLabelHidden(_ isHidden: Bool) {
         if isHidden {
+            // If the forward button is disabled, it is not added to view hierarchy and this has no effect.
+            // Also, ideally we don't link the forward arrow to the primary text but this is easiest.
+            forwardArrowView.isHidden = true
+
             primaryTextLabel.isHidden = true
             secondaryTextLabelHalfHeightConstraint.isActive = false
             secondaryTextLabelFullHeightConstraint.isActive = true
         } else {
+            forwardArrowView.isHidden = false
+
             primaryTextLabel.isHidden = false
             secondaryTextLabelHalfHeightConstraint.isActive = true
             secondaryTextLabelFullHeightConstraint.isActive = false
