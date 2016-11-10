@@ -31,7 +31,7 @@ struct PlaceDataSourceError: Error {
 
 class PlaceCarouselViewController: UIViewController {
 
-
+    fileprivate let minimumTimeAtLocationBeforeFetchingEvents: TimeInterval = 15 * 60
     fileprivate let currentLocationIdentifier = "CURRENT_LOCATION"
     fileprivate let MIN_SECS_BETWEEN_LOCATION_UPDATES: TimeInterval = 1
 
@@ -116,7 +116,15 @@ class PlaceCarouselViewController: UIViewController {
     fileprivate var fakeLocation: CLLocation = CLLocation(latitude: 19.924043, longitude: -155.887652)
 
     fileprivate var monitoredRegions: [String: GeofenceRegion] = [String: GeofenceRegion]()
-    fileprivate var shouldFetchEvents: Bool = false
+    fileprivate var shouldFetchEvents: Bool {
+        guard var lastLocationFetchTime = timeOfLastLocationUpdate else {
+            return false
+        }
+        let now = Date()
+        lastLocationFetchTime += minimumTimeAtLocationBeforeFetchingEvents
+        return lastLocationFetchTime < now
+    }
+    fileprivate var timeAtLocationTimer: Timer?
 
     private func setSunriseSetTimes() {
         let today = Date()
@@ -269,11 +277,19 @@ class PlaceCarouselViewController: UIViewController {
         }
     }
 
+    func cancelTimeAtLocationTimer() {
+        timeAtLocationTimer?.invalidate()
+        timeAtLocationTimer = nil
+    }
+
+    @objc fileprivate func timerFired(timer: Timer) {
+        self.fetchEvents()
+    }
+
     fileprivate func updateLocation(location: CLLocation) {
-        self.shouldFetchEvents = true
+        timeAtLocationTimer = Timer.scheduledTimer(timeInterval: minimumTimeAtLocationBeforeFetchingEvents, target: self, selector: #selector(timerFired(timer:)), userInfo: nil, repeats: true)
         startMonitoring(location: location, withIdentifier: currentLocationIdentifier, forEntry: nil, forExit: {
-            print("Exited location \(self.currentLocationIdentifier)")
-            self.shouldFetchEvents = false
+            self.cancelTimeAtLocationTimer()
             self.stopMonitoringRegion(withIdentifier: self.currentLocationIdentifier)
         })
         updatePlaces(forLocation: location)
@@ -328,13 +344,14 @@ class PlaceCarouselViewController: UIViewController {
 
     // MARK: Events
 
-    func fetchEvents(completion: @escaping (UIBackgroundFetchResult) -> Void) {
+    func fetchEvents(completion: ((UIBackgroundFetchResult) -> Void)? = nil) {
         if shouldFetchEvents {
             print("Should fetch events")
-            return completion(.noData)
+            completion?(.noData)
+            return
         }
         print("Should not fetch events")
-        completion(.noData)
+        completion?(.noData)
     }
 }
 
