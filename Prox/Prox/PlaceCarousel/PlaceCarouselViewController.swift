@@ -35,7 +35,16 @@ class PlaceCarouselViewController: UIViewController {
     fileprivate let currentLocationIdentifier = "CURRENT_LOCATION"
     fileprivate let MIN_SECS_BETWEEN_LOCATION_UPDATES: TimeInterval = 1
 
-    fileprivate var timeOfLastLocationUpdate: Date?
+    private let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
+
+    fileprivate var timeOfLastLocationUpdate: Date? {
+        get {
+            return UserDefaults.standard.value(forKey: timeOfLastLocationUpdateKey) as? Date
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: timeOfLastLocationUpdateKey)
+        }
+    }
 
     lazy var locationManager: CLLocationManager = {
         let manager = CLLocationManager()
@@ -215,6 +224,11 @@ class PlaceCarouselViewController: UIViewController {
         // this ensures consistency between the place details and the carousel underneath
         // and makes sure we don't end up providing weird data to users while they are scrolling
         // through places details
+        // if sunrise set is not present, then we haven't processed our first location yet, so setup the app for the current location
+        // otherwise just update the places
+        guard let _ = sunriseSet else {
+            return self.updateLocation(location: location)
+        }
         updatePlaces(forLocation: location)
     }
 
