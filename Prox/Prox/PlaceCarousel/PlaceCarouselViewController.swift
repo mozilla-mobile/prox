@@ -245,17 +245,6 @@ class PlaceCarouselViewController: UIViewController {
 
     // MARK: Location Handling
 
-    fileprivate func updatePlaces(forLocation location: CLLocation) {
-        FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
-            let newPlaces = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
-            // only update our places list if the places have changed
-            if newPlaces != self.places {
-                self.places = newPlaces
-                self.placeCarousel.refresh()
-            }
-        }
-    }
-
     func refreshLocation() {
         if (CLLocationManager.hasLocationPermissionAndEnabled()) {
             locationManager.startMonitoringSignificantLocationChanges()
@@ -272,13 +261,18 @@ class PlaceCarouselViewController: UIViewController {
             self.shouldFetchEvents = false
             self.stopMonitoringRegion(withIdentifier: self.currentLocationIdentifier)
         })
-        fetchPlaces(forLocation: location)
+        updatePlaces(forLocation: location)
         updateSunRiseSetTimes(forLocation: location)
     }
 
-    fileprivate func fetchPlaces(forLocation location: CLLocation) {
+    fileprivate func updatePlaces(forLocation location: CLLocation) {
         FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
-            self.places = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
+            let newPlaces = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
+            // only update our places list if the places have changed
+            if newPlaces != self.places {
+                self.places = newPlaces
+                self.placeCarousel.refresh()
+            }
         }
     }
 
