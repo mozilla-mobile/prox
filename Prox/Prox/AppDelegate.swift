@@ -4,6 +4,7 @@
 
 import UIKit
 import Firebase
+import FirebaseRemoteConfig
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -13,10 +14,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private var authorizedUser: FIRUser?
 
+    private lazy var remoteConfigCacheExpiration: TimeInterval = {
+        if AppConstants.isDebug {
+            // Refresh the config if it hasn't been refreshed in 60 seconds.
+            return 60
+        }
+        let key = RemoteConfigKeys.remoteConfigCacheExpiration
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
+    }()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
         setupFirebase()
+        setupRemoteConfig()
         BuddyBuildSDK.setup()
         application.setMinimumBackgroundFetchInterval(AppConstants.backgroundFetchInterval)
 
@@ -47,6 +56,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.authorizedUser = user
                 dump(user)
             }
+        }
+    }
+
+    private func setupRemoteConfig() {
+        let remoteConfig = FIRRemoteConfig.remoteConfig()
+        remoteConfig.configSettings = FIRRemoteConfigSettings(developerModeEnabled: AppConstants.isDebug)!
+        remoteConfig.setDefaultsFromPlistFileName("RemoteConfigDefaults")
+
+        let defaults = UserDefaults.standard
+        // Declare this here, because it's not needed anywhere else.
+        let pendingUpdateKey = "pendingUpdate"
+
+        remoteConfig.fetch(withExpirationDuration: remoteConfigCacheExpiration) { status, err in
+            if status == FIRRemoteConfigFetchStatus.success {
+                print("RemoteConfig fetched")
+                // The config will be applied next time we load.
+                // We don't do it now, because we want the update to be atomic,
+                // at the beginning of a session with the app.
+                defaults.set(true, forKey: pendingUpdateKey)
+                defaults.synchronize()
+            } else {
+                // We'll revert back to the latest update, or the RemoteConfigDefaults plist.
+                print("RemoteConfig fetch failed")
+            }
+        }
+
+        if defaults.bool(forKey: pendingUpdateKey) {
+            remoteConfig.activateFetched()
+            print("RemoteConfig updated")
+            defaults.set(false, forKey: pendingUpdateKey)
+            defaults.synchronize()
         }
     }
 
