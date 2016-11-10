@@ -44,6 +44,7 @@ class PlaceCarouselViewController: UIViewController {
         // TODO: update to a more sane distance value when testing is over.
         // This is probably going to be around 100m
         manager.distanceFilter = kCLDistanceFilterNone
+        manager.pausesLocationUpdatesAutomatically = true
         return manager
     }()
 
