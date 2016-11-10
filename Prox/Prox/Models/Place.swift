@@ -282,6 +282,16 @@ struct OpenHours {
         return OpenHours.calendar.dateComponents(timeComponentsSet, from: dateFromTime)
     }
 
+    /** 
+    * The logic for isOpen is as follows:
+    * Apply opening time and closing time to the current date (provided as an argument)
+    * If the closing time is < the opening time, then the venue is open over midnight and we have to add 24hrs to the closing time
+    * If the current time is before the opening time, but the venue closed before midnight the previous day, the venue is closed
+    * If the current time if before the opening time, but the venue closed after midnight the previous day, the venue is closed if the 
+      current time is after yesterdays closing time, otherwise the venue is open
+    * If the current time is before the closing time and after the opening time, the venue is open
+    * If the current time is after the closing time and before the opening time, the venue is closed
+    **/
     func isOpen(atTime time: Date) -> Bool {
         let dayOfWeek = DayOfWeek.forDate(time)
         guard let openDateComponents = hours[dayOfWeek]?.openTime,
@@ -291,23 +301,22 @@ struct OpenHours {
             return false
         }
 
+        // Add 24 hours to the closing time if the closing time if before the opening time
         if closingTime <= openingTime {
             closingTime = closingTime.addingTimeInterval(AppConstants.ONE_DAY)
         }
 
-        // if the current time is before the opening time, find out when yesterdays closing time was and check to see if we are before that too
-        // if we are, then the venue is still open, otherwise the venue has not opened yet
-        if time < openingTime {
-            let yesterday = dayOfWeek.previousWeekday()
-            if let yesterdaysClosingDateComponents = hours[yesterday]?.closeTime,
-                var yesterdaysClosingTime = date(forTime: yesterdaysClosingDateComponents, onDate: time) {
-                if yesterdaysClosingTime > openingTime {
-                    yesterdaysClosingTime = yesterdaysClosingTime.addingTimeInterval(-AppConstants.ONE_DAY)
-                }
+        // Is the current time before the opening time and the venue closed after midnight the previous day?
+        if time < openingTime,
+            let yesterdaysClosingDateComponents = hours[dayOfWeek.previousWeekday()]?.closeTime,
+            let yesterdaysClosingTime = date(forTime: yesterdaysClosingDateComponents, onDate: time),
+            yesterdaysClosingTime < openingTime {
+
+                // the venue is open if our current time is before yesterdays close time
                 return time < yesterdaysClosingTime
-            }
         }
 
+        // the venue is open if our current time is after or at the opening time and before the closing time
         return time >= openingTime && time < closingTime
     }
 
