@@ -25,11 +25,11 @@ struct PlaceUtilities {
         return categories?.prefix(MaxDisplayedCategories).joined(separator: " • ")
     }
 
-    static func updateReviewUI(fromProvider provider: ReviewProvider?, onView view: ReviewContainerView) {
+    static func updateReviewUI(fromProvider provider: ReviewProvider?, onView view: ReviewContainerView, isTextShortened: Bool = false) {
         guard let provider = provider else {
             setSubviewAlpha(0.4, forParent: view)
             view.score = nil
-            view.numberOfReviewersLabel.text = "No data available"
+            view.numberOfReviewersLabel.text = "No data" + (isTextShortened ? "" : " available")
             return
         }
 
