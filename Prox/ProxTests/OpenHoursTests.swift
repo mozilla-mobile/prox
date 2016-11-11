@@ -102,6 +102,13 @@ class OpenHoursTests: XCTestCase {
         isOpen(openHours: hours, time: date)
     }
 
+    func testIfOpenWhenCurrentTimeBetweenOpeningTimeAndClosingTime() {
+        let hours = OpenHours(hours: [.sunday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0)),
+                                      .monday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))])
+        let date = monday(atHour: 12, minute: 00)
+        isOpen(openHours: hours, time: date)
+    }
+
     func testIsClosedWhenCurrentTimeIsTodaysClosingTime() {
         let hours = OpenHours(hours: [.sunday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0)),
                                       .monday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0)),
