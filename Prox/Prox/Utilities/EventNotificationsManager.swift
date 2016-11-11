@@ -13,7 +13,7 @@ class EventNotificationsManager {
             return false
         }
         let now = Date()
-        lastLocationFetchTime += AppConstants.minimumTimeAtLocationBeforeFetchingEvents
+        lastLocationFetchTime += AppConstants.minimumIntervalAtLocationBeforeFetchingEvents
         return lastLocationFetchTime < now
     }
 

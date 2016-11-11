@@ -275,7 +275,7 @@ class PlaceCarouselViewController: UIViewController {
 
     func startTimeAtLocationTimer() {
         if timeAtLocationTimer == nil {
-            timeAtLocationTimer = Timer.scheduledTimer(timeInterval: AppConstants.minimumTimeAtLocationBeforeFetchingEvents, target: self, selector: #selector(timerFired(timer:)), userInfo: nil, repeats: true)
+            timeAtLocationTimer = Timer.scheduledTimer(timeInterval: AppConstants.minimumIntervalAtLocationBeforeFetchingEvents, target: self, selector: #selector(timerFired(timer:)), userInfo: nil, repeats: true)
         }
     }
 
