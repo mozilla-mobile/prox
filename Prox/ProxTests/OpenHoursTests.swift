@@ -128,10 +128,10 @@ class OpenHoursTests: XCTestCase {
 
     func testIsClosedWhenCurrentTimeIsAfterMidnightAndClosingTimeIsBeforeMidnight() {
         let opening = dateComponents(withHour: 7, minute: 0)
-        let hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: dateComponents(withHour: 0, minute: 0)),
+        let hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: dateComponents(withHour: 23, minute: 30)),
                                       .tuesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0)),
                                       .wednesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))])
-        let date = monday(atHour: 0, minute: 0)
+        let date = tuesday(atHour: 0, minute: 0)
         isClosed(openHours: hours, time: date)
     }
 
@@ -144,12 +144,21 @@ class OpenHoursTests: XCTestCase {
         isOpen(openHours: hours, time: date)
     }
 
+    func testIsClosedWhenCurrentTimeIsAfterMidnightAndAfterClosingTimeAfterMidnight() {
+        let opening = dateComponents(withHour: 7, minute: 0)
+        let hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: dateComponents(withHour: 0, minute: 0)),
+                                      .tuesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0)),
+                                      .wednesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))])
+        let date = wednesday(atHour: 3, minute: 0)
+        isClosed(openHours: hours, time: date)
+    }
+
     func testIsClosedWhenCurrentTimeMatchesClosingTimeAfterMidnight() {
         let opening = dateComponents(withHour: 7, minute: 0)
         let hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: dateComponents(withHour: 0, minute: 0)),
                                       .tuesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0)),
                                       .wednesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))])
-        let date = tuesday(atHour: 2, minute: 0)
+        let date = wednesday(atHour: 2, minute: 0)
         isClosed(openHours: hours, time: date)
     }
 
