@@ -749,6 +749,7 @@
 				E662FF4E1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift in Sources */,
 				7B8651921DBFAF19002A666A /* PlaceUtilities.swift in Sources */,
 				E65857DE1DB69F4200CD18F8 /* ReviewProvider.swift in Sources */,
+				7B0ECE461DD60E9F00ABBD72 /* RegionMonitor.swift in Sources */,
 				7BD5CC7F1DAFF07E00BCF50D /* GFGeoHash.m in Sources */,
 				7B50956E1DB53429007C54F0 /* HorizontalLineView.swift in Sources */,
 				7B9DA14B1DBE332E00A68C82 /* AppConstants.swift in Sources */,
