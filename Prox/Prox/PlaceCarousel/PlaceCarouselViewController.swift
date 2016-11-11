@@ -288,7 +288,7 @@ class PlaceCarouselViewController: UIViewController {
 
     fileprivate func updateLocation(location: CLLocation) {
         startTimeAtLocationTimer()
-        startMonitoring(location: location, withIdentifier: currentLocationIdentifier, forEntry: nil, forExit: {
+        startMonitoring(location: location, withIdentifier: currentLocationIdentifier, withRadius: AppConstants.currentLocationMonitoringRadius, forEntry: nil, forExit: {
             self.cancelTimeAtLocationTimer()
             self.stopMonitoringRegion(withIdentifier: self.currentLocationIdentifier)
         })
@@ -326,8 +326,8 @@ class PlaceCarouselViewController: UIViewController {
 
     }
 
-    fileprivate func startMonitoring(location: CLLocation, withIdentifier identifier: String, forEntry: (()->())?, forExit: (()->())?) {
-        let region = GeofenceRegion(location: location.coordinate, identifier: identifier, radius: 50.00, onEntry: forEntry, onExit: forExit)
+    fileprivate func startMonitoring(location: CLLocation, withIdentifier identifier: String, withRadius radius: CLLocationDistance, forEntry: (()->())?, forExit: (()->())?) {
+        let region = GeofenceRegion(location: location.coordinate, identifier: identifier, radius: radius, onEntry: forEntry, onExit: forExit)
         monitoredRegions[identifier] = region
 
         self.locationManager.startMonitoring(for: region.region)
