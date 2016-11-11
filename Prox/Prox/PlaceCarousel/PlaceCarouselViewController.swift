@@ -43,7 +43,7 @@ class PlaceCarouselViewController: UIViewController {
         }
     }
 
-    lazy var eventsManager: EventManager = EventManager()
+    lazy var eventNotificationsManager: EventNotificationsManager = EventNotificationsManager()
 
     lazy var locationManager: CLLocationManager = {
         let manager = CLLocationManager()
@@ -281,7 +281,7 @@ class PlaceCarouselViewController: UIViewController {
 
     @objc fileprivate func timerFired(timer: Timer) {
         guard let currentLocation = getCurrentLocation() else { return }
-        eventsManager.fetchEvents(forLocation: currentLocation) { (events, error) in
+        eventNotificationsManager.fetchEvents(forLocation: currentLocation) { (events, error) in
             print("events have been fetched \(events), \(error)")
         }
     }

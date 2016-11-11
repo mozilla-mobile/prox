@@ -5,7 +5,7 @@
 import Foundation
 import CoreLocation
 
-class EventManager {
+class EventNotificationsManager {
 
     fileprivate var eventFetchCompletionHandler: (([Event]?, Error?) -> Void)?
     fileprivate var shouldFetchEvents: Bool {
@@ -39,7 +39,7 @@ class EventManager {
     }
 }
 
-extension EventManager: EventsControllerDelegate {
+extension EventNotificationsManager: EventsControllerDelegate {
     func eventController(_ eventController: EventsController, didUpdateEvents events: [Event]) {
         eventFetchCompletionHandler?(events, nil)
     }
