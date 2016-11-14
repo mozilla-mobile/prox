@@ -12,13 +12,11 @@ protocol EventsControllerDelegate: class {
 class EventsController {
     lazy var eventsDatabase: EventsDatabase = FakeEventsDatabase()
 
-    weak var delegate: EventsControllerDelegate?
-
-    func getEvents(forLocation location: CLLocation) {
+    func getEvents(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
         return eventsDatabase.getEvents(forLocation: location).upon { results in
             let events = results.flatMap { $0.successResult() }
             DispatchQueue.main.async {
-                self.delegate?.eventController(self, didUpdateEvents: events)
+                completion(events, nil)
             }
         }
     }
