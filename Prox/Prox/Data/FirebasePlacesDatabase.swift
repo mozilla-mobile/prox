@@ -7,9 +7,12 @@ import Firebase
 import Deferred
 import CoreLocation
 
-private let ROOT_PATH = "venues/"
-private let GEOFIRE_PATH = ROOT_PATH + "locations/"
-private let DETAILS_PATH = ROOT_PATH + "details/"
+// Adding "$name/" allows you to develop against a locally run database.
+// TODO prox-server – allow this string to be passed in as a URL parameter when in debug mode. 
+private let ROOT_PATH = ""
+private let VENUES_PATH = ROOT_PATH + "venues/"
+private let GEOFIRE_PATH = VENUES_PATH + "locations/"
+private let DETAILS_PATH = VENUES_PATH + "details/"
 
 private let SEARCH_RADIUS_KM = 4.0 // TODO: set distance
 

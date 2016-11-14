@@ -56,9 +56,17 @@ class PlaceCarouselViewController: UIViewController {
         return manager
     }()
 
+    lazy var placesController: PlacesController = {
+        let controller = PlacesController()
+        controller.delegate = self
+        return controller
+    }()
 
     var places: [Place] = [Place]() {
         didSet {
+            if oldValue == places {
+                return
+            }
             // TODO: how do we make sure the user wasn't interacting?
             headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
             placeCarousel.refresh()
@@ -256,7 +264,6 @@ class PlaceCarouselViewController: UIViewController {
         self.present(placeDetailViewController, animated: true, completion: nil)
     }
 
-
     // MARK: Location Handling
 
     func refreshLocation() {
@@ -297,14 +304,7 @@ class PlaceCarouselViewController: UIViewController {
     }
 
     fileprivate func updatePlaces(forLocation location: CLLocation) {
-        FirebasePlacesDatabase().getPlaces(forLocation: location).upon(DispatchQueue.main) { places in
-            let newPlaces = PlaceUtilities.sort(places: places.flatMap { $0.successResult() }, byDistanceFromLocation: location)
-            // only update our places list if the places have changed
-            if newPlaces != self.places {
-                self.places = newPlaces
-                self.placeCarousel.refresh()
-            }
-        }
+        self.placesController.updatePlaces(forLocation: location)
     }
 
     fileprivate func updateSunRiseSetTimes(forLocation location: CLLocation) {
@@ -446,7 +446,30 @@ extension PlaceCarouselViewController: EventsControllerDelegate {
     }
 
     func eventController(_ eventController: EventsController, didUpdateEvents: [Event]) {
+    }
+}
 
+extension PlaceCarouselViewController: PlacesControllerDelegate {
+    func placeControllerWillStartFetchingPlaces(_ controller: PlacesController) {
+        // TODO placeholder for the waiting state.
+        if self.places.count == 0 {
+            headerView.numberOfPlacesLabel.text = "Waiting"
+        }
+    }
+
+    func placeControllerDidFinishFetchingPlaces(_ controller: PlacesController) {
+        // no op
+    }
+
+    func placesController(_ controller: PlacesController, didReceivePlaces places: [Place]) {
+        self.places = places
+    }
+
+    func placesController(_ controller: PlacesController, didError error: Error) {
+        if self.places.count == 0 {
+            // placeholder for the error state.
+            headerView.numberOfPlacesLabel.text = "Error"
+        }
     }
 }
 
