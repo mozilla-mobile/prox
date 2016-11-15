@@ -3,8 +3,12 @@
 <plist version="1.0">
 <dict>
 	<key>remote_config_cache_expiration</key>
-	<integer>43200</integer>
+	<real>43200</real>
 	<key>search_radius_in_km</key>
 	<integer>4</integer>
+	<key>you_are_here_walking_time_mins</key>
+	<integer>1</integer>
+	<key>max_walking_time_in_mins</key>
+	<integer>30</integer>
 </dict>
 </plist>

@@ -31,4 +31,12 @@ class RemoteConfigKeys {
     // The search radius the app will use to query the Firebase database.
     // This is measured in kilometers. The default value is 4 km.
     public static let searchRadiusInKm = "search_radius_in_km"
+
+    // The minimum number of minutes walking to the venue to be considered at the venue.at
+    // This is measured in minutes. The default value is 1 minute.
+    public static let youAreHereWalkingTimeMins = "you_are_here_walking_time_mins"
+
+    // This is the maximum time interval that we display walking directions before switching to driving directions.
+    // This is measure in minutes. The default value is 30 minutes.
+    public static let maxWalkingTimeInMins = "max_walking_time_in_mins"
 }

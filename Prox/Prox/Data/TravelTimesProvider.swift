@@ -2,13 +2,23 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import FirebaseRemoteConfig
 import Foundation
 import MapKit
 
 struct TravelTimesProvider {
 
-    static let MIN_WALKING_TIME = 30
-    static let YOU_ARE_HERE_WALKING_TIME = 1
+    static var MIN_WALKING_TIME: Int = {
+        // Note that this is semantically maximum walking time, 
+        // rather than minimum walking time (as used throughout the codebase).
+        let key = RemoteConfigKeys.maxWalkingTimeInMins
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.intValue
+    }()
+
+    static var YOU_ARE_HERE_WALKING_TIME: Int = {
+        let key = RemoteConfigKeys.youAreHereWalkingTimeMins
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.intValue
+    }()
 
     private static func directions(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType) -> MKDirections {
 
