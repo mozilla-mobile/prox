@@ -87,8 +87,10 @@
 
 /* Begin PBXFileReference section */
 		032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProxTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B7888AD8C6E7538A1FCCDD3 /* Pods-ProxTests.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		0EA57261799D082127AF0A24 /* Pods-ProxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.release.xcconfig"; sourceTree = "<group>"; };
 		18F1C6CC1D18EC45A9072FF1 /* Pods-ProxUITests.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise.xcconfig"; sourceTree = "<group>"; };
+		1E318DF6890B9E7221222152 /* Pods-Prox.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		246E3C4ADD7C4DD2150C111B /* Pods-Prox.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.release.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.release.xcconfig"; sourceTree = "<group>"; };
 		29190FCA903C1D1AF4C77316 /* Pods_Prox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Prox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		324CE3415A3E66A0F7F7CF54 /* Pods-ProxUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 		7BD5CC7C1DAFF07E00BCF50D /* GFQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFQuery.m; sourceTree = "<group>"; };
 		7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A62868128BA3BDA4EF8E22F1 /* Pods-ProxTests.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.enterprise.xcconfig"; sourceTree = "<group>"; };
+		BD2188137E599F03500C7FBD /* Pods-ProxUITests.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		D3DA777E1DC2776C009C114E /* BuddyBuildSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BuddyBuildSDK.framework; path = ../Pods/BuddyBuildSDK/BuddyBuildSDK.framework; sourceTree = "<group>"; };
 		D3DA77821DC289A4009C114E /* Prox-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Prox-Bridging-Header.h"; sourceTree = "<group>"; };
 		D4ACFAE1468306F6BC08DB51 /* Pods-ProxUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -405,6 +408,9 @@
 				D4ACFAE1468306F6BC08DB51 /* Pods-ProxUITests.debug.xcconfig */,
 				324CE3415A3E66A0F7F7CF54 /* Pods-ProxUITests.release.xcconfig */,
 				18F1C6CC1D18EC45A9072FF1 /* Pods-ProxUITests.enterprise.xcconfig */,
+				1E318DF6890B9E7221222152 /* Pods-Prox.enterprise kona.xcconfig */,
+				0B7888AD8C6E7538A1FCCDD3 /* Pods-ProxTests.enterprise kona.xcconfig */,
+				BD2188137E599F03500C7FBD /* Pods-ProxUITests.enterprise kona.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -509,7 +515,7 @@
 				TargetAttributes = {
 					7B29E7BE1DA3EC360099AF38 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 9G8J6YA743;
+						DevelopmentTeam = 43AQ936H96;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -752,7 +758,6 @@
 				E662FF4E1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift in Sources */,
 				7B8651921DBFAF19002A666A /* PlaceUtilities.swift in Sources */,
 				E65857DE1DB69F4200CD18F8 /* ReviewProvider.swift in Sources */,
-				7B0ECE461DD60E9F00ABBD72 /* RegionMonitor.swift in Sources */,
 				7BD5CC7F1DAFF07E00BCF50D /* GFGeoHash.m in Sources */,
 				7B50956E1DB53429007C54F0 /* HorizontalLineView.swift in Sources */,
 				7B9DA14B1DBE332E00A68C82 /* AppConstants.swift in Sources */,
@@ -819,6 +824,98 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		7B0ECE491DDB3AA900ABBD72 /* Enterprise Kona */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Enterprise Kona";
+		};
+		7B0ECE4A1DDB3AA900ABBD72 /* Enterprise Kona */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1E318DF6890B9E7221222152 /* Pods-Prox.enterprise kona.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 9G8J6YA743;
+				INFOPLIST_FILE = Prox/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_ENTERPRISE_KONA";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.Kona;
+				PRODUCT_NAME = "$(TARGET_NAME) Kona";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
+			};
+			name = "Enterprise Kona";
+		};
+		7B0ECE4B1DDB3AA900ABBD72 /* Enterprise Kona */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0B7888AD8C6E7538A1FCCDD3 /* Pods-ProxTests.enterprise kona.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 9G8J6YA743;
+				INFOPLIST_FILE = ProxTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
+			};
+			name = "Enterprise Kona";
+		};
+		7B0ECE4C1DDB3AA900ABBD72 /* Enterprise Kona */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BD2188137E599F03500C7FBD /* Pods-ProxUITests.enterprise kona.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				DEVELOPMENT_TEAM = 9G8J6YA743;
+				INFOPLIST_FILE = ProxUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(FRAMEWORK_SEARCH_PATHS)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = Prox;
+			};
+			name = "Enterprise Kona";
+		};
 		7B29E7E51DA3EC360099AF38 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1111,6 +1208,7 @@
 				7B29E7E51DA3EC360099AF38 /* Debug */,
 				7B29E7E61DA3EC360099AF38 /* Release */,
 				7B4678A81DB5013800AC5B5D /* Enterprise */,
+				7B0ECE491DDB3AA900ABBD72 /* Enterprise Kona */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1121,6 +1219,7 @@
 				7B29E7E81DA3EC360099AF38 /* Debug */,
 				7B29E7E91DA3EC360099AF38 /* Release */,
 				7B4678A91DB5013800AC5B5D /* Enterprise */,
+				7B0ECE4A1DDB3AA900ABBD72 /* Enterprise Kona */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1131,6 +1230,7 @@
 				7B29E7EB1DA3EC360099AF38 /* Debug */,
 				7B29E7EC1DA3EC360099AF38 /* Release */,
 				7B4678AA1DB5013800AC5B5D /* Enterprise */,
+				7B0ECE4B1DDB3AA900ABBD72 /* Enterprise Kona */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1141,6 +1241,7 @@
 				7B29E7EE1DA3EC360099AF38 /* Debug */,
 				7B29E7EF1DA3EC360099AF38 /* Release */,
 				7B4678AB1DB5013800AC5B5D /* Enterprise */,
+				7B0ECE4C1DDB3AA900ABBD72 /* Enterprise Kona */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

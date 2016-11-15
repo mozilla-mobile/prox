@@ -7,6 +7,7 @@ import UIKit
 public enum AppBuildChannel {
     case Developer
     case Enterprise
+    case EnterpriseKona
     case Release
 }
 
@@ -23,6 +24,8 @@ public struct AppConstants {
     public static let BuildChannel: AppBuildChannel = {
         #if MOZ_CHANNEL_ENTERPRISE
             return AppBuildChannel.Enterprise
+        #elseif MOZ_CHANNEL_ENTERPRISE_KONA
+            return AppBuildChannel.EnterpriseKona
         #elseif MOZ_CHANNEL_RELEASE
             return AppBuildChannel.Release
         #else
@@ -58,12 +61,8 @@ public struct AppConstants {
 
     // Enables/disables location faking for Hawaii
     public static let MOZ_LOCATION_FAKING: Bool = {
-        #if MOZ_CHANNEL_DEBUG
-            return false
-        #elseif MOZ_CHANNEL_ENTERPRISE
+        #if MOZ_CHANNEL_ENTERPRISE_KONA
             return true
-        #elseif MOZ_CHANNEL_RELEASE
-            return false
         #else
             return false
         #endif
