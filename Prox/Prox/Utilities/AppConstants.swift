@@ -20,7 +20,7 @@ public struct AppConstants {
     public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 1 * 60
     #else
     public static let backgroundFetchInterval: TimeInterval = 5 * 60
-    public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 15 * 60
+    public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 1  * 60
     #endif
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
     public static let currentLocationMonitoringRadius: CLLocationDistance = 50.0

@@ -13,7 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var placeCarouselViewController: PlaceCarouselViewController?
 
     private var authorizedUser: FIRUser?
-
+    
     private lazy var remoteConfigCacheExpiration: TimeInterval = {
         if AppConstants.isDebug {
             // Refresh the config if it hasn't been refreshed in 60 seconds.
@@ -22,6 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let key = RemoteConfigKeys.remoteConfigCacheExpiration
         return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
     }()
+
+    private lazy var eventsNotificationsManager = EventNotificationsManager()
+
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         setupFirebase()
@@ -36,6 +39,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // create root view
         placeCarouselViewController = PlaceCarouselViewController()
         window?.rootViewController = placeCarouselViewController
+
+        if #available(iOS 10.0, *) {
+            placeCarouselViewController?.setupUserNotificationCenter()
+        }
 
         // display
         window?.makeKeyAndVisible()
@@ -115,8 +122,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        guard let currentLocation =  placeCarouselViewController?.locationMonitor.getCurrentLocation() else { return completionHandler(.noData) }
-        let eventsNotificationsManager = EventNotificationsManager()
+        guard let currentLocation =  placeCarouselViewController?.locationMonitor.getCurrentLocation() else {
+            return completionHandler(.noData)
+        }
         eventsNotificationsManager.sendEventNotifications(forLocation: currentLocation) { (events, error) in
             if let _ = error {
                 return completionHandler(.failed)
