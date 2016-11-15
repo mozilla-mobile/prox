@@ -24,10 +24,10 @@ struct PlaceUtilities {
     static func filterPlacesForCarousel(_ places: [Place]) -> [Place] {
         return places.filter() { place in
             do {
-                let shouldShow = try CategoriesUtil.shouldShowPlace(byCategories: place.categories.ids)
-                if !shouldShow {
+                let shouldShowByCategory = try CategoriesUtil.shouldShowPlace(byCategories: place.categories.ids)
+                guard shouldShowByCategory else {
                     print("lol filtering out place, \(place.id), by category")
-                    return shouldShow
+                    return shouldShowByCategory
                 }
 
             } catch CategoryError.Unknown(let name) {
@@ -38,6 +38,28 @@ struct PlaceUtilities {
                 return false
             }
 
+            let shouldShowByRating = shouldShowPlaceByRating(place)
+            guard shouldShowByRating  else {
+                print("lol filtering out place, \(place.id), by rating")
+                return shouldShowByRating
+            }
+
+            return true
+        }
+    }
+
+    static func shouldShowPlaceByRating(_ place: Place) -> Bool {
+        guard let rating = place.yelpProvider.rating,
+                let reviewCount = place.yelpProvider.totalReviewCount else {
+            print("lol missing rating or review count for place \(place.id)")
+            return false
+        }
+
+        if (rating < 2.5) ||
+                (rating == 3 && reviewCount > 3) ||
+                (reviewCount <= 3 && rating < 5) {
+            return false
+        } else {
             return true
         }
     }

@@ -49,5 +49,23 @@ class PlaceUtilitiesTests: XCTestCase {
         XCTAssertEqual(sortedDescending[1].id, place2.id)
         XCTAssertEqual(sortedDescending[2].id, place1.id)
     }
+
+    /*
+     * This logic can change a lot so it's not worth writing comprehensive tests for, I think.
+     * This is more of a sanity check.
+     */
+    func testShouldShowPlaceByRating() {
+        let lowRatingLowReviewPlace = getPlace(forRating: 1.0, reviewCount: 3)
+        XCTAssertFalse(PlaceUtilities.shouldShowPlaceByRating(lowRatingLowReviewPlace))
+
+        let highRatingHighReviewPlace = getPlace(forRating: 5.0, reviewCount: 3634)
+        XCTAssertTrue(PlaceUtilities.shouldShowPlaceByRating(highRatingHighReviewPlace))
+    }
+
+    private func getPlace(forRating rating: Float, reviewCount: Int) -> Place {
+        let yelpProvider = ReviewProvider(url: "url", rating: rating, reviews: nil, totalReviewCount: reviewCount)
+        return Place(id: "id", name: "name", latLong: CLLocationCoordinate2D(latitude: 0, longitude: 0),
+                     categories: ([], []), yelpProvider: yelpProvider)
+    }
     
 }
