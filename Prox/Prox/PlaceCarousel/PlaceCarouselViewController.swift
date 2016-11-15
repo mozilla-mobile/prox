@@ -336,7 +336,7 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
     }
 
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation) {
-        eventNotificationsManager.fetchEvents(forLocation: location) { (events, error) in
+        eventNotificationsManager.sendEventNotifications(forLocation: location) { (events, error) in
             print("events have been fetched \(events), \(error)")
         }
     }

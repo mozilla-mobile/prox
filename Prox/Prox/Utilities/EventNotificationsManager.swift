@@ -28,7 +28,7 @@ class EventNotificationsManager {
 
     fileprivate lazy var eventsProvider = EventsProvider()
 
-    func fetchEvents(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
+    func sendEventNotifications(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
         if shouldFetchEvents {
             print("Should fetch events")
             eventsProvider.getEventsForNotifications(forLocation: location, completion: completion)
