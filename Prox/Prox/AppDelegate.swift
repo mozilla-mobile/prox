@@ -138,7 +138,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
             completionHandler(.newData)
         }
-
     }
 
     func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
