@@ -90,4 +90,30 @@ class CategoriesUtilTests: XCTestCase {
     func testGetRootForMissingCategory() {
         XCTAssertThrowsError(try CategoriesUtil.getRootCategories(forCategories: [NotACategory]))
     }
+
+    func testShouldShowPlaceOnAllMatch() {
+        let input = CategoriesUtil.HiddenRootCategories.prefix(3)
+        XCTAssertFalse(try CategoriesUtil.shouldShowPlace(byCategories: input))
+    }
+
+    func testShouldShowPlaceOnPartialMatch() {
+        let input = Set(CategoriesUtil.HiddenRootCategories.prefix(1)).union(getNonHiddenCategories())
+        XCTAssertTrue(try CategoriesUtil.shouldShowPlace(byCategories: input))
+    }
+
+    func testShouldShowPlaceOnNoMatch() {
+        let input = getNonHiddenCategories()
+        XCTAssertTrue(try CategoriesUtil.shouldShowPlace(byCategories: input))
+    }
+
+    func testShouldShowPlaceThrowsOnInvalidCategory() {
+        XCTAssertThrowsError(try CategoriesUtil.shouldShowPlace(byCategories: ["not-a-category"]))
+    }
+
+    private func getNonHiddenCategories() -> Set<String> {
+        let nonHiddenCat = "shopping"
+        XCTAssertFalse(CategoriesUtil.HiddenRootCategories.contains(nonHiddenCat),
+                       "Failed sanity check: expected \(nonHiddenCat) to be a non-hidden category.")
+        return Set(arrayLiteral: nonHiddenCat)
+    }
 }

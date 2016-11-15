@@ -111,14 +111,14 @@ class PlacesController {
     }
 
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
-        let sortedPlaces = self.preparePlaces(places: places, forLocation: location)
+        let preparedPlaces = self.preparePlaces(places: places, forLocation: location)
         DispatchQueue.main.async {
-            self.delegate?.placesController(self, didReceivePlaces: sortedPlaces)
+            self.delegate?.placesController(self, didReceivePlaces: preparedPlaces)
         }
     }
 
     private func preparePlaces(places: [Place], forLocation location: CLLocation) -> [Place] {
-        // TODO filter places, based on… distance, categories, availability, rating etc
-        return PlaceUtilities.sort(places: places, byDistanceFromLocation: location)
+        let filteredPlaces = PlaceUtilities.filterPlacesForCarousel(places)
+        return PlaceUtilities.sort(places: filteredPlaces, byDistanceFromLocation: location)
     }
 }

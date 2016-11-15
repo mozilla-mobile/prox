@@ -6,7 +6,7 @@ import Foundation
 
 struct CategoriesUtil {
 
-    private static let HiddenRootCategories = Set(arrayLiteral: "auto", // 🚗
+    static let HiddenRootCategories = Set(arrayLiteral: "auto", // 🚗
                                                   "bicycles",
                                                   "education",
                                                   "financialservices",
@@ -19,6 +19,13 @@ struct CategoriesUtil {
 
     private static let AllCategoriesPath = "Data.bundle/yelp_categories_v3"
     private static let AllCategoriesExt = "json"
+
+    static func shouldShowPlace<S : Sequence>(byCategories categories: S) throws -> Bool where S.Iterator.Element == String {
+        // Hide if all match.
+        let rootCategories = try getRootCategories(forCategories: categories)
+        let allCategoriesMatch = rootCategories.subtracting(HiddenRootCategories).isEmpty
+        return !allCategoriesMatch
+    }
 
     // This accesses the app bundle, which could be slow. If it's an issue, consider using a background thread.
     static let categoryToParents = getCategoryToParents()
@@ -61,7 +68,7 @@ struct CategoriesUtil {
 
     private static func getRootCategories(forCategory category: String) throws -> Set<String> {
         guard let parents = categoryToParents[category] else {
-            throw UnknownCategoryError(name: category)
+            throw CategoryError.Unknown(name: category)
         }
 
         if parents.isEmpty {
@@ -72,8 +79,8 @@ struct CategoriesUtil {
             res.union(try getRootCategories(forCategory: parent))
         }
     }
+}
 
-    struct UnknownCategoryError: Error {
-        let name: String
-    }
+enum CategoryError: Error {
+    case Unknown(name: String)
 }
