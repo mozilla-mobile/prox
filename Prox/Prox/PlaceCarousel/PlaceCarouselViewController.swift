@@ -19,40 +19,13 @@ protocol PlaceDataSource: class {
     func place(forIndex: Int) throws -> Place
 }
 
-protocol LocationProvider: class {
-    func getCurrentLocation() -> CLLocation?
-}
-
 struct PlaceDataSourceError: Error {
     let message: String
 }
 
 class PlaceCarouselViewController: UIViewController {
 
-    fileprivate let currentLocationIdentifier = "CURRENT_LOCATION"
-    fileprivate let MIN_SECS_BETWEEN_LOCATION_UPDATES: TimeInterval = 1
-
-    fileprivate var timeOfLastLocationUpdate: Date? {
-        get {
-            return UserDefaults.standard.value(forKey: AppConstants.timeOfLastLocationUpdateKey) as? Date
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: AppConstants.timeOfLastLocationUpdateKey)
-        }
-    }
-
     lazy var eventNotificationsManager: EventNotificationsManager = EventNotificationsManager()
-
-    lazy var locationManager: CLLocationManager = {
-        let manager = CLLocationManager()
-        manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyBest
-        // TODO: update to a more sane distance value when testing is over.
-        // This is probably going to be around 100m
-        manager.distanceFilter = kCLDistanceFilterNone
-        manager.pausesLocationUpdatesAutomatically = true
-        return manager
-    }()
 
     lazy var placesProvider: PlacesProvider = {
         let controller = PlacesProvider()
@@ -103,11 +76,17 @@ class PlaceCarouselViewController: UIViewController {
         return label
     }()
 
+    lazy var locationMonitor: LocationMonitor = {
+        let monitor = LocationMonitor()
+        monitor.delegate = self
+        return monitor
+    }()
+
     lazy var placeCarousel: PlaceCarousel = {
         let carousel = PlaceCarousel()
         carousel.delegate = self
         carousel.dataSource = self
-        carousel.locationProvider = self
+        carousel.locationProvider = self.locationMonitor
         return carousel
     }()
 
@@ -116,12 +95,6 @@ class PlaceCarouselViewController: UIViewController {
             setSunriseSetTimes()
         }
     }
-
-    // fake the location to Hilton Waikaloa Village, Kona, Hawaii
-    fileprivate var fakeLocation: CLLocation = CLLocation(latitude: 19.924043, longitude: -155.887652)
-
-    fileprivate var monitoredRegions: [String: GeofenceRegion] = [String: GeofenceRegion]()
-    fileprivate var timeAtLocationTimer: Timer?
 
     private func setSunriseSetTimes() {
         let today = Date()
@@ -220,7 +193,7 @@ class PlaceCarouselViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        guard let location = getCurrentLocation() else {
+        guard let location = locationMonitor.getCurrentLocation() else {
             return
         }
 
@@ -231,9 +204,7 @@ class PlaceCarouselViewController: UIViewController {
         // through places details
         // if sunrise set is not present, then we haven't processed our first location yet, so setup the app for the current location
         // otherwise just update the places
-        guard let _ = sunriseSet else {
-            return self.updateLocation(location: location)
-        }
+        updateLocation(location: location)
         updatePlaces(forLocation: location)
     }
 
@@ -257,48 +228,25 @@ class PlaceCarouselViewController: UIViewController {
         }
         let placeDetailViewController = PlaceDetailViewController(place: place)
         placeDetailViewController.dataSource = self
-        placeDetailViewController.locationProvider = self
+        placeDetailViewController.locationProvider = self.locationMonitor
 
         self.present(placeDetailViewController, animated: true, completion: nil)
     }
 
     // MARK: Location Handling
-
-    func refreshLocation() {
-        if (CLLocationManager.hasLocationPermissionAndEnabled()) {
-            locationManager.startMonitoringSignificantLocationChanges()
-        } else {
-            // requestLocation expected to be called on authorization status change.
-            locationManager.maybeRequestLocationPermission(viewController: self)
-        }
-    }
-
-    func cancelTimeAtLocationTimer() {
-        timeAtLocationTimer?.invalidate()
-        timeAtLocationTimer = nil
-    }
-
-    func startTimeAtLocationTimer() {
-        if timeAtLocationTimer == nil {
-            timeAtLocationTimer = Timer.scheduledTimer(timeInterval: AppConstants.minimumIntervalAtLocationBeforeFetchingEvents, target: self, selector: #selector(timerFired(timer:)), userInfo: nil, repeats: true)
-        }
-    }
-
-    @objc fileprivate func timerFired(timer: Timer) {
-        guard let currentLocation = getCurrentLocation() else { return }
-        eventNotificationsManager.fetchEvents(forLocation: currentLocation) { (events, error) in
-            print("events have been fetched \(events), \(error)")
-        }
-    }
-
     fileprivate func updateLocation(location: CLLocation) {
-        startTimeAtLocationTimer()
-        startMonitoring(location: location, withIdentifier: currentLocationIdentifier, withRadius: AppConstants.currentLocationMonitoringRadius, forEntry: nil, forExit: {
-            self.cancelTimeAtLocationTimer()
-            self.stopMonitoringRegion(withIdentifier: self.currentLocationIdentifier)
-        })
-        updatePlaces(forLocation: location)
-        updateSunRiseSetTimes(forLocation: location)
+        if let timeOfLastLocationUpdate = locationMonitor.timeOfLastLocationUpdate,
+            timeOfLastLocationUpdate < location.timestamp {
+            locationMonitor.startMonitoringCurrentLocation()
+        }
+
+        if places.isEmpty {
+            updatePlaces(forLocation: location)
+        }
+
+        if sunriseSet == nil {
+            updateSunRiseSetTimes(forLocation: location)
+        }
     }
 
     fileprivate func updatePlaces(forLocation location: CLLocation) {
@@ -324,67 +272,21 @@ class PlaceCarouselViewController: UIViewController {
 
     }
 
-    fileprivate func startMonitoring(location: CLLocation, withIdentifier identifier: String, withRadius radius: CLLocationDistance, forEntry: (()->())?, forExit: (()->())?) {
-        let region = GeofenceRegion(location: location.coordinate, identifier: identifier, radius: radius, onEntry: forEntry, onExit: forExit)
-        monitoredRegions[identifier] = region
+    fileprivate func presentSettingsOrQuitPrompt() {
+        let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
+        let alertController = UIAlertController(title: "\(appName) requires location access",
+            message: "This prototype is not supported without location access.", preferredStyle: .alert)
 
-        self.locationManager.startMonitoring(for: region.region)
-    }
+        let settingsAction = UIAlertAction(title: "Settings", style: .default, handler: {(action: UIAlertAction) -> Void in
+            UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
+        })
+        let quitAction = UIAlertAction(title: "Quit", style: .destructive, handler: {(action: UIAlertAction) -> Void in
+            UIControl().sendAction(#selector(URLSessionTask.suspend), to: UIApplication.shared, for: nil)
+        })
+        alertController.addAction(settingsAction)
+        alertController.addAction(quitAction)
 
-    fileprivate func stopMonitoringRegion(withIdentifier identifier: String) {
-        guard let monitoredRegion = monitoredRegions[identifier]?.region else {
-            return
-        }
-        self.locationManager.stopMonitoring(for: monitoredRegion)
-        monitoredRegions.removeValue(forKey: identifier)
-    }
-
-
-    // MARK: Events
-}
-
-extension PlaceCarouselViewController: CLLocationManagerDelegate {
-
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        refreshLocation()
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        // Use last coord: we want to display where the user is now.
-        if var location = locations.last {
-            // In iOS9, didUpdateLocations can be unexpectedly called multiple
-            // times for a single `requestLocation`: we guard against that here.
-            if timeOfLastLocationUpdate == nil ||
-                (location.timestamp - MIN_SECS_BETWEEN_LOCATION_UPDATES) > timeOfLastLocationUpdate! {
-
-                if AppConstants.MOZ_LOCATION_FAKING {
-                    // fake the location to Hilton Waikaloa Village, Kona, Hawaii
-                    location = fakeLocation
-                }
-
-                // only update places if this is our first location update
-                if timeOfLastLocationUpdate == nil {
-                    updateLocation(location: location)
-                }
-                timeOfLastLocationUpdate = location.timestamp
-            }
-        }
-    }
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        // TODO: handle
-        print("lol-location \(error.localizedDescription)")
-    }
-
-    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        monitoredRegions[region.identifier]?.onEntry?()
-    }
-
-    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
-        monitoredRegions[region.identifier]?.onExit?()
-    }
-
-    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
-        print("lol-location region monitoring failed \(error.localizedDescription)")
+        self.present(alertController, animated: true)
     }
 }
 
@@ -428,13 +330,18 @@ extension PlaceCarouselViewController: PlaceCarouselDelegate {
     }
 }
 
-extension PlaceCarouselViewController: LocationProvider {
-    func getCurrentLocation() -> CLLocation? {
-        guard AppConstants.MOZ_LOCATION_FAKING else {
-            return self.locationManager.location
+extension PlaceCarouselViewController: LocationMonitorDelegate {
+    func locationMonitor(_ locationMonitor: LocationMonitor, didUpdateLocation location: CLLocation) {
+        updateLocation(location: location)
+    }
+
+    func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation) {
+        eventNotificationsManager.fetchEvents(forLocation: location) { (events, error) in
+            print("events have been fetched \(events), \(error)")
         }
-        // fake the location to Hilton Waikaloa Village, Kona, Hawaii
-        return fakeLocation
+    }
+    func locationMonitorNeedsUserPermissionsPrompt(_ locationMonitor: LocationMonitor) {
+        presentSettingsOrQuitPrompt()
     }
 }
 

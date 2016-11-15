@@ -8,12 +8,18 @@ import CoreLocation
 class EventNotificationsManager {
 
     fileprivate var shouldFetchEvents: Bool {
-        guard var lastLocationFetchTime = timeOfLastLocationUpdate else {
+        guard let eventFetchStartTime = eventFetchStartTime else {
             return false
         }
         let now = Date()
-        lastLocationFetchTime += AppConstants.minimumIntervalAtLocationBeforeFetchingEvents
-        return lastLocationFetchTime < now
+        return eventFetchStartTime < now
+    }
+
+    fileprivate var eventFetchStartTime: Date? {
+        guard let lastLocationFetchTime = timeOfLastLocationUpdate else {
+            return nil
+        }
+        return lastLocationFetchTime.addingTimeInterval(AppConstants.minimumIntervalAtLocationBeforeFetchingEvents)
     }
 
     fileprivate var timeOfLastLocationUpdate: Date? {

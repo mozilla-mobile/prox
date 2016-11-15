@@ -14,6 +14,7 @@ public enum AppBuildChannel {
 public struct AppConstants {
 
     public static let isRunningTest = NSClassFromString("XCTestCase") != nil
+    
     #if MOZ_CHANNEL_DEBUG
     public static let backgroundFetchInterval: TimeInterval = 1 * 60
     public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 1 * 60

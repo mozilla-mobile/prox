@@ -97,17 +97,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         // if there is a timer running, cancel it. We'll wait until background app refresh fires instead
-        placeCarouselViewController?.cancelTimeAtLocationTimer()
+        placeCarouselViewController?.locationMonitor.cancelTimeAtLocationTimer()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-        placeCarouselViewController?.startTimeAtLocationTimer()
+        placeCarouselViewController?.locationMonitor.startTimeAtLocationTimer()
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        placeCarouselViewController?.refreshLocation()
+        placeCarouselViewController?.locationMonitor.refreshLocation()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -115,7 +115,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        guard let currentLocation =  placeCarouselViewController?.getCurrentLocation() else { return completionHandler(.noData) }
+        guard let currentLocation =  placeCarouselViewController?.locationMonitor.getCurrentLocation() else { return completionHandler(.noData) }
         placeCarouselViewController?.eventNotificationsManager.fetchEvents(forLocation: currentLocation) { (events, error) in
             if let _ = error {
                 return completionHandler(.failed)
