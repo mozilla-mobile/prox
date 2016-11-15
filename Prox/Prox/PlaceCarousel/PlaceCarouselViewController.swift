@@ -7,7 +7,6 @@ import MapKit
 import QuartzCore
 import EDSunriseSet
 import Deferred
-import UserNotifications
 
 private let MAP_SPAN_DELTA = 0.05
 private let MAP_LATITUDE_OFFSET = 0.015
@@ -373,33 +372,6 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
         if self.places.count == 0 {
             // placeholder for the error state.
             headerView.numberOfPlacesLabel.text = "Error"
-        }
-    }
-}
-
-@available(iOS 10.0, *)
-extension PlaceCarouselViewController: UNUserNotificationCenterDelegate {
-
-    func setupUserNotificationCenter() {
-        UNUserNotificationCenter.current().delegate = self
-    }
-
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                willPresent notification: UNNotification,
-                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // Update the app interface directly.
-
-        // Play a sound.
-        completionHandler(UNNotificationPresentationOptions.sound)
-    }
-
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void) {
-        if response.notification.request.content.categoryIdentifier == "EVENTS" {
-            if response.actionIdentifier == "OPEN_ACTION" {
-                print("Opening event UI")
-            }
         }
     }
 }

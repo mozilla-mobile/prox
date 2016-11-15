@@ -5,6 +5,7 @@
 import UIKit
 import Firebase
 import FirebaseRemoteConfig
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -41,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = placeCarouselViewController
 
         if #available(iOS 10.0, *) {
-            placeCarouselViewController?.setupUserNotificationCenter()
+            self.setupUserNotificationCenter()
         }
 
         // display
@@ -140,6 +141,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     }
 
+    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
+        print("Opening event UI")
+    }
 
+
+}
+
+
+@available(iOS 10.0, *)
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+
+    func setupUserNotificationCenter() {
+        UNUserNotificationCenter.current().delegate = self
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // show a badge.
+        completionHandler(UNNotificationPresentationOptions.alert)
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        if response.notification.request.content.categoryIdentifier == "EVENTS" {
+            if response.actionIdentifier == "OPEN_ACTION" {
+                print("Opening event UI")
+            }
+        }
+    }
 }
 
