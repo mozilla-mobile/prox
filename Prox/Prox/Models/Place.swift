@@ -23,12 +23,12 @@ class Place: Hashable {
     let id: String
 
     let name: String
+    let categories: (names: [String], ids: [String]) // Indices correlate.
     let latLong: CLLocationCoordinate2D
 
     let photoURLs: [String]
 
     // Optional values.
-    let categories: [String]?
     let url: String?
 
     let address: String?
@@ -44,7 +44,7 @@ class Place: Hashable {
     let yelpDescription: String?
 
     init(id: String, name: String, wikiDescription: String? = nil, yelpDescription: String? = nil,
-         latLong: CLLocationCoordinate2D, categories: [String]? = nil, url: String? = nil,
+         latLong: CLLocationCoordinate2D, categories: (names: [String], ids: [String]), url: String? = nil,
          address: String? = nil, yelpProvider: ReviewProvider,
          tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: OpenHours? = nil) {
         self.id = id
@@ -66,6 +66,8 @@ class Place: Hashable {
                 let value = data.value as? NSDictionary,
                 let id = value["id"] as? String,
                 let name = value["name"] as? String,
+                let categoriesFromFirebase = value["categories"] as? [[String:String]],
+                let categories = Place.getCategories(fromFirebaseValue: categoriesFromFirebase),
                 let coords = value["coordinates"] as? [String:Double],
                 let lat = coords["lat"], let lng = coords["lng"] else {
             print("lol dropping place: missing data, id, name, or coords")
@@ -84,7 +86,6 @@ class Place: Hashable {
         // * validate incoming data
         // * b/c ^, tests
         let (wikiDescription, yelpDescription) = Place.getDescriptions(fromFirebaseValue: value)
-        let categoryNames = (value["categories"] as? [[String:String]])?.flatMap { $0["text"] }
         let photoURLs = (value["images"] as? [[String:String]])?.flatMap { $0["src"] } ?? []
 
         guard photoURLs.count > 0 else {
@@ -110,7 +111,7 @@ class Place: Hashable {
                   wikiDescription: wikiDescription,
                   yelpDescription: yelpDescription,
                   latLong: CLLocationCoordinate2D(latitude: lat, longitude: lng),
-                  categories: categoryNames,
+                  categories: categories,
                   url: value["url"] as? String,
                   address: (value["address"] as? [String])?.joined(separator: " "),
                   yelpProvider: yelpProvider,
@@ -121,6 +122,23 @@ class Place: Hashable {
 
     static func ==(lhs: Place, rhs: Place) -> Bool {
         return lhs.id == rhs.id
+    }
+
+    private static func getCategories(fromFirebaseValue value: [[String:String]]) -> (names: [String], ids: [String])? {
+        var names = [String]()
+        var ids = [String]()
+        for category in value {
+            guard let name = category["text"],
+                    let id = category["id"] else {
+                print("lol unable to retrieve category from firebase data for place")
+                return nil
+            }
+
+            names.append(name)
+            ids.append(id)
+        }
+
+        return (names, ids)
     }
 
     private static func getDescriptions(fromFirebaseValue value: NSDictionary) -> (wiki: String?, yelp: String?) {

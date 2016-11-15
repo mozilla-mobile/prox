@@ -80,7 +80,7 @@ extension PlaceCarousel: UICollectionViewDataSource {
             return cell
         }
 
-        cell.category.text = PlaceUtilities.getString(forCategories: place.categories)
+        cell.category.text = PlaceUtilities.getString(forCategories: place.categories.names)
         cell.name.text = place.name
 
         downloadAndSetImage(for: place, into: cell)

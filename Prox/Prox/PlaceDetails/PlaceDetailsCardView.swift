@@ -220,7 +220,7 @@ class PlaceDetailsCardView: UIView {
 
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
-        categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories)
+        categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories.names)
         updateURLText(place.url)
 
         updateHoursUI(place.hours)

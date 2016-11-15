@@ -29,11 +29,12 @@ class PlaceUtilitiesTests: XCTestCase {
         let yelpProvider = ReviewProvider(url: "https://mozilla.org")
         // London Bridge Station
 
-        let place1 = Place(id: "1", name: "Place 1", latLong: CLLocationCoordinate2D(latitude: 51.5054704, longitude: -0.0943248), yelpProvider: yelpProvider)
+        let emptyCategories = (names: [""], ids: [""])
+        let place1 = Place(id: "1", name: "Place 1", latLong: CLLocationCoordinate2D(latitude: 51.5054704, longitude: -0.0943248), categories: emptyCategories, yelpProvider: yelpProvider)
         // old Mozilla London office
-        let place2 = Place(id: "2", name: "Place 2", latLong: CLLocationCoordinate2D(latitude: 51.5100773, longitude: -0.1257861), yelpProvider: yelpProvider)
+        let place2 = Place(id: "2", name: "Place 2", latLong: CLLocationCoordinate2D(latitude: 51.5100773, longitude: -0.1257861), categories: emptyCategories, yelpProvider: yelpProvider)
         // Kensington Palace
-        let place3 = Place(id: "3", name: "Place 3", latLong: CLLocationCoordinate2D(latitude: 51.4998605, longitude: -0.177838), yelpProvider: yelpProvider)
+        let place3 = Place(id: "3", name: "Place 3", latLong: CLLocationCoordinate2D(latitude: 51.4998605, longitude: -0.177838), categories: emptyCategories, yelpProvider: yelpProvider)
         let places = [place1, place2, place3]
 
         let sortedAscending = PlaceUtilities.sort(places: places, byDistanceFromLocation: currentLocation, ascending: true)
