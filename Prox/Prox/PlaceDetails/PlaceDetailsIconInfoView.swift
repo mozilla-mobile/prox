@@ -34,11 +34,23 @@ class PlaceDetailsIconInfoView: UIView {
 
     lazy var forwardArrowView = UIImageView(image: UIImage(named: "icon_forward"))
 
-    lazy var loadingSpinner: UIActivityIndicatorView = {
+    private lazy var loadingSpinner: UIActivityIndicatorView = {
         let indicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
         indicatorView.hidesWhenStopped = true
         return indicatorView
     }()
+
+    var isLoading = false {
+        didSet {
+            if isLoading {
+                loadingSpinner.startAnimating()
+                forwardArrowView.isHidden = true
+            } else {
+                loadingSpinner.stopAnimating()
+                forwardArrowView.isHidden = false
+            }
+        }
+    }
 
     let enableForwardArrow: Bool
 
