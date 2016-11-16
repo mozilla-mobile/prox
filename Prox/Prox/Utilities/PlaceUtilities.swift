@@ -22,20 +22,11 @@ struct PlaceUtilities {
     }
 
     static func filterPlacesForCarousel(_ places: [Place]) -> [Place] {
-        return places.filter() { place in
-            do {
-                let shouldShowByCategory = try CategoriesUtil.shouldShowPlace(byCategories: place.categories.ids)
-                guard shouldShowByCategory else {
-                    print("lol filtering out place, \(place.id), by category")
-                    return shouldShowByCategory
-                }
-
-            } catch CategoryError.Unknown(let name) {
-                print("lol unknown category name, \(name), for place, \(place.id)")
-                return false
-            } catch { // I don't know why this is necessary - afaik, no other errors are thrown.
-                print("lol Unknown error occurred while filtering place, \(place.id)")
-                return false
+        return places.filter { place in
+            let shouldShowByCategory = CategoriesUtil.shouldShowPlace(byCategories: place.categories.ids)
+            guard shouldShowByCategory else {
+                print("lol filtering out place, \(place.id), by category")
+                return shouldShowByCategory
             }
 
             let shouldShowByRating = shouldShowPlaceByRating(place)

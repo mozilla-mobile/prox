@@ -20,17 +20,26 @@ struct CategoriesUtil {
     private static let AllCategoriesPath = "Data.bundle/yelp_categories_v3"
     private static let AllCategoriesExt = "json"
 
-    static func shouldShowPlace<S : Sequence>(byCategories categories: S) throws -> Bool where S.Iterator.Element == String {
+    static func shouldShowPlace<S : Sequence>(byCategories categories: S) -> Bool where S.Iterator.Element == String {
         // Hide if all match.
-        let rootCategories = try getRootCategories(forCategories: categories)
+        let rootCategories: Set<String>
+        do {
+            rootCategories = try getRootCategories(forCategories: categories)
+        } catch CategoryError.Unknown(let name) {
+            print("lol unknown category name, \(name) - filtering out by category")
+            return false
+        } catch { // I don't know why this is necessary - afaik, no other errors are thrown.
+            print("lol Unknown error occurred while filtering categories - filtering out")
+            return false
+        }
         let allCategoriesMatch = rootCategories.subtracting(HiddenRootCategories).isEmpty
         return !allCategoriesMatch
     }
 
     // This accesses the app bundle, which could be slow. If it's an issue, consider using a background thread.
-    static let categoryToParents = getCategoryToParents()
+    static let categoryToParentsMap = getCategoryToParentsMap()
 
-    private static func getCategoryToParents() -> [String:Set<String>] {
+    private static func getCategoryToParentsMap() -> [String:Set<String>] {
         let json = loadAllCategoriesFile()
 
         var categoryToParents = [String:Set<String>]()
@@ -67,7 +76,7 @@ struct CategoriesUtil {
     }
 
     private static func getRootCategories(forCategory category: String) throws -> Set<String> {
-        guard let parents = categoryToParents[category] else {
+        guard let parents = categoryToParentsMap[category] else {
             throw CategoryError.Unknown(name: category)
         }
 

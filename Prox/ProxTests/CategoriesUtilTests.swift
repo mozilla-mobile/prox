@@ -27,7 +27,7 @@ class CategoriesUtilTests: XCTestCase {
     private let NotACategory = "not-a-category"
 
     private func assertCategoryToParents(input: String, expected: [String]) {
-        let actual = CategoriesUtil.categoryToParents[input]
+        let actual = CategoriesUtil.categoryToParentsMap[input]
         XCTAssertEqual(actual, Set(expected))
     }
 
@@ -54,7 +54,7 @@ class CategoriesUtilTests: XCTestCase {
     }
 
     func testCategoryToParentsForMissingCategory() {
-        let actual = CategoriesUtil.categoryToParents[NotACategory]
+        let actual = CategoriesUtil.categoryToParentsMap[NotACategory]
         XCTAssertNil(actual)
     }
 
@@ -93,21 +93,21 @@ class CategoriesUtilTests: XCTestCase {
 
     func testShouldShowPlaceOnAllMatch() {
         let input = CategoriesUtil.HiddenRootCategories.prefix(3)
-        XCTAssertFalse(try CategoriesUtil.shouldShowPlace(byCategories: input))
+        XCTAssertFalse(CategoriesUtil.shouldShowPlace(byCategories: input))
     }
 
     func testShouldShowPlaceOnPartialMatch() {
         let input = Set(CategoriesUtil.HiddenRootCategories.prefix(1)).union(getNonHiddenCategories())
-        XCTAssertTrue(try CategoriesUtil.shouldShowPlace(byCategories: input))
+        XCTAssertTrue(CategoriesUtil.shouldShowPlace(byCategories: input))
     }
 
     func testShouldShowPlaceOnNoMatch() {
         let input = getNonHiddenCategories()
-        XCTAssertTrue(try CategoriesUtil.shouldShowPlace(byCategories: input))
+        XCTAssertTrue(CategoriesUtil.shouldShowPlace(byCategories: input))
     }
 
-    func testShouldShowPlaceThrowsOnInvalidCategory() {
-        XCTAssertThrowsError(try CategoriesUtil.shouldShowPlace(byCategories: ["not-a-category"]))
+    func testShouldShowPlaceOnInvalidCategory() {
+        XCTAssertFalse(CategoriesUtil.shouldShowPlace(byCategories: ["not-a-category"]))
     }
 
     private func getNonHiddenCategories() -> Set<String> {
