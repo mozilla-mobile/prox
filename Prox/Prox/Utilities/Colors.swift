@@ -38,6 +38,8 @@ extension Colors {
     public static let detailsViewMapButtonShadow = UIColor.black.withAlphaComponent(0.4)
     public static let detailsViewMapButtonBackground = UIColor.white
 
+    public static let detailsViewTravelTimeErrorPinTint = UIColor(colorLiteralRed: 0.8, green: 0.8, blue: 0.8, alpha: 1)
+
     public static let detailsViewEventText = UIColor.white
     public static let detailsViewEventBackground = UIColor(red: 0.00, green: 0.48, blue: 1.00, alpha: 1.0)
 

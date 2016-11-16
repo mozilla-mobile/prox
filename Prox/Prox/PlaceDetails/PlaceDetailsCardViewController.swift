@@ -118,7 +118,6 @@ class PlaceDetailsCardViewController: UIViewController {
         if let location = location {
             place.travelTimes(fromLocation: location, withCallback: { travelTimes in
                 self.cardView.travelTimeView.isLoading = false
-                guard let travelTimes = travelTimes else { return }
                 self.cardView.updateTravelTimesUI(travelTimes: travelTimes)
             })
         }

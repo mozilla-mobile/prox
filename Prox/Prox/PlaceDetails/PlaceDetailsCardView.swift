@@ -273,7 +273,18 @@ class PlaceDetailsCardView: UIView {
         }
     }
 
-    func updateTravelTimesUI(travelTimes: TravelTimes) {
+    func updateTravelTimesUI(travelTimes: TravelTimes?) {
+        guard let travelTimes = travelTimes else {
+            travelTimeView.isPrimaryTextLabelHidden = true
+            travelTimeView.secondaryTextLabel.text = "View on Map"
+
+            travelTimeView.iconView.tintColor = Colors.detailsViewTravelTimeErrorPinTint
+            travelTimeView.iconView.image = UIImage(named: "icon_here")?.withRenderingMode(.alwaysTemplate)
+            return
+        }
+
+        travelTimeView.iconView.tintColor = nil
+
         if let walkingTimeSeconds = travelTimes.walkingTime {
             let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
             if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
