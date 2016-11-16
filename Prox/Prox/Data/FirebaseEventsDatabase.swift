@@ -82,4 +82,29 @@ class FirebaseEventsDatabase: EventsDatabase {
 
         return deferred
     }
+
+    func getPlacesWithEvents(forLocation location: CLLocation, withRadius radius: Double, withPlacesDatabase placesDatabase: PlacesDatabase) -> Future<[DatabaseResult<Place>]> {
+        let dispatchQueue = DispatchQueue.global(qos: .userInitiated)
+        let places = getEvents(forLocation: location, withRadius: radius).andThen(upon: dispatchQueue) { events -> Future<[DatabaseResult<Place>]> in
+            let eventsMap = events.map { eventResult -> Deferred<DatabaseResult<Place>> in
+                let deferred = Deferred<DatabaseResult<Place>>()
+                guard let event = eventResult.successResult() else {
+                    deferred.fill(with: DatabaseResult.fail(withMessage: "No event found"))
+                    return deferred
+                }
+                placesDatabase.getPlace(forKey: event.placeId).upon { result in
+                    if let place = result.successResult()   {
+                        place.events.append(event)
+                        deferred.fill(with: DatabaseResult.succeed(value: place))
+                    } else {
+                        deferred.fill(with: DatabaseResult.fail(withMessage: "No Place for event \(event.id)"))
+                    }
+                }
+                return deferred
+            }
+            return eventsMap.allFilled()
+        }
+
+        return places
+    }
 }

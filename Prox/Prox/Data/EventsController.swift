@@ -27,4 +27,11 @@ class EventsProvider {
             }
         }
     }
+
+    func getPlacesWithEvents(forLocation location: CLLocation, usingPlacesDatabase placesDatabase: PlacesDatabase, completion: @escaping ([Place]) -> ()) {
+        return eventsDatabase.getPlacesWithEvents(forLocation: location, withRadius: radius, withPlacesDatabase: placesDatabase).upon { results in
+            let places = results.flatMap { $0.successResult() }
+            completion(places)
+        }
+    }
 }

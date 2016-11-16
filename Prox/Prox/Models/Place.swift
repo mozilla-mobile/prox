@@ -43,6 +43,8 @@ class Place: Hashable {
     let wikiDescription: String?
     let yelpDescription: String?
 
+    var events = [Event]()
+
     init(id: String, name: String, wikiDescription: String? = nil, yelpDescription: String? = nil,
          latLong: CLLocationCoordinate2D, categories: (names: [String], ids: [String]), url: String? = nil,
          address: String? = nil, yelpProvider: ReviewProvider,

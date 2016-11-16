@@ -15,6 +15,10 @@ class FakeEventsDatabase: EventsDatabase {
         return Future(deferred)
     }
 
+    func getPlacesWithEvents(forLocation location: CLLocation, withRadius radius: Double, withPlacesDatabase placesDatabase: PlacesDatabase) -> Future<[DatabaseResult<Place>]> {
+        return Future( Deferred<[DatabaseResult<Place>]>())
+    }
+
     private func getFakeEvent() -> Event {
         return Event(id: "fake-event", placeId: "fake-place", description: "Fake Event at Fake Place!", url: "https://mozilla.org", startTime: Date(), endTime: nil)
     }

@@ -11,4 +11,5 @@ import CoreLocation
  */
 protocol PlacesDatabase {
     func getPlaces(forLocation location: CLLocation, withRadius: Double) -> Future<[DatabaseResult<Place>]>
+    func getPlace(forKey key: String) -> Deferred<DatabaseResult<Place>>
 }

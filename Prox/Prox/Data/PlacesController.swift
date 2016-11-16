@@ -40,6 +40,9 @@ class PlacesProvider {
         return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
     }()
 
+    private var nearbyPlaces = [CLLocation: [Place]]()
+    private var eventsPlaces = [CLLocation: [Place]]()
+
     func updatePlaces(forLocation location: CLLocation) {
         assert(Thread.isMainThread)
         // We would like to prevent running more than one update at the same time.
@@ -73,7 +76,9 @@ class PlacesProvider {
 
         // Immediately after we've told the server, we should start querying the firebase datastore,
         // because we may have already got something cached.
-        retryQueryPlaces(location: location, withRadius: radius, retriesLeft: numberOfRetries)
+        nearbyPlaces.removeValue(forKey: location)
+        retryQueryPlaces(location: location, withRadius: radius, retriesLeft: numberOfRetries, lastCount: 0)
+        fetchPlacesWithEvents(location: location)
     }
 
     private func retryQueryPlaces(location: CLLocation, withRadius radius: Double, retriesLeft: Int, lastCount: Int = -1) {
@@ -86,19 +91,21 @@ class PlacesProvider {
             let placeCount = places.count
             // Check if we have a stable number of places.
             if (placeCount > 0 && lastCount == placeCount) || retriesLeft == 0 {
-                self.displayPlaces(places: places, forLocation: location)
+                self.nearbyPlaces[location] = places
+                self.displayPlaces(forLocation: location)
                 DispatchQueue.main.async {
                     // TODO refactor for a more incremental load, and therefore
                     // insertion sort approach to ranking. We shouldn't do too much of this until
                     // we have the waiting states implemented.
-                    self.delegate?.placesProviderDidFinishFetchingPlaces(self)
                     self.isUpdating = false
+                    self.delegate?.placesProviderDidFinishFetchingPlaces(self)
                 }
             } else {
                 // We either have zero places, or the server is adding stuff to firebase,
                 // and we should wait.
                 if placeCount > 0 && lastCount != placeCount {
-                    self.displayPlaces(places: places, forLocation: location)
+                    self.nearbyPlaces[location] = places
+                    self.displayPlaces(forLocation: location)
                 }
                 DispatchQueue.main.asyncAfter(wallDeadline: .now() + .seconds(timeBetweenRetries)) {
                     self.retryQueryPlaces(location: location,
@@ -110,11 +117,34 @@ class PlacesProvider {
         }
     }
 
-    private func displayPlaces(places: [Place], forLocation location: CLLocation) {
-        let preparedPlaces = self.preparePlaces(places: places, forLocation: location)
+    private func fetchPlacesWithEvents(location: CLLocation) {
+        let eventProvider = EventsProvider()
+        eventsPlaces.removeValue(forKey: location)
+        eventProvider.getPlacesWithEvents(forLocation: location, usingPlacesDatabase: database) { places in
+            self.eventsPlaces[location] = places
+            self.displayPlaces(forLocation: location)
+        }
+    }
+
+    private func displayPlaces(forLocation location: CLLocation) {
+        guard let places = self.nearbyPlaces[location],
+            let eventPlaces = self.eventsPlaces[location] else { return }
+        let preparedPlaces = self.preparePlaces(places: union(ofNearbyPlaces: places, andEventPlaces: eventPlaces), forLocation: location)
         DispatchQueue.main.async {
             self.delegate?.placesProvider(self, didReceivePlaces: preparedPlaces)
         }
+    }
+
+    private func union(ofNearbyPlaces nearbyPlaces: [Place], andEventPlaces eventPlaces: [Place]) -> [Place] {
+        var unionOfPlaces = nearbyPlaces
+        for place in eventPlaces {
+            if let placeIndex = unionOfPlaces.index(of: place) {
+                unionOfPlaces[placeIndex] = place
+            } else {
+                unionOfPlaces.append(place)
+            }
+        }
+        return unionOfPlaces
     }
 
     private func preparePlaces(places: [Place], forLocation location: CLLocation) -> [Place] {

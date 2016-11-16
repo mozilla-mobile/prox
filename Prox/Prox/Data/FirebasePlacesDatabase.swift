@@ -97,4 +97,8 @@ class FirebasePlacesDatabase: PlacesDatabase {
 
         return deferred
     }
+
+    func getPlace(forKey key: String) -> Deferred<DatabaseResult<Place>> {
+        return queryChildPlaceDetails(by: key)
+    }
 }
