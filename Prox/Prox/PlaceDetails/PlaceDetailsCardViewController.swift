@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import FXPageControl
 import UIKit
 
 private let  PlaceDetailsCardCellReuseIdentifier = "ImageCarouselCell"
@@ -51,10 +52,22 @@ class PlaceDetailsCardViewController: UIViewController {
     }()
 
 
-    lazy var pageControl: UIPageControl = {
-        let pageControl = UIPageControl()
-        pageControl.pageIndicatorTintColor = Colors.pageIndicatorTintColor
-        pageControl.currentPageIndicatorTintColor = Colors.currentPageIndicatorTintColor
+    lazy var pageControl: FXPageControl = {
+        let pageControl = FXPageControl()
+        pageControl.backgroundColor = .clear
+        pageControl.dotColor = Colors.pageIndicatorTintColor
+        pageControl.selectedDotColor = Colors.currentPageIndicatorTintColor
+
+        let shadowBlur: CGFloat = 3
+        let shadowOffset = CGSize(width: 0.5, height: 0.75)
+        let shadowColor = Colors.detailsViewImageCarouselPageControlShadow
+        pageControl.dotShadowBlur = shadowBlur
+        pageControl.selectedDotShadowBlur = shadowBlur
+        pageControl.dotShadowColor = shadowColor
+        pageControl.selectedDotShadowColor = shadowColor
+        pageControl.dotShadowOffset = shadowOffset
+        pageControl.selectedDotShadowOffset = shadowOffset
+
         pageControl.addTarget(self, action: #selector(self.pageControlDidPage(sender:)), for: UIControlEvents.valueChanged)
         return pageControl
     }()

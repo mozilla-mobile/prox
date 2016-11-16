@@ -30,15 +30,17 @@ extension Colors {
     public static let detailsViewCardPrimaryText = UIColor.black
     public static let detailsViewCardSecondaryText = UIColor.black.withAlphaComponent(0.5)
     public static let detailsViewCardLinkText = UIColor(red: 0.00, green: 0.48, blue: 1.00, alpha: 1.0)
-    public static let pageIndicatorTintColor = UIColor.black.withAlphaComponent(0.8)
+    public static let pageIndicatorTintColor = UIColor.black.withAlphaComponent(0.4)
     public static let detailsViewCardSeparator = UIColor(hue: 0, saturation: 0, brightness: 0.94, alpha: 1)
-    public static let currentPageIndicatorTintColor = UIColor.lightGray
+    public static let currentPageIndicatorTintColor = UIColor.white
     public static let detailsViewMapButtonBadgeBackground = UIColor(colorLiteralRed: 0.07, green: 0.40, blue: 0.98, alpha: 1.0)
     public static let detailsViewMapButtonBadgeFont = UIColor.white
     public static let detailsViewMapButtonShadow = UIColor.black.withAlphaComponent(0.4)
     public static let detailsViewMapButtonBackground = UIColor.white
 
     public static let detailsViewTravelTimeErrorPinTint = UIColor(colorLiteralRed: 0.8, green: 0.8, blue: 0.8, alpha: 1)
+
+    public static let detailsViewImageCarouselPageControlShadow = UIColor.black.withAlphaComponent(0.4)
 
     public static let detailsViewEventText = UIColor.white
     public static let detailsViewEventBackground = UIColor(red: 0.00, green: 0.48, blue: 1.00, alpha: 1.0)
