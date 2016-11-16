@@ -13,7 +13,6 @@ private let EVENTS_PATH = ROOT_PATH + "events/"
 private let GEOFIRE_PATH = EVENTS_PATH + "locations/"
 private let DETAILS_PATH = EVENTS_PATH + "details/"
 
-
 class FirebaseEventsDatabase: EventsDatabase {
 
     private let eventDetailsRef: FIRDatabaseReference
