@@ -146,7 +146,8 @@ class Place: Hashable {
     }
 
     func travelTimes(fromLocation location: CLLocation, withCallback callback: @escaping ((TravelTimes?) -> ())) {
-        TravelTimesProvider.travelTime(fromLocation: location.coordinate, toLocation: latLong) { travelTimes in
+        TravelTimesProvider.travelTime(fromLocation: location.coordinate, toLocation: latLong,
+                                       byTransitTypes: [.automobile, .walking]) { travelTimes in
             self.lastTravelTime = travelTimes
             DispatchQueue.main.async {
                 callback(travelTimes)
