@@ -95,6 +95,9 @@ class PlaceCarouselViewController: UIViewController {
         return view
     }()
 
+    lazy var loadingView = LocationLoadingView(frame: CGRect(x: 0, y: 0, width: 100, height: 100),
+                                               fillColor: Colors.carouselLoadingViewColor)
+
     // label displaying sunrise and sunset times
     lazy var sunriseSetTimesLabel: UILabel = {
         let label = UILabel()
@@ -207,6 +210,12 @@ class PlaceCarouselViewController: UIViewController {
 
         headerView.numberOfPlacesLabel.text = "" // placeholder
 
+        view.addSubview(loadingView)
+        constraints.append(contentsOf: [loadingView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                                        loadingView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                                        loadingView.heightAnchor.constraint(equalToConstant: 100),
+                                        loadingView.widthAnchor.constraint(equalToConstant: 100)])
+        
         view.addSubview(placeCarousel.carousel)
         constraints.append(contentsOf: [placeCarousel.carousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                         placeCarousel.carousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -460,6 +469,7 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
     }
 
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
+        UIView.animate(withDuration: 0.2, animations: { self.loadingView.alpha = 0 }, completion: { _ in self.loadingView.isHidden = true })
         self.places = places
     }
 

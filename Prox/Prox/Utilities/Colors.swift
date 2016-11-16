@@ -15,6 +15,7 @@ extension Colors {
     public static let carouselViewSunriseSetTimesLabelText = UIColor.black.withAlphaComponent(0.5)
     public static let carouselViewImageOpacityLayer = UIColor.black.withAlphaComponent(0.2)
     public static let carouselViewPlaceCardImageText = UIColor.white
+    public static let carouselLoadingViewColor = UIColor(red:0.00, green:0.59, blue:0.87, alpha:1.0)
 }
 
 extension Colors {
