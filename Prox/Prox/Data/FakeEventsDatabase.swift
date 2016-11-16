@@ -7,7 +7,7 @@ import Deferred
 
 class FakeEventsDatabase: EventsDatabase {
 
-    internal func getEvents(forLocation location: CLLocation) -> Future<[DatabaseResult<Event>]> {
+    internal func getEvents(forLocation location: CLLocation, withRadius radius: Double) -> Future<[DatabaseResult<Event>]> {
         let deferred = Deferred<[DatabaseResult<Event>]>()
         var eventResults: [DatabaseResult<Event>] = [DatabaseResult<Event>]()
         eventResults.append(DatabaseResult.succeed(value: getFakeEvent()))

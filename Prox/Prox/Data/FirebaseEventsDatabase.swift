@@ -14,8 +14,6 @@ private let GEOFIRE_PATH = EVENTS_PATH + "locations/"
 private let DETAILS_PATH = EVENTS_PATH + "details/"
 
 
-private let SEARCH_RADIUS_KM = 20.0 // TODO: set distance
-
 class FirebaseEventsDatabase: EventsDatabase {
 
     private let eventDetailsRef: FIRDatabaseReference
@@ -27,9 +25,9 @@ class FirebaseEventsDatabase: EventsDatabase {
         geofire = GeoFire(firebaseRef: rootRef.child(GEOFIRE_PATH))
     }
 
-    internal func getEvents(forLocation location: CLLocation) -> Future<[DatabaseResult<Event>]> {
+    internal func getEvents(forLocation location: CLLocation, withRadius radius: Double) -> Future<[DatabaseResult<Event>]> {
         let queue = DispatchQueue.global(qos: .userInitiated)
-        let events = getEventKeys(aroundPoint: location).andThen(upon: queue) { (eventKeyToLoc) -> Future<[DatabaseResult<Event>]> in
+        let events = getEventKeys(aroundPoint: location, withRadius: radius).andThen(upon: queue) { (eventKeyToLoc) -> Future<[DatabaseResult<Event>]> in
             // TODO: limit the number of place details we look up. X closest places?
             // TODO: These should be ordered by display order
             let eventKeys = Array(eventKeyToLoc.keys)
@@ -42,11 +40,11 @@ class FirebaseEventsDatabase: EventsDatabase {
     /*
      * Queries GeoFire to find keys that represent locations around the given point.
      */
-    private func getEventKeys(aroundPoint location: CLLocation) -> Deferred<[String:CLLocation]> {
+    private func getEventKeys(aroundPoint location: CLLocation, withRadius radius: Double) -> Deferred<[String:CLLocation]> {
         let deferred = Deferred<[String:CLLocation]>()
         var eventKeyToLoc = [String:CLLocation]()
 
-        guard let circleQuery = geofire.query(at: location, withRadius: SEARCH_RADIUS_KM) else {
+        guard let circleQuery = geofire.query(at: location, withRadius: radius) else {
             deferred.fill(with: eventKeyToLoc)
             return deferred
         }
