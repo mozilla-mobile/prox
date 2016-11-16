@@ -11,19 +11,19 @@ import Foundation
  * Delegate methods for updating places asynchronously.
  * All methods on the delegate will be called on the main thread.
  */
-protocol PlacesControllerDelegate: class {
-    func placeControllerWillStartFetchingPlaces(_ controller: PlacesController)
-    func placesController(_ controller: PlacesController, didReceivePlaces places: [Place])
-    func placeControllerDidFinishFetchingPlaces(_ controller: PlacesController)
-    func placesController(_ controller: PlacesController, didError error: Error)
+protocol PlacesProviderDelegate: class {
+    func placeControllerWillStartFetchingPlaces(_ controller: PlacesProvider)
+    func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place])
+    func placeControllerDidFinishFetchingPlaces(_ controller: PlacesProvider)
+    func placesProvider(_ controller: PlacesProvider, didError error: Error)
 }
 
 private let apiSuffix = "/api/v1.0/at/%f/%f"
 private let numberOfRetries = 60
 private let timeBetweenRetries = 1
 
-class PlacesController {
-    weak var delegate: PlacesControllerDelegate?
+class PlacesProvider {
+    weak var delegate: PlacesProviderDelegate?
 
     private let database = FirebasePlacesDatabase()
 
@@ -66,7 +66,7 @@ class PlacesController {
             failure: { (task, err) in
                 print("Error from server: \(err)")
                 DispatchQueue.main.async {
-                    self.delegate?.placesController(self, didError: err)
+                    self.delegate?.placesProvider(self, didError: err)
                 }
             }
         )
@@ -113,7 +113,7 @@ class PlacesController {
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
         let preparedPlaces = self.preparePlaces(places: places, forLocation: location)
         DispatchQueue.main.async {
-            self.delegate?.placesController(self, didReceivePlaces: preparedPlaces)
+            self.delegate?.placesProvider(self, didReceivePlaces: preparedPlaces)
         }
     }
 

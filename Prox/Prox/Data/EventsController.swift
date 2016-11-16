@@ -4,12 +4,12 @@
 
 import Foundation
 
-protocol EventsControllerDelegate: class {
-    func eventController(_ eventController: EventsController, didUpdateEvents: [Event])
-    func eventController(_ eventController: EventsController, didError error: Error)
+protocol EventsProviderDelegate: class {
+    func eventsProvider(_ eventsProvider: EventsProvider, didUpdateEvents: [Event])
+    func eventsProvider(_ eventsProvider: EventsProvider, didError error: Error)
 }
 
-class EventsController {
+class EventsProvider {
     lazy var eventsDatabase: EventsDatabase = FakeEventsDatabase()
 
     func getEvents(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
