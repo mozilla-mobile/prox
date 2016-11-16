@@ -36,12 +36,18 @@ class Event {
                 return nil
         }
 
+        let localEndTime: Date?
+
+        if let localEndTimeString = value["localEndTime"] as? String {
+            localEndTime = formatter.date(from: localEndTimeString)
+        } else { localEndTime = nil }
+
 
         self.init(id: id,
                   placeId: id,
                   description: description,
                   url:url,
                   startTime: localStartTime,
-                  endTime: nil)
+                  endTime: localEndTime)
     }
 }
