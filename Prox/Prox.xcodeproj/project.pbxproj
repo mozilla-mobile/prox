@@ -13,6 +13,7 @@
 		39C4EC9E1DDCA75400B53B77 /* RemoteConfigKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */; };
 		39C4EC9F1DDCA75500B53B77 /* RemoteConfigKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */; };
 		4F00E2C2201E3A088D934AE0 /* Pods_Prox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29190FCA903C1D1AF4C77316 /* Pods_Prox.framework */; };
+		7B1C657B1DDCA9A90047559C /* FirebaseEventsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */; };
 		7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */; };
 		7B29E7CA1DA3EC360099AF38 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7C91DA3EC360099AF38 /* Assets.xcassets */; };
 		7B29E7CD1DA3EC360099AF38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */; };
@@ -109,6 +110,7 @@
 		55740F6C4426324FDA569848 /* Pods-Prox.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.enterprise.xcconfig"; sourceTree = "<group>"; };
 		64E189E4D93A85A43CF269E2 /* Pods-ProxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		75091F0A7DE7F3D6E008D07B /* Pods-Prox.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.debug.xcconfig"; sourceTree = "<group>"; };
+		7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FirebaseEventsDatabase.swift; path = Data/FirebaseEventsDatabase.swift; sourceTree = "<group>"; };
 		7B29E7BF1DA3EC360099AF38 /* Prox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7B29E7C91DA3EC360099AF38 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -444,6 +446,7 @@
 				7BA05BE61DD4CDF6009AC121 /* FakeEventsDatabase.swift */,
 				7BA05BE81DD4D149009AC121 /* EventsController.swift */,
 				392F3D8F1DD20EAE00B44B01 /* PlacesController.swift */,
+				7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */,
 			);
 			name = Database;
 			sourceTree = "<group>";
@@ -774,6 +777,7 @@
 				7B9DA15A1DBE6F7500A68C82 /* PlaceDetailViewController.swift in Sources */,
 				7BA05BE51DD4CCB1009AC121 /* Event.swift in Sources */,
 				7BD5CC801DAFF07E00BCF50D /* GFGeoHashQuery.m in Sources */,
+				7B1C657B1DDCA9A90047559C /* FirebaseEventsDatabase.swift in Sources */,
 				7B9DA1571DBE6EE300A68C82 /* PlaceCarouselViewController.swift in Sources */,
 				7B5095671DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift in Sources */,
 				7B5095751DB62590007C54F0 /* NSLayoutConstraint.swift in Sources */,
@@ -1208,7 +1212,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox Kona.app/Prox Kona";
 			};
 			name = Enterprise;
 		};

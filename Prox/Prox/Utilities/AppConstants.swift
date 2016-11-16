@@ -15,7 +15,7 @@ public struct AppConstants {
 
     public static let isRunningTest = NSClassFromString("XCTestCase") != nil
     public static let backgroundFetchInterval: TimeInterval = 5 * 60
-    public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 15 * 60
+    public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 1 * 60
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
     public static let currentLocationMonitoringRadius: CLLocationDistance = 50.0
     public static let ONE_DAY: TimeInterval = (60 * 60) * 24

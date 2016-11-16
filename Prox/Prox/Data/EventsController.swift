@@ -10,7 +10,7 @@ protocol EventsProviderDelegate: class {
 }
 
 class EventsProvider {
-    lazy var eventsDatabase: EventsDatabase = FakeEventsDatabase()
+    lazy var eventsDatabase: EventsDatabase = FirebaseEventsDatabase()
 
     func getEvents(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
         return eventsDatabase.getEvents(forLocation: location).upon { results in
