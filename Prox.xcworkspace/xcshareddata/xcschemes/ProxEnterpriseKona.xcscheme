@@ -118,7 +118,8 @@
       buildConfiguration = "Enterprise Kona">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Enterprise Kona"
+      customArchiveName = "Prox Kona"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
