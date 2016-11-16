@@ -115,27 +115,21 @@ class PlaceDetailsDescriptionView: UIView {
     }
 
     func didTap() {
-        switch uiMode {
-        case .collapsed:
+        setExpandableView(isExpanded: uiMode == .collapsed)
+    }
+
+    func setExpandableView(isExpanded shouldExpand: Bool) {
+        if shouldExpand {
             uiMode = .expanded
-            expandView()
-        case .expanded:
+            expandableLabelHeightConstraint.isActive = false
+            expandableLabelBottomConstraint.constant = -10
+            logoBottomConstraint.constant = -20
+        } else {
             uiMode = .collapsed
-            collapseView()
+            expandableLabelBottomConstraint.constant = 0
+            expandableLabelHeightConstraint.isActive = true
+            logoBottomConstraint.constant = 0
         }
-    }
-
-    private func expandView() {
-        expandableLabelHeightConstraint.isActive = false
-        expandableLabelBottomConstraint.constant = -10
-        logoBottomConstraint.constant = -20
-        self.layoutIfNeeded()
-    }
-
-    private func collapseView() {
-        expandableLabelBottomConstraint.constant = 0
-        expandableLabelHeightConstraint.isActive = true
-        logoBottomConstraint.constant = 0
-        self.layoutIfNeeded()
+        layoutIfNeeded()
     }
 }

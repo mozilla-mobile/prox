@@ -253,6 +253,7 @@ class PlaceDetailsCardView: UIView {
         if let text = text {
             view.isHidden = false
             view.expandableLabel.text = text
+            view.setExpandableView(isExpanded: false)
         } else {
             view.isHidden = true
             view.expandableLabel.text = nil
