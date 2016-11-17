@@ -47,7 +47,6 @@
 		7B9DA15A1DBE6F7500A68C82 /* PlaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */; };
 		7BA05BE31DD4CC75009AC121 /* EventsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA05BE21DD4CC75009AC121 /* EventsDatabase.swift */; };
 		7BA05BE51DD4CCB1009AC121 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA05BE41DD4CCB1009AC121 /* Event.swift */; };
-		7BA05BE71DD4CDF6009AC121 /* FakeEventsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA05BE61DD4CDF6009AC121 /* FakeEventsDatabase.swift */; };
 		7BA05BE91DD4D149009AC121 /* EventsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA05BE81DD4D149009AC121 /* EventsController.swift */; };
 		7BA05BEB1DD4D602009AC121 /* EventNotificationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA05BEA1DD4D602009AC121 /* EventNotificationsManager.swift */; };
 		7BB1CA451DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */; };
@@ -149,7 +148,6 @@
 		7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailViewController.swift; sourceTree = "<group>"; };
 		7BA05BE21DD4CC75009AC121 /* EventsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EventsDatabase.swift; path = Data/EventsDatabase.swift; sourceTree = "<group>"; };
 		7BA05BE41DD4CCB1009AC121 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
-		7BA05BE61DD4CDF6009AC121 /* FakeEventsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FakeEventsDatabase.swift; path = Data/FakeEventsDatabase.swift; sourceTree = "<group>"; };
 		7BA05BE81DD4D149009AC121 /* EventsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EventsController.swift; path = Data/EventsController.swift; sourceTree = "<group>"; };
 		7BA05BEA1DD4D602009AC121 /* EventNotificationsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventNotificationsManager.swift; sourceTree = "<group>"; };
 		7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCarouselCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -443,7 +441,6 @@
 				7B9DA1531DBE6ED300A68C82 /* PlacesDatabase.swift */,
 				7B5095841DB903B7007C54F0 /* DatabaseResult.swift */,
 				7BA05BE21DD4CC75009AC121 /* EventsDatabase.swift */,
-				7BA05BE61DD4CDF6009AC121 /* FakeEventsDatabase.swift */,
 				7BA05BE81DD4D149009AC121 /* EventsController.swift */,
 				392F3D8F1DD20EAE00B44B01 /* PlacesController.swift */,
 				7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */,
@@ -792,7 +789,6 @@
 				7B9DA14B1DBE332E00A68C82 /* AppConstants.swift in Sources */,
 				392F3D901DD20EAE00B44B01 /* PlacesController.swift in Sources */,
 				7B5095781DB64E76007C54F0 /* TravelTimesProvider.swift in Sources */,
-				7BA05BE71DD4CDF6009AC121 /* FakeEventsDatabase.swift in Sources */,
 				7BA05BE31DD4CC75009AC121 /* EventsDatabase.swift in Sources */,
 				7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */,
 				7BB1CA491DC8C6C5004AEE56 /* MapButton.swift in Sources */,
