@@ -39,4 +39,8 @@ class RemoteConfigKeys {
     // This is the maximum time interval that we display walking directions before switching to driving directions.
     // This is measure in minutes. The default value is 30 minutes.
     public static let maxWalkingTimeInMins = "max_walking_time_in_mins"
+
+    // The event search radius the app will use to query the Firebase datbase
+    // This is measures in kilometers. The default value is 20 km.
+    public static let eventSearchRadiusInKm = "event_search_radius_in_km"
 }

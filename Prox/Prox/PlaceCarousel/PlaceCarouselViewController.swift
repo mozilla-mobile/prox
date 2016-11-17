@@ -54,8 +54,8 @@ class PlaceCarouselViewController: UIViewController {
         return manager
     }()
 
-    lazy var placesController: PlacesController = {
-        let controller = PlacesController()
+    lazy var placesProvider: PlacesProvider = {
+        let controller = PlacesProvider()
         controller.delegate = self
         return controller
     }()
@@ -302,7 +302,7 @@ class PlaceCarouselViewController: UIViewController {
     }
 
     fileprivate func updatePlaces(forLocation location: CLLocation) {
-        self.placesController.updatePlaces(forLocation: location)
+        self.placesProvider.updatePlaces(forLocation: location)
     }
 
     fileprivate func updateSunRiseSetTimes(forLocation location: CLLocation) {
@@ -438,32 +438,32 @@ extension PlaceCarouselViewController: LocationProvider {
     }
 }
 
-extension PlaceCarouselViewController: EventsControllerDelegate {
-    func eventController(_ eventController: EventsController, didError error: Error) {
+extension PlaceCarouselViewController: EventsProviderDelegate {
+    func eventsProvider(_ eventsProvider: EventsProvider, didError error: Error) {
 
     }
 
-    func eventController(_ eventController: EventsController, didUpdateEvents: [Event]) {
+    func eventsProvider(_ eventsProvider: EventsProvider, didUpdateEvents: [Event]) {
     }
 }
 
-extension PlaceCarouselViewController: PlacesControllerDelegate {
-    func placeControllerWillStartFetchingPlaces(_ controller: PlacesController) {
+extension PlaceCarouselViewController: PlacesProviderDelegate {
+    func placesProviderWillStartFetchingPlaces(_ controller: PlacesProvider) {
         // TODO placeholder for the waiting state.
         if self.places.count == 0 {
             headerView.numberOfPlacesLabel.text = "Waiting"
         }
     }
 
-    func placeControllerDidFinishFetchingPlaces(_ controller: PlacesController) {
+    func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider) {
         // no op
     }
 
-    func placesController(_ controller: PlacesController, didReceivePlaces places: [Place]) {
+    func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
         self.places = places
     }
 
-    func placesController(_ controller: PlacesController, didError error: Error) {
+    func placesProvider(_ controller: PlacesProvider, didError error: Error) {
         if self.places.count == 0 {
             // placeholder for the error state.
             headerView.numberOfPlacesLabel.text = "Error"

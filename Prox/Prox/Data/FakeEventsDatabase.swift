@@ -7,7 +7,7 @@ import Deferred
 
 class FakeEventsDatabase: EventsDatabase {
 
-    internal func getEvents(forLocation location: CLLocation) -> Future<[DatabaseResult<Event>]> {
+    internal func getEvents(forLocation location: CLLocation, withRadius radius: Double) -> Future<[DatabaseResult<Event>]> {
         let deferred = Deferred<[DatabaseResult<Event>]>()
         var eventResults: [DatabaseResult<Event>] = [DatabaseResult<Event>]()
         eventResults.append(DatabaseResult.succeed(value: getFakeEvent()))
@@ -16,6 +16,6 @@ class FakeEventsDatabase: EventsDatabase {
     }
 
     private func getFakeEvent() -> Event {
-        return Event(id: "fake-event", placeId: "fake-place", name: "Fake Event at Fake Place!", url: "https://mozilla.org", startTime: Date(), endTime: nil)
+        return Event(id: "fake-event", placeId: "fake-place", description: "Fake Event at Fake Place!", url: "https://mozilla.org", startTime: Date(), endTime: nil)
     }
 }

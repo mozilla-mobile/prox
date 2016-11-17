@@ -20,12 +20,12 @@ class EventNotificationsManager {
         return UserDefaults.standard.value(forKey: AppConstants.timeOfLastLocationUpdateKey) as? Date
     }
 
-    fileprivate lazy var eventsController = EventsController()
+    fileprivate lazy var eventsProvider = EventsProvider()
 
     func fetchEvents(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
         if shouldFetchEvents {
             print("Should fetch events")
-            eventsController.getEvents(forLocation: location, completion: completion)
+            eventsProvider.getEvents(forLocation: location, completion: completion)
             return
         }
         print("Should not fetch events")

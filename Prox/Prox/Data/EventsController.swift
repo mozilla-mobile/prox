@@ -4,16 +4,23 @@
 
 import Foundation
 
-protocol EventsControllerDelegate: class {
-    func eventController(_ eventController: EventsController, didUpdateEvents: [Event])
-    func eventController(_ eventController: EventsController, didError error: Error)
+import FirebaseRemoteConfig
+
+protocol EventsProviderDelegate: class {
+    func eventsProvider(_ eventsProvider: EventsProvider, didUpdateEvents: [Event])
+    func eventsProvider(_ eventsProvider: EventsProvider, didError error: Error)
 }
 
-class EventsController {
-    lazy var eventsDatabase: EventsDatabase = FakeEventsDatabase()
+class EventsProvider {
+    lazy var eventsDatabase: EventsDatabase = FirebaseEventsDatabase()
+
+    private lazy var radius: Double = {
+        let key = RemoteConfigKeys.eventSearchRadiusInKm
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
+    }()
 
     func getEvents(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
-        return eventsDatabase.getEvents(forLocation: location).upon { results in
+        return eventsDatabase.getEvents(forLocation: location, withRadius: radius).upon { results in
             let events = results.flatMap { $0.successResult() }
             DispatchQueue.main.async {
                 completion(events, nil)
