@@ -31,7 +31,7 @@ class Event {
     }()
 
     var notificationString: String {
-        let randomIndex = Int(arc4random_uniform(UInt32(Event.numberOfEventNotificationStrings)) + 1)
+        let randomIndex = Int(arc4random_uniform(UInt32(Event.numberOfEventNotificationStrings)))
         return Event.eventNotificationStrings[randomIndex]
     }
 
@@ -52,7 +52,7 @@ class Event {
     }()
 
     var placeDisplayString: String {
-        let randomIndex = Int(arc4random_uniform(UInt32(Event.numberOfPlaceDisplayStrings)) + 1)
+        let randomIndex = Int(arc4random_uniform(UInt32(Event.numberOfPlaceDisplayStrings)))
         return Event.placeDisplayStrings[randomIndex]
     }
 
