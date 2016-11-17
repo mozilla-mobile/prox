@@ -6,7 +6,19 @@ import Foundation
 import CoreLocation
 import UserNotifications
 
+private let sentNotificationDictKey = "sent_notifications_dict"
+
 class EventNotificationsManager {
+
+    fileprivate var sentNotifications: [String: [String]] {
+        get {
+            return UserDefaults.standard.dictionary(forKey: sentNotificationDictKey) as? [String : [String]] ?? [String : [String]]()
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: sentNotificationDictKey)
+        }
+    }
 
     fileprivate var shouldFetchEvents: Bool {
         guard let eventFetchStartTime = eventFetchStartTime else {
@@ -66,10 +78,13 @@ class EventNotificationsManager {
 
     private func sendNotifications(forEvents events: [Event]) {
         for event in events {
-            placeProvider.place(forKey: event.placeId) { place in
-                guard let place = place else { return }
-                DispatchQueue.main.async {
-                    self.sendNotification(forEvent: event, atPlace: place)
+            if isUnsent(event: event) {
+                placeProvider.place(forKey: event.placeId) { place in
+                    guard let place = place else { return }
+                    DispatchQueue.main.async {
+                        self.sendNotification(forEvent: event, atPlace: place)
+                        self.markAsSent(event: event)
+                    }
                 }
             }
         }
@@ -133,5 +148,22 @@ class EventNotificationsManager {
             print("Found events \(foundEvents)")
             self.sendNotifications(forEvents: foundEvents)
         })
+    }
+
+    fileprivate func isUnsent(event: Event) -> Bool {
+        guard let placeEvents = sentNotifications[event.placeId] else {
+                return true
+        }
+        return !placeEvents.contains(event.description)
+    }
+
+    fileprivate func markAsSent(event: Event) {
+        var sent = sentNotifications
+        if sent.keys.contains(event.placeId) {
+            sent[event.placeId]?.append(event.description)
+        } else {
+            sent[event.placeId] = [event.description]
+        }
+        sentNotifications = sent
     }
 }
