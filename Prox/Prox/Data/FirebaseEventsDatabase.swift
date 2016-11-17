@@ -99,7 +99,7 @@ class FirebaseEventsDatabase: EventsDatabase {
         let dispatchQueue = DispatchQueue.global(qos: .userInitiated)
         // get the events within our event radius
         let places = getEvents(forLocation: location, withRadius: radius).andThen(upon: dispatchQueue) { events -> Future<[DatabaseResult<Place>]> in
-            let eventsMap = events.flatMap { $0.successResult() }
+            let eventsMap = events.flatMap { $0.successResult() } .filter { return eventFilter($0, location) }
             let eventPlaceMap = self.mapEventsToPlaceIds(events: eventsMap)
             var fetchedPlaces = [String: Place]()
             // loop through each event and fetch the place

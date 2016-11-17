@@ -43,4 +43,10 @@ class RemoteConfigKeys {
     // The event search radius the app will use to query the Firebase datbase
     // This is measures in kilometers. The default value is 20 km.
     public static let eventSearchRadiusInKm = "event_search_radius_in_km"
+
+    // The amount of time before the event starts we should show a notification
+    // This is measures in minutes
+    public static let eventStartNotificationInterval = "event_start_notification_interval"
+
+    public static let eventStartPlaceInterval = "event_start_place_interval"
 }

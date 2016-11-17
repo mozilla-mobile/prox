@@ -25,7 +25,7 @@ class EventNotificationsManager {
     func fetchEvents(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
         if shouldFetchEvents {
             print("Should fetch events")
-            eventsProvider.getEvents(forLocation: location, completion: completion)
+            eventsProvider.getEventsForNotifications(forLocation: location, completion: completion)
             return
         }
         print("Should not fetch events")

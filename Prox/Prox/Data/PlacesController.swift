@@ -120,7 +120,7 @@ class PlacesProvider {
     private func fetchPlacesWithEvents(location: CLLocation) {
         let eventProvider = EventsProvider()
         eventsPlaces.removeValue(forKey: location)
-        eventProvider.getPlacesWithEvents(forLocation: location, usingPlacesDatabase: database) { places in
+        eventProvider.getEventsWithPlaces(forLocation: location, usingPlacesDatabase: database) { places in
             self.eventsPlaces[location] = places
             self.displayPlaces(forLocation: location)
         }

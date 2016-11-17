@@ -19,23 +19,43 @@ class EventsProvider {
         return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
     }()
 
-    func getEvents(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
+    private lazy var eventStartNotificationInterval: Double = {
+        let key = RemoteConfigKeys.eventStartNotificationInterval
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue * 60
+    }()
+
+    private lazy var eventStartPlaceInterval: Double = {
+        let key = RemoteConfigKeys.eventStartPlaceInterval
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue * 60
+    }()
+
+    func getEventsForNotifications(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
         return eventsDatabase.getEvents(forLocation: location, withRadius: radius).upon { results in
-            let events = results.flatMap { $0.successResult() }.filter { self.shouldShowEvent(event: $0, forLocation: location) }
+            let events = results.flatMap { $0.successResult() }.filter { self.shouldShowEventForNotifications(event: $0, forLocation: location) }
             DispatchQueue.main.async {
                 completion(events, nil)
             }
         }
     }
 
-    func getPlacesWithEvents(forLocation location: CLLocation, usingPlacesDatabase placesDatabase: PlacesDatabase, completion: @escaping ([Place]) -> ()) {
-        return eventsDatabase.getPlacesWithEvents(forLocation: location, withRadius: radius, withPlacesDatabase: placesDatabase, filterEventsUsing: self.shouldShowEvent).upon { results in
+    func getEventsWithPlaces(forLocation location: CLLocation, usingPlacesDatabase placesDatabase: PlacesDatabase, completion: @escaping ([Place]) -> ()) {
+        return eventsDatabase.getPlacesWithEvents(forLocation: location, withRadius: radius, withPlacesDatabase: placesDatabase, filterEventsUsing: self.shouldShowEventForPlaces).upon { results in
             let places = results.flatMap { $0.successResult() }
             completion(places)
         }
     }
 
-    private func shouldShowEvent(event: Event, forLocation location: CLLocation) -> Bool {
-        return true
+    private func shouldShowEventForNotifications(event: Event, forLocation location: CLLocation) -> Bool {
+        return doesEvent(event: event, startAtCorrectTimeIntervalFromNow: eventStartNotificationInterval)
+    }
+
+    private func shouldShowEventForPlaces(event: Event, forLocation location: CLLocation) -> Bool {
+        return doesEvent(event: event, startAtCorrectTimeIntervalFromNow: eventStartPlaceInterval)
+    }
+
+    private func doesEvent(event: Event, startAtCorrectTimeIntervalFromNow timeInterval: TimeInterval) -> Bool {
+        // event must start in 1 hour
+        let maxStartTime = Date().addingTimeInterval(timeInterval)
+        return event.startTime <= maxStartTime
     }
 }
