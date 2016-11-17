@@ -175,6 +175,44 @@ class Place: Hashable {
         }
     }
 
+    func getNotificationString(forEvent event: Event) -> String {
+        return replacePlaceName(string: replaceTimeToEvent(string: replaceEventName(string: event.notificationString, withName: event.description), withStartTime: event.startTime))
+    }
+
+    func getPlaceDetailsEventString(forEvent event: Event) -> String {
+        return replaceStartTime(string: replaceEventName(string: event.placeDisplayString, withName: event.description), withStartTime: event.startTime)
+    }
+
+    private func replaceEventName( string: String, withName name: String) -> String {
+        return string.replacingOccurrences(of: "{event_name}", with: name)
+    }
+
+    private func replacePlaceName(string: String) -> String {
+        return string.replacingOccurrences(of: "{venue_name}", with: self.name)
+    }
+
+    private func replaceTimeToEvent(string: String, withStartTime startTime: Date) -> String {
+        let now = Date()
+        let timeToEvent = now.timeIntervalSince(startTime)
+        let (hours, mins) = secondsToHoursMinutes(seconds: Int(timeToEvent))
+        var timeString: String = ""
+        if hours > 0 {
+            timeString += "\(hours) hours, "
+        }
+        timeString += "\(mins) minutes"
+        return string.replacingOccurrences(of: "{time_to_event}", with: "\(timeString)")
+    }
+
+    private func replaceStartTime(string: String, withStartTime startTime: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return string.replacingOccurrences(of: "{start_time}", with: formatter.string(from: startTime))
+    }
+
+    private func secondsToHoursMinutes (seconds : Int) -> (Int, Int) {
+        return (seconds / 3600, (seconds % 3600) / 60)
+    }
+
 }
 
 enum DayOfWeek: String {

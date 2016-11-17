@@ -47,6 +47,16 @@ class RemoteConfigKeys {
     // The amount of time before the event starts we should show a notification
     // This is measures in minutes
     public static let eventStartNotificationInterval = "event_start_notification_interval_mins"
-
     public static let eventStartPlaceInterval = "event_start_place_interval_mins"
+
+    // the number of strings that are in the config for event notifications
+    public static let numberOfEventNotificationStrings = "number_of_event_notification_strings"
+    // the root string that all keys for event notification strings will start with
+    public static let eventNotificationStringRoot = "event_notification_string_"
+
+    // the number of strings that are in the config for events displayed on the place details
+    public static let numberOfPlaceDetailsEventStrings = "number_of_place_details_event_strings"
+
+    // the root string that all keys for place details event strings will start with
+    public static let placeDetailsEventStringRoot = "place_details_event_string_"
 }

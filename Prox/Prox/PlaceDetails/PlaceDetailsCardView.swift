@@ -261,12 +261,10 @@ class PlaceDetailsCardView: UIView {
     }
 
     private func updateEventUI(forPlace place: Place) {
-        // TEMP: Show event on one item so we can test it.
-        // TODO: bind real events
-        if place.id == "tropics-ale-house-waikoloa-beach" {
+        if let event = place.events.first {
             setContainingStackViewMargins(isTopMarginPresent: false)
             eventView.isHidden = false
-            eventView.setText("Free Jazz Concert at The Bar in 1 hour!", underlined: "More info.")
+            eventView.setText(place.getPlaceDetailsEventString(forEvent: event), underlined: "More info.")
         } else {
             setContainingStackViewMargins(isTopMarginPresent: true)
             eventView.isHidden = true

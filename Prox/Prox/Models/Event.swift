@@ -4,6 +4,7 @@
 
 import Foundation
 import Firebase
+import FirebaseRemoteConfig
 
 class Event {
     var id: String
@@ -12,6 +13,48 @@ class Event {
     var startTime: Date
     var endTime: Date?
     var url: String
+
+    private static var numberOfEventNotificationStrings: Int = {
+        let key = RemoteConfigKeys.numberOfEventNotificationStrings
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.intValue
+    }()
+
+    private static var eventNotificationStrings: [String] = {
+        var eventNotificationStrings = [String]()
+        for i in 1...Event.numberOfEventNotificationStrings {
+            let key = RemoteConfigKeys.eventNotificationStringRoot + "\(i)"
+            if let string = FIRRemoteConfig.remoteConfig()[key].stringValue {
+                eventNotificationStrings.append(string)
+            }
+        }
+        return eventNotificationStrings
+    }()
+
+    var notificationString: String {
+        let randomIndex = Int(arc4random_uniform(UInt32(Event.numberOfEventNotificationStrings)) + 1)
+        return Event.eventNotificationStrings[randomIndex]
+    }
+
+    private static var numberOfPlaceDisplayStrings: Int = {
+        let key = RemoteConfigKeys.numberOfPlaceDetailsEventStrings
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.intValue
+    }()
+
+    private static var placeDisplayStrings: [String] = {
+        var placeDisplayStrings = [String]()
+        for i in 1...Event.numberOfPlaceDisplayStrings {
+            let key = RemoteConfigKeys.placeDetailsEventStringRoot + "\(i)"
+            if let string = FIRRemoteConfig.remoteConfig()[key].stringValue {
+                placeDisplayStrings.append(string)
+            }
+        }
+        return placeDisplayStrings
+    }()
+
+    var placeDisplayString: String {
+        let randomIndex = Int(arc4random_uniform(UInt32(Event.numberOfPlaceDisplayStrings)) + 1)
+        return Event.placeDisplayStrings[randomIndex]
+    }
 
     init(id: String, placeId: String, description: String, url: String, startTime: Date, endTime: Date?) {
         self.id = id

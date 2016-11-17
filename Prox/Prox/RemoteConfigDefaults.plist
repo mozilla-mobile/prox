@@ -2,6 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>place_details_event_string_2</key>
+	<string>You might be interested in the event {event_name} that starts at {start_time} today!</string>
+	<key>place_details_event_string_1</key>
+	<string>This venue has an event {event_name} starting at {start_time} today</string>
+	<key>event_notification_string_2</key>
+	<string>Hey! We&apos;ve just noticed that {event_name} is starting in {time_to_event} at {venue_name}. Sound good?</string>
+	<key>event_notification_string_1</key>
+	<string>{event_name} is starting in {time_to_event} at {venue_name}</string>
+	<key>number_of_place_details_event_strings</key>
+	<integer>2</integer>
+	<key>number_of_event_notification_strings</key>
+	<integer>2</integer>
 	<key>event_start_place_interval_mins</key>
 	<integer>300</integer>
 	<key>event_start_notification_interval_mins</key>
