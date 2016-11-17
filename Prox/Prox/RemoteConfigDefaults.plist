@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>background_fetch_interval_mins</key>
+	<string>5</string>
+	<key>notification_visit_interval_mins</key>
+	<integer>15</integer>
 	<key>place_details_event_string_2</key>
 	<string>You might be interested in &apos;{event_name}&apos; that starts at {start_time} today!</string>
 	<key>place_details_event_string_1</key>

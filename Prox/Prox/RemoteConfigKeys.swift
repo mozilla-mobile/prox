@@ -60,6 +60,10 @@ class RemoteConfigKeys {
 
     // the root string that all keys for place details event strings will start with
     public static let placeDetailsEventStringRoot = "place_details_event_string_"
+
+    public static let backgroundFetchIntervalMins = "background_fetch_interval_mins"
+    public static let notificationVisitIntervalMins = "notification_visit_interval_mins"
+    
 }
 
 extension RemoteConfigKeys {

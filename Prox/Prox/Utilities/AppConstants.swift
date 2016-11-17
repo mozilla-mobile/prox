@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import FirebaseRemoteConfig
 
 public enum AppBuildChannel {
     case Developer
@@ -19,8 +20,14 @@ public struct AppConstants {
     public static let backgroundFetchInterval: TimeInterval = 1 * 60
     public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 1 * 60
     #else
-    public static let backgroundFetchInterval: TimeInterval = 5 * 60
-    public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 15  * 60
+    public static var backgroundFetchInterval: TimeInterval {
+        let key = RemoteConfigKeys.backgroundFetchIntervalMins
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
+    }
+    public static var minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval {
+        let key = RemoteConfigKeys.notificationVisitIntervalMins
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
+    }
     #endif
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
     public static let currentLocationMonitoringRadius: CLLocationDistance = 50.0
