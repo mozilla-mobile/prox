@@ -40,11 +40,10 @@ class PlaceDetailsEventView: UIView {
         backgroundColor = Colors.detailsViewEventBackground
 
         addSubview(iconView)
-        var constraints = [iconView.topAnchor.constraint(equalTo: topAnchor, constant: 26),
+        var constraints = [iconView.centerYAnchor.constraint(equalTo: centerYAnchor),
                            iconView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
                            iconView.heightAnchor.constraint(equalToConstant: 28),
-                           iconView.widthAnchor.constraint(equalToConstant: 28),
-                           iconView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -26)]
+                           iconView.widthAnchor.constraint(equalToConstant: 28)]
 
         addSubview(textView)
         constraints += [textView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
