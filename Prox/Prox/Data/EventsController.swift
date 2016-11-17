@@ -21,7 +21,7 @@ class EventsProvider {
 
     func getEvents(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
         return eventsDatabase.getEvents(forLocation: location, withRadius: radius).upon { results in
-            let events = results.flatMap { $0.successResult() }
+            let events = results.flatMap { $0.successResult() }.filter { self.shouldShowEvent(event: $0, forLocation: location) }
             DispatchQueue.main.async {
                 completion(events, nil)
             }
@@ -29,9 +29,13 @@ class EventsProvider {
     }
 
     func getPlacesWithEvents(forLocation location: CLLocation, usingPlacesDatabase placesDatabase: PlacesDatabase, completion: @escaping ([Place]) -> ()) {
-        return eventsDatabase.getPlacesWithEvents(forLocation: location, withRadius: radius, withPlacesDatabase: placesDatabase).upon { results in
+        return eventsDatabase.getPlacesWithEvents(forLocation: location, withRadius: radius, withPlacesDatabase: placesDatabase, filterEventsUsing: self.shouldShowEvent).upon { results in
             let places = results.flatMap { $0.successResult() }
             completion(places)
         }
+    }
+
+    private func shouldShowEvent(event: Event, forLocation location: CLLocation) -> Bool {
+        return true
     }
 }

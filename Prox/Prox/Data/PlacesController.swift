@@ -102,7 +102,7 @@ class PlacesProvider {
                 }
             } else {
                 // We either have zero places, or the server is adding stuff to firebase,
-                // and we should wait.
+                // and we should wait. 
                 if placeCount > 0 && lastCount != placeCount {
                     self.nearbyPlaces[location] = places
                     self.displayPlaces(forLocation: location)

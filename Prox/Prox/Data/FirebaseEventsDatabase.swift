@@ -83,15 +83,17 @@ class FirebaseEventsDatabase: EventsDatabase {
         return deferred
     }
 
-    func getPlacesWithEvents(forLocation location: CLLocation, withRadius radius: Double, withPlacesDatabase placesDatabase: PlacesDatabase) -> Future<[DatabaseResult<Place>]> {
+    func getPlacesWithEvents(forLocation location: CLLocation, withRadius radius: Double, withPlacesDatabase placesDatabase: PlacesDatabase, filterEventsUsing eventFilter: @escaping (Event, CLLocation) -> Bool) -> Future<[DatabaseResult<Place>]> {
         let dispatchQueue = DispatchQueue.global(qos: .userInitiated)
         let places = getEvents(forLocation: location, withRadius: radius).andThen(upon: dispatchQueue) { events -> Future<[DatabaseResult<Place>]> in
             let eventsMap = events.map { eventResult -> Deferred<DatabaseResult<Place>> in
                 let deferred = Deferred<DatabaseResult<Place>>()
-                guard let event = eventResult.successResult() else {
+                guard let event = eventResult.successResult(),
+                    eventFilter(event, location) else {
                     deferred.fill(with: DatabaseResult.fail(withMessage: "No event found"))
                     return deferred
                 }
+                // TODO: Figure out what we do if we've already fetched this place for another event - maybe we need to remember the places we've already seen?
                 placesDatabase.getPlace(forKey: event.placeId).upon { result in
                     if let place = result.successResult()   {
                         place.events.append(event)
