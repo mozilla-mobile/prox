@@ -448,14 +448,14 @@ extension PlaceCarouselViewController: EventsProviderDelegate {
 }
 
 extension PlaceCarouselViewController: PlacesProviderDelegate {
-    func placeControllerWillStartFetchingPlaces(_ controller: PlacesProvider) {
+    func placesProviderWillStartFetchingPlaces(_ controller: PlacesProvider) {
         // TODO placeholder for the waiting state.
         if self.places.count == 0 {
             headerView.numberOfPlacesLabel.text = "Waiting"
         }
     }
 
-    func placeControllerDidFinishFetchingPlaces(_ controller: PlacesProvider) {
+    func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider) {
         // no op
     }
 
