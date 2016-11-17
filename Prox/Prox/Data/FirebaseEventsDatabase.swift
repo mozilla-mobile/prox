@@ -28,8 +28,6 @@ class FirebaseEventsDatabase: EventsDatabase {
     internal func getEvents(forLocation location: CLLocation, withRadius radius: Double) -> Future<[DatabaseResult<Event>]> {
         let queue = DispatchQueue.global(qos: .userInitiated)
         let events = getEventKeys(aroundPoint: location, withRadius: radius).andThen(upon: queue) { (eventKeyToLoc) -> Future<[DatabaseResult<Event>]> in
-            // TODO: limit the number of place details we look up. X closest places?
-            // TODO: These should be ordered by display order
             let eventKeys = Array(eventKeyToLoc.keys)
             let fetchedEvents = eventKeys.map { self.getEvent(withKey: $0) }
             return fetchedEvents.allFilled()
