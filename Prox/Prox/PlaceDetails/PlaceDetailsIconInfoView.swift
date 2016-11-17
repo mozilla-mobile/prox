@@ -121,16 +121,10 @@ class PlaceDetailsIconInfoView: UIView {
 
     private func setPrimaryTextLabelHidden(_ isHidden: Bool) {
         if isHidden {
-            // If the forward button is disabled, it is not added to view hierarchy and this has no effect.
-            // Also, ideally we don't link the forward arrow to the primary text but this is easiest.
-            forwardArrowView.isHidden = true
-
             primaryTextLabel.isHidden = true
             secondaryTextLabelHalfHeightConstraint.isActive = false
             secondaryTextLabelFullHeightConstraint.isActive = true
         } else {
-            forwardArrowView.isHidden = false
-
             primaryTextLabel.isHidden = false
             secondaryTextLabelHalfHeightConstraint.isActive = true
             secondaryTextLabelFullHeightConstraint.isActive = false

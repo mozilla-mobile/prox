@@ -274,8 +274,10 @@ class PlaceDetailsCardView: UIView {
     }
 
     func updateTravelTimesUI(travelTimes: TravelTimes?) {
+        // TODO: Consider travelTimeView.setState – there is a lot of duplication here.
         guard let travelTimes = travelTimes else {
             travelTimeView.isPrimaryTextLabelHidden = true
+            travelTimeView.forwardArrowView.isHidden = false
             travelTimeView.secondaryTextLabel.text = "View on Map"
 
             travelTimeView.iconView.tintColor = Colors.detailsViewTravelTimeErrorPinTint
@@ -290,10 +292,12 @@ class PlaceDetailsCardView: UIView {
             if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
                 if walkingTimeMinutes < TravelTimesProvider.YOU_ARE_HERE_WALKING_TIME {
                     self.travelTimeView.isPrimaryTextLabelHidden = true
+                    travelTimeView.forwardArrowView.isHidden = true
                     self.travelTimeView.secondaryTextLabel.text = "You're here!"
                     self.travelTimeView.iconView.image = UIImage(named: "icon_here")
                 } else {
                     self.travelTimeView.isPrimaryTextLabelHidden = false
+                    travelTimeView.forwardArrowView.isHidden = false
                     self.travelTimeView.primaryTextLabel.text = "\(walkingTimeMinutes) min"
                     self.travelTimeView.secondaryTextLabel.text = "Walking"
                     self.travelTimeView.iconView.image = UIImage(named: "icon_walkingdist")
@@ -305,6 +309,7 @@ class PlaceDetailsCardView: UIView {
         if let drivingTimeSeconds = travelTimes.drivingTime {
             let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
             self.travelTimeView.isPrimaryTextLabelHidden = false
+            travelTimeView.forwardArrowView.isHidden = false
             self.travelTimeView.primaryTextLabel.text = "\(drivingTimeMinutes) min"
             self.travelTimeView.secondaryTextLabel.text = "Driving"
             self.travelTimeView.iconView.image = UIImage(named: "icon_drivingdist")
