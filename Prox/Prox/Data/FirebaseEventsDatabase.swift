@@ -83,28 +83,41 @@ class FirebaseEventsDatabase: EventsDatabase {
         return deferred
     }
 
+    private func mapEventsToPlaceIds(events: [Event]) -> [String: [Event]] {
+        var placeIdsToEventMap = [String: [Event]]()
+        for event in events {
+            if var mappedEvents = placeIdsToEventMap[event.placeId] {
+                mappedEvents.append(event)
+            } else {
+                placeIdsToEventMap[event.placeId] = [event]
+            }
+        }
+        return placeIdsToEventMap
+    }
+
     func getPlacesWithEvents(forLocation location: CLLocation, withRadius radius: Double, withPlacesDatabase placesDatabase: PlacesDatabase, filterEventsUsing eventFilter: @escaping (Event, CLLocation) -> Bool) -> Future<[DatabaseResult<Place>]> {
         let dispatchQueue = DispatchQueue.global(qos: .userInitiated)
+        // get the events within our event radius
         let places = getEvents(forLocation: location, withRadius: radius).andThen(upon: dispatchQueue) { events -> Future<[DatabaseResult<Place>]> in
-            let eventsMap = events.map { eventResult -> Deferred<DatabaseResult<Place>> in
+            let eventsMap = events.flatMap { $0.successResult() }
+            let eventPlaceMap = self.mapEventsToPlaceIds(events: eventsMap)
+            var fetchedPlaces = [String: Place]()
+            // loop through each event and fetch the place
+            let placesMap = eventPlaceMap.keys.map { placeKey -> Deferred<DatabaseResult<Place>> in
                 let deferred = Deferred<DatabaseResult<Place>>()
-                guard let event = eventResult.successResult(),
-                    eventFilter(event, location) else {
-                    deferred.fill(with: DatabaseResult.fail(withMessage: "No event found"))
-                    return deferred
-                }
-                // TODO: Figure out what we do if we've already fetched this place for another event - maybe we need to remember the places we've already seen?
-                placesDatabase.getPlace(forKey: event.placeId).upon { result in
-                    if let place = result.successResult()   {
-                        place.events.append(event)
+                placesDatabase.getPlace(forKey: placeKey).upon { result in
+                    if let place = result.successResult(),
+                        let placeEvents = eventPlaceMap[placeKey] {
+                        place.events = placeEvents
                         deferred.fill(with: DatabaseResult.succeed(value: place))
+                        fetchedPlaces[place.id] = place
                     } else {
-                        deferred.fill(with: DatabaseResult.fail(withMessage: "No Place for event \(event.id)"))
+                        deferred.fill(with: DatabaseResult.fail(withMessage: "No Place for event place with id \(placeKey)"))
                     }
                 }
                 return deferred
             }
-            return eventsMap.allFilled()
+            return placesMap.allFilled()
         }
 
         return places

@@ -534,7 +534,7 @@
 				TargetAttributes = {
 					7B29E7BE1DA3EC360099AF38 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 43AQ936H96;
+						DevelopmentTeam = 9G8J6YA743;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -909,6 +909,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.Kona;
 				PRODUCT_NAME = "$(TARGET_NAME) Kona";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 			};
 			name = "Enterprise Kona";

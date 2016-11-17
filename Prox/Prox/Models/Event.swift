@@ -24,7 +24,7 @@ class Event {
 
     convenience init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         guard data.exists(), data.hasChildren(),
             let value = data.value as? NSDictionary,
             let id = value["id"] as? String,
