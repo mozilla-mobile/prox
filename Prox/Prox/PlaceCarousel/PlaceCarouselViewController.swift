@@ -65,8 +65,7 @@ class PlaceCarouselViewController: UIViewController {
         return view
     }()
 
-    lazy var loadingView = LocationLoadingView(frame: CGRect(x: 0, y: 0, width: 100, height: 100),
-                                               fillColor: Colors.carouselLoadingViewColor)
+    lazy var loadingOverlay = LoadingOverlayView(frame: CGRect.zero)
 
     // label displaying sunrise and sunset times
     lazy var sunriseSetTimesLabel: UILabel = {
@@ -155,14 +154,22 @@ class PlaceCarouselViewController: UIViewController {
             self.view.layer.contents = backgroundImage.cgImage
         }
 
+        var constraints = [NSLayoutConstraint]()
+
+        view.addSubview(loadingOverlay)
+        constraints.append(contentsOf: [loadingOverlay.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor),
+                                        loadingOverlay.bottomAnchor.constraint(equalTo: self.bottomLayoutGuide.topAnchor),
+                                        loadingOverlay.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+                                        loadingOverlay.rightAnchor.constraint(equalTo: self.view.rightAnchor)])
+        
         // add the views to the stack view
         view.addSubview(headerView)
 
         // setting up the layout constraints
-        var constraints = [headerView.topAnchor.constraint(equalTo: view.topAnchor),
-                           headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                           headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                           headerView.heightAnchor.constraint(equalToConstant: 150)]
+        constraints.append(contentsOf: [headerView.topAnchor.constraint(equalTo: view.topAnchor),
+                                        headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                                        headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                                        headerView.heightAnchor.constraint(equalToConstant: 150)])
 
         view.addSubview(sunView)
         constraints.append(contentsOf: [sunView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
@@ -178,12 +185,6 @@ class PlaceCarouselViewController: UIViewController {
 
         headerView.numberOfPlacesLabel.text = "" // placeholder
 
-        view.addSubview(loadingView)
-        constraints.append(contentsOf: [loadingView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                                        loadingView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                                        loadingView.heightAnchor.constraint(equalToConstant: 100),
-                                        loadingView.widthAnchor.constraint(equalToConstant: 100)])
-        
         view.addSubview(placeCarousel.carousel)
         constraints.append(contentsOf: [placeCarousel.carousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                         placeCarousel.carousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -385,7 +386,7 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
     }
 
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
-        UIView.animate(withDuration: 0.2, animations: { self.loadingView.alpha = 0 }, completion: { _ in self.loadingView.isHidden = true })
+        UIView.animate(withDuration: 0.4, animations: { self.loadingOverlay.alpha = 0 }, completion: { _ in self.loadingOverlay.isHidden = true })
 
         let oldPlaces = self.places
         self.places = places

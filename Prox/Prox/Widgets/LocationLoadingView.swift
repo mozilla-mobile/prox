@@ -6,12 +6,6 @@ import Foundation
 import UIKit
 import QuartzCore
 
-/// Create a CAShapeLayer filled with a circle with the given color and bounds.
-///
-/// - Parameters:
-///   - color: Fill color of the circle
-///   - frame: Frame/bounds of the circle shape
-/// - Returns: CAShapeLayer filled with a circle
 fileprivate func createCircle(color: CGColor, frame: CGRect) -> CAShapeLayer {
     let circle = CAShapeLayer()
     circle.path = CGPath(ellipseIn: frame, transform: nil)
@@ -20,13 +14,6 @@ fileprivate func createCircle(color: CGColor, frame: CGRect) -> CAShapeLayer {
     return circle
 }
 
-/// Generates an CAAnimation from `fromState` to `toState`. The animation group contains
-/// both the fade out/out effect and frame change.
-///
-/// - Parameters:
-///   - fromState: State to transition from
-///   - toState: State to transition to
-/// - Returns: CAAnimationGroup containing the size/opacity changes when from state to state
 fileprivate func animation(fromState: CircleState, toState: CircleState) -> CAAnimationGroup {
     let sizeChange = CABasicAnimation(keyPath: "transform")
     let fromTransform = CGAffineTransform(scaleX: fromState.scale, y: fromState.scale)
@@ -89,12 +76,13 @@ class LocationLoadingView: UIView {
         }
     }
 
-    init(frame: CGRect, fillColor: UIColor) {
-        self.circleA = createCircle(color: fillColor.cgColor, frame: frame)
-        self.circleB = createCircle(color: fillColor.cgColor, frame: frame)
+    init(fillColor: UIColor) {
+        let circleFrame = CGRect(x: 0, y: 0, width: 100, height: 100)
+        self.circleA = createCircle(color: fillColor.cgColor, frame: circleFrame)
+        self.circleB = createCircle(color: fillColor.cgColor, frame: circleFrame)
         self.dot = UIImageView(image: #imageLiteral(resourceName: "icon_loadingdot"))
 
-        super.init(frame: frame)
+        super.init(frame: circleFrame)
 
         layer.addSublayer(self.circleA)
         layer.addSublayer(self.circleB)
@@ -115,5 +103,9 @@ class LocationLoadingView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: 100, height: 100)
     }
 }
