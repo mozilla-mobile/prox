@@ -46,7 +46,7 @@ class RemoteConfigKeys {
 
     // The amount of time before the event starts we should show a notification
     // This is measures in minutes
-    public static let eventStartNotificationInterval = "event_start_notification_interval"
+    public static let eventStartNotificationInterval = "event_start_notification_interval_mins"
 
-    public static let eventStartPlaceInterval = "event_start_place_interval"
+    public static let eventStartPlaceInterval = "event_start_place_interval_mins"
 }
