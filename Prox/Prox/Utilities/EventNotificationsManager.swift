@@ -28,6 +28,7 @@ class EventNotificationsManager {
     }
 
     fileprivate lazy var eventsProvider = EventsProvider()
+    fileprivate lazy var placeProvider = PlacesProvider()
 
     @available(iOS 10.0, *)
     fileprivate lazy var eventNotificationsCategory: UNNotificationCategory = {
@@ -65,42 +66,51 @@ class EventNotificationsManager {
 
     private func sendNotifications(forEvents events: [Event]) {
         for event in events {
-            print("Sending notification for event \(event.description)")
-            let alertTitle = "New event!"
-            let alertActionTitle = "Open"
-            let alertBody = "Event Body \(event.description)"
-            if #available(iOS 10.0, *) {
-                let center = UNUserNotificationCenter.current()
-                center.getNotificationSettings { (settings) in
-                    if settings.authorizationStatus == .authorized {
-                        let content = UNMutableNotificationContent()
-                        content.title = NSString.localizedUserNotificationString(forKey: alertTitle, arguments: nil)
-                        content.body =  NSString.localizedUserNotificationString(forKey: alertBody, arguments: nil)
-                        content.categoryIdentifier = "EVENTS"
-                        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-                        let request = UNNotificationRequest(identifier: "EventNotification", content: content, trigger: trigger)
-                        center.add(request) { error in
-                            if let theError = error {
-                                print(theError.localizedDescription)
-                            } else {
-                                print("Notification scheduled")
-                            }
+            placeProvider.place(forKey: event.placeId) { place in
+                guard let place = place else { return }
+                DispatchQueue.main.async {
+                    self.sendNotification(forEvent: event, atPlace: place)
+                }
+            }
+        }
+    }
+
+    private func sendNotification(forEvent event: Event, atPlace place: Place) {
+        print("Sending notification for event \(event.description)")
+        let alertTitle = "New event!"
+        let alertActionTitle = "Open"
+        let alertBody = place.getNotificationString(forEvent: event)
+        if #available(iOS 10.0, *) {
+            let center = UNUserNotificationCenter.current()
+            center.getNotificationSettings { (settings) in
+                if settings.authorizationStatus == .authorized {
+                    let content = UNMutableNotificationContent()
+                    content.title = NSString.localizedUserNotificationString(forKey: alertTitle, arguments: nil)
+                    content.body =  NSString.localizedUserNotificationString(forKey: alertBody, arguments: nil)
+                    content.categoryIdentifier = "EVENTS"
+                    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+                    let request = UNNotificationRequest(identifier: "EventNotification", content: content, trigger: trigger)
+                    center.add(request) { error in
+                        if let theError = error {
+                            print(theError.localizedDescription)
+                        } else {
+                            print("Notification scheduled")
                         }
-                    } else {
-                        print("Settings not authorized for notifications \(settings.authorizationStatus)")
                     }
+                } else {
+                    print("Settings not authorized for notifications \(settings.authorizationStatus)")
                 }
-            } else {
-                if let userNotificationSettingsAuthorization = UIApplication.shared.currentUserNotificationSettings?.types,
-                    userNotificationSettingsAuthorization.contains(.alert) || userNotificationSettingsAuthorization.contains(.badge) {
-                    let notification = UILocalNotification()
-                    notification.alertTitle = alertTitle
-                    notification.alertBody = alertBody
-                    notification.alertAction = alertActionTitle
-                    notification.fireDate = Date().addingTimeInterval(1)
-                    notification.userInfo = ["eventPlaceID": event.placeId]
-                    UIApplication.shared.scheduleLocalNotification(notification)
-                }
+            }
+        } else {
+            if let userNotificationSettingsAuthorization = UIApplication.shared.currentUserNotificationSettings?.types,
+                userNotificationSettingsAuthorization.contains(.alert) || userNotificationSettingsAuthorization.contains(.badge) {
+                let notification = UILocalNotification()
+                notification.alertTitle = alertTitle
+                notification.alertBody = alertBody
+                notification.alertAction = alertActionTitle
+                notification.fireDate = Date().addingTimeInterval(1)
+                notification.userInfo = ["eventPlaceID": event.placeId]
+                UIApplication.shared.scheduleLocalNotification(notification)
             }
         }
     }

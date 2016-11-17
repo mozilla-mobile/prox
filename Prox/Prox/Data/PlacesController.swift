@@ -43,6 +43,10 @@ class PlacesProvider {
     private var nearbyPlaces = [CLLocation: [Place]]()
     private var eventsPlaces = [CLLocation: [Place]]()
 
+    func place(forKey key: String, callback: @escaping (Place?) -> ()) {
+        database.getPlace(forKey: key).upon { callback($0.successResult() )}
+    }
+
     func updatePlaces(forLocation location: CLLocation) {
         assert(Thread.isMainThread)
         // We would like to prevent running more than one update at the same time.
