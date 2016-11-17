@@ -128,6 +128,7 @@ class PlaceDetailsCardViewController: UIViewController {
         cardView.yelpReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openYelpReview(gestureRecgonizer:))))
         cardView.tripAdvisorReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTripAdvisorReview(gestureRecgonizer:))))
         cardView.travelTimeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openDirections(gestureRecgonizer:))))
+        cardView.eventView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openEventURL(gestureRecognizer:))))
     }
 
     @objc private func openPlaceURL(gestureRecgonizer: UITapGestureRecognizer) {
@@ -160,6 +161,14 @@ class PlaceDetailsCardViewController: UIViewController {
 
         if !OpenInHelper.openRoute(fromLocation: location.coordinate, toPlace: place, by: transportType) {
             print("lol unable to open travel directions")
+        }
+    }
+
+    @objc private func openEventURL(gestureRecognizer: UITapGestureRecognizer) {
+        guard let event = place.events.first,
+            let url = URL(string: event.url) else { return }
+        if !OpenInHelper.open(url: url) {
+            print("lol unable to open web address")
         }
     }
 

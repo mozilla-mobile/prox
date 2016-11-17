@@ -16,7 +16,7 @@ class PlaceDetailsEventView: UIView {
         let view = UILabel()
         view.font = Fonts.detailsViewEventText
         view.textColor = Colors.detailsViewEventText
-        view.numberOfLines = 0 // line count limited by constraints
+        view.numberOfLines = 0 
         return view
     }()
 
