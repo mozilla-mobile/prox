@@ -52,8 +52,9 @@ class EventsProvider {
 
     private func doesEvent(event: Event, startAtCorrectTimeIntervalFromNow timeInterval: TimeInterval) -> Bool {
         // event must start in 1 hour
-        let maxStartTime = Date().addingTimeInterval(timeInterval)
-        return event.startTime <= maxStartTime
+        let now = Date()
+        let maxStartTime = now.addingTimeInterval(timeInterval)
+        return event.startTime > now && event.startTime <= maxStartTime
     }
 
     private func isEventToday(event: Event) -> Bool {
