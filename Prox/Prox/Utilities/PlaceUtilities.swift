@@ -46,9 +46,8 @@ struct PlaceUtilities {
             return false
         }
 
-        if (rating < 2.5) ||
-                (rating == 3 && reviewCount > 3) ||
-                (reviewCount <= 3 && rating < 5) {
+        if (rating < 2.5) || // poorly-reviewed
+                (rating == 3 && reviewCount > 3) { // known to be mediocre
             return false
         } else {
             return true
