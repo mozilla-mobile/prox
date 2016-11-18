@@ -264,7 +264,7 @@ class PlaceDetailsCardView: UIView {
         if let event = place.events.first {
             setContainingStackViewMargins(isTopMarginPresent: false)
             eventView.isHidden = false
-            eventView.setText(place.getPlaceDetailsEventString(forEvent: event), underlined: "More info.")
+            eventView.setText(place.getPlaceDetailsEventString(forEvent: event), underlined: event.url == nil ? nil : "More info.")
         } else {
             setContainingStackViewMargins(isTopMarginPresent: true)
             eventView.isHidden = true

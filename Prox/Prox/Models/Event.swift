@@ -12,7 +12,7 @@ class Event {
     var description: String
     var startTime: Date
     var endTime: Date?
-    var url: String
+    var url: String?
 
     private static var numberOfEventNotificationStrings: Int = {
         let key = RemoteConfigKeys.numberOfEventNotificationStrings
@@ -56,7 +56,7 @@ class Event {
         return Event.placeDisplayStrings[randomIndex]
     }
 
-    init(id: String, placeId: String, description: String, url: String, startTime: Date, endTime: Date?) {
+    init(id: String, placeId: String, description: String, url: String?, startTime: Date, endTime: Date?) {
         self.id = id
         self.placeId = placeId
         self.description = description
@@ -73,9 +73,8 @@ class Event {
             let id = value["id"] as? String,
             let description = value["description"] as? String,
             let localStartTimeString = value["localStartTime"] as? String,
-            let localStartTime = formatter.date(from: localStartTimeString),
-            let url = value["url"] as? String else {
-                print("lol dropping event: missing data, id, description, start time, or url \(data.value)")
+            let localStartTime = formatter.date(from: localStartTimeString) else {
+                print("lol dropping event: missing data, id, description, start time \(data.value)")
                 return nil
         }
 
@@ -89,7 +88,7 @@ class Event {
         self.init(id: id,
                   placeId: id,
                   description: description,
-                  url:url,
+                  url:value["url"] as? String,
                   startTime: localStartTime,
                   endTime: localEndTime)
     }

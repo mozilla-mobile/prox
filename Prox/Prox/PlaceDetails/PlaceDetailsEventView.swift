@@ -29,7 +29,8 @@ class PlaceDetailsEventView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setText(_ text: String, underlined underlinedText: String) {
+    func setText(_ text: String, underlined underlinedText: String?) {
+        guard let underlinedText = underlinedText else { return }
         let underlineAttr = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
         let outStr = NSMutableAttributedString(string: underlinedText, attributes: underlineAttr)
         outStr.insert(NSAttributedString(string: text + " "), at: 0)

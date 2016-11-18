@@ -183,7 +183,8 @@ class PlaceDetailsCardViewController: UIViewController {
 
     @objc private func openEventURL(gestureRecognizer: UITapGestureRecognizer) {
         guard let event = place.events.first,
-            let url = URL(string: event.url) else { return }
+            let urlString = event.url,
+            let url = URL(string: urlString) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open web address")
         }
