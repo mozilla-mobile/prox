@@ -63,7 +63,7 @@ class FirebaseEventsDatabase: EventsDatabase {
         return deferred
     }
 
-    private func getEvent(withKey key: String) -> Deferred<DatabaseResult<Event>> {
+    func getEvent(withKey key: String) -> Deferred<DatabaseResult<Event>> {
         let deferred = Deferred<DatabaseResult<Event>>()
 
         let detailRef = eventDetailsRef.child(key)

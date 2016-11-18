@@ -42,8 +42,9 @@ class PlaceCarouselViewController: UIViewController {
             headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
             placeCarousel.refresh()
 
-            if oldValue.count == 0 {
-                openClosestPlace()
+            if oldValue.isEmpty,
+                !places.isEmpty {
+                openFirstPlace()
             }
         }
     }
@@ -191,6 +192,7 @@ class PlaceCarouselViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        print("viewWillAppear")
         super.viewWillAppear(animated)
 
         guard let location = locationMonitor.getCurrentLocation() else {
@@ -208,16 +210,21 @@ class PlaceCarouselViewController: UIViewController {
         updatePlaces(forLocation: location)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print("viewDidAppear")
+    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
-    func openClosestPlace() {
-        guard places.count > 0 else {
+    func openFirstPlace() {
+        guard let place = places.first else {
             return
         }
-        openDetail(forPlace: places[0])
+        openDetail(forPlace: place)
     }
 
     func openDetail(forPlace place: Place) {
@@ -287,6 +294,21 @@ class PlaceCarouselViewController: UIViewController {
         alertController.addAction(quitAction)
 
         self.present(alertController, animated: true)
+    }
+
+    func openPlaceForEvent(withKey key: String) {
+        placesProvider.placeWithEvent(forKey: key) { place in
+            DispatchQueue.main.async {
+                guard let place = place else { return }
+                guard let presentedVC = self.presentedViewController else {
+                    // open the details screen for the place
+                    return self.openDetail(forPlace: place)
+                }
+
+                // handle when the user is already looking at the app
+                (presentedVC as? PlaceDetailViewController)?.openCard(forPlace: place)
+            }
+        }
     }
 }
 

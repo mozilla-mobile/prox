@@ -11,11 +11,15 @@ public extension TimeInterval {
             if hours > 1 {
                 timeString += "s"
             }
-            timeString += ", "
+            if mins > 0 {
+                timeString += ", "
+            }
         }
-        timeString += "\(mins) minute"
-        if mins != 1 {
-            timeString += "s"
+        if mins > 0 {
+            timeString += "\(mins) minute"
+            if mins != 1 {
+                timeString += "s"
+            }
         }
         return timeString
     }

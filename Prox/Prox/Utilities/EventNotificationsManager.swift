@@ -103,6 +103,7 @@ class EventNotificationsManager {
                     content.title = NSString.localizedUserNotificationString(forKey: alertTitle, arguments: nil)
                     content.body =  NSString.localizedUserNotificationString(forKey: alertBody, arguments: nil)
                     content.categoryIdentifier = "EVENTS"
+                    content.userInfo = ["eventPlaceID": event.placeId]
                     let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
                     let request = UNNotificationRequest(identifier: "EventNotification", content: content, trigger: trigger)
                     center.add(request) { error in
@@ -141,7 +142,8 @@ class EventNotificationsManager {
             defer {
                 completion?(events, error)
             }
-            guard let foundEvents = events else {
+            guard let foundEvents = events,
+                !foundEvents.isEmpty else {
                 print("Found no events \(events)")
                 return
             }
@@ -151,10 +153,10 @@ class EventNotificationsManager {
     }
 
     fileprivate func isUnsent(event: Event) -> Bool {
-        guard let placeEvents = sentNotifications[event.placeId] else {
+        // guard let placeEvents = sentNotifications[event.placeId] else {
                 return true
-        }
-        return !placeEvents.contains(event.description)
+//        }
+//        return !placeEvents.contains(event.description)
     }
 
     fileprivate func markAsSent(event: Event) {

@@ -8,4 +8,5 @@ import Deferred
 protocol EventsDatabase {
     func getEvents(forLocation location: CLLocation, withRadius radius: Double) -> Future<[DatabaseResult<Event>]>
     func getPlacesWithEvents(forLocation location: CLLocation, withRadius radius: Double, withPlacesDatabase placesDatabase: PlacesDatabase, filterEventsUsing eventFilter: @escaping (Event, CLLocation) -> Bool) -> Future<[DatabaseResult<Place>]>
+    func getEvent(withKey key: String) -> Deferred<DatabaseResult<Event>>
 }

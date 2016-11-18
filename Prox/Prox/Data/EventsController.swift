@@ -26,6 +26,10 @@ class EventsProvider {
         return RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.eventStartPlaceInterval) * 60
     }()
 
+    func event(forKey key: String, completion: @escaping (Event?) -> ()) {
+        eventsDatabase.getEvent(withKey: key).upon { completion($0.successResult() )}
+    }
+
     func getEventsForNotifications(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
         return eventsDatabase.getEvents(forLocation: location, withRadius: radius).upon { results in
             let events = results.flatMap { $0.successResult() }.filter { self.shouldShowEventForNotifications(event: $0, forLocation: location) }
@@ -43,7 +47,8 @@ class EventsProvider {
     }
 
     private func shouldShowEventForNotifications(event: Event, forLocation location: CLLocation) -> Bool {
-        return doesEvent(event: event, startAtCorrectTimeIntervalFromNow: eventStartNotificationInterval)
+        return isEventToday(event: event) && isEventYetToHappen(event: event)
+//        return doesEvent(event: event, startAtCorrectTimeIntervalFromNow: eventStartNotificationInterval)
     }
 
     private func shouldShowEventForPlaces(event: Event, forLocation location: CLLocation) -> Bool {

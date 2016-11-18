@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
     }()
 
-    private lazy var eventsNotificationsManager = EventNotificationsManager()
+    private var eventsNotificationsManager = EventNotificationsManager()
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -141,10 +141,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-        print("Opening event UI")
+        if let eventKey = notification.userInfo?["eventPlaceID"] as? String {
+            placeCarouselViewController?.openPlaceForEvent(withKey: eventKey)
+        }
     }
-
-
 }
 
 
@@ -167,8 +167,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
         if response.notification.request.content.categoryIdentifier == "EVENTS" {
-            if response.actionIdentifier == "OPEN_ACTION" {
-                print("Opening event UI")
+            if let eventKey = response.notification.request.content.userInfo["eventPlaceID"] as? String {
+                placeCarouselViewController?.openPlaceForEvent(withKey: eventKey)
             }
         }
     }

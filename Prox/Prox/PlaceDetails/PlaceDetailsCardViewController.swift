@@ -109,6 +109,10 @@ class PlaceDetailsCardViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    func showEvent() {
+        self.cardView.showEvent(atPlace: place)
+    }
+
     // TODO: set the view values in cardView to values in place
     fileprivate func setPlace(place: Place?) {
         guard let place = place else {

@@ -13,14 +13,15 @@
 		39C4EC9E1DDCA75400B53B77 /* RemoteConfigKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */; };
 		39C4EC9F1DDCA75500B53B77 /* RemoteConfigKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */; };
 		4F00E2C2201E3A088D934AE0 /* Pods_Prox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29190FCA903C1D1AF4C77316 /* Pods_Prox.framework */; };
+		7B0ECE481DD6145500ABBD72 /* LocationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */; };
 		7B1C657B1DDCA9A90047559C /* FirebaseEventsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */; };
 		7B1C657D1DDF28F00047559C /* TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1C657C1DDF28F00047559C /* TimeInterval.swift */; };
-		7B0ECE481DD6145500ABBD72 /* LocationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */; };
 		7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */; };
 		7B29E7CA1DA3EC360099AF38 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7C91DA3EC360099AF38 /* Assets.xcassets */; };
 		7B29E7CD1DA3EC360099AF38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */; };
 		7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7D71DA3EC360099AF38 /* ProxTests.swift */; };
 		7B29E7E31DA3EC360099AF38 /* ProxUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7E21DA3EC360099AF38 /* ProxUITests.swift */; };
+		7B2EF5871DDF4D7200695515 /* TimeIntervalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2EF5861DDF4D7200695515 /* TimeIntervalTests.swift */; };
 		7B48EBDA1DD1F679005C36CB /* GeofenceRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B48EBD91DD1F679005C36CB /* GeofenceRegion.swift */; };
 		7B5095621DB531C0007C54F0 /* PlaceCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */; };
 		7B5095651DB531CA007C54F0 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095641DB531CA007C54F0 /* Place.swift */; };
@@ -111,9 +112,9 @@
 		55740F6C4426324FDA569848 /* Pods-Prox.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.enterprise.xcconfig"; sourceTree = "<group>"; };
 		64E189E4D93A85A43CF269E2 /* Pods-ProxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		75091F0A7DE7F3D6E008D07B /* Pods-Prox.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.debug.xcconfig"; sourceTree = "<group>"; };
+		7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationMonitor.swift; sourceTree = "<group>"; };
 		7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FirebaseEventsDatabase.swift; path = Data/FirebaseEventsDatabase.swift; sourceTree = "<group>"; };
 		7B1C657C1DDF28F00047559C /* TimeInterval.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TimeInterval.swift; path = Extensions/TimeInterval.swift; sourceTree = "<group>"; };
-		7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationMonitor.swift; sourceTree = "<group>"; };
 		7B29E7BF1DA3EC360099AF38 /* Prox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7B29E7C91DA3EC360099AF38 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -125,6 +126,7 @@
 		7B29E7DE1DA3EC360099AF38 /* ProxUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProxUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B29E7E21DA3EC360099AF38 /* ProxUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxUITests.swift; sourceTree = "<group>"; };
 		7B29E7E41DA3EC360099AF38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7B2EF5861DDF4D7200695515 /* TimeIntervalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeIntervalTests.swift; sourceTree = "<group>"; };
 		7B48EBD91DD1F679005C36CB /* GeofenceRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeofenceRegion.swift; sourceTree = "<group>"; };
 		7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarousel.swift; path = PlaceCarousel/PlaceCarousel.swift; sourceTree = "<group>"; };
 		7B5095641DB531CA007C54F0 /* Place.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
@@ -289,6 +291,7 @@
 				7B86518F1DBF8544002A666A /* PlaceCarouselViewControllerTests.swift */,
 				7B8651931DBFAFA8002A666A /* PlaceUtilitiesTests.swift */,
 				E6101A951DDA481800D05B74 /* CategoriesUtilTests.swift */,
+				7B2EF5861DDF4D7200695515 /* TimeIntervalTests.swift */,
 			);
 			path = ProxTests;
 			sourceTree = "<group>";
@@ -817,6 +820,7 @@
 				7B5095811DB65FD4007C54F0 /* TravelTimesTests.swift in Sources */,
 				7B8651941DBFAFA8002A666A /* PlaceUtilitiesTests.swift in Sources */,
 				7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */,
+				7B2EF5871DDF4D7200695515 /* TimeIntervalTests.swift in Sources */,
 				7B50957A1DB65342007C54F0 /* TravelTimesProvider.swift in Sources */,
 				E68BD90D1DCA9E8E007B51A3 /* DayOfWeekTests.swift in Sources */,
 				E68BD90F1DCAAD6B007B51A3 /* OpenHoursTests.swift in Sources */,

@@ -271,6 +271,12 @@ class PlaceDetailsCardView: UIView {
         }
     }
 
+    func showEvent(atPlace place: Place) {
+        updateEventUI(forPlace: place)
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
+    }
+
     func updateTravelTimesUI(travelTimes: TravelTimes?) {
         // TODO: Consider travelTimeView.setState – there is a lot of duplication here.
         guard let travelTimes = travelTimes else {

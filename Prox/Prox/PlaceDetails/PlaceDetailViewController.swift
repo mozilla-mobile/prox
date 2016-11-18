@@ -242,6 +242,83 @@ class PlaceDetailViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    func openCard(forPlace place: Place) {
+        if currentCardViewController.place == place {
+            currentCardViewController.place = place
+            // if we're currently looking at that card then just animate in the event
+            currentCardViewController.showEvent()
+        } else {
+            // I'm totally not sure what we should be doing here.
+            pageForwardToCard(forPlace: place)
+        }
+    }
+
+    fileprivate func pageForwardToCard(forPlace place: Place) {
+        guard let newCurrentViewController = insertNewCardViewController(forPlace: place) else { return }
+
+        // check to see if there is a next card to the next card
+        // add a new view controller to next card view controller
+        // if so, remove currentCardViewController centerX constraint
+        // add center x constraint to nextCardViewController
+        
+        let nextCardImageCarousel = addImageCarousel(forNextCard: newCurrentViewController)
+
+        previousCardViewController?.cardView.isHidden = true
+
+        let newNextCardViewController = insertNewCardViewController(forPlace: dataSource?.nextPlace(forPlace: place))
+
+        let newPreviousCardViewController = insertNewCardViewController(forPlace: dataSource?.previousPlace(forPlace: place))
+
+        let springDamping:CGFloat = newNextCardViewController == nil ? 0.8 : 1.0
+        setupConstraints(forNewPreviousCard: newPreviousCardViewController, newCurrentCard: newCurrentViewController, newNextCard: newNextCardViewController)
+
+        view.layoutIfNeeded()
+
+        // setup constraints for new central card
+        if let currentCardViewCenterXConstraint = currentCardViewCenterXConstraint {
+            NSLayoutConstraint.deactivate([currentCardViewCenterXConstraint])
+        }
+
+        self.currentCardViewCenterXConstraint = newCurrentViewController.cardView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+        NSLayoutConstraint.activate([self.currentCardViewCenterXConstraint!])
+
+        // animate the constraint changes
+        UIView.animate(withDuration: 0.1, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
+            self.imageCarousel.alpha = 0
+            nextCardImageCarousel.alpha = 1
+            self.setBackgroundImage(toPhotoAtURL: newCurrentViewController.place.photoURLs.first)
+            self.view.layoutIfNeeded()
+        }, completion: { finished in
+            if finished {
+                // ensure that the correct current, previous and next view controller references are set
+                self.imageCarousel.removeFromSuperview()
+                self.imageCarousel = nextCardImageCarousel
+                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
+                if let previousCardViewController = self.previousCardViewController {
+                    previousCardViewController.cardView.removeFromSuperview()
+                    previousCardViewController.cardView.isHidden = false
+                    previousCardViewController.removeFromParentViewController()
+                    self.unusedPlaceCardViewControllers.append(previousCardViewController)
+                }
+                if let nextCardViewController = self.nextCardViewController {
+                    nextCardViewController.cardView.removeFromSuperview()
+                    nextCardViewController.cardView.isHidden = false
+                    nextCardViewController.removeFromParentViewController()
+                    self.unusedPlaceCardViewControllers.append(nextCardViewController)
+                }
+                self.currentCardViewController.cardView.removeFromSuperview()
+                self.currentCardViewController.cardView.isHidden = false
+                self.currentCardViewController.removeFromParentViewController()
+                self.unusedPlaceCardViewControllers.append(self.currentCardViewController)
+
+                self.previousCardViewController = newPreviousCardViewController
+                self.currentCardViewController = newCurrentViewController
+                self.nextCardViewController = newNextCardViewController
+                self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
+            }
+        })
+    }
+
     fileprivate func dequeuePlaceCardViewController(forPlace place: Place) -> PlaceDetailsCardViewController {
         if let placeCardVC = unusedPlaceCardViewControllers.last {
             unusedPlaceCardViewControllers.removeLast()
@@ -256,8 +333,7 @@ class PlaceDetailViewController: UIViewController {
         return newController
     }
 
-    func didPan(gestureRecognizer: UIPanGestureRecognizer) {
-
+    @objc fileprivate func didPan(gestureRecognizer: UIPanGestureRecognizer) {
         defer {
             if gestureRecognizer.state == .ended {
                 panDirection = .none

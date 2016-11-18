@@ -141,7 +141,10 @@ class LocationMonitor: NSObject {
 
 extension LocationMonitor: LocationProvider {
     func getCurrentLocation() -> CLLocation? {
-        return currentLocation ?? locationManager.location
+        if currentLocation == nil {
+            currentLocation = self.locationManager.location
+        }
+        return currentLocation
     }
 }
 

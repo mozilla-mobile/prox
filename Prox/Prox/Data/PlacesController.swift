@@ -47,6 +47,29 @@ class PlacesProvider {
         database.getPlace(forKey: key).upon { callback($0.successResult() )}
     }
 
+    func placeWithEvent(forKey key: String, callback: @escaping (Place?) -> ()) {
+        let eventProvider = EventsProvider()
+        var placeWithEvent: Place?
+        var eventForPlace: Event?
+        place(forKey: key) { place in
+            guard let foundPlace = place,
+                let event = eventForPlace else {
+                return placeWithEvent = place
+            }
+            foundPlace.events.append(event)
+            callback(foundPlace)
+        }
+
+        eventProvider.event(forKey: key) { event in
+            guard let foundEvent = event,
+                let place = placeWithEvent else {
+                    return eventForPlace = event
+            }
+            place.events.append(foundEvent)
+            callback(place)
+        }
+    }
+
     func updatePlaces(forLocation location: CLLocation) {
         assert(Thread.isMainThread)
         // We would like to prevent running more than one update at the same time.
@@ -123,7 +146,6 @@ class PlacesProvider {
 
     private func fetchPlacesWithEvents(location: CLLocation) {
         let eventProvider = EventsProvider()
-        eventsPlaces.removeValue(forKey: location)
         eventProvider.getEventsWithPlaces(forLocation: location, usingPlacesDatabase: database) { places in
             self.eventsPlaces[location] = places
             self.displayPlaces(forLocation: location)
