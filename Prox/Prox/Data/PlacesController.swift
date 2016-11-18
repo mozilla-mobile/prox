@@ -126,22 +126,36 @@ class PlacesProvider {
         }
     }
 
+    /**
+    * Display places merges found places with events with places we have found nearby, giving us a combined list of
+    * all the places that we need to show to the user.
+    **/
     private func displayPlaces(forLocation location: CLLocation) {
-        guard let places = self.nearbyPlaces[location],
-            let eventPlaces = self.eventsPlaces[location] else { return }
-        let preparedPlaces = self.preparePlaces(places: union(ofNearbyPlaces: places, andEventPlaces: eventPlaces), forLocation: location)
+        let placesNearby = self.nearbyPlaces[location]
+        let placesWithEvents = self.eventsPlaces[location]
+        let placesToDisplay = union(ofNearbyPlaces: placesNearby, andEventPlaces: placesWithEvents)
+
+        let preparedPlaces = self.preparePlaces(places: placesToDisplay, forLocation: location)
         DispatchQueue.main.async {
             self.delegate?.placesProvider(self, didReceivePlaces: preparedPlaces)
         }
+
+        if placesWithEvents != nil && !isUpdating {
+            self.eventsPlaces.removeValue(forKey: location)
+            self.nearbyPlaces.removeValue(forKey: location)
+        }
     }
 
-    private func union(ofNearbyPlaces nearbyPlaces: [Place], andEventPlaces eventPlaces: [Place]) -> [Place] {
-        var unionOfPlaces = nearbyPlaces
-        for place in eventPlaces {
-            if let placeIndex = unionOfPlaces.index(of: place) {
-                unionOfPlaces[placeIndex] = place
+    // replaces any Place in nearbyPlaces with the equivalent Place from eventPlaces if it exists
+    // otherwise just adds the eventPlace to the result
+    // leaving a combination of places with events and places nearby
+    private func union(ofNearbyPlaces nearbyPlaces: [Place]?, andEventPlaces eventPlaces: [Place]?) -> [Place] {
+        var unionOfPlaces = nearbyPlaces ?? []
+        for eventPlace in (eventPlaces ?? []){
+            if let placeIndex = unionOfPlaces.index(of: eventPlace) {
+                unionOfPlaces[placeIndex] = eventPlace
             } else {
-                unionOfPlaces.append(place)
+                unionOfPlaces.append(eventPlace)
             }
         }
         return unionOfPlaces

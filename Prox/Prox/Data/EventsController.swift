@@ -15,18 +15,15 @@ class EventsProvider {
     lazy var eventsDatabase: EventsDatabase = FirebaseEventsDatabase()
 
     private lazy var radius: Double = {
-        let key = RemoteConfigKeys.eventSearchRadiusInKm
-        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
+        return RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.eventSearchRadiusInKm)
     }()
 
     private lazy var eventStartNotificationInterval: Double = {
-        let key = RemoteConfigKeys.eventStartNotificationInterval
-        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue * 60
+        return RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.eventStartNotificationInterval) * 60
     }()
 
     private lazy var eventStartPlaceInterval: Double = {
-        let key = RemoteConfigKeys.eventStartPlaceInterval
-        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue * 60
+        return RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.eventStartPlaceInterval) * 60
     }()
 
     func getEventsForNotifications(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
@@ -39,7 +36,7 @@ class EventsProvider {
     }
 
     func getEventsWithPlaces(forLocation location: CLLocation, usingPlacesDatabase placesDatabase: PlacesDatabase, completion: @escaping ([Place]) -> ()) {
-        return eventsDatabase.getPlacesWithEvents(forLocation: location, withRadius: radius, withPlacesDatabase: placesDatabase, filterEventsUsing: self.shouldShowEventForPlaces).upon { results in
+        eventsDatabase.getPlacesWithEvents(forLocation: location, withRadius: radius, withPlacesDatabase: placesDatabase, filterEventsUsing: self.shouldShowEventForPlaces).upon { results in
             let places = results.flatMap { $0.successResult() }
             completion(places)
         }
@@ -50,12 +47,20 @@ class EventsProvider {
     }
 
     private func shouldShowEventForPlaces(event: Event, forLocation location: CLLocation) -> Bool {
-        return doesEvent(event: event, startAtCorrectTimeIntervalFromNow: eventStartPlaceInterval)
+        return isEventToday(event: event) && isEventYetToHappen(event: event)
     }
 
     private func doesEvent(event: Event, startAtCorrectTimeIntervalFromNow timeInterval: TimeInterval) -> Bool {
         // event must start in 1 hour
         let maxStartTime = Date().addingTimeInterval(timeInterval)
         return event.startTime <= maxStartTime
+    }
+
+    private func isEventToday(event: Event) -> Bool {
+        return Calendar.current.isDateInToday(event.startTime)
+    }
+
+    private func isEventYetToHappen(event: Event) -> Bool {
+        return Date() < event.startTime
     }
 }

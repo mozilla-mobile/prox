@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
+import FirebaseRemoteConfig
 
 /**
  * This file holds the keys to values held in Firebase's RemoteConfig file.
@@ -59,4 +60,18 @@ class RemoteConfigKeys {
 
     // the root string that all keys for place details event strings will start with
     public static let placeDetailsEventStringRoot = "place_details_event_string_"
+}
+
+extension RemoteConfigKeys {
+    open static func getDouble(forKey key: String) -> Double {
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
+    }
+
+    open static func getString(forKey key: String) -> String {
+        return FIRRemoteConfig.remoteConfig()[key].stringValue!
+    }
+
+    open static func getInt(forKewy key: String) -> Int {
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.intValue
+    }
 }

@@ -98,16 +98,16 @@ class FirebaseEventsDatabase: EventsDatabase {
     func getPlacesWithEvents(forLocation location: CLLocation, withRadius radius: Double, withPlacesDatabase placesDatabase: PlacesDatabase, filterEventsUsing eventFilter: @escaping (Event, CLLocation) -> Bool) -> Future<[DatabaseResult<Place>]> {
         let dispatchQueue = DispatchQueue.global(qos: .userInitiated)
         // get the events within our event radius
-        let places = getEvents(forLocation: location, withRadius: radius).andThen(upon: dispatchQueue) { events -> Future<[DatabaseResult<Place>]> in
-            let eventsMap = events.flatMap { $0.successResult() } .filter { return eventFilter($0, location) }
-            let eventPlaceMap = self.mapEventsToPlaceIds(events: eventsMap)
+        return getEvents(forLocation: location, withRadius: radius).andThen(upon: dispatchQueue) { events -> Future<[DatabaseResult<Place>]> in
+            let filteredEvents = events.flatMap { $0.successResult() } .filter { return eventFilter($0, location) }
+            let eventToPlaceMap = self.mapEventsToPlaceIds(events: filteredEvents)
             var fetchedPlaces = [String: Place]()
             // loop through each event and fetch the place
-            let placesMap = eventPlaceMap.keys.map { placeKey -> Deferred<DatabaseResult<Place>> in
+            return eventToPlaceMap.keys.map { placeKey -> Deferred<DatabaseResult<Place>> in
                 let deferred = Deferred<DatabaseResult<Place>>()
                 placesDatabase.getPlace(forKey: placeKey).upon { result in
                     if let place = result.successResult(),
-                        let placeEvents = eventPlaceMap[placeKey] {
+                        let placeEvents = eventToPlaceMap[placeKey] {
                         place.events = placeEvents
                         deferred.fill(with: DatabaseResult.succeed(value: place))
                         fetchedPlaces[place.id] = place
@@ -116,10 +116,7 @@ class FirebaseEventsDatabase: EventsDatabase {
                     }
                 }
                 return deferred
-            }
-            return placesMap.allFilled()
+            }.allFilled()
         }
-
-        return places
     }
 }
