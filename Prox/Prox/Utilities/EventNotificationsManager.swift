@@ -151,10 +151,10 @@ class EventNotificationsManager {
     }
 
     fileprivate func isUnsent(event: Event) -> Bool {
-        // guard let placeEvents = sentNotifications[event.placeId] else {
-                return true
-//        }
-//        return !placeEvents.contains(event.description)
+        guard let placeEvents = sentNotifications[event.placeId] else {
+            return true
+        }
+        return !placeEvents.contains(event.description)
     }
 
     fileprivate func markAsSent(event: Event) {
