@@ -59,7 +59,8 @@ struct PlaceUtilities {
     }
 
     static func updateReviewUI(fromProvider provider: ReviewProvider?, onView view: ReviewContainerView, isTextShortened: Bool = false) {
-        guard let provider = provider else {
+        guard let provider = provider,
+                !(provider.totalReviewCount == nil && provider.rating == nil) else { // intentional: if both null, short-circuit
             setSubviewAlpha(0.4, forParent: view)
             view.score = 0
             view.numberOfReviewersLabel.text = "No data" + (isTextShortened ? "" : " available")
@@ -67,8 +68,18 @@ struct PlaceUtilities {
         }
 
         setSubviewAlpha(1.0, forParent: view)
-        view.score = provider.rating ?? 0 // TODO: error state (& next line)
-        view.numberOfReviewersLabel.text = "\(provider.totalReviewCount ?? 0) Reviews"
+
+        if let rating = provider.rating {
+            view.score = rating
+        } else {
+            view.reviewScore.alpha = 0.15 // no UX spec so I eyeballed. Unlikely anyway.
+            view.score = 0
+        }
+
+        let reviewPrefix: String
+        if let reviewCount = provider.totalReviewCount { reviewPrefix = String(reviewCount) }
+        else { reviewPrefix = "No" }
+        view.numberOfReviewersLabel.text = reviewPrefix + " Reviews"
     }
 
     private static func setSubviewAlpha(_ alpha: CGFloat, forParent parentView: ReviewContainerView) {
