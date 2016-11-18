@@ -197,7 +197,7 @@ class Place: Hashable {
 
     private func replaceTimeToEvent(string: String, withStartTime startTime: Date) -> String {
         let now = Date()
-        let timeToEvent = now.timeIntervalSince(startTime)
+        let timeToEvent = startTime.timeIntervalSince(now)
         let timeString = timeToEvent.asHoursAndMinutesString()
         return string.replacingOccurrences(of: "{time_to_event}", with: "\(timeString)")
     }
