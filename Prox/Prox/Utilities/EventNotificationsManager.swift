@@ -8,6 +8,8 @@ import UserNotifications
 
 private let sentNotificationDictKey = "sent_notifications_dict"
 
+let notificationEventIDKey = "eventPlaceID"
+
 class EventNotificationsManager {
 
     fileprivate var sentNotifications: [String: [String]] {
@@ -103,7 +105,7 @@ class EventNotificationsManager {
                     content.title = NSString.localizedUserNotificationString(forKey: alertTitle, arguments: nil)
                     content.body =  NSString.localizedUserNotificationString(forKey: alertBody, arguments: nil)
                     content.categoryIdentifier = "EVENTS"
-                    content.userInfo = ["eventPlaceID": event.placeId]
+                    content.userInfo = [notificationEventIDKey: event.placeId]
                     let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
                     let request = UNNotificationRequest(identifier: "EventNotification", content: content, trigger: trigger)
                     center.add(request) { error in
