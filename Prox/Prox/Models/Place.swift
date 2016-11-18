@@ -176,11 +176,14 @@ class Place: Hashable {
     }
 
     func getNotificationString(forEvent event: Event) -> String {
-        return replacePlaceName(string: replaceTimeToEvent(string: replaceEventName(string: event.notificationString, withName: event.description), withStartTime: event.startTime))
+        var notification = replaceEventName(string: event.notificationString, withName: event.description)
+        notification = replaceTimeToEvent(string: notification, withStartTime: event.startTime)
+        return replacePlaceName(string: notification)
     }
 
     func getPlaceDetailsEventString(forEvent event: Event) -> String {
-        return replaceStartTime(string: replaceEventName(string: event.placeDisplayString, withName: event.description), withStartTime: event.startTime)
+        var notification = replaceEventName(string: event.notificationString, withName: event.description)
+        return replaceStartTime(string: notification, withStartTime: event.startTime)
     }
 
     private func replaceEventName( string: String, withName name: String) -> String {
@@ -194,12 +197,7 @@ class Place: Hashable {
     private func replaceTimeToEvent(string: String, withStartTime startTime: Date) -> String {
         let now = Date()
         let timeToEvent = now.timeIntervalSince(startTime)
-        let (hours, mins) = secondsToHoursMinutes(seconds: Int(timeToEvent))
-        var timeString: String = ""
-        if hours > 0 {
-            timeString += "\(hours) hours, "
-        }
-        timeString += "\(mins) minutes"
+        let timeString = timeToEvent.asHoursAndMinutesString()
         return string.replacingOccurrences(of: "{time_to_event}", with: "\(timeString)")
     }
 
@@ -208,11 +206,6 @@ class Place: Hashable {
         formatter.dateFormat = "h:mm a"
         return string.replacingOccurrences(of: "{start_time}", with: formatter.string(from: startTime))
     }
-
-    private func secondsToHoursMinutes (seconds : Int) -> (Int, Int) {
-        return (seconds / 3600, (seconds % 3600) / 60)
-    }
-
 }
 
 enum DayOfWeek: String {
