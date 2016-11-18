@@ -47,19 +47,18 @@ class EventsProvider {
     }
 
     private func shouldShowEventForNotifications(event: Event, forLocation location: CLLocation) -> Bool {
-        return isEventToday(event: event) && isEventYetToHappen(event: event)
-//        return doesEvent(event: event, startAtCorrectTimeIntervalFromNow: eventStartNotificationInterval)
+        return isEventToday(event: event) && isEventYetToHappen(event: event) && doesEvent(event: event, startAtCorrectTimeIntervalFromNow: eventStartNotificationInterval)
     }
 
     private func shouldShowEventForPlaces(event: Event, forLocation location: CLLocation) -> Bool {
-        return isEventToday(event: event) && isEventYetToHappen(event: event)
+        return isEventToday(event: event) && isEventYetToHappen(event: event) && doesEvent(event: event, startAtCorrectTimeIntervalFromNow: eventStartPlaceInterval)
     }
 
     private func doesEvent(event: Event, startAtCorrectTimeIntervalFromNow timeInterval: TimeInterval) -> Bool {
         // event must start in 1 hour
         let now = Date()
         let maxStartTime = now.addingTimeInterval(timeInterval)
-        return event.startTime > now && event.startTime <= maxStartTime
+        return event.startTime <= maxStartTime
     }
 
     private func isEventToday(event: Event) -> Bool {
