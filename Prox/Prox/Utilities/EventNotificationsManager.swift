@@ -135,21 +135,17 @@ class EventNotificationsManager {
 
     func sendEventNotifications(forLocation location: CLLocation, completion: (([Event]?, Error?) -> Void)? = nil) {
         guard shouldFetchEvents else {
-            print("Should not fetch events")
             completion?(nil, nil)
             return
         }
-        print("Should fetch events & send notifications")
         eventsProvider.getEventsForNotifications(forLocation: location, completion: { events, error in
             defer {
                 completion?(events, error)
             }
             guard let foundEvents = events,
                 !foundEvents.isEmpty else {
-                print("Found no events \(events)")
                 return
             }
-            print("Found events \(foundEvents)")
             self.sendNotifications(forEvents: foundEvents)
         })
     }
