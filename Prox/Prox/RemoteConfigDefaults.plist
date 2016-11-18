@@ -19,7 +19,7 @@
 	<key>number_of_event_notification_strings</key>
 	<integer>2</integer>
 	<key>event_start_place_interval_mins</key>
-	<integer>300</integer>
+	<integer>60</integer>
 	<key>event_start_notification_interval_mins</key>
 	<integer>60</integer>
 	<key>event_search_radius_in_km</key>
