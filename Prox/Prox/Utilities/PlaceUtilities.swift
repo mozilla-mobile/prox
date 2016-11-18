@@ -23,6 +23,9 @@ struct PlaceUtilities {
 
     static func filterPlacesForCarousel(_ places: [Place]) -> [Place] {
         return places.filter { place in
+            // always show places if they have events
+            guard place.events.isEmpty else { return true }
+            
             let shouldShowByCategory = CategoriesUtil.shouldShowPlace(byCategories: place.categories.ids)
             guard shouldShowByCategory else {
                 print("lol filtering out place, \(place.id), by category")
