@@ -233,6 +233,11 @@ class PlaceDetailViewController: UIViewController {
         backgroundGradientLayer.frame = backgroundImage.bounds
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.currentCardViewController.beginAutoMovingOfCarousel()
+    }
+
     func addGestureRecognizers(toViewController viewController: PlaceDetailsCardViewController) {
         viewController.cardView.addGestureRecognizer(panGestureRecognizer)
     }
@@ -390,6 +395,9 @@ class PlaceDetailViewController: UIViewController {
         guard let nextCardViewController = nextCardViewController  else {
             return
         }
+
+        self.currentCardViewController.stopAutoMovingOfCarousel()
+        
         // check to see if there is a next card to the next card
         // add a new view controller to next card view controller
         // if so, remove currentCardViewController centerX constraint
@@ -435,6 +443,8 @@ class PlaceDetailViewController: UIViewController {
                 self.currentCardViewController = nextCardViewController
                 self.nextCardViewController = newNextCardViewController
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
+
+                self.currentCardViewController.beginAutoMovingOfCarousel()
             }
         })
     }
@@ -451,6 +461,8 @@ class PlaceDetailViewController: UIViewController {
         guard let previousCardViewController = previousCardViewController else {
             return
         }
+
+        self.currentCardViewController.stopAutoMovingOfCarousel()
 
         // add the image carousel for the previous place card underneath the existing carousel
         // we need to ensure these constraints are applied and rendered before we animate the rest, otherwise we end
@@ -494,6 +506,8 @@ class PlaceDetailViewController: UIViewController {
                 self.currentCardViewController = previousCardViewController
                 self.previousCardViewController = newPreviousCardViewController
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
+
+                self.currentCardViewController.beginAutoMovingOfCarousel()
             }
         })
     }

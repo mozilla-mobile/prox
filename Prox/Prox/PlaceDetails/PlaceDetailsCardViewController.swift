@@ -40,7 +40,7 @@ class PlaceDetailsCardViewController: UIViewController {
     }()
 
     fileprivate lazy var imageCarouselCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.imageCarouselLayout)
+        let collectionView = TouchableCollectionView(frame: .zero, collectionViewLayout: self.imageCarouselLayout)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(ImageCarouselCollectionViewCell.self, forCellWithReuseIdentifier: PlaceDetailsCardCellReuseIdentifier)
@@ -48,9 +48,10 @@ class PlaceDetailsCardViewController: UIViewController {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
         collectionView.isPagingEnabled = true
+        collectionView.delaysContentTouches = false
+        collectionView.touchDetected = { self.stopAutoMovingOfCarousel() }
         return collectionView
     }()
-
 
     lazy var pageControl: FXPageControl = {
         let pageControl = FXPageControl()
@@ -92,6 +93,8 @@ class PlaceDetailsCardViewController: UIViewController {
 
         return imageCarousel
     }()
+
+    fileprivate var carouselTimer: Timer?
 
     init(place: Place) {
         self.place = place
@@ -190,11 +193,31 @@ class PlaceDetailsCardViewController: UIViewController {
         }
     }
 
+    @objc private func autoMoveToNextCarouselImage() {
+        let pageSize = imageCarouselCollectionView.bounds.size
+        let contentWidth = imageCarouselCollectionView.contentSize.width
+        let oldOffset = imageCarouselCollectionView.contentOffset
+        let newX = (oldOffset.x + pageSize.width).truncatingRemainder(dividingBy: contentWidth)
+        let newOffset = CGPoint(x: newX, y: oldOffset.y)
+        self.imageCarouselCollectionView.setContentOffset(newOffset, animated: true)
+    }
+
     func pageControlDidPage(sender: AnyObject) {
         let pageSize = imageCarousel.bounds.size
         let xOffset = pageSize.width * CGFloat(pageControl.currentPage)
         imageCarouselCollectionView.setContentOffset(CGPoint(x: xOffset, y: 0), animated: true)
         notifyDelegateOfChangeOfImageToURL(atIndex: pageControl.currentPage)
+    }
+
+    func beginAutoMovingOfCarousel() {
+        carouselTimer = Timer.scheduledTimer(timeInterval: 6, target: self,
+                                             selector: #selector(autoMoveToNextCarouselImage), userInfo: nil,
+                                             repeats: true)
+    }
+
+    func stopAutoMovingOfCarousel() {
+        carouselTimer?.invalidate()
+        carouselTimer = nil
     }
 
     fileprivate func notifyDelegateOfChangeOfImageToURL(atIndex index: Int) {
@@ -238,11 +261,28 @@ extension PlaceDetailsCardViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension PlaceDetailsCardViewController: UIScrollViewDelegate {
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        didChangePage(scrollView: scrollView)
+    }
+    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        didChangePage(scrollView: scrollView)
+    }
+
+    fileprivate func didChangePage(scrollView: UIScrollView) {
         let pageSize = imageCarouselCollectionView.bounds.size
         let selectedPageIndex = Int(floor((scrollView.contentOffset.x-pageSize.width/2)/pageSize.width))+1
         pageControl.currentPage = selectedPageIndex
 
         notifyDelegateOfChangeOfImageToURL(atIndex: selectedPageIndex)
+    }
+}
+
+fileprivate class TouchableCollectionView: UICollectionView {
+    var touchDetected: (() -> Void)?
+
+    fileprivate override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        touchDetected?()
     }
 }
