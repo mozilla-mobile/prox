@@ -10,6 +10,15 @@ enum PanDirection {
     case vertical, horizontal, none
 }
 
+struct PlaceDetailAnimatableViews {
+    var nextCard: PlaceDetailsCardView?
+    var previousCard: PlaceDetailsCardView?
+    var mapButton: MapButton
+    var currentCard: PlaceDetailsCardView
+    var mapButtonBadge: BadgeSwift
+    var backgroundImage: UIImageView
+}
+
 /**
  * This class has essentially implemented it's own version of a paging collection view
 
@@ -92,6 +101,10 @@ class PlaceDetailViewController: UIViewController {
     fileprivate var backgroundImageHeightConstraint: NSLayoutConstraint?
 
     var imageCarousel: UIView!
+
+    var currentPlace: Place {
+        return currentCardViewController.place
+    }
 
     fileprivate let cardViewTopAnchorConstant: CGFloat = 204
     fileprivate let cardViewSpacingConstant: CGFloat = 6
@@ -652,5 +665,18 @@ extension PlaceDetailViewController: UIGestureRecognizerDelegate {
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return gestureRecognizer == panGestureRecognizer && otherGestureRecognizer == scrollView.panGestureRecognizer
+    }
+}
+
+extension PlaceDetailViewController: Animatable {
+    func animatableProperties() -> PlaceDetailAnimatableViews {
+        return PlaceDetailAnimatableViews(
+            nextCard: self.nextCardViewController?.cardView,
+            previousCard: self.previousCardViewController?.cardView,
+            mapButton: self.mapButton,
+            currentCard: self.currentCardViewController.cardView,
+            mapButtonBadge: self.mapButtonBadge,
+            backgroundImage: self.backgroundImage
+        )
     }
 }

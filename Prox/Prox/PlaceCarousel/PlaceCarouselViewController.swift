@@ -95,6 +95,14 @@ class PlaceCarouselViewController: UIViewController {
         }
     }
 
+    // fake the location to Hilton Waikaloa Village, Kona, Hawaii
+    fileprivate var fakeLocation: CLLocation = CLLocation(latitude: 19.924043, longitude: -155.887652)
+
+    fileprivate var monitoredRegions: [String: GeofenceRegion] = [String: GeofenceRegion]()
+    fileprivate var timeAtLocationTimer: Timer?
+
+    weak var selectedCell: PlaceCarouselCollectionViewCell?
+
     private func setSunriseSetTimes() {
         let today = Date()
 
@@ -198,7 +206,9 @@ class PlaceCarouselViewController: UIViewController {
         guard let place = places.first else {
             return
         }
-        openDetail(forPlace: place)
+        selectedCell = placeCarousel.carousel.cellForItem(at: IndexPath(row: 0, section: 0))
+            as? PlaceCarouselCollectionViewCell
+        openDetail(forPlace: places[0])
     }
 
     func openDetail(forPlace place: Place) {
@@ -210,6 +220,7 @@ class PlaceCarouselViewController: UIViewController {
         let placeDetailViewController = PlaceDetailViewController(place: place)
         placeDetailViewController.dataSource = self
         placeDetailViewController.locationProvider = self.locationMonitor
+        placeDetailViewController.transitioningDelegate = self
 
         self.present(placeDetailViewController, animated: true, completion: nil)
     }
@@ -339,6 +350,8 @@ extension PlaceCarouselViewController: PlaceDataSource {
 
 extension PlaceCarouselViewController: PlaceCarouselDelegate {
     func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int) {
+        selectedCell = placeCarousel.carousel.cellForItem(at: IndexPath(row: index, section: 0))
+            as? PlaceCarouselCollectionViewCell
         openDetail(forPlace: places[index])
     }
 }
@@ -375,9 +388,19 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
     }
 
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
+        let oldPlaces = self.places
         self.places = places
 
         (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
+        placeCarousel.refresh()
+
+        if oldPlaces.count == 0 {
+            // Wrap the openClosedPlace in an async block to make sure its queued after the
+            // carousel's refresh so the cells load before we invoke the transition
+            DispatchQueue.main.async {
+                self.openFirstPlace()
+            }
+        }
     }
 
     func placesProvider(_ controller: PlacesProvider, didError error: Error) {
@@ -385,6 +408,29 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
             // placeholder for the error state.
             headerView.numberOfPlacesLabel.text = "Error"
         }
+    }
+}
+
+extension PlaceCarouselViewController: UIViewControllerTransitioningDelegate {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController,
+                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        if let _ = presented as? PlaceDetailViewController {
+            let transition = MapPlacesTransition()
+            transition.presenting = true
+            transition.selectedCell = self.selectedCell
+            return transition
+        }
+        return nil
+    }
+
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        if let _ = dismissed as? PlaceDetailViewController {
+            let transition = MapPlacesTransition()
+            transition.presenting = false
+            transition.selectedCell = self.selectedCell
+            return transition
+        }
+        return nil
     }
 }
 

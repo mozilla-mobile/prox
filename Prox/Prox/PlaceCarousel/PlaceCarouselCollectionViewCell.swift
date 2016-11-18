@@ -5,6 +5,11 @@
 import UIKit
 import QuartzCore
 
+struct PlaceCarouselCVCAnimatableProperties {
+    var placeImage: UIImageView
+    var labelContainer: UIView
+}
+
 class PlaceCarouselCollectionViewCell: UICollectionViewCell {
 
     lazy var roundedBackgroundView: UIView = {
@@ -95,6 +100,8 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         return label
     }()
 
+    fileprivate lazy var labelContainer = UIView()
+
     private var locationLabelLeadingConstraint: NSLayoutConstraint?
     private var locationImageHeightConstraint: NSLayoutConstraint?
     private var locationImageWidthConstraint: NSLayoutConstraint?
@@ -145,8 +152,14 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
                                         placeImage.trailingAnchor.constraint(equalTo: roundedBackgroundView.trailingAnchor),
                                         placeImage.heightAnchor.constraint(equalToConstant: 201)])
 
+        contentView.addSubview(labelContainer)
+        constraints.append(contentsOf: [labelContainer.topAnchor.constraint(equalTo: placeImage.topAnchor),
+                                        labelContainer.bottomAnchor.constraint(equalTo: placeImage.bottomAnchor),
+                                        labelContainer.trailingAnchor.constraint(equalTo: placeImage.trailingAnchor),
+                                        labelContainer.leadingAnchor.constraint(equalTo: placeImage.leadingAnchor)])
+        
 
-        placeImage.addSubview(category)
+        labelContainer.addSubview(category)
         constraints.append(contentsOf: [category.leadingAnchor.constraint(equalTo: name.leadingAnchor),
                                         category.trailingAnchor.constraint(equalTo: name.trailingAnchor),
                                         category.bottomAnchor.constraint(equalTo: name.topAnchor, constant: -9)])
@@ -155,23 +168,23 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         lineView.backgroundColor = .clear
         lineView.color = Colors.carouselViewPlaceCardImageText
         lineView.startX = 0.0
-        placeImage.addSubview(lineView)
+        labelContainer.addSubview(lineView)
         constraints.append(contentsOf: [lineView.leadingAnchor.constraint(equalTo: category.leadingAnchor, constant: 9),
                                         lineView.topAnchor.constraint(equalTo: category.bottomAnchor, constant: 2),
                                         lineView.widthAnchor.constraint(equalToConstant: 12.0),
                                         lineView.heightAnchor.constraint(equalToConstant: 2.0)])
 
-        placeImage.addSubview(name)
-        constraints.append(contentsOf: [name.leadingAnchor.constraint(equalTo: placeImage.leadingAnchor, constant: 12.0),
+        labelContainer.addSubview(name)
+        constraints.append(contentsOf: [name.leadingAnchor.constraint(equalTo: labelContainer.leadingAnchor, constant: 12.0),
                                          name.bottomAnchor.constraint(equalTo: location.topAnchor),
-                                         name.trailingAnchor.constraint(equalTo: placeImage.trailingAnchor)])
+                                         name.trailingAnchor.constraint(equalTo: labelContainer.trailingAnchor)])
 
-        placeImage.addSubview(locationImage)
-        constraints.append(contentsOf: [locationImage.leadingAnchor.constraint(equalTo: placeImage.leadingAnchor, constant: 13.0),
-                                        locationImage.bottomAnchor.constraint(equalTo: placeImage.bottomAnchor, constant: -16)])
-        placeImage.addSubview(location)
-        constraints.append(contentsOf: [location.bottomAnchor.constraint(equalTo: placeImage.bottomAnchor, constant: -12),
-                                        location.trailingAnchor.constraint(equalTo: placeImage.trailingAnchor, constant: -12)])
+        labelContainer.addSubview(locationImage)
+        constraints.append(contentsOf: [locationImage.leadingAnchor.constraint(equalTo: labelContainer.leadingAnchor, constant: 13.0),
+                                        locationImage.bottomAnchor.constraint(equalTo: labelContainer.bottomAnchor, constant: -16)])
+        labelContainer.addSubview(location)
+        constraints.append(contentsOf: [location.bottomAnchor.constraint(equalTo: labelContainer.bottomAnchor, constant: -12),
+                                        location.trailingAnchor.constraint(equalTo: labelContainer.trailingAnchor, constant: -12)])
 
         roundedBackgroundView.addSubview(yelpReview)
         constraints.append(contentsOf: [yelpReview.topAnchor.constraint(equalTo: placeImage.bottomAnchor, constant: 13),
@@ -227,4 +240,11 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate(updatedConstraints)
     }
     
+}
+
+extension PlaceCarouselCollectionViewCell: Animatable {
+    func animatableProperties() -> PlaceCarouselCVCAnimatableProperties {
+        return PlaceCarouselCVCAnimatableProperties(placeImage: self.placeImage,
+                                                    labelContainer: self.labelContainer)
+    }
 }

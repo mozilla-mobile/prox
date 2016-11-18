@@ -130,6 +130,7 @@ class PlaceDetailsDescriptionView: UIView {
             expandableLabelHeightConstraint.isActive = true
             logoBottomConstraint.constant = 0
         }
-        layoutIfNeeded()
+
+        setNeedsLayout()
     }
 }
