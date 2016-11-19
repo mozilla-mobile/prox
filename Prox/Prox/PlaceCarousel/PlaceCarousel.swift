@@ -83,11 +83,7 @@ extension PlaceCarousel: UICollectionViewDataSource {
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: cell.yelpReview, isTextShortened: true)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: cell.tripAdvisorReview, isTextShortened: true)
 
-        if let location = locationProvider?.getCurrentLocation() {
-            place.travelTimes(fromLocation: location, withCallback: { travelTimes in
-                self.setTravelTimes(travelTimes: travelTimes, forCell: cell)
-            })
-        }
+        PlaceUtilities.updateTravelTimeUI(fromPlace: place, toLocation: locationProvider?.getCurrentLocation(), forView: cell)
 
         return cell
     }
@@ -104,34 +100,6 @@ extension PlaceCarousel: UICollectionViewDataSource {
 
         cell.placeImage.setImageWith(url)
     }
-
-    private func setTravelTimes(travelTimes: TravelTimes?, forCell cell: PlaceCarouselCollectionViewCell) {
-        guard let travelTimes = travelTimes else {
-            return
-        }
-
-        if let walkingTimeSeconds = travelTimes.walkingTime {
-            let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
-            if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
-                if walkingTimeMinutes < TravelTimesProvider.YOU_ARE_HERE_WALKING_TIME {
-                    cell.locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
-                    cell.location.text = "You're here"
-                    cell.isSelected = true
-                } else {
-                    cell.location.text = "\(walkingTimeMinutes) min walk away"
-                    cell.isSelected = false
-                }
-                return
-            }
-        }
-
-        if let drivingTimeSeconds = travelTimes.drivingTime {
-            let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
-            cell.location.text = "\(drivingTimeMinutes) min drive away"
-            cell.isSelected = false
-        }
-    }
-
 }
 
 extension PlaceCarousel: UICollectionViewDelegateFlowLayout {

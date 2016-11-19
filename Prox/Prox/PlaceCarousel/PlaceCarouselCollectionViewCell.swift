@@ -227,5 +227,30 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.deactivate(deactivateConstraints)
         NSLayoutConstraint.activate(updatedConstraints)
     }
-    
+}
+
+extension PlaceCarouselCollectionViewCell: TravelTimesView {
+    func setTravelTimesUIIsLoading(_ isLoading: Bool) {
+        // TODO: issue #219
+    }
+
+    func updateTravelTimesUIForResult(_ result: TravelTimesViewResult, durationInMinutes: Int?) {
+        switch result {
+        case .userHere:
+            locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+            location.text = "You're here"
+            isSelected = true
+
+        case .walkingDist:
+            location.text = "\(durationInMinutes!) min walk away"
+            isSelected = false
+
+        case .drivingDist:
+            location.text = "\(durationInMinutes!) min drive away"
+            isSelected = false
+
+        case .noData:
+            break // TODO: issue #219
+        }
+    }
 }

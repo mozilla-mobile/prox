@@ -86,6 +86,44 @@ struct PlaceUtilities {
         view.numberOfReviewersLabel.text = reviewPrefix + " Reviews"
     }
 
+    static func updateTravelTimeUI(fromPlace place: Place, toLocation location: CLLocation?, forView view: TravelTimesView) {
+        guard let location = location else {
+            // TODO: how to handle? Previously, this was unhandled.
+            return
+        }
+
+        view.setTravelTimesUIIsLoading(true)
+
+        place.travelTimes(fromLocation: location, withCallback: { travelTimes in
+            view.setTravelTimesUIIsLoading(false)
+
+            guard let travelTimes = travelTimes else {
+                view.updateTravelTimesUIForResult(.noData, durationInMinutes: nil)
+                return
+            }
+
+            if let walkingTimeSeconds = travelTimes.walkingTime {
+                let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
+                if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
+                    if walkingTimeMinutes < TravelTimesProvider.YOU_ARE_HERE_WALKING_TIME {
+                        view.updateTravelTimesUIForResult(.userHere, durationInMinutes: nil)
+                    } else {
+                        view.updateTravelTimesUIForResult(.walkingDist, durationInMinutes: walkingTimeMinutes)
+                    }
+                    return
+                }
+            }
+
+            if let drivingTimeSeconds = travelTimes.drivingTime {
+                let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
+                view.updateTravelTimesUIForResult(.drivingDist, durationInMinutes: drivingTimeMinutes)
+                return
+            }
+
+            view.updateTravelTimesUIForResult(.noData, durationInMinutes: nil)
+        })
+    }
+
     private static func setSubviewAlpha(_ alpha: CGFloat, forParent parentView: ReviewContainerView) {
         for view in parentView.subviews {
             view.alpha = alpha
