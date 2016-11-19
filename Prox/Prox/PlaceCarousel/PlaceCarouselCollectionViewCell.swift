@@ -231,7 +231,8 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
 
 extension PlaceCarouselCollectionViewCell: TravelTimesView {
     func prepareTravelTimesUIForReuse() {
-        // TODO: not changing logic in this commit; locationImage must be rm'd, isSelected = false
+        locationImage.image = nil
+        isSelected = false
         // TODO: issue #219: should we nil text?
     }
 
@@ -248,11 +249,9 @@ extension PlaceCarouselCollectionViewCell: TravelTimesView {
 
         case .walkingDist:
             location.text = "\(durationInMinutes!) min walk away"
-            isSelected = false
 
         case .drivingDist:
             location.text = "\(durationInMinutes!) min drive away"
-            isSelected = false
 
         case .noData:
             break // TODO: issue #219
