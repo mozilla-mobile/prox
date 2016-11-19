@@ -29,6 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        Analytics.startAppSession()
         setupFirebase()
         setupRemoteConfig()
         BuddyBuildSDK.setup()
@@ -179,6 +180,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
         if response.notification.request.content.categoryIdentifier == "EVENTS" {
             if let eventKey = response.notification.request.content.userInfo[notificationEventIDKey] as? String {
+                Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [:])
                 placeCarouselViewController?.openPlaceForEvent(withKey: eventKey)
             }
         }

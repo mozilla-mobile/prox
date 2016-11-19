@@ -148,6 +148,8 @@ class PlaceDetailsCardViewController: UIViewController {
            let url = URL(string: urlString) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open web address")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.WEBSITE, params: [:])
         }
     }
 
@@ -155,6 +157,8 @@ class PlaceDetailsCardViewController: UIViewController {
         guard let url = URL(string: place.yelpProvider.url) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open yelp review")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.YELP, params: [:])
         }
     }
 
@@ -163,6 +167,8 @@ class PlaceDetailsCardViewController: UIViewController {
             let url = URL(string: tripAdvisorProvider.url) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open trip advisor review")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.TRIPADVISOR, params: [:])
         }
     }
 
@@ -173,6 +179,8 @@ class PlaceDetailsCardViewController: UIViewController {
 
         if !OpenInHelper.openRoute(fromLocation: location.coordinate, toPlace: place, by: transportType) {
             print("lol unable to open travel directions")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.DIRECTIONS, params: [AnalyticsEvent.PARAM_ACTION: transportString])
         }
     }
 
@@ -182,6 +190,8 @@ class PlaceDetailsCardViewController: UIViewController {
             let url = URL(string: urlString) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open web address")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.EVENT_BANNER_LINK, params: [:])
         }
     }
 

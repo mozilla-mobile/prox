@@ -11,6 +11,7 @@ fileprivate enum UIMode {
 class PlaceDetailsDescriptionView: UIView {
 
     private let CollapseExpandSeconds = 1.0
+    private let toggleEventType: String
 
     let horizontalMargin: CGFloat
 
@@ -95,6 +96,8 @@ class PlaceDetailsDescriptionView: UIView {
          icon: UIImage?,
          horizontalMargin: CGFloat) {
         self.horizontalMargin = horizontalMargin
+        toggleEventType = labelText == "Yelp top review" ? AnalyticsEvent.YELP_TOGGLE : AnalyticsEvent.WIKIPEDIA_TOGGLE
+
         super.init(frame: .zero)
 
         logoView.image = icon
@@ -143,6 +146,8 @@ class PlaceDetailsDescriptionView: UIView {
     }
 
     func didTap() {
+        let action = uiMode == .collapsed ? "expand" : "collapse"
+        Analytics.logEvent(event: toggleEventType, params: [AnalyticsEvent.PARAM_ACTION: action])
         setExpandableView(isExpanded: uiMode == .collapsed)
     }
 

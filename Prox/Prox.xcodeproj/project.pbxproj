@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		234AF15A1DDFD91C00097B0B /* AnalyticsUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234AF1591DDFD91C00097B0B /* AnalyticsUtilities.swift */; };
 		392F3D901DD20EAE00B44B01 /* PlacesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392F3D8F1DD20EAE00B44B01 /* PlacesController.swift */; };
 		392F3D971DD4395000B44B01 /* RemoteConfigDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 392F3D961DD4395000B44B01 /* RemoteConfigDefaults.plist */; };
 		39C4EC9D1DDB464200B53B77 /* RemoteConfigKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */; };
@@ -111,6 +112,7 @@
 		0EA57261799D082127AF0A24 /* Pods-ProxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.release.xcconfig"; sourceTree = "<group>"; };
 		18F1C6CC1D18EC45A9072FF1 /* Pods-ProxUITests.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise.xcconfig"; sourceTree = "<group>"; };
 		1E318DF6890B9E7221222152 /* Pods-Prox.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.enterprise kona.xcconfig"; sourceTree = "<group>"; };
+		234AF1591DDFD91C00097B0B /* AnalyticsUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsUtilities.swift; sourceTree = "<group>"; };
 		246E3C4ADD7C4DD2150C111B /* Pods-Prox.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.release.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.release.xcconfig"; sourceTree = "<group>"; };
 		29190FCA903C1D1AF4C77316 /* Pods_Prox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Prox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		324CE3415A3E66A0F7F7CF54 /* Pods-ProxUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -360,6 +362,7 @@
 				7B9D15C51DC0D2E70051B760 /* OpenInHelper.swift */,
 				7BA05BEA1DD4D602009AC121 /* EventNotificationsManager.swift */,
 				E6101A971DDA7B8500D05B74 /* CategoriesUtil.swift */,
+				234AF1591DDFD91C00097B0B /* AnalyticsUtilities.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -796,6 +799,7 @@
 				E63C346F1DDCDFBB005B6B15 /* LocationLoadingView.swift in Sources */,
 				7B5095721DB5352E007C54F0 /* Colors.swift in Sources */,
 				7B48EBDA1DD1F679005C36CB /* GeofenceRegion.swift in Sources */,
+				234AF15A1DDFD91C00097B0B /* AnalyticsUtilities.swift in Sources */,
 				E662FF4A1DC022940042C4A9 /* PlaceDetailsCardView.swift in Sources */,
 				E6101A981DDA7B8500D05B74 /* CategoriesUtil.swift in Sources */,
 				7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */,

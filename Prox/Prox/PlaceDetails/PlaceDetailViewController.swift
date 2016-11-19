@@ -694,6 +694,7 @@ class PlaceDetailViewController: UIViewController {
     }
 
     func close() {
+        Analytics.logEvent(event: AnalyticsEvent.MAP_BUTTON, params: [:])
         self.dismiss(animated: true, completion: nil)
 
     }
