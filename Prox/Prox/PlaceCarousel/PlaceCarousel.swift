@@ -69,11 +69,6 @@ extension PlaceCarousel: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdentifier, for: indexPath) as! PlaceCarouselCollectionViewCell
 
-        if !isCellReused(cell) {
-            cell.yelpReview.reviewSiteLogo.image = UIImage(named: "logo_yelp")
-            cell.tripAdvisorReview.reviewSiteLogo.image = UIImage(named: "logo_ta")
-        }
-
         // TODO: this view is only partially filled in
         guard let dataSource = dataSource,
             let place = try? dataSource.place(forIndex: indexPath.item) else {
@@ -95,10 +90,6 @@ extension PlaceCarousel: UICollectionViewDataSource {
         }
 
         return cell
-    }
-
-    private func isCellReused(_ cell: PlaceCarouselCollectionViewCell) -> Bool {
-        return cell.yelpReview.reviewSiteLogo.image != nil
     }
 
     private func downloadAndSetImage(for place: Place, into cell: PlaceCarouselCollectionViewCell) {

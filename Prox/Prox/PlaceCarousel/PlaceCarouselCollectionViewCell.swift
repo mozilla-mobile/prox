@@ -52,13 +52,14 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
     lazy var yelpReview: ReviewContainerView = {
         let view = ReviewContainerView(color: Colors.yelp, mode: .carouselView)
         view.accessibilityIdentifier = "YelpReview"
-
+        view.reviewSiteLogo.image = UIImage(named: "logo_yelp")
         return view
     }()
 
     lazy var tripAdvisorReview: ReviewContainerView = {
         let view = ReviewContainerView(color: Colors.tripAdvisor, mode: .carouselView)
         view.accessibilityIdentifier = "TripAdvisorReview"
+        view.reviewSiteLogo.image = UIImage(named: "logo_ta")
         return view
     }()
 
