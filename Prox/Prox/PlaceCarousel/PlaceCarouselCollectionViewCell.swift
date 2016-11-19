@@ -230,6 +230,11 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
 }
 
 extension PlaceCarouselCollectionViewCell: TravelTimesView {
+    func prepareTravelTimesUIForReuse() {
+        // TODO: not changing logic in this commit; locationImage must be rm'd, isSelected = false
+        // TODO: issue #219: should we nil text?
+    }
+
     func setTravelTimesUIIsLoading(_ isLoading: Bool) {
         // TODO: issue #219
     }

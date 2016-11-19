@@ -5,6 +5,7 @@
 import Foundation
 
 protocol TravelTimesView {
+    func prepareTravelTimesUIForReuse()
     func setTravelTimesUIIsLoading(_ isLoading: Bool)
     func updateTravelTimesUIForResult(_ result: TravelTimesViewResult, durationInMinutes: Int?)
 }

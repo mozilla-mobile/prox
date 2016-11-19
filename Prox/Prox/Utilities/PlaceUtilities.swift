@@ -87,6 +87,8 @@ struct PlaceUtilities {
     }
 
     static func updateTravelTimeUI(fromPlace place: Place, toLocation location: CLLocation?, forView view: TravelTimesView) {
+        view.prepareTravelTimesUIForReuse()
+
         guard let location = location else {
             // TODO: how to handle? Previously, this was unhandled.
             return

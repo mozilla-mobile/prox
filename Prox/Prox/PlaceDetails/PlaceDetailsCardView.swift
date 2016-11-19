@@ -110,10 +110,7 @@ class PlaceDetailsCardView: UIView {
         return view
     }()
 
-    lazy var travelTimeView: PlaceDetailsIconInfoView = {
-        let view = PlaceDetailsIconInfoView(enableForwardArrow: true)
-        return view
-    }()
+    lazy var travelTimeView = PlaceDetailsTravelTimesView()
 
     lazy var hoursView: PlaceDetailsIconInfoView = {
         let view = PlaceDetailsIconInfoView(enableForwardArrow: false)
@@ -271,55 +268,13 @@ class PlaceDetailsCardView: UIView {
         }
     }
 
+
     func showEvent(atPlace place: Place) {
         updateEventUI(forPlace: place)
         // this is here as we want to animate the appearance of the card later
         // TODO: Animate the appearance of the event card
         self.setNeedsLayout()
         self.layoutIfNeeded()
-    }
-
-    func updateTravelTimesUI(travelTimes: TravelTimes?) {
-        // TODO: Consider travelTimeView.setState – there is a lot of duplication here.
-        guard let travelTimes = travelTimes else {
-            travelTimeView.isPrimaryTextLabelHidden = true
-            travelTimeView.forwardArrowView.isHidden = false
-            travelTimeView.secondaryTextLabel.text = "View on Map"
-
-            travelTimeView.iconView.tintColor = Colors.detailsViewTravelTimeErrorPinTint
-            travelTimeView.iconView.image = UIImage(named: "icon_here")?.withRenderingMode(.alwaysTemplate)
-            return
-        }
-
-        travelTimeView.iconView.tintColor = nil
-
-        if let walkingTimeSeconds = travelTimes.walkingTime {
-            let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
-            if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
-                if walkingTimeMinutes < TravelTimesProvider.YOU_ARE_HERE_WALKING_TIME {
-                    self.travelTimeView.isPrimaryTextLabelHidden = true
-                    travelTimeView.forwardArrowView.isHidden = true
-                    self.travelTimeView.secondaryTextLabel.text = "You're here!"
-                    self.travelTimeView.iconView.image = UIImage(named: "icon_here")
-                } else {
-                    self.travelTimeView.isPrimaryTextLabelHidden = false
-                    travelTimeView.forwardArrowView.isHidden = false
-                    self.travelTimeView.primaryTextLabel.text = "\(walkingTimeMinutes) min"
-                    self.travelTimeView.secondaryTextLabel.text = "Walking"
-                    self.travelTimeView.iconView.image = UIImage(named: "icon_walkingdist")
-                }
-                return
-            }
-        }
-
-        if let drivingTimeSeconds = travelTimes.drivingTime {
-            let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
-            self.travelTimeView.isPrimaryTextLabelHidden = false
-            travelTimeView.forwardArrowView.isHidden = false
-            self.travelTimeView.primaryTextLabel.text = "\(drivingTimeMinutes) min"
-            self.travelTimeView.secondaryTextLabel.text = "Driving"
-            self.travelTimeView.iconView.image = UIImage(named: "icon_drivingdist")
-        }
     }
 
     private func getStringsForOpenHours(_ openHours: OpenHours?, forDate date: Date) -> (primary: String, secondary: String) {
