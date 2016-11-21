@@ -192,7 +192,6 @@ class PlaceCarouselViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        print("viewWillAppear")
         super.viewWillAppear(animated)
 
         guard let location = locationMonitor.getCurrentLocation() else {
@@ -204,15 +203,8 @@ class PlaceCarouselViewController: UIViewController {
         // this ensures consistency between the place details and the carousel underneath
         // and makes sure we don't end up providing weird data to users while they are scrolling
         // through places details
-        // if sunrise set is not present, then we haven't processed our first location yet, so setup the app for the current location
-        // otherwise just update the places
         updateLocation(location: location)
         updatePlaces(forLocation: location)
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        print("viewDidAppear")
     }
 
     override func didReceiveMemoryWarning() {
