@@ -306,7 +306,7 @@ class PlaceCarouselViewController: UIViewController {
                 }
 
                 // handle when the user is already looking at the app
-                (presentedVC as? PlaceDetailViewController)?.openCard(forPlace: place)
+                (presentedVC as? PlaceDetailViewController)?.openCard(forPlaceWithEvent: place)
             }
         }
     }
@@ -384,6 +384,9 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
 
     func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider) {
         // no op
+        if self.places.isEmpty {
+            headerView.numberOfPlacesLabel.text = "No Places Found"
+        }
     }
 
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {

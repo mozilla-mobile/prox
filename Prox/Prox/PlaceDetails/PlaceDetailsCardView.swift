@@ -273,6 +273,8 @@ class PlaceDetailsCardView: UIView {
 
     func showEvent(atPlace place: Place) {
         updateEventUI(forPlace: place)
+        // this is here as we want to animate the appearance of the card later
+        // TODO: Animate the appearance of the event card
         self.setNeedsLayout()
         self.layoutIfNeeded()
     }

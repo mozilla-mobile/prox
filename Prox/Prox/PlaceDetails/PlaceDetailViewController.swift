@@ -242,14 +242,14 @@ class PlaceDetailViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    func openCard(forPlace place: Place) {
-        if currentCardViewController.place == place {
-            currentCardViewController.place = place
+    func openCard(forPlaceWithEvent placeWithEvent: Place) {
+        if currentCardViewController.place == placeWithEvent {
+            currentCardViewController.place.events = placeWithEvent.events
             // if we're currently looking at that card then just animate in the event
             currentCardViewController.showEvent()
         } else {
-            // I'm totally not sure what we should be doing here.
-            pageForwardToCard(forPlace: place)
+            // Page to new card.
+            pageForwardToCard(forPlace: placeWithEvent)
         }
     }
 
