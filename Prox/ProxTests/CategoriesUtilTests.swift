@@ -6,24 +6,57 @@ import XCTest
 
 @testable import Prox
 
+// Preferably with other constant declarations but its most convenient to put here so we don't need
+// to reference with "CategoriesUtilTests.varName"
+fileprivate let LeafParentCategory = "insurance"
+fileprivate let LeafCategory = "autoinsurance" // 🚗
+
 class CategoriesUtilTests: XCTestCase {
-    
+
     override func setUp() {
         super.setUp()
     }
-    
+
     override func tearDown() {
         super.tearDown()
     }
 
-    // Descendants (e.g. direct, multi-level) are relative to the root.
-    private let RootCategory = "restaurants"
-    private let DirectDescendant = (name: "3dprinting", parents: ["localservices"])
-    private let MultilevelDescendant = (name: "yakiniku", parents: ["japanese"], roots: ["restaurants"])
-    private let MultipleParentsDirectDescendant = (name: "cosmetics", parents: ["shopping", "beautysvc"])
-    private let MultipleParentsMultilevelDescendant = (name: "sportswear",
-                                                       parents: ["sportgoods", "fashion"],
-                                                       roots: ["shopping"])
+    // Root and its children
+    private let RootCategory = "financialservices"
+    // explicit types or SourceKitService eats your CPU: http://stackoverflow.com/a/28183589
+    private let CategoryHierarchy: [String : Set<String>] =
+        ["banks" : Set<String>(),
+         "businessfinancing" : Set<String>(),
+         "paydayloans" : Set<String>(),
+         "currencyexchange" : Set<String>(),
+         "debtrelief" : Set<String>(),
+         "financialadvising" : Set<String>(),
+         "installmentloans" : Set<String>(),
+         LeafParentCategory : Set<String>([LeafCategory,
+                                           "homeinsurance",
+                                           "lifeinsurance"]),
+         "investing" : Set<String>(),
+         "taxservices" : Set<String>(),
+         "titleloans" : Set<String>()]
+
     private let NotACategory = "not-a-category"
 
+    func testCategoriesToDescendantsForLeaf() {
+        XCTAssertEqual(CategoriesUtil.categoryToDescendantsMap[LeafCategory], Set<String>())
+    }
+
+    func testCategoriesToDescendantsForLeafParent() {
+        let expected = CategoryHierarchy[LeafParentCategory]!
+        XCTAssertEqual(CategoriesUtil.categoryToDescendantsMap[LeafParentCategory], expected)
+    }
+
+    func testCategoriesToDescendantsForRoot() {
+        var expected = Set<String>()
+        for (cat, children) in CategoryHierarchy {
+            expected = expected.union(children)
+            expected = expected.union([cat])
+        }
+
+        XCTAssertEqual(CategoriesUtil.categoryToDescendantsMap[RootCategory], expected)
+    }
 }

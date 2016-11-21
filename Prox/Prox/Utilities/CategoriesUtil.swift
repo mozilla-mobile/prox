@@ -13,6 +13,41 @@ struct CategoriesUtil {
         return true // we'll update this in the next commits.
     }
 
+    static let categoryToDescendantsMap = getCategoryToDescendantsMap()
+
+    private static func getCategoryToDescendantsMap() -> [String:Set<String>] {
+        let allCats = loadAllCategoriesFile()
+
+        var parentToDescendantsMap = [String:Set<String>]()
+        for cat in allCats {
+            let obj = cat as! NSDictionary
+            let name = obj["alias"] as! String
+            let parents = obj["parents"] as! [String]
+
+            // Ensure leaf nodes have entries.
+            if parentToDescendantsMap[name] == nil {
+                parentToDescendantsMap[name] = Set()
+            }
+
+            for parent in parents {
+                let value = parentToDescendantsMap[parent] ?? Set()
+                parentToDescendantsMap[parent] = value.union([name])
+            }
+        }
+
+        // Handle sub-categories. This code assumes yelp's hierarchy is three levels deep.
+        for (cat, children) in parentToDescendantsMap {
+            var grandChildren = Set<String>()
+            for child in children {
+                grandChildren = grandChildren.union(parentToDescendantsMap[child] ?? Set())
+            }
+
+            parentToDescendantsMap[cat] = children.union(grandChildren)
+        }
+
+        return parentToDescendantsMap
+    }
+
     private static func loadAllCategoriesFile() -> NSArray {
         // We choose not to handle errors: with an unchanging file, we should never hit an error case.
         guard let filePath = Bundle.main.path(forResource: AllCategoriesPath, ofType: AllCategoriesExt) else {
@@ -29,4 +64,8 @@ struct CategoriesUtil {
         return try! JSONSerialization.jsonObject(with: inputStream) as! NSArray
     }
 
+}
+
+enum CategoryError: Error {
+    case UnknownCategory(name: String)
 }
