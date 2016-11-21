@@ -51,19 +51,30 @@ class PlacesProvider {
         let eventProvider = EventsProvider()
         var placeWithEvent: Place?
         var eventForPlace: Event?
+        let lock = NSLock()
         place(forKey: key) { place in
+            defer {
+                lock.unlock()
+            }
+            lock.lock()
             guard let foundPlace = place,
                 let event = eventForPlace else {
-                return placeWithEvent = place
+                    placeWithEvent = place
+                    return
             }
             foundPlace.events.append(event)
             callback(foundPlace)
         }
 
         eventProvider.event(forKey: key) { event in
+            defer {
+                lock.unlock()
+            }
+            lock.lock()
             guard let foundEvent = event,
                 let place = placeWithEvent else {
-                    return eventForPlace = event
+                    eventForPlace = event
+                    return
             }
             place.events.append(foundEvent)
             callback(place)
