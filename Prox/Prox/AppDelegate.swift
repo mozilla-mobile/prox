@@ -65,6 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 dump(user)
             }
         }
+        FIRDatabase.database().persistenceEnabled = true
     }
 
     private func setupRemoteConfig() {
