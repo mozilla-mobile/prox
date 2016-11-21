@@ -107,6 +107,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // if there is a timer running, cancel it. We'll wait until background app refresh fires instead
         placeCarouselViewController?.locationMonitor.cancelTimeAtLocationTimer()
+        eventsNotificationsManager.persistNotificationCache()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -121,6 +122,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        placeCarouselViewController?.locationMonitor.cancelTimeAtLocationTimer()
+        eventsNotificationsManager.persistNotificationCache()
     }
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
