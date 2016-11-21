@@ -19,11 +19,15 @@ class EventsProvider {
     }()
 
     private lazy var eventStartNotificationInterval: Double = {
-        return RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.eventStartNotificationInterval) * 60
+        return RemoteConfigKeys.getTimeInterval(forKey: RemoteConfigKeys.eventStartNotificationInterval)
     }()
 
     private lazy var eventStartPlaceInterval: Double = {
-        return RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.eventStartPlaceInterval) * 60
+        return RemoteConfigKeys.getTimeInterval(forKey: RemoteConfigKeys.eventStartPlaceInterval)
+    }()
+
+    private lazy var maxEventDuration: Double = {
+        return RemoteConfigKeys.getTimeInterval(forKey: RemoteConfigKeys.maxEventDurationForNotificationsMins)
     }()
 
     func event(forKey key: String, completion: @escaping (Event?) -> ()) {
@@ -47,17 +51,27 @@ class EventsProvider {
     }
 
     private func shouldShowEventForNotifications(event: Event, forLocation location: CLLocation) -> Bool {
-        return isEventToday(event: event) && isEventYetToHappen(event: event) && doesEvent(event: event, startAtTimeIntervalFromNow: eventStartNotificationInterval)
+        let now = Date()
+        return isValidFutureEvent(event: event, currentTime: now, forNotifications: true) || isValidCurrentEvent(event: event, currentTime: now, forNotifications: true)
     }
 
     private func shouldShowEventForPlaces(event: Event, forLocation location: CLLocation) -> Bool {
-        return isEventToday(event: event) && isEventYetToHappen(event: event) && doesEvent(event: event, startAtTimeIntervalFromNow: eventStartPlaceInterval)
+        let now = Date()
+        return isValidFutureEvent(event: event, currentTime: now) || isValidCurrentEvent(event: event, currentTime: now)
     }
 
-    private func doesEvent(event: Event, startAtTimeIntervalFromNow timeInterval: TimeInterval) -> Bool {
-        // event must start in 1 hour
-        let now = Date()
-        let maxStartTime = now.addingTimeInterval(timeInterval)
+    private func isValidFutureEvent(event: Event, currentTime: Date, forNotifications: Bool = false) -> Bool {
+        let startTimeInterval = forNotifications ? eventStartNotificationInterval : eventStartPlaceInterval
+        return isEventToday(event: event) && isFutureEvent(event: event, currentTime: currentTime) && doesEvent(event: event, startAtTimeInterval: startTimeInterval, fromTime: currentTime)
+    }
+
+    private func isValidCurrentEvent(event: Event, currentTime: Date, forNotifications: Bool = false) -> Bool {
+        return isCurrentEvent(event: event, currentTime: currentTime) && doesEvent(event: event, lastLessThan: maxEventDuration)
+    }
+
+    private func doesEvent(event: Event, startAtTimeInterval timeInterval: TimeInterval, fromTime time: Date) -> Bool {
+        // event must start in specified time interval
+        let maxStartTime = time.addingTimeInterval(timeInterval)
         return event.startTime <= maxStartTime
     }
 
@@ -65,7 +79,24 @@ class EventsProvider {
         return Calendar.current.isDateInToday(event.startTime)
     }
 
-    private func isEventYetToHappen(event: Event) -> Bool {
-        return Date() < event.startTime
+    private func isFutureEvent(event: Event, currentTime: Date) -> Bool {
+        return currentTime < event.startTime
+    }
+
+    private func isCurrentEvent(event: Event, currentTime: Date) -> Bool {
+        // if we have no end time then we don't want to treat this as a current event
+        // because we have no idea if the event is still running
+        guard currentTime >= event.startTime,
+            let endTime = event.endTime else {
+            return false
+        }
+
+        return currentTime <= endTime
+    }
+
+    private func doesEvent(event: Event, lastLessThan maxDuration: TimeInterval) -> Bool {
+        guard let endTime = event.endTime else { return false }
+        let eventDuration = endTime.timeIntervalSince(event.startTime)
+        return eventDuration <= maxDuration
     }
 }

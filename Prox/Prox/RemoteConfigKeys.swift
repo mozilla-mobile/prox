@@ -63,6 +63,8 @@ class RemoteConfigKeys {
 
     public static let backgroundFetchIntervalMins = "background_fetch_interval_mins"
     public static let notificationVisitIntervalMins = "notification_visit_interval_mins"
+    public static let maxEventDurationForNotificationsMins = "max_duration_of_event_for_notification_mins"
+    public static let maxTravelTimesToEventMins = "max_travel_time_to_event_mins"
     
 }
 
@@ -75,7 +77,11 @@ extension RemoteConfigKeys {
         return FIRRemoteConfig.remoteConfig()[key].stringValue!
     }
 
-    open static func getInt(forKewy key: String) -> Int {
+    open static func getInt(forKey key: String) -> Int {
         return FIRRemoteConfig.remoteConfig()[key].numberValue!.intValue
+    }
+
+    open static func getTimeInterval(forKey key: String) -> TimeInterval {
+        return RemoteConfigKeys.getDouble(forKey: key) * 60
     }
 }

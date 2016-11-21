@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
     }()
 
-    private var eventsNotificationsManager = EventNotificationsManager()
+    private var eventsNotificationsManager: EventNotificationsManager!
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -43,6 +43,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         if #available(iOS 10.0, *) {
             self.setupUserNotificationCenter()
+        }
+
+        if let locationProvider = placeCarouselViewController?.locationMonitor {
+            self.eventsNotificationsManager = EventNotificationsManager(withLocationProvider: locationProvider)
         }
 
         // display

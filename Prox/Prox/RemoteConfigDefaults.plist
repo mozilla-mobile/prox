@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>max_travel_time_to_event_mins</key>
+	<integer>60</integer>
+	<key>max_duration_of_event_for_notification_mins</key>
+	<integer>240</integer>
 	<key>background_fetch_interval_mins</key>
 	<string>5</string>
 	<key>notification_visit_interval_mins</key>

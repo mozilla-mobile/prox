@@ -25,8 +25,6 @@ struct PlaceDataSourceError: Error {
 
 class PlaceCarouselViewController: UIViewController {
 
-    lazy var eventNotificationsManager: EventNotificationsManager = EventNotificationsManager()
-
     lazy var placesProvider: PlacesProvider = {
         let controller = PlacesProvider()
         controller.delegate = self
@@ -350,6 +348,7 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
     }
 
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation) {
+        let eventNotificationsManager = EventNotificationsManager(withLocationProvider: locationMonitor)
         eventNotificationsManager.sendEventNotifications(forLocation: location)
     }
     func locationMonitorNeedsUserPermissionsPrompt(_ locationMonitor: LocationMonitor) {
