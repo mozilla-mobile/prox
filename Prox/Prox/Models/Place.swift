@@ -209,6 +209,13 @@ class Place: Hashable {
     }
 }
 
+// Help with debugging/printing place in lldb
+extension Place: CustomDebugStringConvertible {
+    var debugDescription: String {
+        return "Place { name: \(self.name), id: \(self.id), photoURLs: \(self.photoURLs) }"
+    }
+}
+
 enum DayOfWeek: String {
     case monday
     case tuesday, wednesday, thursday, friday

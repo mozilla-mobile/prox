@@ -17,6 +17,7 @@ protocol PlaceDataSource: class {
     func previousPlace(forPlace place: Place) -> Place?
     func numberOfPlaces() -> Int
     func place(forIndex: Int) throws -> Place
+    func index(forPlace: Place) -> Int?
 }
 
 struct PlaceDataSourceError: Error {
@@ -40,12 +41,6 @@ class PlaceCarouselViewController: UIViewController {
             }
             // TODO: how do we make sure the user wasn't interacting?
             headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
-            placeCarousel.refresh()
-
-            if oldValue.isEmpty,
-                !places.isEmpty {
-                openFirstPlace()
-            }
         }
     }
 
@@ -100,8 +95,6 @@ class PlaceCarouselViewController: UIViewController {
 
     fileprivate var monitoredRegions: [String: GeofenceRegion] = [String: GeofenceRegion]()
     fileprivate var timeAtLocationTimer: Timer?
-
-    weak var selectedCell: PlaceCarouselCollectionViewCell?
 
     private func setSunriseSetTimes() {
         let today = Date()
@@ -206,9 +199,7 @@ class PlaceCarouselViewController: UIViewController {
         guard let place = places.first else {
             return
         }
-        selectedCell = placeCarousel.carousel.cellForItem(at: IndexPath(row: 0, section: 0))
-            as? PlaceCarouselCollectionViewCell
-        openDetail(forPlace: places[0])
+        openDetail(forPlace: place)
     }
 
     func openDetail(forPlace place: Place) {
@@ -346,12 +337,14 @@ extension PlaceCarouselViewController: PlaceDataSource {
 
         return places[index]
     }
+
+    func index(forPlace place: Place) -> Int? {
+        return places.index(of: place)
+    }
 }
 
 extension PlaceCarouselViewController: PlaceCarouselDelegate {
     func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int) {
-        selectedCell = placeCarousel.carousel.cellForItem(at: IndexPath(row: index, section: 0))
-            as? PlaceCarouselCollectionViewCell
         openDetail(forPlace: places[index])
     }
 }
@@ -417,7 +410,6 @@ extension PlaceCarouselViewController: UIViewControllerTransitioningDelegate {
         if let _ = presented as? PlaceDetailViewController {
             let transition = MapPlacesTransition()
             transition.presenting = true
-            transition.selectedCell = self.selectedCell
             return transition
         }
         return nil
@@ -427,7 +419,6 @@ extension PlaceCarouselViewController: UIViewControllerTransitioningDelegate {
         if let _ = dismissed as? PlaceDetailViewController {
             let transition = MapPlacesTransition()
             transition.presenting = false
-            transition.selectedCell = self.selectedCell
             return transition
         }
         return nil

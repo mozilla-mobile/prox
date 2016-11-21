@@ -14,13 +14,10 @@ import Foundation
 class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
     var presenting: Bool = false
 
-    // The cell the user selected on the maps view
-    weak var selectedCell: PlaceCarouselCollectionViewCell?
-
     // Scaling factor for the map view when we animate away. This gives the 'expanding' effect.
     private let scale: CGFloat = 1.1
 
-    fileprivate let duration: TimeInterval = 0.3
+    fileprivate let duration: TimeInterval = 0.25
 
     override init() {
         super.init()
@@ -44,6 +41,7 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
         }
 
         let placesViews = placesVC.animatableProperties()
+        let currentPlace = placesVC.currentPlace
 
         // Create some local variables to help reference the views in the placesVC
         let placesImageCarousel = placesVC.imageCarousel!
@@ -62,10 +60,12 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
         placesImageCarousel.alpha = 0
 
         if presenting {
-            guard let cellViews = selectedCell?.animatableProperties(),
+            guard let selectedCell = mapVC.placeCarousel.visibleCellFor(place: currentPlace),
                   let imageURL = URL(string: placesVC.currentPlace.photoURLs.first ?? "") else {
                 return
             }
+
+            let cellViews = selectedCell.animatableProperties()
 
             // Convert the frame from the placeImages in the cell to the container's coordinates
             let placesImageFrame = cellViews.placeImage.frame
@@ -127,6 +127,7 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
                 placesImageCarousel.alpha = 1
                 placesViews.nextCard?.alpha = 1
                 placesViews.previousCard?.alpha = 1
+                selectedCell.placeImage.alpha = 1
 
                 transitionContext.completeTransition(true)
             })
@@ -134,17 +135,25 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             // Delay the views from the places view controller a bit so we don't cover the animation with the background image
             fadeDelay(placesViews: placesViews, withEndingAlpha: 1, delay: duration * 2/3, duration: duration  * 1/3)
         } else {
-            guard let cellViews = selectedCell?.animatableProperties(),
+            // Since we could be at a different place than the one we selected to enter the detail view,
+            // make sure we scroll the carousel to the new view before doing anything
+            let currentPlace = placesVC.currentPlace
+            mapVC.placeCarousel.scrollTo(place: currentPlace)
+            mapsView.layoutIfNeeded()
+
+            guard let toPlacesCell = mapVC.placeCarousel.visibleCellFor(place: currentPlace),
                   let imageURL = URL(string: placesVC.currentPlace.photoURLs.first ?? "") else {
                 return
             }
+
+            let cellViews = toPlacesCell.animatableProperties()
 
             // Scale back the maps view to calculate the frames correctly, then scale back down
             mapsView.transform = CGAffineTransform.identity
 
             // Convert the frame from the placeImages in the cell to the container's coordinates
             let placesImageFrame = cellViews.placeImage.frame
-            let convertedPlacesImageFrame = containerView.convert(placesImageFrame, from: selectedCell)
+            let convertedPlacesImageFrame = containerView.convert(placesImageFrame, from: toPlacesCell)
 
             // Setup the fake views we'll need to perform the animation
             let fakeImageView = UIImageView(frame: placesVC.imageCarousel.frame)

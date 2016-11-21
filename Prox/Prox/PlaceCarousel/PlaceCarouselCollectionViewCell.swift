@@ -50,7 +50,6 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         opacityView.trailingAnchor.constraint(equalTo: imageView.trailingAnchor).isActive = true
         opacityView.accessibilityIdentifier = "ImageOpacityLayer"
 
-
         return imageView
     }()
 
@@ -114,8 +113,6 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-
 
     override var isSelected: Bool {
         didSet {
