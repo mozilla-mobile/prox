@@ -65,6 +65,7 @@ class RemoteConfigKeys {
     public static let notificationVisitIntervalMins = "notification_visit_interval_mins"
     public static let maxEventDurationForNotificationsMins = "max_duration_of_event_for_notification_mins"
     public static let maxTravelTimesToEventMins = "max_travel_time_to_event_mins"
+    public static let minTimeFromEndOfEventForNotificationMins = "min_time_from_end_of_event_for_notifications_mins"
     
 }
 
