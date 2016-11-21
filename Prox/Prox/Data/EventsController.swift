@@ -47,11 +47,11 @@ class EventsProvider {
     }
 
     private func shouldShowEventForNotifications(event: Event, forLocation location: CLLocation) -> Bool {
-        return isEventToday(event: event) && isEventYetToHappen(event: event) //&& doesEvent(event: event, startAtTimeIntervalFromNow: eventStartNotificationInterval)
+        return isEventToday(event: event) && isEventYetToHappen(event: event) && doesEvent(event: event, startAtTimeIntervalFromNow: eventStartNotificationInterval)
     }
 
     private func shouldShowEventForPlaces(event: Event, forLocation location: CLLocation) -> Bool {
-        return isEventToday(event: event) && isEventYetToHappen(event: event) //&& doesEvent(event: event, startAtTimeIntervalFromNow: eventStartPlaceInterval)
+        return isEventToday(event: event) && isEventYetToHappen(event: event) && doesEvent(event: event, startAtTimeIntervalFromNow: eventStartPlaceInterval)
     }
 
     private func doesEvent(event: Event, startAtTimeIntervalFromNow timeInterval: TimeInterval) -> Bool {
