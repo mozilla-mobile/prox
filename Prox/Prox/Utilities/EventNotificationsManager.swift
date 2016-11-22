@@ -10,12 +10,15 @@ private let sentNotificationDictKey = "sent_notifications_dict"
 
 let notificationEventIDKey = "eventPlaceID"
 
+fileprivate typealias PlaceID = String
+fileprivate typealias EventStartTimestamp = Double
+
 class EventNotificationsManager {
 
     // caches events by their start time by place
-    fileprivate lazy var sentNotifications: [String: [Double]] = {
-        var cache = [String: [Double]]()
-        guard let savedNotifications = UserDefaults.standard.dictionary(forKey: sentNotificationDictKey) as? [String: [Double]] else {
+    fileprivate lazy var sentNotifications: [PlaceID: [EventStartTimestamp]] = {
+        var cache = [PlaceID: [EventStartTimestamp]]()
+        guard let savedNotifications = UserDefaults.standard.dictionary(forKey: sentNotificationDictKey) as? [PlaceID: [EventStartTimestamp]] else {
             return cache
         }
         for (place, eventsStartTimes) in savedNotifications {
