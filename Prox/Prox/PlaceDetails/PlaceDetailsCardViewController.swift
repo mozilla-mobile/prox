@@ -203,6 +203,8 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     func pageControlDidPage(sender: AnyObject) {
+        stopAutoMovingOfCarousel()
+
         let pageSize = imageCarousel.bounds.size
         let xOffset = pageSize.width * CGFloat(pageControl.currentPage)
         imageCarouselCollectionView.setContentOffset(CGPoint(x: xOffset, y: 0), animated: true)
