@@ -10,7 +10,7 @@ import Deferred
 
 private let MAP_SPAN_DELTA = 0.05
 private let MAP_LATITUDE_OFFSET = 0.015
-
+private let LOADING_TIMEOUT_IN_SECONDS: TimeInterval = 10
 
 protocol PlaceDataSource: class {
     func nextPlace(forPlace place: Place) -> Place?
@@ -92,6 +92,8 @@ class PlaceCarouselViewController: UIViewController {
             setSunriseSetTimes()
         }
     }
+
+    fileprivate var loadingTimeoutTimer: Timer?
 
     private func setSunriseSetTimes() {
         let today = Date()
@@ -231,6 +233,17 @@ class PlaceCarouselViewController: UIViewController {
         headerView.alpha = loading ? 0 : 1
         sunView.alpha = loading ? 0 : 1
         loadingOverlay.alpha = loading ? 1 : 0
+
+        if let timer = loadingTimeoutTimer {
+            timer.invalidate()
+            loadingTimeoutTimer = nil
+        }
+
+        if loading {
+            loadingTimeoutTimer = Timer.scheduledTimer(timeInterval: LOADING_TIMEOUT_IN_SECONDS, target: self,
+                                                       selector: #selector(loadingPlacesDidTimeout),
+                                                       userInfo: nil, repeats: false)
+        }
     }
 
     fileprivate func shouldStartMonitoringLocation() -> Bool {
@@ -313,6 +326,10 @@ class PlaceCarouselViewController: UIViewController {
                 (presentedVC as? PlaceDetailViewController)?.openCard(forPlaceWithEvent: place)
             }
         }
+    }
+
+    @objc fileprivate func loadingPlacesDidTimeout() {
+        loadingOverlay.fadeInMessaging()
     }
 }
 
