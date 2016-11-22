@@ -10,6 +10,7 @@ import XCTest
 // to reference with "CategoriesUtilTests.varName"
 fileprivate let LeafParentCategory = "insurance"
 fileprivate let LeafCategory = "autoinsurance" // 🚗
+fileprivate let LeafCategorySibling = "homeinsurance" // 🏡
 
 class CategoriesUtilTests: XCTestCase {
 
@@ -33,11 +34,13 @@ class CategoriesUtilTests: XCTestCase {
          "financialadvising" : Set<String>(),
          "installmentloans" : Set<String>(),
          LeafParentCategory : Set<String>([LeafCategory,
-                                           "homeinsurance",
+                                           LeafCategorySibling,
                                            "lifeinsurance"]),
          "investing" : Set<String>(),
          "taxservices" : Set<String>(),
          "titleloans" : Set<String>()]
+
+    private let AnotherLeafCategory = "winetastingroom" // food -> wineries -> winetastingroom
 
     private let NotACategory = "not-a-category"
 
@@ -58,5 +61,43 @@ class CategoriesUtilTests: XCTestCase {
         }
 
         XCTAssertEqual(CategoriesUtil.categoryToDescendantsMap[RootCategory], expected)
+    }
+
+    func testGetHiddenCategoriesForCSVForLeaf() {
+        let actual = CategoriesUtil.getHiddenCategories(forCSV: LeafCategory)
+        XCTAssertEqual(actual, Set([LeafCategory]))
+    }
+
+    func testGetHiddenCategoriesForCSVForLeafSiblings() {
+        let input = [LeafCategory, LeafCategorySibling]
+        let inputCSV = input.joined(separator: ",")
+        let actual = CategoriesUtil.getHiddenCategories(forCSV: inputCSV)
+        XCTAssertEqual(actual, Set(input))
+    }
+
+    func testGetHiddenCategoriesForCSVForLeafParentAndLeaf() {
+        let input = [LeafParentCategory, AnotherLeafCategory]
+        let inputCSV = input.joined(separator: ",")
+        let expected = Set(input).union(CategoryHierarchy[LeafParentCategory]!)
+
+        let actual = CategoriesUtil.getHiddenCategories(forCSV: inputCSV)
+        XCTAssertEqual(actual, expected)
+    }
+
+    func testGetHiddenCategoriesForCSVForNonCategory() {
+        let actual = CategoriesUtil.getHiddenCategories(forCSV: NotACategory)
+        XCTAssertEqual(actual, Set<String>())
+    }
+
+    func testGetHiddenCategoriesForCSVWithWhitespace() {
+        let inputCSV = " " + LeafCategory + ", " + LeafCategorySibling + "  "
+        let actual = CategoriesUtil.getHiddenCategories(forCSV: inputCSV)
+        XCTAssertEqual(actual, Set([LeafCategory, LeafCategorySibling]))
+    }
+
+    func testGetHiddenCategoriesForCSVStrangelyFormatted() {
+        let input = LeafCategory + ",,,  ,,"
+        let actual = CategoriesUtil.getHiddenCategories(forCSV: input)
+        XCTAssertEqual(actual, Set([LeafCategory]))
     }
 }

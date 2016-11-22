@@ -36,6 +36,8 @@
 	<integer>4</integer>
 	<key>you_are_here_walking_time_mins</key>
 	<integer>1</integer>
+	<key>place_categories_to_hide_csv</key>
+	<string></string>
 	<key>max_walking_time_in_mins</key>
 	<integer>30</integer>
 </dict>

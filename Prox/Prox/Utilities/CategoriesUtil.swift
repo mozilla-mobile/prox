@@ -13,6 +13,36 @@ struct CategoriesUtil {
         return true // we'll update this in the next commits.
     }
 
+    // UX gives us a CSV list of categories to hide and we hide them *and their children*.
+    // This is an exhaustive collection of these categories and their children.
+    // Caveat: we don't expect UX to include root categories, which are special-cased: we can reduce
+    // yelp resource use by whitelisting the categories we ask for meaning the other root categories
+    // are hidden implicitly.
+    static let HiddenCategories: Set<String> = {
+        let csv = RemoteConfigKeys.getString(forKey: RemoteConfigKeys.placeCategoriesToHideCSV)
+        return getHiddenCategories(forCSV: csv)
+    }()
+
+    // Separated for testing: I don't know how to do automated tests with the Firebase value.
+    internal static func getHiddenCategories(forCSV csv: String) -> Set<String> {
+        // We could be more robust
+        let categories = csv.characters.split(separator: ",")
+
+        var hiddenCategories = Set<String>()
+        for categoryCharView in categories {
+            let category = String(categoryCharView).trimmingCharacters(in: .whitespaces)
+            guard let descendants = categoryToDescendantsMap[category] else {
+                print("lol unknown category, \(category) (from Firebase?). Ignoring")
+                continue
+            }
+
+            hiddenCategories.update(with: category)
+            hiddenCategories = hiddenCategories.union(descendants)
+        }
+
+        return hiddenCategories
+    }
+
     static let categoryToDescendantsMap = getCategoryToDescendantsMap()
 
     private static func getCategoryToDescendantsMap() -> [String:Set<String>] {
