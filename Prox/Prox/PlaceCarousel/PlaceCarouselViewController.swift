@@ -91,7 +91,7 @@ class PlaceCarouselViewController: UIViewController {
         return carousel
     }()
 
-    fileprivate var shouldUpdatePlaces: Bool = true
+    fileprivate var shouldFetchPlaces: Bool = true
 
     var sunriseSet: EDSunriseSet? {
         didSet {
@@ -206,10 +206,7 @@ class PlaceCarouselViewController: UIViewController {
         // and makes sure we don't end up providing weird data to users while they are scrolling
         // through places details
         updateLocation(location: location)
-
-        if shouldUpdatePlaces {
-            updatePlaces(forLocation: location)
-        }
+        updatePlaces(forLocation: location)
     }
 
     override func didReceiveMemoryWarning() {
@@ -250,11 +247,21 @@ class PlaceCarouselViewController: UIViewController {
     }
 
     fileprivate func updatePlaces(forLocation location: CLLocation) {
+        if shouldFetchPlaces {
+            fetchPlaces(forLocation: location)
+        } else {
+            // re-sort places based on new location
+            let sortedPlaces = PlaceUtilities.sort(places: self.places, byDistanceFromLocation: location)
+            self.places = sortedPlaces
+        }
+    }
+
+    fileprivate func fetchPlaces(forLocation location: CLLocation) {
         self.placesProvider.updatePlaces(forLocation: location)
-        let placeMonitoringRadius = RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.searchRadiusInKm) / 2
+        let placeMonitoringRadius = RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.searchRadiusInKm) / 4
         locationMonitor.startMonitoring(location: location, withIdentifier: placesFetchMonitorIdentifier, withRadius: placeMonitoringRadius, forEntry: nil, forExit: { region in
             self.locationMonitor.stopMonitoringRegion(withIdentifier: placesFetchMonitorIdentifier)
-            self.shouldUpdatePlaces = true
+            self.shouldFetchPlaces = true
             // if we're currently in the background then dismiss the detail view if we have one
             // this is so that we get fresh places when we open the app again
             // right now I have no idea if this will kick of a places fetch immediately or when the app is next opened
@@ -266,7 +273,7 @@ class PlaceCarouselViewController: UIViewController {
                 }
             }
         })
-        self.shouldUpdatePlaces = false
+        self.shouldFetchPlaces = false
     }
 
     fileprivate func updateSunRiseSetTimes(forLocation location: CLLocation) {
