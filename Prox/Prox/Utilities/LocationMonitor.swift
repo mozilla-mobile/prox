@@ -84,7 +84,7 @@ class LocationMonitor: NSObject {
         delegate?.locationMonitor(self, userDidVisitLocation: currentLocation)
     }
 
-    func startMonitoringCurrentLocation() {
+    func startMonitoringForVisitAtCurrentLocation() {
         guard let currentLocation = getCurrentLocation() else { return }
         startTimeAtLocationTimer()
         startMonitoring(location: currentLocation, withIdentifier: currentLocationIdentifier, withRadius: AppConstants.currentLocationMonitoringRadius, forEntry: nil, forExit: { region in
@@ -101,7 +101,7 @@ class LocationMonitor: NSObject {
         self.locationManager.startMonitoring(for: region.region)
     }
 
-    fileprivate func stopMonitoringRegion(withIdentifier identifier: String) {
+    func stopMonitoringRegion(withIdentifier identifier: String) {
         guard let monitoredRegion = monitoredRegions[identifier]?.region else {
             return
         }

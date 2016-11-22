@@ -23,6 +23,8 @@ struct PlaceDataSourceError: Error {
     let message: String
 }
 
+fileprivate let placesFetchMonitorIdentifier = "PlaceFetchRadiusMonitor"
+
 class PlaceCarouselViewController: UIViewController {
 
     lazy var placesProvider: PlacesProvider = {
@@ -88,6 +90,8 @@ class PlaceCarouselViewController: UIViewController {
         carousel.locationProvider = self.locationMonitor
         return carousel
     }()
+
+    fileprivate var shouldUpdatePlaces: Bool = true
 
     var sunriseSet: EDSunriseSet? {
         didSet {
@@ -202,7 +206,10 @@ class PlaceCarouselViewController: UIViewController {
         // and makes sure we don't end up providing weird data to users while they are scrolling
         // through places details
         updateLocation(location: location)
-        updatePlaces(forLocation: location)
+
+        if shouldUpdatePlaces {
+            updatePlaces(forLocation: location)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -234,11 +241,7 @@ class PlaceCarouselViewController: UIViewController {
     fileprivate func updateLocation(location: CLLocation) {
         if let timeOfLastLocationUpdate = locationMonitor.timeOfLastLocationUpdate,
             timeOfLastLocationUpdate < location.timestamp {
-            locationMonitor.startMonitoringCurrentLocation()
-        }
-
-        if places.isEmpty {
-            updatePlaces(forLocation: location)
+            locationMonitor.startMonitoringForVisitAtCurrentLocation()
         }
 
         if sunriseSet == nil {
@@ -248,6 +251,22 @@ class PlaceCarouselViewController: UIViewController {
 
     fileprivate func updatePlaces(forLocation location: CLLocation) {
         self.placesProvider.updatePlaces(forLocation: location)
+        let placeMonitoringRadius = RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.searchRadiusInKm) / 2
+        locationMonitor.startMonitoring(location: location, withIdentifier: placesFetchMonitorIdentifier, withRadius: placeMonitoringRadius, forEntry: nil, forExit: { region in
+            self.locationMonitor.stopMonitoringRegion(withIdentifier: placesFetchMonitorIdentifier)
+            self.shouldUpdatePlaces = true
+            // if we're currently in the background then dismiss the detail view if we have one
+            // this is so that we get fresh places when we open the app again
+            // right now I have no idea if this will kick of a places fetch immediately or when the app is next opened
+            // maybe I'll have to make some changes once I have figured that out
+            let state = UIApplication.shared.applicationState
+            if state == .background || state == .inactive {
+                DispatchQueue.main.async {
+                    self.presentedViewController?.dismiss(animated: false, completion: nil)
+                }
+            }
+        })
+        self.shouldUpdatePlaces = false
     }
 
     fileprivate func updateSunRiseSetTimes(forLocation location: CLLocation) {
@@ -353,15 +372,6 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
     }
     func locationMonitorNeedsUserPermissionsPrompt(_ locationMonitor: LocationMonitor) {
         presentSettingsOrQuitPrompt()
-    }
-}
-
-extension PlaceCarouselViewController: EventsProviderDelegate {
-    func eventsProvider(_ eventsProvider: EventsProvider, didError error: Error) {
-
-    }
-
-    func eventsProvider(_ eventsProvider: EventsProvider, didUpdateEvents: [Event]) {
     }
 }
 
