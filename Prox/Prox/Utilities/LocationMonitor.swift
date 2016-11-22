@@ -142,7 +142,12 @@ class LocationMonitor: NSObject {
 extension LocationMonitor: LocationProvider {
     func getCurrentLocation() -> CLLocation? {
         if currentLocation == nil {
-            currentLocation = self.locationManager.location
+            if AppConstants.MOZ_LOCATION_FAKING {
+                // fake the location to Hilton Waikaloa Village, Kona, Hawaii
+                currentLocation = fakeLocation
+            }else {
+                currentLocation = self.locationManager.location
+            }
         }
         return currentLocation
     }
