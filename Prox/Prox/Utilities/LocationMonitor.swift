@@ -46,7 +46,7 @@ class LocationMonitor: NSObject {
         manager.desiredAccuracy = kCLLocationAccuracyBest
         // TODO: update to a more sane distance value when testing is over.
         // This is probably going to be around 100m
-        manager.distanceFilter = kCLDistanceFilterNone
+        manager.distanceFilter = RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.significantLocationChangeDistanceMeters)
         manager.pausesLocationUpdatesAutomatically = true
         return manager
     }()
