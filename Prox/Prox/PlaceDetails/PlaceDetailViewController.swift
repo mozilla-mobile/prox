@@ -143,6 +143,9 @@ class PlaceDetailViewController: UIViewController {
 
     init(place: Place) {
         super.init(nibName: nil, bundle: nil)
+
+        AppState.enterDetails()
+
         self.currentCardViewController = dequeuePlaceCardViewController(forPlace: place)
         self.currentCardViewController.cardView.alpha = 1
         self.currentCardViewController.cardView.transform = .identity
@@ -695,6 +698,7 @@ class PlaceDetailViewController: UIViewController {
 
     func close() {
         Analytics.logEvent(event: AnalyticsEvent.MAP_BUTTON, params: [:])
+        AppState.enterCarousel()
         self.dismiss(animated: true, completion: nil)
 
     }

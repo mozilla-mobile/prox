@@ -7,23 +7,29 @@ import Flurry_iOS_SDK
 
 class Analytics {
     static func startAppSession() {
+        // TODO: Load key
         Flurry.logEvent(AnalyticsEvent.APP_INIT)
     }
 
-    static func logEvent(event: String, params: [String: String]) {
+    static func logEvent(event: String, params: [String: Any]) {
         Flurry.logEvent(event, withParameters: params)
+    }
+
+    static func startSession(sessionName: String, params: [String: Any]) {
+        Flurry.logEvent(sessionName, withParameters: params, timed: true)
+    }
+
+    static func endSession(sessionName: String, params: [String: Any]) {
+        Flurry.endTimedEvent(sessionName, withParameters: params)
     }
 }
 
 public struct AnalyticsEvent {
     static let APP_INIT = "app_init";
 
-    // Durations
-    static let LOADING_SCREEN_DURATION         = "loading_screen_duration"
-    static let PLACE_DETAILS_SESSION_DURATION  = "details_session_duration"
-    static let DETAILS_CARD_SESSION_DURATION   =
-        "details_card_session_duration"
-    static let PLACE_CAROUSEL_SESSION_DURATION = "carousel_session_duration"
+    static let SESSION_SUFFIX = "_session_duration"
+    static let DETAILS_CARD_SESSION_DURATION   = "details_card" + SESSION_SUFFIX
+
 
     // Place Details
     static let YELP               = "yelp_link"

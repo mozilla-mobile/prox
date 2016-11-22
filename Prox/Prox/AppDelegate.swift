@@ -29,7 +29,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+
         Analytics.startAppSession()
+        // Start session measuring Loading duration
+        Analytics.startSession(sessionName: AppState.State.loading.rawValue + AnalyticsEvent.SESSION_SUFFIX, params: [:])
+
         setupFirebase()
         setupRemoteConfig()
         BuddyBuildSDK.setup()
@@ -116,11 +120,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // if there is a timer running, cancel it. We'll wait until background app refresh fires instead
         placeCarouselViewController?.locationMonitor.cancelTimeAtLocationTimer()
         eventsNotificationsManager.persistNotificationCache()
+        AppState.enterBackground()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         placeCarouselViewController?.locationMonitor.startTimeAtLocationTimer()
+        AppState.enterForeground()
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -132,6 +138,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         placeCarouselViewController?.locationMonitor.cancelTimeAtLocationTimer()
         eventsNotificationsManager.persistNotificationCache()
+        AppState.exiting()
     }
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
