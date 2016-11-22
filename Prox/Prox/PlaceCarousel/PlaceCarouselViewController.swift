@@ -193,6 +193,12 @@ class PlaceCarouselViewController: UIViewController {
 
         // apply the constraints
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+
+        toggleLoadingUI(loading: true)
+
+        if let location = self.locationMonitor.getCurrentLocation() {
+            updatePlaces(forLocation: location)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -221,20 +227,20 @@ class PlaceCarouselViewController: UIViewController {
         self.present(placeDetailViewController, animated: true, completion: nil)
     }
 
-    // MARK: Location Handling
-    fileprivate func updateLocation(location: CLLocation) {
-        if let timeOfLastLocationUpdate = locationMonitor.timeOfLastLocationUpdate,
-            timeOfLastLocationUpdate < location.timestamp {
-            locationMonitor.startMonitoringForVisitAtCurrentLocation()
-        }
-
-        if sunriseSet == nil {
-            updateSunRiseSetTimes(forLocation: location)
-        }
-
-        updatePlaces(forLocation: location)
+    fileprivate func toggleLoadingUI(loading: Bool) {
+        headerView.alpha = loading ? 0 : 1
+        sunView.alpha = loading ? 0 : 1
+        loadingOverlay.alpha = loading ? 1 : 0
     }
 
+    fileprivate func shouldStartMonitoringLocation() -> Bool {
+        guard let timeOfLastLocationUpdate = locationMonitor.timeOfLastLocationUpdate,
+              let location = locationMonitor.currentLocation else {
+            return false
+        }
+        return timeOfLastLocationUpdate < location.timestamp
+    }
+    
     fileprivate func updatePlaces(forLocation location: CLLocation) {
         // don't bother fetching new places when in the background.
         if UIApplication.shared.applicationState != .background {
@@ -356,7 +362,8 @@ extension PlaceCarouselViewController: PlaceCarouselDelegate {
 
 extension PlaceCarouselViewController: LocationMonitorDelegate {
     func locationMonitor(_ locationMonitor: LocationMonitor, didUpdateLocation location: CLLocation) {
-        updateLocation(location: location)
+        updatePlaces(forLocation: location)
+        updateSunRiseSetTimes(forLocation: location)
     }
 
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation) {
@@ -379,19 +386,20 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
     }
 
     func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider) {
-        // no op
         if self.places.isEmpty {
             headerView.numberOfPlacesLabel.text = "No Places Found"
         }
     }
 
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
-        UIView.animate(withDuration: 0.4, animations: { self.loadingOverlay.alpha = 0 }, completion: { _ in self.loadingOverlay.isHidden = true })
+        toggleLoadingUI(loading: false)
 
-        let oldPlaces = self.places
+        let wasEmpty = self.places.isEmpty
         self.places = places
 
         (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
+
+        if wasEmpty && !places.isEmpty {
 
         if oldPlaces.count == 0 {
             // Wrap the openClosedPlace in an async block to make sure its queued after the
@@ -404,8 +412,7 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
 
     func placesProvider(_ controller: PlacesProvider, didError error: Error) {
         if self.places.count == 0 {
-            // placeholder for the error state.
-            headerView.numberOfPlacesLabel.text = "Error"
+            loadingOverlay.fadeInMessaging()
         }
     }
 }
