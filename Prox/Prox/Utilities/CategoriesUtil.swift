@@ -10,7 +10,12 @@ struct CategoriesUtil {
     private static let AllCategoriesExt = "json"
 
     static func shouldShowPlace<S : Sequence>(byCategories categories: S) -> Bool where S.Iterator.Element == String {
-        return true // we'll update this in the next commits.
+        // TODO: UX still needs to tell us whether they want to hide a place if its categories contains
+        // a single category they said to hide or only if *all* its categories are in the categories
+        // they said to hide. For now, we hide if they all match.
+        let categorySet = Set(categories)
+        let allMatched = categorySet.subtracting(HiddenCategories).isEmpty
+        return !allMatched
     }
 
     // UX gives us a CSV list of categories to hide and we hide them *and their children*.
