@@ -6,11 +6,6 @@ import Foundation
 
 import FirebaseRemoteConfig
 
-protocol EventsProviderDelegate: class {
-    func eventsProvider(_ eventsProvider: EventsProvider, didUpdateEvents: [Event])
-    func eventsProvider(_ eventsProvider: EventsProvider, didError error: Error)
-}
-
 class EventsProvider {
     lazy var eventsDatabase: EventsDatabase = FirebaseEventsDatabase()
 
