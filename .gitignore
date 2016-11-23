@@ -23,6 +23,7 @@ xcuserdata/
 
 # Secure Information
 Prox/Prox/GoogleService-Info.plist
+Prox/Prox/APIKeys.plist
 
 ## Obj-C/Swift specific
 *.hmap

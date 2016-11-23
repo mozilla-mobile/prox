@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		23039CD41DE56D5200653FCD /* APIKeys.plist in Resources */ = {isa = PBXBuildFile; fileRef = 23039CD31DE56D5200653FCD /* APIKeys.plist */; };
 		234AF15A1DDFD91C00097B0B /* AnalyticsUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234AF1591DDFD91C00097B0B /* AnalyticsUtilities.swift */; };
 		2380CA911DE4140A002D73F1 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2380CA901DE4140A002D73F1 /* AppState.swift */; };
 		392F3D901DD20EAE00B44B01 /* PlacesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392F3D8F1DD20EAE00B44B01 /* PlacesController.swift */; };
@@ -113,6 +114,7 @@
 		0EA57261799D082127AF0A24 /* Pods-ProxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.release.xcconfig"; sourceTree = "<group>"; };
 		18F1C6CC1D18EC45A9072FF1 /* Pods-ProxUITests.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise.xcconfig"; sourceTree = "<group>"; };
 		1E318DF6890B9E7221222152 /* Pods-Prox.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.enterprise kona.xcconfig"; sourceTree = "<group>"; };
+		23039CD31DE56D5200653FCD /* APIKeys.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = APIKeys.plist; sourceTree = "<group>"; };
 		234AF1591DDFD91C00097B0B /* AnalyticsUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsUtilities.swift; sourceTree = "<group>"; };
 		2380CA901DE4140A002D73F1 /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		246E3C4ADD7C4DD2150C111B /* Pods-Prox.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.release.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.release.xcconfig"; sourceTree = "<group>"; };
@@ -284,6 +286,7 @@
 				E6101A8F1DDA45CD00D05B74 /* Data.bundle */,
 				E65857E31DB6A75400CD18F8 /* Database */,
 				7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */,
+				23039CD31DE56D5200653FCD /* APIKeys.plist */,
 				392F3D961DD4395000B44B01 /* RemoteConfigDefaults.plist */,
 				39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */,
 				E67146341DB5488D007A99E4 /* Extensions */,
@@ -622,6 +625,7 @@
 			files = (
 				7B561BBA1DAC02B90096D8BC /* hilton_location.gpx in Resources */,
 				392F3D971DD4395000B44B01 /* RemoteConfigDefaults.plist in Resources */,
+				23039CD41DE56D5200653FCD /* APIKeys.plist in Resources */,
 				7BD5CC891DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */,
 				7B29E7CD1DA3EC360099AF38 /* LaunchScreen.storyboard in Resources */,
 				7B29E7CA1DA3EC360099AF38 /* Assets.xcassets in Resources */,

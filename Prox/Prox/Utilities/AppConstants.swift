@@ -91,4 +91,6 @@ public struct AppConstants {
             return URL(string: "https://prox-dev.moo.mx")!
         #endif
     }()
+
+    public static let APIKEYS_PATH = "APIKeys"
 }
