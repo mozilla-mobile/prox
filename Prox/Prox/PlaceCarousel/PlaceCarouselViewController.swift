@@ -68,7 +68,7 @@ class PlaceCarouselViewController: UIViewController {
 
         return view
     }()
-
+ 
     // label displaying sunrise and sunset times
     lazy var sunriseSetTimesLabel: UILabel = {
         let label = UILabel()
@@ -77,11 +77,7 @@ class PlaceCarouselViewController: UIViewController {
         return label
     }()
 
-    lazy var locationMonitor: LocationMonitor = {
-        let monitor = LocationMonitor()
-        monitor.delegate = self
-        return monitor
-    }()
+    var locationMonitor: LocationMonitor { return (UIApplication.shared.delegate! as! AppDelegate).locationMonitor }
 
     lazy var placeCarousel: PlaceCarousel = {
         let carousel = PlaceCarousel()
@@ -193,22 +189,6 @@ class PlaceCarouselViewController: UIViewController {
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        guard let location = locationMonitor.getCurrentLocation() else {
-            return
-        }
-
-        // this will update places when we first load, and whenever we show the place carousel
-        // but not update places while we are showing details, until we close the place details
-        // this ensures consistency between the place details and the carousel underneath
-        // and makes sure we don't end up providing weird data to users while they are scrolling
-        // through places details
-        updateLocation(location: location)
-        updatePlaces(forLocation: location)
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -244,15 +224,20 @@ class PlaceCarouselViewController: UIViewController {
         if sunriseSet == nil {
             updateSunRiseSetTimes(forLocation: location)
         }
+
+        updatePlaces(forLocation: location)
     }
 
     fileprivate func updatePlaces(forLocation location: CLLocation) {
-        if shouldFetchPlaces {
-            fetchPlaces(forLocation: location)
-        } else {
-            // re-sort places based on new location
-            let sortedPlaces = PlaceUtilities.sort(places: self.places, byDistanceFromLocation: location)
-            self.places = sortedPlaces
+        // don't bother fetching new places when in the background.
+        if UIApplication.shared.applicationState != .background {
+            if shouldFetchPlaces {
+                fetchPlaces(forLocation: location)
+            } else {
+                // re-sort places based on new location
+                let sortedPlaces = PlaceUtilities.sort(places: self.places, byDistanceFromLocation: location)
+                self.places = sortedPlaces
+            }
         }
     }
 
@@ -262,16 +247,6 @@ class PlaceCarouselViewController: UIViewController {
         locationMonitor.startMonitoring(location: location, withIdentifier: placesFetchMonitorIdentifier, withRadius: placeMonitoringRadius, forEntry: nil, forExit: { region in
             self.locationMonitor.stopMonitoringRegion(withIdentifier: placesFetchMonitorIdentifier)
             self.shouldFetchPlaces = true
-            // if we're currently in the background then dismiss the detail view if we have one
-            // this is so that we get fresh places when we open the app again
-            // right now I have no idea if this will kick of a places fetch immediately or when the app is next opened
-            // maybe I'll have to make some changes once I have figured that out
-            let state = UIApplication.shared.applicationState
-            if state == .background || state == .inactive {
-                DispatchQueue.main.async {
-                    self.presentedViewController?.dismiss(animated: false, completion: nil)
-                }
-            }
         })
         self.shouldFetchPlaces = false
     }
@@ -340,10 +315,11 @@ extension PlaceCarouselViewController: PlaceDataSource {
     }
 
     func previousPlace(forPlace place: Place) -> Place? {
-        guard let currentPlaceIndex = places.index(where: {$0 == place}),
-            currentPlaceIndex > places.startIndex else {
-                return nil
+        guard let currentPlaceIndex = places.index(where: {$0 == place}) else {
+                return places[places.startIndex]
         }
+
+        guard currentPlaceIndex > places.startIndex else { return nil }
 
         return places[places.index(before: currentPlaceIndex)]
     }
@@ -380,14 +356,16 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
     func locationMonitorNeedsUserPermissionsPrompt(_ locationMonitor: LocationMonitor) {
         presentSettingsOrQuitPrompt()
     }
+
+    func locationMonitor(_ locationMonitor: LocationMonitor, userDidExitCurrentLocation location: CLLocation) {
+        locationMonitor.refreshLocation()
+    }
 }
 
 extension PlaceCarouselViewController: PlacesProviderDelegate {
     func placesProviderWillStartFetchingPlaces(_ controller: PlacesProvider) {
         // TODO placeholder for the waiting state.
-        if self.places.count == 0 {
-            headerView.numberOfPlacesLabel.text = "Waiting"
-        }
+        headerView.numberOfPlacesLabel.text = "Waiting"
     }
 
     func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider) {
@@ -399,6 +377,8 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
 
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
         self.places = places
+
+        (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
     }
 
     func placesProvider(_ controller: PlacesProvider, didError error: Error) {

@@ -57,11 +57,14 @@ class LocationMonitor: NSObject {
     fileprivate var monitoredRegions: [String: GeofenceRegion] = [String: GeofenceRegion]()
     fileprivate var timeAtLocationTimer: Timer?
 
+    fileprivate var isAuthorized = false
 
     func refreshLocation() {
         if (CLLocationManager.hasLocationPermissionAndEnabled()) {
-            locationManager.startMonitoringSignificantLocationChanges()
+            isAuthorized = true
+            locationManager.startUpdatingLocation()
         } else {
+            isAuthorized = false
             // requestLocation expected to be called on authorization status change.
             maybeRequestLocationPermission()
         }
@@ -85,7 +88,8 @@ class LocationMonitor: NSObject {
     }
 
     func startMonitoringForVisitAtCurrentLocation() {
-        guard let currentLocation = getCurrentLocation() else { return }
+        guard let currentLocation = getCurrentLocation(),
+            !monitoredRegions.keys.contains(currentLocationIdentifier) else { return }
         startTimeAtLocationTimer()
         startMonitoring(location: currentLocation, withIdentifier: currentLocationIdentifier, withRadius: AppConstants.currentLocationMonitoringRadius, forEntry: nil, forExit: { region in
             self.cancelTimeAtLocationTimer()
@@ -156,7 +160,9 @@ extension LocationMonitor: LocationProvider {
 extension LocationMonitor: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        refreshLocation()
+        if !isAuthorized || !CLLocationManager.hasLocationPermissionAndEnabled(){
+            refreshLocation()
+        }
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -176,9 +182,11 @@ extension LocationMonitor: CLLocationManagerDelegate {
                 self.delegate?.locationMonitor(self, didUpdateLocation: location)
 
                 timeOfLastLocationUpdate = location.timestamp
+                locationManager.stopUpdatingLocation()
             } else if currentLocation == nil {
                 self.currentLocation = location
                 self.delegate?.locationMonitor(self, didUpdateLocation: location)
+                locationManager.stopUpdatingLocation()
             }
         }
     }
