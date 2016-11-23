@@ -17,7 +17,7 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
     // Scaling factor for the map view when we animate away. This gives the 'expanding' effect.
     private let scale: CGFloat = 1.1
 
-    fileprivate let duration: TimeInterval = 0.25
+    fileprivate let duration: TimeInterval = 0.6
 
     override init() {
         super.init()
@@ -56,9 +56,6 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
         }
         containerView.layoutIfNeeded()
 
-        // We always want to hide the carousel when we're either presenting or dismissing
-        placesImageCarousel.alpha = 0
-
         if presenting {
             guard let selectedCell = mapVC.placeCarousel.visibleCellFor(place: currentPlace),
                   let imageURL = URL(string: placesVC.currentPlace.photoURLs.first ?? "") else {
@@ -66,6 +63,8 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             }
 
             let cellViews = selectedCell.animatableProperties()
+
+            placesImageCarousel.alpha = 0
 
             // Convert the frame from the placeImages in the cell to the container's coordinates
             let placesImageFrame = cellViews.placeImage.frame
@@ -84,9 +83,11 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             let labelsView = UIImageView(image: labelsSnapshot!)
             labelsView.frame = convertedPlacesImageFrame
 
-            containerView.insertSubview(fakeImageView, belowSubview: placesView)
-            containerView.insertSubview(opacityView, aboveSubview: fakeImageView)
-            containerView.insertSubview(labelsView, aboveSubview: opacityView)
+            // Insert the fake image below the card along with the related views
+            let cardParent = placesViews.currentCard.superview!
+            cardParent.insertSubview(fakeImageView, belowSubview: placesViews.currentCard)
+            cardParent.insertSubview(opacityView, aboveSubview: fakeImageView)
+            cardParent.insertSubview(labelsView, aboveSubview: opacityView)
 
             // Hide the next/previous cards until we finish the animation
             placesViews.nextCard?.alpha = 0
@@ -103,9 +104,9 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             let startingCardOrigin = CGPoint(x: placesCardView.frame.origin.x, y: UIScreen.main.bounds.height)
             placesCardView.frame = CGRect(origin: startingCardOrigin, size: placesCardView.frame.size)
 
-            // Run the card/image animation concurrently with the next/card animation but make sure they
-            // end at the same time
-            UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.8,
+                           initialSpringVelocity: 0.5, options: .curveEaseInOut,
+                           animations: {
                 placesCardView.frame = CGRect(origin: endingCardOrigin, size: placesCardView.frame.size)
                 fakeImageView.frame = placesImageCarousel.frame
                 opacityView.frame = placesImageCarousel.frame
@@ -133,7 +134,7 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             })
 
             // Delay the views from the places view controller a bit so we don't cover the animation with the background image
-            fadeDelay(placesViews: placesViews, withEndingAlpha: 1, delay: duration * 2/3, duration: duration  * 1/3)
+            fadeDelay(placesViews: placesViews, withEndingAlpha: 1, delay: duration * 1/6, duration: duration  * 1/4)
         } else {
             // Since we could be at a different place than the one we selected to enter the detail view,
             // make sure we scroll the carousel to the new view before doing anything
@@ -153,7 +154,7 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
             // Convert the frame from the placeImages in the cell to the container's coordinates
             let placesImageFrame = cellViews.placeImage.frame
-            let convertedPlacesImageFrame = containerView.convert(placesImageFrame, from: toPlacesCell)
+            let convertedPlacesImageFrame = placesView.convert(placesImageFrame, from: toPlacesCell)
 
             // Setup the fake views we'll need to perform the animation
             let fakeImageView = UIImageView(frame: placesVC.imageCarousel.frame)
@@ -171,9 +172,12 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             labelsView.frame = convertedPlacesImageFrame
             labelsView.alpha = 0
 
-            containerView.insertSubview(fakeImageView, belowSubview: placesView)
+            containerView.insertSubview(fakeImageView, aboveSubview: placesVC.imageCarousel)
             containerView.insertSubview(opacityView, aboveSubview: fakeImageView)
             containerView.insertSubview(labelsView, aboveSubview: opacityView)
+
+            // Hide the actual carousel
+            placesImageCarousel.alpha = 0
 
             // Setup our frame values for the card animation
             let startingCardOrigin = placesCardView.frame.origin
@@ -194,7 +198,9 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             // Hide the selected cell's image since we're using a fake one to animate
             cellViews.placeImage.alpha = 0
 
-            UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1,
+                           initialSpringVelocity: 0.5, options: .curveEaseInOut,
+                           animations: {
                 placesCardView.frame = CGRect(origin: endingCardOrigin, size: placesCardView.frame.size)
                 fakeImageView.frame = convertedPlacesImageFrame
                 opacityView.frame = convertedPlacesImageFrame
@@ -218,8 +224,7 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
                 transitionContext.completeTransition(true)
             })
 
-            // Time the places views animation to execute immediately but finish quickly
-            fadeDelay(placesViews: placesViews, withEndingAlpha: 0, delay: 0, duration: duration * 1/3)
+            fadeDelay(placesViews: placesViews, withEndingAlpha: 0, delay: 0, duration: duration * 1/4)
         }
     }
 
@@ -253,7 +258,9 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
     fileprivate func snapshotOf(labelsContainer: UIView) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(labelsContainer.frame.size, false, UIScreen.main.scale)
-        labelsContainer.drawHierarchy(in: labelsContainer.frame, afterScreenUpdates: true)
+        if let ctx = UIGraphicsGetCurrentContext() {
+            labelsContainer.layer.render(in: ctx)
+        }
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return image

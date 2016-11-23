@@ -198,6 +198,10 @@ class PlaceDetailViewController: UIViewController {
 
         cardViewWidth = self.view.bounds.width - (2 * cardEdgeMarginConstant)
 
+        // Add some additional height to the background image so when the spring animation runs when
+        // transitioning to the this VC we don't see a blank space poke through the bottom due to the spring
+        let springOverlap: CGFloat = 5
+        
         view.addSubview(scrollView)
         var constraints = [scrollView.topAnchor.constraint(equalTo: view.topAnchor),
                            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -210,7 +214,7 @@ class PlaceDetailViewController: UIViewController {
 
         backgroundImageHeightConstraint = backgroundImage.heightAnchor.constraint(equalToConstant: scrollView.contentSize.height)
 
-        constraints += [backgroundImage.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageCarouselHeightConstant),
+        constraints += [backgroundImage.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageCarouselHeightConstant - springOverlap),
                            backgroundImage.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
                            backgroundImageHeightConstraint!,
                            backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor)]
