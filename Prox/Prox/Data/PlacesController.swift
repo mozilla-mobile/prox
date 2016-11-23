@@ -39,9 +39,6 @@ class PlacesProvider {
         return RemoteConfigKeys.searchRadiusInKm.value
     }()
 
-    private var nearbyPlaces = [CLLocation: [Place]]()
-    private var eventsPlaces = [CLLocation: [Place]]()
-
     func place(forKey key: String, callback: @escaping (Place?) -> ()) {
         database.getPlace(forKey: key).upon { callback($0.successResult() )}
     }
@@ -113,12 +110,10 @@ class PlacesProvider {
 
         // Immediately after we've told the server, we should start querying the firebase datastore,
         // because we may have already got something cached.
-        nearbyPlaces.removeValue(forKey: location)
         retryQueryPlaces(location: location, withRadius: radius, retriesLeft: numberOfRetries, lastCount: 0)
-        fetchPlacesWithEvents(location: location)
     }
 
-    private func retryQueryPlaces(location: CLLocation, withRadius radius: Double, retriesLeft: Int, lastCount: Int = -1) {
+    private func retryQueryPlaces(location: CLLocation, withRadius radius: Double, retriesLeft: Int, lastCount: Int) {
         // Fetch a stable list of places from firebase.
         // In the event of the server crawling (from a cold start, for example)
         // the server will be adding places to firebase.
@@ -128,21 +123,26 @@ class PlacesProvider {
             let placeCount = places.count
             // Check if we have a stable number of places.
             if (placeCount > 0 && lastCount == placeCount) || retriesLeft == 0 {
-                self.nearbyPlaces[location] = places
-                self.displayPlaces(forLocation: location)
-                DispatchQueue.main.async {
-                    // TODO refactor for a more incremental load, and therefore
-                    // insertion sort approach to ranking. We shouldn't do too much of this until
-                    // we have the waiting states implemented.
-                    self.isUpdating = false
-                    self.delegate?.placesProviderDidFinishFetchingPlaces(self)
+                let eventsProvider = EventsProvider()
+                eventsProvider.getEventsWithPlaces(forLocation: location, usingPlacesDatabase: self.database) { placesWithEvents in
+                    let placesSet = Set<Place>(places)
+                    let eventPlacesSet = Set<Place>(placesWithEvents)
+                    let union = eventPlacesSet.union(placesSet)
+
+                    self.displayPlaces(places: Array(union), forLocation: location)
+                    DispatchQueue.main.async {
+                        // TODO refactor for a more incremental load, and therefore
+                        // insertion sort approach to ranking. We shouldn't do too much of this until
+                        // we have the waiting states implemented.
+                        self.isUpdating = false
+                        self.delegate?.placesProviderDidFinishFetchingPlaces(self)
+                    }
                 }
             } else {
                 // We either have zero places, or the server is adding stuff to firebase,
                 // and we should wait. 
                 if placeCount > 0 && lastCount != placeCount {
-                    self.nearbyPlaces[location] = places
-                    self.displayPlaces(forLocation: location)
+                    self.displayPlaces(places: places, forLocation: location)
                 }
                 DispatchQueue.main.asyncAfter(wallDeadline: .now() + .seconds(timeBetweenRetries)) {
                     self.retryQueryPlaces(location: location,
@@ -154,31 +154,14 @@ class PlacesProvider {
         }
     }
 
-    private func fetchPlacesWithEvents(location: CLLocation) {
-        let eventProvider = EventsProvider()
-        eventProvider.getEventsWithPlaces(forLocation: location, usingPlacesDatabase: database) { places in
-            self.eventsPlaces[location] = places
-            self.displayPlaces(forLocation: location)
-        }
-    }
-
     /**
     * Display places merges found places with events with places we have found nearby, giving us a combined list of
     * all the places that we need to show to the user.
     **/
-    private func displayPlaces(forLocation location: CLLocation) {
-        let placesNearby = self.nearbyPlaces[location]
-        let placesWithEvents = self.eventsPlaces[location]
-        let placesToDisplay = union(ofNearbyPlaces: placesNearby, andEventPlaces: placesWithEvents)
-
-        let preparedPlaces = self.preparePlaces(places: placesToDisplay, forLocation: location)
+    private func displayPlaces(places: [Place], forLocation location: CLLocation) {
+        let preparedPlaces = self.preparePlaces(places: places, forLocation: location)
         DispatchQueue.main.async {
             self.delegate?.placesProvider(self, didReceivePlaces: preparedPlaces)
-        }
-
-        if placesWithEvents != nil && !isUpdating {
-            self.eventsPlaces.removeValue(forKey: location)
-            self.nearbyPlaces.removeValue(forKey: location)
         }
     }
 
