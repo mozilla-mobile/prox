@@ -32,7 +32,7 @@ class PlaceCarousel: NSObject {
     weak var locationProvider: LocationProvider?
 
     private lazy var carouselLayout: UICollectionViewFlowLayout = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = CarouselFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = self.defaultPadding
         layout.sectionInset = UIEdgeInsets(top: 0.0, left: self.defaultPadding, bottom: 0.0, right: self.defaultPadding)
@@ -52,6 +52,7 @@ class PlaceCarousel: NSObject {
 
     func refresh() {
         carousel.reloadData()
+        carousel.collectionViewLayout.invalidateLayout()
     }
 
     func visibleCellFor(place: Place) -> PlaceCarouselCollectionViewCell? {
@@ -131,5 +132,41 @@ extension PlaceCarousel: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.placeCarousel(placeCarousel: self, didSelectPlaceAtIndex: indexPath.item)
     }
+}
 
+fileprivate class CarouselFlowLayout: UICollectionViewFlowLayout {
+    var pageWidth: CGFloat {
+        return 200 + minimumLineSpacing
+    }
+
+    var flickVelocity: CGFloat {
+        return 0.3
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override init() {
+        super.init()
+    }
+
+    fileprivate override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
+        guard let collectionView = collectionView else {
+            return CGPoint.zero
+        }
+        
+        let rawPageValue = collectionView.contentOffset.x / pageWidth
+        let currentPage = velocity.x > 0 ? floor(rawPageValue) : ceil(rawPageValue)
+        let nextPage = velocity.x > 0 ? ceil(rawPageValue) : floor(rawPageValue)
+
+        let pannedLessThanAPage = fabs(1 + currentPage - rawPageValue) > 0.5
+        let flicked = fabs(velocity.x) > flickVelocity
+
+        if pannedLessThanAPage && flicked {
+            return CGPoint(x: nextPage * pageWidth, y: proposedContentOffset.y)
+        } else {
+            return CGPoint(x: round(rawPageValue) * pageWidth, y: proposedContentOffset.y)
+        }
+    }
 }
