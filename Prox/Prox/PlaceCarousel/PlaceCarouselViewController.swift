@@ -306,20 +306,19 @@ class PlaceCarouselViewController: UIViewController {
 extension PlaceCarouselViewController: PlaceDataSource {
 
     func nextPlace(forPlace place: Place) -> Place? {
-        guard let currentPlaceIndex = places.index(where: {$0 == place}),
-            currentPlaceIndex + 1 < places.endIndex else {
-                return nil
+        // if the place isn't in the list, make the first item in the list the next item
+        guard let currentPlaceIndex = places.index(where: {$0 == place}) else {
+            return places[places.startIndex]
         }
+
+        guard currentPlaceIndex + 1 < places.endIndex else { return nil }
 
         return places[places.index(after: currentPlaceIndex)]
     }
 
     func previousPlace(forPlace place: Place) -> Place? {
-        guard let currentPlaceIndex = places.index(where: {$0 == place}) else {
-                return places[places.startIndex]
-        }
-
-        guard currentPlaceIndex > places.startIndex else { return nil }
+        guard let currentPlaceIndex = places.index(where: {$0 == place}),
+            currentPlaceIndex > places.startIndex else { return nil }
 
         return places[places.index(before: currentPlaceIndex)]
     }

@@ -147,7 +147,11 @@ class PlaceDetailViewController: UIViewController {
                                 nextCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
                                 nextCardViewLeadingConstraint!], translatesAutoresizingMaskIntoConstraints: false)
             }
+        } else {
+            nextCardViewController?.cardView.removeFromSuperview()
+            nextCardViewController?.removeFromParentViewController()
         }
+
         if let previousPlace = dataSource?.previousPlace(forPlace: currentCardViewController.place) {
             if let previousCardViewController = previousCardViewController {
                 previousCardViewController.place = previousPlace
@@ -159,6 +163,9 @@ class PlaceDetailViewController: UIViewController {
                                 previousCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
                                 previousCardViewTrailingConstraint!], translatesAutoresizingMaskIntoConstraints: false)
             }
+        } else {
+            previousCardViewController?.cardView.removeFromSuperview()
+            previousCardViewController?.removeFromParentViewController()
         }
 
         view.setNeedsLayout()
