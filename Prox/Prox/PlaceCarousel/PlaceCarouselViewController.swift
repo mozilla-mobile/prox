@@ -42,6 +42,11 @@ class PlaceCarouselViewController: UIViewController {
             // TODO: how do we make sure the user wasn't interacting?
             headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
             placeCarousel.refresh()
+
+            if oldValue.isEmpty,
+                !places.isEmpty {
+                openFirstPlace()
+            }
         }
     }
 
@@ -197,10 +202,6 @@ class PlaceCarouselViewController: UIViewController {
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
 
         toggleLoadingUI(loading: true)
-
-        if let location = self.locationMonitor.getCurrentLocation() {
-            updatePlaces(forLocation: location)
-        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -227,6 +228,22 @@ class PlaceCarouselViewController: UIViewController {
         placeDetailViewController.transitioningDelegate = self
 
         self.present(placeDetailViewController, animated: true, completion: nil)
+    }
+
+    // MARK: Location Handling
+    fileprivate func updateLocation(location: CLLocation) {
+        if let timeOfLastLocationUpdate = locationMonitor.timeOfLastLocationUpdate,
+            timeOfLastLocationUpdate < location.timestamp {
+            locationMonitor.startMonitoringCurrentLocation()
+        }
+
+        if places.isEmpty {
+            updatePlaces(forLocation: location)
+        }
+
+        if sunriseSet == nil {
+            updateSunRiseSetTimes(forLocation: location)
+        }
     }
 
     fileprivate func toggleLoadingUI(loading: Bool) {
@@ -379,8 +396,7 @@ extension PlaceCarouselViewController: PlaceCarouselDelegate {
 
 extension PlaceCarouselViewController: LocationMonitorDelegate {
     func locationMonitor(_ locationMonitor: LocationMonitor, didUpdateLocation location: CLLocation) {
-        updatePlaces(forLocation: location)
-        updateSunRiseSetTimes(forLocation: location)
+        updateLocation(location: location)
     }
 
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation) {
