@@ -54,12 +54,12 @@ class PlaceUtilitiesTests: XCTestCase {
      * This logic can change a lot so it's not worth writing comprehensive tests for, I think.
      * This is more of a sanity check.
      */
-    func testShouldShowPlaceByRating() {
+    func testShouldShowPlaceByRatingAndReviewCount() {
         let lowRatingLowReviewPlace = getPlace(forRating: 1.0, reviewCount: 3)
-        XCTAssertFalse(PlaceUtilities.shouldShowPlaceByRating(lowRatingLowReviewPlace))
+        XCTAssertFalse(PlaceUtilities.shouldShowPlaceByRatingAndReviewCount(lowRatingLowReviewPlace))
 
         let highRatingHighReviewPlace = getPlace(forRating: 5.0, reviewCount: 3634)
-        XCTAssertTrue(PlaceUtilities.shouldShowPlaceByRating(highRatingHighReviewPlace))
+        XCTAssertTrue(PlaceUtilities.shouldShowPlaceByRatingAndReviewCount(highRatingHighReviewPlace))
     }
 
     private func getPlace(forRating rating: Float, reviewCount: Int) -> Place {

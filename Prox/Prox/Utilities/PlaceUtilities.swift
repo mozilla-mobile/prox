@@ -32,7 +32,7 @@ struct PlaceUtilities {
                 return shouldShowByCategory
             }
 
-            let shouldShowByRating = shouldShowPlaceByRating(place)
+            let shouldShowByRating = shouldShowPlaceByRatingAndReviewCount(place)
             guard shouldShowByRating  else {
                 print("lol filtering out place, \(place.id), by rating")
                 return shouldShowByRating
@@ -42,15 +42,16 @@ struct PlaceUtilities {
         }
     }
 
-    static func shouldShowPlaceByRating(_ place: Place) -> Bool {
+    static func shouldShowPlaceByRatingAndReviewCount(_ place: Place) -> Bool {
         guard let rating = place.yelpProvider.rating,
                 let reviewCount = place.yelpProvider.totalReviewCount else {
             print("lol missing rating or review count for place \(place.id)")
             return false
         }
 
+
         if (rating < 2.5) || // poorly-reviewed
-                (rating == 3 && reviewCount > 3) { // known to be mediocre
+                reviewCount < 4 { // unpopular
             return false
         } else {
             return true
