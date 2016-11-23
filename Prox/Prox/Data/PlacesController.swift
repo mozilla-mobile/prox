@@ -36,7 +36,8 @@ class PlacesProvider {
     }()
 
     private lazy var radius: Double = {
-        return RemoteConfigKeys.searchRadiusInKm.value
+        let key = RemoteConfigKeys.searchRadiusInKm
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
     }()
 
     private var nearbyPlaces = [CLLocation: [Place]]()

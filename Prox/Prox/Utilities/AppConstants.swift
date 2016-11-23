@@ -21,10 +21,12 @@ public struct AppConstants {
     public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 1 * 60
     #else
     public static var backgroundFetchInterval: TimeInterval {
-        return RemoteConfigKeys.backgroundFetchIntervalMins.value * 60.0
+        let key = RemoteConfigKeys.backgroundFetchIntervalMins
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
     }
     public static var minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval {
-        return RemoteConfigKeys.notificationVisitIntervalMins.value * 60.0
+        let key = RemoteConfigKeys.notificationVisitIntervalMins
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
     }
     #endif
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"

@@ -18,9 +18,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private lazy var remoteConfigCacheExpiration: TimeInterval = {
         if AppConstants.isDebug {
             // Refresh the config if it hasn't been refreshed in 60 seconds.
-            return 0.0
+            return 60
         }
-        return RemoteConfigKeys.remoteConfigCacheExpiration.value
+        let key = RemoteConfigKeys.remoteConfigCacheExpiration
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
     }()
 
     private var eventsNotificationsManager: EventNotificationsManager!
@@ -73,7 +74,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func setupRemoteConfig() {
         let remoteConfig = FIRRemoteConfig.remoteConfig()
-        remoteConfig.configSettings = FIRRemoteConfigSettings(developerModeEnabled: AppConstants.BuildChannel != AppBuildChannel.Release)!
+        remoteConfig.configSettings = FIRRemoteConfigSettings(developerModeEnabled: AppConstants.isDebug)!
         remoteConfig.setDefaultsFromPlistFileName("RemoteConfigDefaults")
 
         let defaults = UserDefaults.standard

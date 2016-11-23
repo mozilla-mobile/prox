@@ -11,11 +11,13 @@ struct TravelTimesProvider {
     static var MIN_WALKING_TIME: Int = {
         // Note that this is semantically maximum walking time, 
         // rather than minimum walking time (as used throughout the codebase).
-        return RemoteConfigKeys.maxWalkingTimeInMins.value
+        let key = RemoteConfigKeys.maxWalkingTimeInMins
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.intValue
     }()
 
     static var YOU_ARE_HERE_WALKING_TIME: Int = {
-        return RemoteConfigKeys.youAreHereWalkingTimeMins.value
+        let key = RemoteConfigKeys.youAreHereWalkingTimeMins
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.intValue
     }()
 
     private static func directions(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType) -> MKDirections {

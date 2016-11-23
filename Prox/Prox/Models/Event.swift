@@ -15,7 +15,8 @@ class Event {
     var url: String?
 
     private static var numberOfEventNotificationStrings: Int = {
-        return RemoteConfigKeys.numberOfEventNotificationStrings.value
+        let key = RemoteConfigKeys.numberOfEventNotificationStrings
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.intValue
     }()
 
     private static var eventNotificationStrings: [String] = {
@@ -35,7 +36,8 @@ class Event {
     }
 
     private static var numberOfPlaceDisplayStrings: Int = {
-        return RemoteConfigKeys.numberOfPlaceDetailsEventStrings.value
+        let key = RemoteConfigKeys.numberOfPlaceDetailsEventStrings
+        return FIRRemoteConfig.remoteConfig()[key].numberValue!.intValue
     }()
 
     private static var placeDisplayStrings: [String] = {

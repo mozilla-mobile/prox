@@ -15,23 +15,23 @@ class EventsProvider {
     lazy var eventsDatabase: EventsDatabase = FirebaseEventsDatabase()
 
     private lazy var radius: Double = {
-        return RemoteConfigKeys.eventSearchRadiusInKm.value
+        return RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.eventSearchRadiusInKm)
     }()
 
     private lazy var eventStartNotificationInterval: TimeInterval = {
-        return RemoteConfigKeys.eventStartNotificationInterval.value * 60
+        return RemoteConfigKeys.getTimeInterval(forKey: RemoteConfigKeys.eventStartNotificationInterval)
     }()
 
     private lazy var eventStartPlaceInterval: TimeInterval = {
-        return RemoteConfigKeys.eventStartPlaceInterval.value * 60
+        return RemoteConfigKeys.getTimeInterval(forKey: RemoteConfigKeys.eventStartPlaceInterval)
     }()
 
     private lazy var maxEventDuration: TimeInterval = {
-        return RemoteConfigKeys.maxEventDurationForNotificationsMins.value * 60.0
+        return RemoteConfigKeys.getTimeInterval(forKey: RemoteConfigKeys.maxEventDurationForNotificationsMins)
     }()
 
     private lazy var minTimeFromEndOfEventForNotificationMins: TimeInterval = {
-        return RemoteConfigKeys.minTimeFromEndOfEventForNotificationMins.value * 60.0
+        return RemoteConfigKeys.getTimeInterval(forKey: RemoteConfigKeys.minTimeFromEndOfEventForNotificationMins)
     }()
 
     func event(forKey key: String, completion: @escaping (Event?) -> ()) {
