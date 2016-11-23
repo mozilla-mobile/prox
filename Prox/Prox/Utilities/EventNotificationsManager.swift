@@ -50,7 +50,7 @@ class EventNotificationsManager {
     }
 
     fileprivate lazy var maxTravelTimeToEvent: TimeInterval = {
-        return RemoteConfigKeys.getTimeInterval(forKey: RemoteConfigKeys.maxTravelTimesToEventMins)
+        return RemoteConfigKeys.maxTravelTimesToEventMins.value * 60.0
     }()
 
     fileprivate lazy var eventsProvider = EventsProvider()

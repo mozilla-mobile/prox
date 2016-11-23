@@ -4,43 +4,19 @@
 <dict>
 	<key>significant_location_change_distance_meters</key>
 	<string>100</string>
-	<key>min_time_from_end_of_event_for_notifications_mins</key>
-	<string>120</string>
-	<key>max_travel_time_to_event_mins</key>
-	<integer>60</integer>
-	<key>max_duration_of_event_for_notification_mins</key>
-	<integer>240</integer>
-	<key>background_fetch_interval_mins</key>
-	<string>5</string>
-	<key>notification_visit_interval_mins</key>
-	<integer>15</integer>
+	<key>place_categories_to_hide_csv</key>
+	<string></string>
+	<key>number_of_place_details_event_strings</key>
+	<integer>2</integer>
 	<key>place_details_event_string_2</key>
 	<string>You might be interested in &apos;{event_name}&apos; that starts at {start_time} today!</string>
 	<key>place_details_event_string_1</key>
 	<string>This venue has an event, &apos;{event_name}&apos;, starting at {start_time} today</string>
+	<key>number_of_event_notification_strings</key>
+	<integer>2</integer>
 	<key>event_notification_string_2</key>
 	<string>Hey! We&apos;ve just noticed that {event_name} is starting in {time_to_event} at {venue_name}. Sound good?</string>
 	<key>event_notification_string_1</key>
 	<string>{event_name} is starting in {time_to_event} at {venue_name}</string>
-	<key>number_of_place_details_event_strings</key>
-	<integer>2</integer>
-	<key>number_of_event_notification_strings</key>
-	<integer>2</integer>
-	<key>event_start_place_interval_mins</key>
-	<integer>60</integer>
-	<key>event_start_notification_interval_mins</key>
-	<integer>60</integer>
-	<key>event_search_radius_in_km</key>
-	<integer>20</integer>
-	<key>remote_config_cache_expiration</key>
-	<real>43200</real>
-	<key>search_radius_in_km</key>
-	<integer>4</integer>
-	<key>you_are_here_walking_time_mins</key>
-	<integer>1</integer>
-	<key>place_categories_to_hide_csv</key>
-	<string></string>
-	<key>max_walking_time_in_mins</key>
-	<integer>30</integer>
 </dict>
 </plist>

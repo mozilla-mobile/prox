@@ -20,10 +20,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private lazy var remoteConfigCacheExpiration: TimeInterval = {
         if AppConstants.isDebug {
             // Refresh the config if it hasn't been refreshed in 60 seconds.
-            return 60
+            return 0.0
         }
-        let key = RemoteConfigKeys.remoteConfigCacheExpiration
-        return FIRRemoteConfig.remoteConfig()[key].numberValue!.doubleValue
+        return RemoteConfigKeys.remoteConfigCacheExpiration.value
     }()
 
     private var eventsNotificationsManager: EventNotificationsManager!
@@ -77,7 +76,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func setupRemoteConfig() {
         let remoteConfig = FIRRemoteConfig.remoteConfig()
-        remoteConfig.configSettings = FIRRemoteConfigSettings(developerModeEnabled: AppConstants.isDebug)!
+        let isDeveloperMode = AppConstants.isDebug || AppConstants.MOZ_LOCATION_FAKING
+        remoteConfig.configSettings = FIRRemoteConfigSettings(developerModeEnabled: isDeveloperMode)!
         remoteConfig.setDefaultsFromPlistFileName("RemoteConfigDefaults")
 
         let defaults = UserDefaults.standard
@@ -86,7 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         remoteConfig.fetch(withExpirationDuration: remoteConfigCacheExpiration) { status, err in
             if status == FIRRemoteConfigFetchStatus.success {
-                print("RemoteConfig fetched")
+                NSLog("RemoteConfig fetched")
                 // The config will be applied next time we load.
                 // We don't do it now, because we want the update to be atomic,
                 // at the beginning of a session with the app.
@@ -94,13 +94,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 defaults.synchronize()
             } else {
                 // We'll revert back to the latest update, or the RemoteConfigDefaults plist.
-                print("RemoteConfig fetch failed")
+                NSLog("RemoteConfig fetch failed")
             }
         }
 
         if defaults.bool(forKey: pendingUpdateKey) {
             remoteConfig.activateFetched()
-            print("RemoteConfig updated")
+            NSLog("RemoteConfig updated")
             defaults.set(false, forKey: pendingUpdateKey)
             defaults.synchronize()
         }
