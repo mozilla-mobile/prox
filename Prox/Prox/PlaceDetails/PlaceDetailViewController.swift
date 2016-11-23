@@ -132,6 +132,38 @@ class PlaceDetailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+
+    func placesUpdated() {
+        mapButtonBadge.text = "\(dataSource?.numberOfPlaces() ?? 0)"
+
+        if let nextPlace = dataSource?.nextPlace(forPlace: currentCardViewController.place) {
+            if let nextCardViewController = nextCardViewController {
+                nextCardViewController.place = nextPlace
+            } else {
+                nextCardViewController = dequeuePlaceCardViewController(forPlace: nextPlace)
+                scrollView.addSubview(nextCardViewController!.cardView)
+                nextCardViewLeadingConstraint = nextCardViewController!.cardView.leadingAnchor.constraint(equalTo: currentCardViewController.cardView.trailingAnchor, constant: cardViewSpacingConstant)
+                NSLayoutConstraint.activate( [nextCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
+                                nextCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
+                                nextCardViewLeadingConstraint!], translatesAutoresizingMaskIntoConstraints: false)
+            }
+        }
+        if let previousPlace = dataSource?.previousPlace(forPlace: currentCardViewController.place) {
+            if let previousCardViewController = previousCardViewController {
+                previousCardViewController.place = previousPlace
+            } else  {
+                previousCardViewController = dequeuePlaceCardViewController(forPlace: previousPlace)
+                scrollView.addSubview(previousCardViewController!.cardView)
+                previousCardViewTrailingConstraint = previousCardViewController!.cardView.trailingAnchor.constraint(equalTo: currentCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
+                NSLayoutConstraint.activate( [previousCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
+                                previousCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
+                                previousCardViewTrailingConstraint!], translatesAutoresizingMaskIntoConstraints: false)
+            }
+        }
+
+        view.setNeedsLayout()
+    }
+
     fileprivate func setBackgroundImage(toPhotoAtURL photoURLString: String?) {
         if let imageURLString = photoURLString,
             let imageURL = URL(string: imageURLString) {

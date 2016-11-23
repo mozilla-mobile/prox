@@ -102,10 +102,10 @@ class PlacesProvider {
             success: { (task, data) in
                 // TODO is there anything useful we can get from the server to help the UI here?
                 // e.g. some JSON to give queue size (how busy is it).
-                print("Server responded ok.")
+                NSLog("Server responded ok.")
             },
             failure: { (task, err) in
-                print("Error from server: \(err)")
+                NSLog("Error from server: \(err)")
                 DispatchQueue.main.async {
                     self.delegate?.placesProvider(self, didError: err)
                 }

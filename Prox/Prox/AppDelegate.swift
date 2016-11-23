@@ -14,6 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var placeCarouselViewController: PlaceCarouselViewController?
 
     private var authorizedUser: FIRUser?
+
+    let locationMonitor = LocationMonitor()
     
     private lazy var remoteConfigCacheExpiration: TimeInterval = {
         if AppConstants.isDebug {
@@ -39,6 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // create root view
         placeCarouselViewController = PlaceCarouselViewController()
+        locationMonitor.delegate = placeCarouselViewController
         window?.rootViewController = placeCarouselViewController
 
         if #available(iOS 10.0, *) {
