@@ -24,18 +24,21 @@ struct CategoriesUtil {
     // yelp resource use by whitelisting the categories we ask for meaning the other root categories
     // are hidden implicitly.
     static let HiddenCategories: Set<String> = {
-        let csv = RemoteConfigKeys.getString(forKey: RemoteConfigKeys.placeCategoriesToHideCSV)
-        return getHiddenCategories(forCSV: csv)
+        let categories = RemoteConfigKeys.placeCategoriesToHideCSV.value
+        return getHiddenCategories(forCategories: categories)
     }()
 
     // Separated for testing: I don't know how to do automated tests with the Firebase value.
     internal static func getHiddenCategories(forCSV csv: String) -> Set<String> {
-        // We could be more robust
-        let categories = csv.characters.split(separator: ",")
+        let categories = csv.components(separatedBy: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0 != "" }
+        return getHiddenCategories(forCategories: categories)
+    }
 
+    internal static func getHiddenCategories(forCategories categories: [String]) -> Set<String> {
         var hiddenCategories = Set<String>()
-        for categoryCharView in categories {
-            let category = String(categoryCharView).trimmingCharacters(in: .whitespaces)
+        for category in categories {
             guard let descendants = categoryToDescendantsMap[category] else {
                 print("lol unknown category, \(category) (from Firebase?). Ignoring")
                 continue
