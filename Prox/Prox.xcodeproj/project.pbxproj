@@ -23,7 +23,7 @@
 		7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7D71DA3EC360099AF38 /* ProxTests.swift */; };
 		7B29E7E31DA3EC360099AF38 /* ProxUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7E21DA3EC360099AF38 /* ProxUITests.swift */; };
 		7B2EF5871DDF4D7200695515 /* TimeIntervalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2EF5861DDF4D7200695515 /* TimeIntervalTests.swift */; };
-		7B2EF58E1DE36E8600695515 /* EventsProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2EF58D1DE36E8600695515 /* EventsProviderTests.swift */; };
+		7B2EF58E1DE36E8600695515 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2EF58D1DE36E8600695515 /* EventTests.swift */; };
 		7B48EBDA1DD1F679005C36CB /* GeofenceRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B48EBD91DD1F679005C36CB /* GeofenceRegion.swift */; };
 		7B5095621DB531C0007C54F0 /* PlaceCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */; };
 		7B5095651DB531CA007C54F0 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095641DB531CA007C54F0 /* Place.swift */; };
@@ -136,7 +136,7 @@
 		7B29E7E21DA3EC360099AF38 /* ProxUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxUITests.swift; sourceTree = "<group>"; };
 		7B29E7E41DA3EC360099AF38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7B2EF5861DDF4D7200695515 /* TimeIntervalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeIntervalTests.swift; sourceTree = "<group>"; };
-		7B2EF58D1DE36E8600695515 /* EventsProviderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsProviderTests.swift; sourceTree = "<group>"; };
+		7B2EF58D1DE36E8600695515 /* EventTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
 		7B48EBD91DD1F679005C36CB /* GeofenceRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeofenceRegion.swift; sourceTree = "<group>"; };
 		7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarousel.swift; path = PlaceCarousel/PlaceCarousel.swift; sourceTree = "<group>"; };
 		7B5095641DB531CA007C54F0 /* Place.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
@@ -308,7 +308,7 @@
 				7B8651931DBFAFA8002A666A /* PlaceUtilitiesTests.swift */,
 				E6101A951DDA481800D05B74 /* CategoriesUtilTests.swift */,
 				7B2EF5861DDF4D7200695515 /* TimeIntervalTests.swift */,
-				7B2EF58D1DE36E8600695515 /* EventsProviderTests.swift */,
+				7B2EF58D1DE36E8600695515 /* EventTests.swift */,
 			);
 			path = ProxTests;
 			sourceTree = "<group>";
@@ -856,7 +856,7 @@
 				E68BD90D1DCA9E8E007B51A3 /* DayOfWeekTests.swift in Sources */,
 				E68BD90F1DCAAD6B007B51A3 /* OpenHoursTests.swift in Sources */,
 				39C4EC9F1DDCA75500B53B77 /* RemoteConfigKeys.swift in Sources */,
-				7B2EF58E1DE36E8600695515 /* EventsProviderTests.swift in Sources */,
+				7B2EF58E1DE36E8600695515 /* EventTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

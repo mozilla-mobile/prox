@@ -10,21 +10,22 @@ private let sentNotificationDictKey = "sent_notifications_dict"
 
 let notificationEventIDKey = "eventPlaceID"
 
-fileprivate typealias PlaceID = String
-fileprivate typealias EventStartTimestamp = Double
+fileprivate typealias EventID = String
 
 class EventNotificationsManager {
-
     // caches events by their start time by place
-    fileprivate lazy var sentNotifications: [PlaceID: [EventStartTimestamp]] = {
-        var cache = [PlaceID: [EventStartTimestamp]]()
-        guard let savedNotifications = UserDefaults.standard.dictionary(forKey: sentNotificationDictKey) as? [PlaceID: [EventStartTimestamp]] else {
+    fileprivate lazy var sentNotifications: Set<EventID> = {
+        var cache = Set<EventID>()
+        guard let savedNotifications = UserDefaults.standard.dictionary(forKey: sentNotificationDictKey) as? [String: [EventID]] else {
             return cache
         }
-        for (place, eventsStartTimes) in savedNotifications {
-            let todaysEvents = eventsStartTimes.filter { Calendar.current.isDateInToday(Date(timeIntervalSinceReferenceDate: $0)) }
-            if !todaysEvents.isEmpty {
-                cache[place] = todaysEvents
+        for (dateString, eventIDs) in savedNotifications {
+            if let timestamp = TimeInterval(dateString) {
+                let date = Date(timeIntervalSinceReferenceDate: timestamp)
+                if Calendar.current.isDateInToday(date) {
+                    let newIdsSet = Set<EventID>(eventIDs)
+                    cache.formUnion(newIdsSet)
+                }
             }
         }
         return cache
@@ -53,6 +54,8 @@ class EventNotificationsManager {
         return RemoteConfigKeys.maxTravelTimesToEventMins.value * 60.0
     }()
 
+    fileprivate var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
+
     fileprivate lazy var eventsProvider = EventsProvider()
     fileprivate lazy var placeProvider = PlacesProvider()
 
@@ -75,7 +78,7 @@ class EventNotificationsManager {
     }
 
     func persistNotificationCache() {
-        UserDefaults.standard.set(sentNotifications, forKey: sentNotificationDictKey)
+        UserDefaults.standard.set([String(Date().timeIntervalSinceReferenceDate): Array(sentNotifications)], forKey: sentNotificationDictKey)
     }
 
     private func requestNotifications() {
@@ -100,26 +103,27 @@ class EventNotificationsManager {
     private func sendNotifications(forEvents events: [Event]) {
         for (index, event) in events.enumerated() {
             if isUnsent(event: event) {
-                placeProvider.place(forKey: event.placeId) { place in
-                    guard let place = place,
-                    let currentLocation = self.locationProvider?.getCurrentLocation()?.coordinate else { return }
-                    // check that travel times are within current location limits before deciding whether to send notification
-                    TravelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: place.latLong, withinTimeInterval: self.maxTravelTimeToEvent) { canTravel in
-                        guard canTravel else { return }
-                        DispatchQueue.main.async {
-                            self.sendNotification(forEvent: event, atPlace: place, inSeconds: TimeInterval(index + 1))
-                            self.markAsSent(event: event)
+                guard let currentLocation = self.locationProvider?.getCurrentLocation()?.coordinate else { return }
+                // check that travel times are within current location limits before deciding whether to send notification
+                TravelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: event.coordinates, withinTimeInterval: self.maxTravelTimeToEvent) { canTravel in
+                    guard canTravel else { return }
+                    DispatchQueue.main.async {
+                        var timeInterval = 1
+                        if index > 0 {
+                            timeInterval = index * 30
                         }
+                        self.sendNotification(forEvent: event, inSeconds: TimeInterval(timeInterval))
                     }
                 }
+                self.markAsSent(event: event)
             }
         }
     }
 
-    private func sendNotification(forEvent event: Event, atPlace place: Place, inSeconds timeInterval: TimeInterval) {
-        let alertTitle = "New event!"
-        let alertActionTitle = "Open"
-        let alertBody = place.getNotificationString(forEvent: event)
+    private func sendNotification(forEvent event: Event, inSeconds timeInterval: TimeInterval) {
+        guard let notificationString = event.notificationString else { return }
+        let alertTitle = "It’s Happening!"
+        let alertBody = notificationString
         if #available(iOS 10.0, *) {
             let center = UNUserNotificationCenter.current()
             center.getNotificationSettings { (settings) in
@@ -130,7 +134,7 @@ class EventNotificationsManager {
                     content.categoryIdentifier = "EVENTS"
                     content.userInfo = [notificationEventIDKey: event.placeId]
                     let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
-                    let request = UNNotificationRequest(identifier: "EventNotification", content: content, trigger: trigger)
+                    let request = UNNotificationRequest(identifier: event.id, content: content, trigger: trigger)
                     center.add(request) { error in
                         if let theError = error {
                             print(theError.localizedDescription)
@@ -145,12 +149,13 @@ class EventNotificationsManager {
         } else {
             if let userNotificationSettingsAuthorization = UIApplication.shared.currentUserNotificationSettings?.types,
                 userNotificationSettingsAuthorization.contains(.alert) || userNotificationSettingsAuthorization.contains(.badge) {
+                let alertActionTitle = "Open"
                 let notification = UILocalNotification()
                 notification.alertTitle = alertTitle
                 notification.alertBody = alertBody
                 notification.alertAction = alertActionTitle
                 notification.fireDate = Date().addingTimeInterval(timeInterval)
-                notification.userInfo = ["eventPlaceID": event.placeId]
+                notification.userInfo = [notificationEventIDKey: event.placeId]
                 UIApplication.shared.scheduleLocalNotification(notification)
             }
         }
@@ -174,23 +179,18 @@ class EventNotificationsManager {
     }
 
     fileprivate func isUnsent(event: Event) -> Bool {
-        guard let placeEvents = sentNotifications[event.placeId] else {
-            return true
-        }
-        return !placeEvents.contains(event.startTime.timeIntervalSinceReferenceDate)
+        return !sentNotifications.contains(event.id)
     }
 
     fileprivate func markAsSent(event: Event) {
-        if var events = sentNotifications[event.placeId] {
-            events.append(event.startTime.timeIntervalSinceReferenceDate)
-        } else {
-            sentNotifications[event.placeId] = [event.startTime.timeIntervalSinceReferenceDate]
-        }
-
+        sentNotifications.insert(event.id)
         let applicationState = UIApplication.shared.applicationState
         if applicationState == .background
             || applicationState == .inactive {
-            persistNotificationCache()
+            backgroundTask = UIApplication.shared.beginBackgroundTask { [weak self] in
+                self?.persistNotificationCache()
+                self?.backgroundTask = UIBackgroundTaskInvalid
+            }
         }
     }
 }

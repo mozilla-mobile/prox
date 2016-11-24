@@ -51,30 +51,29 @@ class RemoteConfigKeys {
 
     // The event search radius the app will use to query the Firebase datbase
     // This is measures in kilometers. The default value is 20 km.
-    public static let eventSearchRadiusInKm = RemoteConfigDouble(key: "event_search_radius_in_km", defaultValue: 20.0)
+    public static let eventSearchRadiusInKm = RemoteConfigDouble(key: "event_search_radius_in_km", defaultValue: 40.0)
 
-    // The amount of time before the event starts we should show a notification
-    // This is measures in minutes
+    // the strings that are in the config for event notifications and display of events on cards
+    public static let endingEventNotificationString = RemoteConfigString(key: "ending_event_notification_string", defaultValue: "{event_name} - will end soon and you&apos;re close by!")
+    public static let ongoingEventNotificationString = RemoteConfigString(key: "ongoing_event_notification_string", defaultValue: "{event_name} - underway now at a place near you.")
+    public static let upcomingEventNotificationString = RemoteConfigString(key: "upcoming_event_notification_string", defaultValue: "{event_name} will start soon and you&apos;re close by!")
+    public static let endingEventCardString = RemoteConfigString(key: "ending_event_card_string", defaultValue: "{event_name} will end at {end_time}")
+    public static let ongoingEventCardString = RemoteConfigString(key: "ongoing_event_card_string", defaultValue: "{event_name} has started")
+    public static let upcomingEventCardString = RemoteConfigString(key: "upcoming_event_card_string", defaultValue: "{event_name} starts in {time_to_start}")
+    public static let eventAboutToEndCardString = RemoteConfigString(key: "about_to_end_event_card_string", defaultValue: "{event_name} ends in {time_to_end}")
+    public static let eventAboutToStartCardString = RemoteConfigString(key: "about_to_start_event_card_string", defaultValue: "{event_name} is about to start!")
+
+    // notification constants
+    public static let eventAboutToEndIntervalMins = RemoteConfigDouble(key: "event_about_to_end_interval_mins", defaultValue: 119.0)
+    public static let eventAboutToStartIntervalMins = RemoteConfigDouble(key: "event_about_to_start_interval_mins", defaultValue: 3.0)
+    public static let maxEventDurationForNotificationsMins = RemoteConfigDouble(key: "max_duration_of_event_for_notification_mins", defaultValue: 240.0)
+    public static let notificationVisitIntervalMins = RemoteConfigDouble(key: "notification_visit_interval_mins", defaultValue: 15.0)
+    public static let maxTravelTimesToEventMins = RemoteConfigDouble(key: "max_travel_time_to_event_mins", defaultValue: 60.0)
+    public static let minTimeFromEndOfEventForNotificationMins = RemoteConfigDouble(key: "min_time_from_end_of_event_for_notifications_mins", defaultValue: 60.0)
     public static let eventStartNotificationInterval = RemoteConfigDouble(key: "event_start_notification_interval_mins", defaultValue: 60.0)
-    public static let eventStartPlaceInterval = RemoteConfigDouble(key: "event_start_place_interval_mins", defaultValue: 300.0)
-
-    // the number of strings that are in the config for event notifications
-    public static let numberOfEventNotificationStrings = RemoteConfigInt(key: "number_of_event_notification_strings", defaultValue: 2)
-
-    // the root string that all keys for event notification strings will start with
-    public static let eventNotificationStringRoot = "event_notification_string_"
-
-    // the number of strings that are in the config for events displayed on the place details
-    public static let numberOfPlaceDetailsEventStrings = RemoteConfigInt(key: "number_of_place_details_event_strings", defaultValue: 2)
-
-    // the root string that all keys for place details event strings will start with
-    public static let placeDetailsEventStringRoot = "place_details_event_string_"
+    public static let eventStartPlaceIntervalMins = RemoteConfigDouble(key: "event_start_place_interval_mins", defaultValue: 60.0)
 
     public static let backgroundFetchIntervalMins = RemoteConfigDouble(key: "background_fetch_interval_mins", defaultValue: 5.0)
-    public static let notificationVisitIntervalMins = RemoteConfigDouble(key: "notification_visit_interval_mins", defaultValue: 15.0)
-    public static let maxEventDurationForNotificationsMins = RemoteConfigDouble(key: "max_duration_of_event_for_notification_mins", defaultValue: 240.0)
-    public static let maxTravelTimesToEventMins = RemoteConfigDouble(key: "max_travel_time_to_event_mins", defaultValue: 60.0)
-    public static let minTimeFromEndOfEventForNotificationMins = RemoteConfigDouble(key: "min_time_from_end_of_event_for_notifications_mins", defaultValue: 120.0)
     public static let placeCategoriesToHideCSV = RemoteConfigStringArray(key: "place_categories_to_hide_csv", defaultValue: [])
     public static let significantLocationChangeDistanceMeters = RemoteConfigDouble(key: "significant_location_change_distance_meters", defaultValue: 100)
 

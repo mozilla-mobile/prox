@@ -220,18 +220,6 @@ class Place: Hashable {
         return false
     }
 
-    func getNotificationString(forEvent event: Event) -> String {
-        var notification = replaceEventName(string: event.notificationString, withName: event.description)
-        notification = replaceTimeToEvent(string: notification, withStartTime: event.startTime)
-        return replacePlaceName(string: notification)
-    }
-
-    func getPlaceDetailsEventString(forEvent event: Event) -> String {
-        var notification = replaceEventName(string: event.placeDisplayString, withName: event.description)
-        notification = replaceStartTime(string: notification, withStartTime: event.startTime)
-        return notification
-    }
-
     private func replaceEventName( string: String, withName name: String) -> String {
         return string.replacingOccurrences(of: "{event_name}", with: name)
     }

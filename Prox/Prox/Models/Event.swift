@@ -5,6 +5,7 @@
 import Foundation
 import Firebase
 import FirebaseRemoteConfig
+import CoreLocation
 
 class Event {
     var id: String
@@ -13,50 +14,69 @@ class Event {
     var startTime: Date
     var endTime: Date?
     var url: String?
+    var coordinates: CLLocationCoordinate2D
 
-    private static var numberOfEventNotificationStrings: Int = {
-        return RemoteConfigKeys.numberOfEventNotificationStrings.value
+    private static var eventStartNotificationInterval: TimeInterval = {
+        return RemoteConfigKeys.eventStartNotificationInterval.value * 60
     }()
 
-    private static var eventNotificationStrings: [String] = {
-        var eventNotificationStrings = [String]()
-        for i in 1...Event.numberOfEventNotificationStrings {
-            let key = RemoteConfigKeys.eventNotificationStringRoot + "\(i)"
-            if let string = FIRRemoteConfig.remoteConfig()[key].stringValue {
-                eventNotificationStrings.append(string)
-            }
+    private static var minTimeFromEndOfEventForNotificationMins: TimeInterval = {
+        return RemoteConfigKeys.minTimeFromEndOfEventForNotificationMins.value * 60
+    }()
+
+    private static var eventAboutToStartInterval: TimeInterval = {
+        return RemoteConfigKeys.eventAboutToStartIntervalMins.value * 60
+    }()
+    private static var eventAboutToEndInterval: TimeInterval = {
+        return RemoteConfigKeys.eventAboutToEndIntervalMins.value * 60
+    }()
+
+    var notificationString: String? {
+        let now = Date()
+        if isUpcomingEvent(currentTime: now) {
+            return formatEventString(string: RemoteConfigKeys.upcomingEventNotificationString.value)
         }
-        return eventNotificationStrings
-    }()
 
-    var notificationString: String {
-        let randomIndex = Int(arc4random_uniform(UInt32(Event.numberOfEventNotificationStrings)))
-        return Event.eventNotificationStrings[randomIndex]
+        if isOngoingEvent(currentTime: now) {
+            return formatEventString(string: RemoteConfigKeys.ongoingEventNotificationString.value)
+        }
+
+        if isEndingEvent(currentTime: now) {
+            return formatEventString(string: RemoteConfigKeys.endingEventNotificationString.value)
+        }
+
+        return nil
     }
 
-    private static var numberOfPlaceDisplayStrings: Int = {
-        return RemoteConfigKeys.numberOfPlaceDetailsEventStrings.value
-    }()
-
-    private static var placeDisplayStrings: [String] = {
-        var placeDisplayStrings = [String]()
-        for i in 1...Event.numberOfPlaceDisplayStrings {
-            let key = RemoteConfigKeys.placeDetailsEventStringRoot + "\(i)"
-            if let string = FIRRemoteConfig.remoteConfig()[key].stringValue {
-                placeDisplayStrings.append(string)
-            }
+    var placeDisplayString: String? {
+        let now = Date()
+        if isAboutToStart(currentTime: now) {
+            return formatEventString(string: RemoteConfigKeys.eventAboutToStartCardString.value)
         }
-        return placeDisplayStrings
-    }()
 
-    var placeDisplayString: String {
-        let randomIndex = Int(arc4random_uniform(UInt32(Event.numberOfPlaceDisplayStrings)))
-        return Event.placeDisplayStrings[randomIndex]
+        if isAboutToEnd(currentTime: now) {
+            return formatEventString(string: RemoteConfigKeys.eventAboutToEndCardString.value)
+        }
+
+        if isUpcomingEvent(currentTime: now) {
+            return formatEventString(string: RemoteConfigKeys.upcomingEventCardString.value)
+        }
+
+        if isOngoingEvent(currentTime: now) {
+            return formatEventString(string: RemoteConfigKeys.ongoingEventCardString.value)
+        }
+
+        if isEndingEvent(currentTime: now) {
+            return formatEventString(string: RemoteConfigKeys.endingEventCardString.value)
+        }
+
+        return nil
     }
 
-    init(id: String, placeId: String, description: String, url: String?, startTime: Date, endTime: Date?) {
+    init(id: String, placeId: String, coordinates: CLLocationCoordinate2D, description: String, url: String?, startTime: Date, endTime: Date?) {
         self.id = id
         self.placeId = placeId
+        self.coordinates = coordinates
         self.description = description
         self.url = url
         self.startTime = startTime
@@ -67,7 +87,10 @@ class Event {
         guard data.exists(), data.hasChildren(),
             let value = data.value as? NSDictionary,
             let id = value["id"] as? String,
-            let placeId = (value["placeId"] as? String) ?? value["id"] as? String,
+            let placeId = (value["placeId"] as? String),
+            let coords = value["coordinates"] as? [String:String],
+            let latStr = coords["lat"], let lat = Double(latStr),
+            let lngStr = coords["lng"], let lng = Double(lngStr),
             let description = value["description"] as? String,
             let localStartTimeString = value["localStartTime"] as? String else {
                 print("lol dropping event: missing data, id, placeId, description, start time \(data.value)")
@@ -104,9 +127,111 @@ class Event {
 
         self.init(id: id,
                   placeId: placeId,
+                  coordinates: CLLocationCoordinate2D(latitude: lat, longitude: lng),
                   description: description,
                   url:value["url"] as? String,
                   startTime: localStartTime,
                   endTime: localEndTime)
+    }
+
+
+
+    /**
+     * Event Notification criteria
+     * paddedTravelTime = time to drive to event + 10 minutes
+     * IF event HAS eventEndTime
+     * IF currentTime <= (eventStartTime - 1 hour) AND currentTime < (eventEndTime - (1 hour + paddedTravelTime )) THEN notify
+     * ELSE
+     * IF currentTime <= (eventStartTime - paddedTravelTime) THEN notify
+     * Travel time will be calculated later, just before when we display the event
+     **/
+    internal func isValidEvent() -> Bool {
+        return shouldShowEvent(withStartTime: startTime, endTime: endTime, timeIntervalBeforeStartOfEvent: Event.eventStartNotificationInterval, timeIntervalBeforeEndOfEvent: Event.minTimeFromEndOfEventForNotificationMins, atCurrentTime: Date())
+    }
+
+    internal func shouldShowEvent(withStartTime startTime: Date, endTime: Date?, timeIntervalBeforeStartOfEvent startTimeInterval: TimeInterval, timeIntervalBeforeEndOfEvent endTimeInterval: TimeInterval, atCurrentTime currentTime: Date) -> Bool {
+        if isFutureEvent(eventStartTime: startTime, currentTime: currentTime) {
+            return (startTime - startTimeInterval) <= currentTime
+        }
+        guard let endTime = endTime else {
+            return false
+        }
+        return currentTime < endTime - endTimeInterval
+    }
+
+    private func isAboutToStart(currentTime: Date) -> Bool {
+        return isUpcomingEvent(currentTime: currentTime) && (startTime - Event.eventAboutToStartInterval) <= currentTime
+    }
+
+    private func isUpcomingEvent(currentTime: Date) -> Bool {
+        return isFutureEvent(eventStartTime: currentTime, currentTime: Date()) && (startTime - Event.eventStartNotificationInterval) <= currentTime
+    }
+
+    private func isOngoingEvent(currentTime: Date) -> Bool {
+        guard let endTime = endTime else {
+            return false
+        }
+        return currentTime < (endTime - (Event.minTimeFromEndOfEventForNotificationMins + Event.eventStartNotificationInterval))
+    }
+
+    private func isAboutToEnd(currentTime: Date) -> Bool {
+        guard let endTime = endTime else {
+            return false
+        }
+        return isEndingEvent(currentTime: currentTime) && (endTime - Event.eventAboutToEndInterval) <= currentTime
+    }
+
+    private func isEndingEvent(currentTime: Date) -> Bool {
+        guard let endTime = endTime else {
+            return false
+        }
+        let lastNotificationTime = endTime - Event.minTimeFromEndOfEventForNotificationMins
+        return currentTime > lastNotificationTime - Event.eventStartNotificationInterval && currentTime < lastNotificationTime
+    }
+
+    private func isFutureEvent(eventStartTime: Date, currentTime: Date) -> Bool {
+        return currentTime < eventStartTime
+    }
+
+    private func formatEventString(string: String) -> String {
+        var eventString = replaceEventName(string: string)
+        eventString = replaceStartTime(string: eventString)
+        eventString = replaceEndTime(string: eventString)
+        eventString = replaceTimeToStart(string: eventString)
+        eventString = replaceTimeToEnd(string: eventString)
+
+        return eventString
+    }
+
+    private func replaceEventName( string: String) -> String {
+        return string.replacingOccurrences(of: "{event_name}", with: description)
+    }
+
+    private func replaceTimeToStart(string: String) -> String {
+        let now = Date()
+        let timeToEvent = startTime.timeIntervalSince(now)
+        let timeString = timeToEvent.asHoursAndMinutesString()
+        return string.replacingOccurrences(of: "{time_to_start}", with: "\(timeString)")
+    }
+
+    private func replaceTimeToEnd(string: String) -> String {
+        guard let endTime = endTime else { return string}
+        let now = Date()
+        let timeToEvent = endTime.timeIntervalSince(now)
+        let timeString = timeToEvent.asHoursAndMinutesString()
+        return string.replacingOccurrences(of: "{time_to_end}", with: "\(timeString)")
+    }
+
+    private func replaceStartTime(string: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return string.replacingOccurrences(of: "{start_time}", with: formatter.string(from: startTime))
+    }
+
+    private func replaceEndTime(string: String) -> String {
+        guard let endTime = endTime else { return string}
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return string.replacingOccurrences(of: "{end_time}", with: formatter.string(from: endTime))
     }
 }

@@ -278,8 +278,9 @@ class PlaceDetailsCardView: UIView {
     }
 
      func updateEventUI(forPlace place: Place) {
-        if let event = place.events.first {
-            eventView.setText(place.getPlaceDetailsEventString(forEvent: event), underlined: event.url == nil ? nil : "More info.")
+        if let event = place.events.first,
+            let message = event.placeDisplayString {
+            eventView.setText(message, underlined: event.url == nil ? nil : "More info.")
             showEventView(isHidden: false)
         } else {
             eventView.setText("", underlined: nil)
