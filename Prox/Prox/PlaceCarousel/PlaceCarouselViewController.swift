@@ -10,7 +10,6 @@ import Deferred
 
 private let MAP_SPAN_DELTA = 0.05
 private let MAP_LATITUDE_OFFSET = 0.015
-private let LOADING_TIMEOUT_IN_SECONDS: TimeInterval = 10
 
 protocol PlaceDataSource: class {
     func nextPlace(forPlace place: Place) -> Place?
