@@ -95,6 +95,8 @@ struct PlaceUtilities {
             return
         }
 
+        // TODO: need to cancel long running requests or users may be stuck with a loading spinner
+        // rather than a "View on Map" button. I think this only happens when you swipe real fast.
         let travelTimesResult = place.travelTimes(fromLocation: location)
         if !travelTimesResult.isFilled {
             view.setTravelTimesUIIsLoading(true)
