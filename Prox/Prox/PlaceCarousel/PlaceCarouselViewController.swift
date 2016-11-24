@@ -156,7 +156,7 @@ class PlaceCarouselViewController: UIViewController {
         view.addSubview(headerView)
 
         // setting up the layout constraints
-        constraints.append(contentsOf: [headerView.topAnchor.constraint(equalTo: view.topAnchor),
+        constraints.append(contentsOf: [headerView.topAnchor.constraint(equalTo: topLayoutGuide.topAnchor),
                                         headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                         headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                                         headerView.heightAnchor.constraint(equalToConstant: 150)])
