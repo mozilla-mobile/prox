@@ -13,6 +13,10 @@ private let TRIP_ADVISOR_PATH = PROVIDERS_PATH + "tripAdvisor"
 
 class Place: Hashable {
 
+    fileprivate static var travelTimeExpirationDistance: CLLocationDistance = {
+        return RemoteConfigKeys.travelTimeExpirationDistance.value
+    }()
+
     var hashValue : Int {
         get {
             return id.hashValue
@@ -39,7 +43,7 @@ class Place: Hashable {
 
     let hours: OpenHours? // if nil, there are no listed hours for this place
 
-    var lastTravelTime: TravelTimes?
+    fileprivate var lastTravelTime: (deferred: Deferred<DatabaseResult<TravelTimes>>, forLocation: CLLocation)?
 
     let wikiDescription: String?
     let yelpDescription: String?
@@ -166,9 +170,17 @@ class Place: Hashable {
         return (wiki: wikiDescription, yelp: yelpDescription)
     }
 
+    // assumes will always be called from UI thread.
     func travelTimes(fromLocation location: CLLocation) -> Deferred<DatabaseResult<TravelTimes>> {
+        if let lastTravelTime = lastTravelTime,
+                shouldReturnCachedTravelTimes(forLocation: location) {
+            return lastTravelTime.deferred
+        }
+
         // TODO: In a better world, with an IDE that could refactor, I'd rename DatabaseResult.
         let deferred = Deferred<DatabaseResult<TravelTimes>>()
+        lastTravelTime = (deferred, location)
+
         TravelTimesProvider.travelTime(fromLocation: location.coordinate, toLocation: latLong,
                                        byTransitTypes: [.automobile, .walking]) { travelTimes in
             let res: DatabaseResult<TravelTimes>
@@ -181,6 +193,27 @@ class Place: Hashable {
         }
 
         return deferred
+    }
+
+    private func shouldReturnCachedTravelTimes(forLocation newLocation: CLLocation) -> Bool {
+        // Return a cached success value or in-flight request.
+        // If the initial request failed or we've moved too far, let's get a new value.
+        if let (lastDeferred, lastLocation) = lastTravelTime,
+            lastLocation.distance(from: newLocation) < Place.travelTimeExpirationDistance {
+
+            // TODO: It'd be great to combine these if statements but `if let` & `||` makes it not
+            // worth my time.
+            if !lastDeferred.isFilled { // request in-flight.
+                return true
+            }
+
+            if let lastResult = lastDeferred.peek(),
+                lastResult.isSuccess() { // cached success!
+                return true
+            }
+        }
+
+        return false
     }
 
     func getNotificationString(forEvent event: Event) -> String {
