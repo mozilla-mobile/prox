@@ -126,15 +126,13 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
                 labelsView.removeFromSuperview()
 
                 placesImageCarousel.alpha = 1
-                placesViews.nextCard?.alpha = 1
-                placesViews.previousCard?.alpha = 1
                 selectedCell.placeImage.alpha = 1
 
                 transitionContext.completeTransition(true)
             })
 
             // Delay the views from the places view controller a bit so we don't cover the animation with the background image
-            fadeDelay(placesViews: placesViews, withEndingAlpha: 1, delay: duration * 1/6, duration: duration  * 1/4)
+            fadeDelay(placesViews: placesViews, show: true, delay: duration * 1/6, duration: duration  * 1/4)
         } else {
             // Since we could be at a different place than the one we selected to enter the detail view,
             // make sure we scroll the carousel to the new view before doing anything
@@ -224,12 +222,12 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
                 transitionContext.completeTransition(true)
             })
 
-            fadeDelay(placesViews: placesViews, withEndingAlpha: 0, delay: 0, duration: duration * 1/4)
+            fadeDelay(placesViews: placesViews, show: false, delay: 0, duration: duration * 1/4)
         }
     }
 
     // Fade in the previous/next cards after a bit of a delay depending on if we're presenting/dismissing
-    fileprivate func fadeDelay(placesViews: PlaceDetailAnimatableViews, withEndingAlpha alpha: CGFloat,
+    fileprivate func fadeDelay(placesViews: PlaceDetailAnimatableViews, show: Bool,
                                delay: TimeInterval, duration: TimeInterval) {
 
         // For some reason, the delay in the UIView.animate call wasn't working when performed at the same time
@@ -238,11 +236,11 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
         DispatchQueue.main.asyncAfter(deadline: dispatchTime) {
             UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut,
                            animations: {
-                placesViews.nextCard?.alpha = alpha
-                placesViews.previousCard?.alpha = alpha
-                placesViews.mapButton.alpha = alpha
-                placesViews.mapButtonBadge.alpha = alpha
-                placesViews.backgroundImage.alpha = alpha
+                placesViews.nextCard?.alpha = show ? 0.6 : 0
+                placesViews.previousCard?.alpha = show ? 0.6 : 0
+                placesViews.mapButton.alpha = show ? 1 : 0
+                placesViews.mapButtonBadge.alpha = show ? 1 : 0
+                placesViews.backgroundImage.alpha = show ? 1 : 0
             }, completion: { _ in })
         }
     }

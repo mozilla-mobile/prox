@@ -19,6 +19,8 @@ struct PlaceDetailAnimatableViews {
     var backgroundImage: UIImageView
 }
 
+private let cardFadeOutAlpha: CGFloat = 0.6
+
 /**
  * This class has essentially implemented it's own version of a paging collection view
 
@@ -138,6 +140,7 @@ class PlaceDetailViewController: UIViewController {
     init(place: Place) {
         super.init(nibName: nil, bundle: nil)
         self.currentCardViewController = dequeuePlaceCardViewController(forPlace: place)
+        self.currentCardViewController.cardView.alpha = 1
         setBackgroundImage(toPhotoAtURL: place.photoURLs.first)
     }
     
@@ -384,6 +387,7 @@ class PlaceDetailViewController: UIViewController {
         if let placeCardVC = unusedPlaceCardViewControllers.last {
             unusedPlaceCardViewControllers.removeLast()
             placeCardVC.place = place
+            placeCardVC.cardView.alpha = cardFadeOutAlpha
             return placeCardVC
         }
 
@@ -391,6 +395,7 @@ class PlaceDetailViewController: UIViewController {
         newController.placeImageDelegate = self
         newController.cardView.delegate = self
         newController.locationProvider = locationProvider
+        newController.cardView.alpha = cardFadeOutAlpha
         return newController
     }
 
@@ -436,11 +441,28 @@ class PlaceDetailViewController: UIViewController {
                 }
             } else {
                 currentCardViewCenterXConstraint?.constant = startConstant + translationX
+
+                let currentCenter = currentCardViewController.cardView.center
+                currentCardViewController.cardView.alpha = calculateAlpha(forCenterPosition: currentCenter)
+
+                if let nextCenter = nextCardViewController?.cardView.center {
+                    nextCardViewController?.cardView.alpha = calculateAlpha(forCenterPosition: nextCenter)
+                }
+
+                if let prevCenter = previousCardViewController?.cardView.center {
+                    previousCardViewController?.cardView.alpha = calculateAlpha(forCenterPosition: prevCenter)
+                }
             }
         default:
             return
         }
 
+    }
+
+    fileprivate func calculateAlpha(forCenterPosition position: CGPoint) -> CGFloat {
+        // Normalize X position to be 0 = center of screen
+        let adjustedXPos = position.x - (UIScreen.main.bounds.width / 2)
+        return 1 - CGFloat((fabsf(Float(adjustedXPos)) /  Float(UIScreen.main.bounds.width / 2)) * Float(0.4))
     }
 
     fileprivate func canPageToNextPlaceCard(finalXPosition: CGFloat) -> Bool {
@@ -477,10 +499,11 @@ class PlaceDetailViewController: UIViewController {
         self.currentCardViewCenterXConstraint = nextCardViewController.cardView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
         NSLayoutConstraint.activate([self.currentCardViewCenterXConstraint!])
 
-        // animate the constraint changes
-        UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
             self.imageCarousel.alpha = 0
             nextCardImageCarousel.alpha = 1
+            nextCardViewController.cardView.alpha = 1
+            self.currentCardViewController.cardView.alpha = cardFadeOutAlpha
             self.setBackgroundImage(toPhotoAtURL: nextCardViewController.place.photoURLs.first)
             self.view.layoutIfNeeded()
         }, completion: { finished in
@@ -541,10 +564,11 @@ class PlaceDetailViewController: UIViewController {
         self.currentCardViewCenterXConstraint = previousCardViewController.cardView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
         NSLayoutConstraint.activate([currentCardViewCenterXConstraint!])
 
-
-        UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
             self.imageCarousel.alpha = 0
             previousCardImageCarousel.alpha = 1
+            previousCardViewController.cardView.alpha = 1
+            self.currentCardViewController.cardView.alpha = cardFadeOutAlpha
             self.setBackgroundImage(toPhotoAtURL: previousCardViewController.place.photoURLs.first)
             self.view.layoutIfNeeded()
         }, completion: { finished in
@@ -614,7 +638,7 @@ class PlaceDetailViewController: UIViewController {
 
     fileprivate func unwindToCurrentPlaceCard(animateWithDuration animationDuration: TimeInterval) {
         currentCardViewCenterXConstraint?.constant = 0
-        UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
             self.view.layoutIfNeeded()
         }, completion: nil )
     }
