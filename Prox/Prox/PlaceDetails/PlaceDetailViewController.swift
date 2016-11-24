@@ -462,7 +462,7 @@ class PlaceDetailViewController: UIViewController {
     fileprivate func calculateAlpha(forCenterPosition position: CGPoint) -> CGFloat {
         // Normalize X position to be 0 = center of screen
         let adjustedXPos = position.x - (UIScreen.main.bounds.width / 2)
-        return 1 - CGFloat((fabsf(Float(adjustedXPos)) /  Float(UIScreen.main.bounds.width / 2)) * Float(0.4))
+        return 1 - min(CGFloat((fabsf(Float(adjustedXPos)) /  Float(UIScreen.main.bounds.width / 2)) * Float(0.4)), 0.4)
     }
 
     fileprivate func canPageToNextPlaceCard(finalXPosition: CGFloat) -> Bool {
@@ -602,7 +602,6 @@ class PlaceDetailViewController: UIViewController {
         self.addChildViewController(newCardViewController)
         NSLayoutConstraint.activate([newCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
                                      newCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth)], translatesAutoresizingMaskIntoConstraints: false)
-
         return newCardViewController
     }
 
@@ -639,6 +638,9 @@ class PlaceDetailViewController: UIViewController {
     fileprivate func unwindToCurrentPlaceCard(animateWithDuration animationDuration: TimeInterval) {
         currentCardViewCenterXConstraint?.constant = 0
         UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+            self.nextCardViewController?.cardView.alpha = cardFadeOutAlpha
+            self.previousCardViewController?.cardView.alpha = cardFadeOutAlpha
+            self.currentCardViewController?.cardView.alpha = 1.0
             self.view.layoutIfNeeded()
         }, completion: nil )
     }

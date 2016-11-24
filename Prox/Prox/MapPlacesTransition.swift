@@ -186,13 +186,6 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             mapsView.alpha = 0
             mapsView.transform = CGAffineTransform.init(scaleX: self.scale, y: self.scale)
 
-            // Hide the next/previous cards until we finish the animation
-            placesViews.nextCard?.alpha = 1
-            placesViews.previousCard?.alpha = 1
-            placesViews.mapButton.alpha = 1
-            placesViews.mapButtonBadge.alpha = 1
-            placesViews.backgroundImage.alpha = 1
-
             // Hide the selected cell's image since we're using a fake one to animate
             cellViews.placeImage.alpha = 0
 
