@@ -137,12 +137,13 @@ class PlaceDetailsCardViewController: UIViewController {
     private func setLocation(location: CLLocation?) {
         PlaceUtilities.updateTravelTimeUI(fromPlace: place, toLocation: location, forView: cardView.travelTimeView)
         if let location = location {
-            // check that travel times are within current location limits before deciding whether to send notification
-            let maxTravelTimeToEvent = RemoteConfigKeys.maxTravelTimesToEventMins.value * 60
-            TravelTimesProvider.canTravelFrom(fromLocation: location.coordinate, toLocation: place.latLong, withinTimeInterval: maxTravelTimeToEvent) { canTravel in
-                guard canTravel else { return }
-                DispatchQueue.main.async {
-                    self.cardView.showEvent(atPlace: self.place)
+            if let event = self.place.events.first {
+                // check that travel times are within current location limits before deciding whether to send notification
+                TravelTimesProvider.canTravelFrom(fromLocation: location.coordinate, toLocation: place.latLong, before: event.arrivalByTime()) { canTravel in
+                    guard canTravel else { return }
+                    DispatchQueue.main.async {
+                        self.cardView.showEvent(atPlace: self.place)
+                    }
                 }
             }
         }

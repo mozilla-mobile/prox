@@ -105,7 +105,7 @@ class EventNotificationsManager {
             if isUnsent(event: event) {
                 guard let currentLocation = self.locationProvider?.getCurrentLocation()?.coordinate else { return }
                 // check that travel times are within current location limits before deciding whether to send notification
-                TravelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: event.coordinates, withinTimeInterval: self.maxTravelTimeToEvent) { canTravel in
+                TravelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: event.coordinates, before: event.arrivalByTime()) { canTravel in
                     guard canTravel else { return }
                     DispatchQueue.main.async {
                         var timeInterval = 1

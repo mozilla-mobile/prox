@@ -159,6 +159,18 @@ class Event {
         return currentTime < endTime - endTimeInterval
     }
 
+    func arrivalByTime() -> Date {
+        let eventEndTimeArrivalInterval = RemoteConfigKeys.minTimeFromEndOfEventForNotificationMins.value * 60
+        let arrivalByTime: Date
+        if let endTime = self.endTime {
+            arrivalByTime = endTime - eventEndTimeArrivalInterval
+        } else {
+            arrivalByTime = startTime
+        }
+
+        return arrivalByTime
+    }
+
     private func isAboutToStart(currentTime: Date) -> Bool {
         return isUpcomingEvent(currentTime: currentTime) && (startTime - Event.eventAboutToStartInterval) <= currentTime
     }
