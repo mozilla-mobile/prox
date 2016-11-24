@@ -41,6 +41,7 @@ class PlaceCarouselViewController: UIViewController {
             }
             // TODO: how do we make sure the user wasn't interacting?
             headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
+            placeCarousel.refresh()
         }
     }
 
@@ -379,7 +380,6 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
         self.places = places
 
         (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
-        placeCarousel.refresh()
 
         if oldPlaces.count == 0 {
             // Wrap the openClosedPlace in an async block to make sure its queued after the
