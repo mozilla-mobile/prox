@@ -243,7 +243,7 @@ class PlaceCarouselViewController: UIViewController {
 
     fileprivate func fetchPlaces(forLocation location: CLLocation) {
         self.placesProvider.updatePlaces(forLocation: location)
-        let placeMonitoringRadius = RemoteConfigKeys.getDouble(forKey: RemoteConfigKeys.searchRadiusInKm) / 4
+        let placeMonitoringRadius = RemoteConfigKeys.searchRadiusInKm.value / 4
         locationMonitor.startMonitoring(location: location, withIdentifier: placesFetchMonitorIdentifier, withRadius: placeMonitoringRadius, forEntry: nil, forExit: { region in
             self.locationMonitor.stopMonitoringRegion(withIdentifier: placesFetchMonitorIdentifier)
             self.shouldFetchPlaces = true

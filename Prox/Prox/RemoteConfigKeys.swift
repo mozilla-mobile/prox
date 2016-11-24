@@ -73,7 +73,7 @@ class RemoteConfigKeys {
     public static let maxTravelTimesToEventMins = RemoteConfigDouble(key: "max_travel_time_to_event_mins", defaultValue: 60.0)
     public static let minTimeFromEndOfEventForNotificationMins = RemoteConfigDouble(key: "min_time_from_end_of_event_for_notifications_mins", defaultValue: 120.0)
     public static let placeCategoriesToHideCSV = RemoteConfigStringArray(key: "place_categories_to_hide_csv", defaultValue: [])
-    public static let significantLocationChangeDistanceMeters = "significant_location_change_distance_meters"
+    public static let significantLocationChangeDistanceMeters = RemoteConfigDouble(key: "significant_location_change_distance_meters", defaultValue: 100)
 }
 
 /*

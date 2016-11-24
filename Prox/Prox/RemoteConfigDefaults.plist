@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>significant_location_change_distance_meters</key>
-	<string>100</string>
 	<key>place_categories_to_hide_csv</key>
 	<string></string>
 	<key>number_of_place_details_event_strings</key>
