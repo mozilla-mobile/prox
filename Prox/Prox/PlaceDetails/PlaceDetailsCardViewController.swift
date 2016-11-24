@@ -112,6 +112,10 @@ class PlaceDetailsCardViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    func prepareForReuse() {
+        self.cardView.prepareForReuse()
+    }
+
     func showEvent() {
         self.cardView.showEvent(atPlace: place)
     }

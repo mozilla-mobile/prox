@@ -408,19 +408,20 @@ class PlaceDetailViewController: UIViewController {
     }
 
     fileprivate func dequeuePlaceCardViewController(forPlace place: Place) -> PlaceDetailsCardViewController {
-        if let placeCardVC = unusedPlaceCardViewControllers.last {
-            unusedPlaceCardViewControllers.removeLast()
-            placeCardVC.place = place
-            placeCardVC.cardView.alpha = cardFadeOutAlpha
-            return placeCardVC
+        guard let placeCardVC = unusedPlaceCardViewControllers.last else {
+            let newController = PlaceDetailsCardViewController(place: place)
+            newController.placeImageDelegate = self
+            newController.cardView.delegate = self
+            newController.locationProvider = locationProvider
+            newController.cardView.alpha = cardFadeOutAlpha
+            return newController
         }
 
-        let newController = PlaceDetailsCardViewController(place: place)
-        newController.placeImageDelegate = self
-        newController.cardView.delegate = self
-        newController.locationProvider = locationProvider
-        newController.cardView.alpha = cardFadeOutAlpha
-        return newController
+        placeCardVC.prepareForReuse()
+        unusedPlaceCardViewControllers.removeLast()
+        placeCardVC.place = place
+        placeCardVC.cardView.alpha = cardFadeOutAlpha
+        return placeCardVC
     }
 
     @objc fileprivate func didPan(gestureRecognizer: UIPanGestureRecognizer) {

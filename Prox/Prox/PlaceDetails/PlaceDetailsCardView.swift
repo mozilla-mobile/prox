@@ -219,12 +219,17 @@ class PlaceDetailsCardView: UIView {
         updateViewSize()
     }
 
+    func prepareForReuse() {
+        self.showEventView(isHidden: false)
+    }
+
     // TODO: when else can we call this? layoutSubviews is called when we scroll and we don't want to calculate all this each time...
     private func updateViewSize() {
         delegate?.placeDetailsCardView(cardView: self, heightDidChange: bounds.height)
     }
 
     func updateUI(forPlace place: Place) {
+        showEventView(isHidden: true)
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories.names)
@@ -267,14 +272,18 @@ class PlaceDetailsCardView: UIView {
         }
     }
 
+    fileprivate func showEventView(isHidden: Bool) {
+        setContainingStackViewMargins(isTopMarginPresent: isHidden)
+        eventView.isHidden = isHidden
+    }
+
      func updateEventUI(forPlace place: Place) {
         if let event = place.events.first {
-            setContainingStackViewMargins(isTopMarginPresent: false)
-            eventView.isHidden = false
             eventView.setText(place.getPlaceDetailsEventString(forEvent: event), underlined: event.url == nil ? nil : "More info.")
+            showEventView(isHidden: false)
         } else {
-            setContainingStackViewMargins(isTopMarginPresent: true)
-            eventView.isHidden = true
+            eventView.setText("", underlined: nil)
+            showEventView(isHidden: true)
         }
     }
 
