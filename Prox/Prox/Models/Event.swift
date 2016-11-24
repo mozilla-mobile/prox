@@ -64,23 +64,41 @@ class Event {
     }
 
     convenience init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         guard data.exists(), data.hasChildren(),
             let value = data.value as? NSDictionary,
             let id = value["id"] as? String,
-            let placeId = value["placeId"] as? String,
+            let placeId = (value["placeId"] as? String) ?? value["id"] as? String,
             let description = value["description"] as? String,
-            let localStartTimeString = value["localStartTime"] as? String,
-            let localStartTime = formatter.date(from: localStartTimeString) else {
+            let localStartTimeString = value["localStartTime"] as? String else {
                 print("lol dropping event: missing data, id, placeId, description, start time \(data.value)")
                 return nil
+        }
+
+        let eventfulDateFormatter = DateFormatter()
+        eventfulDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+
+        let gCalDateFormatter = DateFormatter()
+        gCalDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssz"
+
+        var localStartTime: Date
+
+        if let startTime = eventfulDateFormatter.date(from: localStartTimeString) {
+            localStartTime = startTime
+        } else if let startTime = gCalDateFormatter.date(from: localStartTimeString) {
+            localStartTime = startTime
+        } else {
+            NSLog("Dropping event due to incorrectly formatted start timestamp %@", localStartTimeString)
+            return nil
         }
 
         let localEndTime: Date?
 
         if let localEndTimeString = value["localEndTime"] as? String {
-            localEndTime = formatter.date(from: localEndTimeString)
+            if let endTime = eventfulDateFormatter.date(from: localEndTimeString) {
+                localEndTime = endTime
+            } else if let endTime = gCalDateFormatter.date(from: localEndTimeString) {
+                localEndTime = endTime
+            } else {localEndTime = nil }
         } else { localEndTime = nil }
 
 
