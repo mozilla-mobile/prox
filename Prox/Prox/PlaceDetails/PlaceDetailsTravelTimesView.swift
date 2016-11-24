@@ -5,9 +5,14 @@
 import Foundation
 
 class PlaceDetailsTravelTimesView: PlaceDetailsIconInfoView, TravelTimesView {
+    fileprivate var idForTravelTimesView: String?
+
     convenience init() {
         self.init(enableForwardArrow: true)
     }
+
+    func getIDForTravelTimesView() -> String? { return idForTravelTimesView }
+    func setIDForTravelTimesView(_ id: String) { idForTravelTimesView = id }
 
     func prepareTravelTimesUIForReuse() {
         self.isLoading  = false

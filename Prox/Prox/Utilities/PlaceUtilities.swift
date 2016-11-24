@@ -95,12 +95,21 @@ struct PlaceUtilities {
             return
         }
 
-        // TODO: must cancel in-flight, or prevent updates to existing UI.
         let travelTimesResult = place.travelTimes(fromLocation: location)
         if !travelTimesResult.isFilled {
             view.setTravelTimesUIIsLoading(true)
         }
+
+        let idAtCallTime = place.id
+        view.setIDForTravelTimesView(idAtCallTime)
         travelTimesResult.upon(DispatchQueue.main) { res in
+            guard let idAtResultTime = view.getIDForTravelTimesView(), // should never be nil
+                    idAtCallTime == idAtResultTime else {
+                // Someone has requested new travel times for this view (re-used?) before we could
+                // display the result: cancel view update.
+                return
+            }
+
             view.setTravelTimesUIIsLoading(false)
 
             guard let travelTimes = res.successResult() else {

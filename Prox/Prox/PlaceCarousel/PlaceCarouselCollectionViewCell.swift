@@ -100,6 +100,8 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
     private var locationImageHeightConstraint: NSLayoutConstraint?
     private var locationImageWidthConstraint: NSLayoutConstraint?
 
+    fileprivate var idForTravelTimesView: String? // For extension.
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -230,6 +232,9 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
 }
 
 extension PlaceCarouselCollectionViewCell: TravelTimesView {
+    func getIDForTravelTimesView() -> String? { return idForTravelTimesView }
+    func setIDForTravelTimesView(_ id: String) { idForTravelTimesView = id }
+
     func prepareTravelTimesUIForReuse() {
         locationImage.image = nil
         isSelected = false
