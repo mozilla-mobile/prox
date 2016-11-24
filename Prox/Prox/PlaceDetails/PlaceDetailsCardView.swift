@@ -286,9 +286,9 @@ class PlaceDetailsCardView: UIView {
         let now = Date()
         if openHours.isOpen(atTime: now),
             let closingTime = openHours.closingTime(forTime: now) {
-            return ("Open", "Closes at \(closingTime)")
+            return ("Open", "Until \(closingTime)")
         } else if let openingTime = openHours.nextOpeningTime(forTime: now) {
-            return ("Closed", "Opens at \(openingTime)")
+            return ("Closed", "Until \(openingTime)")
         }
 
         return ("Not sure", "Closing time")
