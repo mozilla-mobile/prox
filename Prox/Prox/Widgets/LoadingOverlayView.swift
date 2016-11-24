@@ -4,8 +4,14 @@
 
 import Foundation
 
+protocol LoadingOverlayDelegate: class {
+    func loadingOverlayDidTapSearchAgain()
+}
+
 /// Overlay view shown on top of the PlaceCarouselViewController while loading.
 class LoadingOverlayView: UIView {
+    weak var delegate: LoadingOverlayDelegate?
+
     fileprivate lazy var loadingAnimation = LocationLoadingView(fillColor: Colors.carouselLoadingViewColor)
     fileprivate lazy var messageLabel: UILabel = {
         let label = UILabel()
@@ -20,16 +26,17 @@ class LoadingOverlayView: UIView {
         return label
     }()
 
-    fileprivate lazy var restartButton: UIButton = {
-        let btn = UIButton(frame: CGRect.zero)
+    fileprivate lazy var searchAgainButton: UIButton = {
+        let btn = UIButton(type: .custom)
         btn.backgroundColor = Colors.restartButtonColor
-        let title = NSLocalizedString("Loading.Restart.Button",
-                                      value: "Restart Prox",
-                                      comment: "Title for button to restart prox")
+        let title = NSLocalizedString("Loading.SearchAgain.Button",
+                                      value: "Search again",
+                                      comment: "Title for button to restart a search for places nearby")
         btn.layer.cornerRadius = 10
         btn.setTitle(title, for: .normal)
         btn.setTitleColor(.white, for: .normal)
         btn.titleLabel?.font = Fonts.loadingRestartButton
+        btn.addTarget(self, action: #selector(didTapSearchAgainButton), for: .touchUpInside)
         return btn
     }()
 
@@ -56,26 +63,31 @@ class LoadingOverlayView: UIView {
             messageLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -16),
         ]
 
-        addSubview(restartButton)
+        addSubview(searchAgainButton)
 
-        let buttonTop = restartButton.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 100)
+        let buttonTop = searchAgainButton.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 100)
         self.buttonTop = buttonTop
         constraintsToAdd += [
             buttonTop,
-            restartButton.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 16),
-            restartButton.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -16),
-            restartButton.heightAnchor.constraint(equalToConstant: 54)
+            searchAgainButton.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 16),
+            searchAgainButton.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -16),
+            searchAgainButton.heightAnchor.constraint(equalToConstant: 54)
         ]
 
         NSLayoutConstraint.activate(constraintsToAdd, translatesAutoresizingMaskIntoConstraints: false)
 
         // Start with the error messaging hidden
-        restartButton.alpha = 0
+        searchAgainButton.alpha = 0
         messageLabel.alpha = 0
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc fileprivate func didTapSearchAgainButton() {
+        fadeOutMessaging()
+        self.delegate?.loadingOverlayDidTapSearchAgain()
     }
 
     func fadeInMessaging() {
@@ -90,8 +102,20 @@ class LoadingOverlayView: UIView {
 
         UIView.animate(withDuration: 0.6, delay: 0.6, animations: {
             self.buttonTop?.constant = 16
-            self.restartButton.alpha = 1
+            self.searchAgainButton.alpha = 1
             self.layoutIfNeeded()
         }, completion: { _ in })
+    }
+
+    func fadeOutMessaging() {
+        layoutIfNeeded()
+
+        UIView.animate(withDuration: 0.6, delay: 0, animations: {
+            self.labelTop?.constant = 100
+            self.buttonTop?.constant = 100
+            self.messageLabel.alpha = 0
+            self.searchAgainButton.alpha = 0
+            self.layoutIfNeeded()
+        }, completion: { _ in})
     }
 }
