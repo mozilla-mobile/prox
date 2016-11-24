@@ -42,11 +42,6 @@ class PlaceCarouselViewController: UIViewController {
             // TODO: how do we make sure the user wasn't interacting?
             headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
             placeCarousel.refresh()
-
-            if oldValue.isEmpty,
-                !places.isEmpty {
-                openFirstPlace()
-            }
         }
     }
 
@@ -234,16 +229,14 @@ class PlaceCarouselViewController: UIViewController {
     fileprivate func updateLocation(location: CLLocation) {
         if let timeOfLastLocationUpdate = locationMonitor.timeOfLastLocationUpdate,
             timeOfLastLocationUpdate < location.timestamp {
-            locationMonitor.startMonitoringCurrentLocation()
-        }
-
-        if places.isEmpty {
-            updatePlaces(forLocation: location)
+            locationMonitor.startMonitoringForVisitAtCurrentLocation()
         }
 
         if sunriseSet == nil {
             updateSunRiseSetTimes(forLocation: location)
         }
+
+        updatePlaces(forLocation: location)
     }
 
     fileprivate func toggleLoadingUI(loading: Bool) {
@@ -263,14 +256,6 @@ class PlaceCarouselViewController: UIViewController {
         }
     }
 
-    fileprivate func shouldStartMonitoringLocation() -> Bool {
-        guard let timeOfLastLocationUpdate = locationMonitor.timeOfLastLocationUpdate,
-              let location = locationMonitor.currentLocation else {
-            return false
-        }
-        return timeOfLastLocationUpdate < location.timestamp
-    }
-    
     fileprivate func updatePlaces(forLocation location: CLLocation) {
         // don't bother fetching new places when in the background.
         if UIApplication.shared.applicationState != .background {
@@ -433,8 +418,6 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
         (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
 
         if wasEmpty && !places.isEmpty {
-
-        if oldPlaces.count == 0 {
             // Wrap the openClosedPlace in an async block to make sure its queued after the
             // carousel's refresh so the cells load before we invoke the transition
             DispatchQueue.main.async {
