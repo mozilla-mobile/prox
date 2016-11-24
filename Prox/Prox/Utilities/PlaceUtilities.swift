@@ -86,6 +86,7 @@ struct PlaceUtilities {
         view.numberOfReviewersLabel.text = reviewPrefix + " Reviews"
     }
 
+    // assumes called from UI thread.
     static func updateTravelTimeUI(fromPlace place: Place, toLocation location: CLLocation?, forView view: TravelTimesView) {
         view.prepareTravelTimesUIForReuse()
 
@@ -94,10 +95,12 @@ struct PlaceUtilities {
             return
         }
 
-        view.setTravelTimesUIIsLoading(true)
-
         // TODO: must cancel in-flight, or prevent updates to existing UI.
-        place.travelTimes(fromLocation: location).upon(DispatchQueue.main) { res in
+        let travelTimesResult = place.travelTimes(fromLocation: location)
+        if !travelTimesResult.isFilled {
+            view.setTravelTimesUIIsLoading(true)
+        }
+        travelTimesResult.upon(DispatchQueue.main) { res in
             view.setTravelTimesUIIsLoading(false)
 
             guard let travelTimes = res.successResult() else {
