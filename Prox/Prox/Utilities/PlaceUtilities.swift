@@ -96,10 +96,11 @@ struct PlaceUtilities {
 
         view.setTravelTimesUIIsLoading(true)
 
-        place.travelTimes(fromLocation: location, withCallback: { travelTimes in
+        // TODO: must cancel in-flight, or prevent updates to existing UI.
+        place.travelTimes(fromLocation: location).upon(DispatchQueue.main) { res in
             view.setTravelTimesUIIsLoading(false)
 
-            guard let travelTimes = travelTimes else {
+            guard let travelTimes = res.successResult() else {
                 view.updateTravelTimesUIForResult(.noData, durationInMinutes: nil)
                 return
             }
@@ -123,7 +124,7 @@ struct PlaceUtilities {
             }
 
             view.updateTravelTimesUIForResult(.noData, durationInMinutes: nil)
-        })
+        }
     }
 
     private static func setSubviewAlpha(_ alpha: CGFloat, forParent parentView: ReviewContainerView) {

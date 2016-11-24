@@ -5,6 +5,7 @@
 import Foundation
 import Firebase
 import CoreLocation
+import Deferred
 
 private let PROVIDERS_PATH = "providers/"
 private let YELP_PATH = PROVIDERS_PATH + "yelp"
@@ -165,14 +166,21 @@ class Place: Hashable {
         return (wiki: wikiDescription, yelp: yelpDescription)
     }
 
-    func travelTimes(fromLocation location: CLLocation, withCallback callback: @escaping ((TravelTimes?) -> ())) {
+    func travelTimes(fromLocation location: CLLocation) -> Deferred<DatabaseResult<TravelTimes>> {
+        // TODO: In a better world, with an IDE that could refactor, I'd rename DatabaseResult.
+        let deferred = Deferred<DatabaseResult<TravelTimes>>()
         TravelTimesProvider.travelTime(fromLocation: location.coordinate, toLocation: latLong,
                                        byTransitTypes: [.automobile, .walking]) { travelTimes in
-            self.lastTravelTime = travelTimes
-            DispatchQueue.main.async {
-                callback(travelTimes)
+            let res: DatabaseResult<TravelTimes>
+            if let travelTimes = travelTimes {
+                res = DatabaseResult.succeed(value: travelTimes)
+            } else {
+                res = DatabaseResult.fail(withMessage: "Unable to retrieve travelTimes for place \(self.id)")
             }
+            deferred.fill(with: res)
         }
+
+        return deferred
     }
 
     func getNotificationString(forEvent event: Event) -> String {
