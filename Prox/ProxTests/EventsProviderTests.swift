@@ -10,7 +10,11 @@ class EventsProviderTests: XCTestCase {
     let eventProvider = EventsProvider()
 
     let oneHour: Double = 60 * 60
-    let timeInterval: Double = 3 * 60 * 60
+
+    lazy var startTimeInterval: Double = { return self.oneHour } ()
+    lazy var endTimeInterval: Double = { return 2 * self.oneHour } ()
+
+    let currentTime = Date()
     
     override func setUp() {
         super.setUp()
@@ -22,106 +26,35 @@ class EventsProviderTests: XCTestCase {
         super.tearDown()
     }
 
-    func getEvent(withStartDate startDate: Date, andEndDate endDate: Date?) -> Event {
-        return Event(id: "1", placeId: "2", description: "Event", url: nil, startTime: startDate, endTime: endDate)
+    func testCurrentTimeTooEarlyBeforeEvent() {
+        XCTAssertFalse(eventProvider.shouldShowEvent(withStartTime: currentTime + (2 * oneHour), endTime: nil, timeIntervalBeforeStartOfEvent: startTimeInterval, timeIntervalBeforeEndOfEvent: endTimeInterval, atCurrentTime: currentTime))
     }
 
-    func testIsInvalidCurrentEventIfEndTimeNil() {
-        let now = Date()
-        let event = getEvent(withStartDate: now + oneHour, andEndDate: nil)
-        XCTAssertFalse(eventProvider.isValidCurrentEvent(event: event, currentTime: now))
+    func testCurrentTimeWithinTimeIntervalBeforeEvent() {
+        let startTime = currentTime + (startTimeInterval / 2)
+        XCTAssertTrue(eventProvider.shouldShowEvent(withStartTime: startTime, endTime: nil, timeIntervalBeforeStartOfEvent: startTimeInterval, timeIntervalBeforeEndOfEvent: endTimeInterval, atCurrentTime: currentTime))
     }
 
-    func testIsTimeWithinTimeIntervalFromTime() {
-        let now = Date()
-        XCTAssertTrue(eventProvider.isTime(time: now + oneHour, withinTimeInterval: timeInterval, fromTime: now))
+    func testCurrentTimeWithinTimeIntervalDuringEvent() {
+        let startTime = currentTime - (4 * oneHour)
+        let endTime = currentTime + endTimeInterval + oneHour
+        XCTAssertTrue(eventProvider.shouldShowEvent(withStartTime: startTime, endTime: endTime, timeIntervalBeforeStartOfEvent: startTimeInterval, timeIntervalBeforeEndOfEvent: endTimeInterval, atCurrentTime: currentTime))
     }
 
-    func testIsTimeWithinTimeIntervalFromTimeFalse() {
-        let now = Date()
-        XCTAssertFalse(eventProvider.isTime(time: now + timeInterval, withinTimeInterval: timeInterval - oneHour, fromTime: now ))
+    func testCurrenTimeAfterTimeIntervalDuringEvent() {
+        let startTime = currentTime - (6 * oneHour)
+        let endTime = currentTime + (endTimeInterval / 2)
+        XCTAssertFalse(eventProvider.shouldShowEvent(withStartTime: startTime, endTime: endTime, timeIntervalBeforeStartOfEvent: startTimeInterval, timeIntervalBeforeEndOfEvent: endTimeInterval, atCurrentTime: currentTime))
     }
 
-    func testIsFutureEventTrueIfCurrentTimeBeforeStartTime() {
-        let now = Date()
-        let event = getEvent(withStartDate: now + oneHour, andEndDate: nil)
-        XCTAssertTrue(eventProvider.isFutureEvent(event: event, currentTime: now))
+    func testCurrentTimeAfterEventEnds() {
+        let startTime = currentTime - (6 * oneHour)
+        let endTime = currentTime - oneHour
+        XCTAssertFalse(eventProvider.shouldShowEvent(withStartTime: startTime, endTime: endTime, timeIntervalBeforeStartOfEvent: startTimeInterval, timeIntervalBeforeEndOfEvent: endTimeInterval, atCurrentTime: currentTime))
     }
 
-    func testIsFutureEventFalseIfCurrentTimeAtStartTime() {
-        let now = Date()
-        let event = getEvent(withStartDate: now, andEndDate: nil)
-        XCTAssertFalse(eventProvider.isFutureEvent(event: event, currentTime: now))
-    }
-
-    func testIsFutureEventFalseIfCurrentTimeAfterStartTime() {
-        let now = Date()
-        let event = getEvent(withStartDate: now - oneHour, andEndDate: nil)
-        XCTAssertFalse(eventProvider.isFutureEvent(event: event, currentTime: now))
-    }
-
-    func testIsCurrentEventTrueIfCurrentTimeBetweenStartAndEndTimes() {
-        let now = Date()
-        let event = getEvent(withStartDate: now - oneHour, andEndDate: now + timeInterval)
-        XCTAssertTrue(eventProvider.isCurrentEvent(event: event, currentTime: now))
-    }
-
-    func testIsCurrentEventTrueIfCurrentTimeAtStartTime() {
-        let now = Date()
-        let event = getEvent(withStartDate: now, andEndDate: now + timeInterval)
-        XCTAssertTrue(eventProvider.isCurrentEvent(event: event, currentTime: now))
-    }
-
-    func testIsCurrentEventTrueIfCurrentTimeAtEndTime() {
-        let now = Date()
-        let event = getEvent(withStartDate: now.addingTimeInterval(-timeInterval), andEndDate: now)
-        XCTAssertTrue(eventProvider.isCurrentEvent(event: event, currentTime: now))
-    }
-
-    func testIsCurrentEventFalseIfCurrentTimeBeforeStartTime() {
-        let now = Date()
-        let event = getEvent(withStartDate: now + oneHour, andEndDate: now + timeInterval)
-        XCTAssertFalse(eventProvider.isCurrentEvent(event: event, currentTime: now))
-    }
-
-    func testIsCurrentEventFalseIfCurrentTimeAfterEndTime() {
-        let now = Date()
-        let event = getEvent(withStartDate: now - timeInterval, andEndDate: now - oneHour)
-        XCTAssertFalse(eventProvider.isCurrentEvent(event: event, currentTime: now))
-    }
-
-    func testIsCurrentEventFalseNoEndTime() {
-        let now = Date()
-        let event = getEvent(withStartDate: now, andEndDate: nil)
-        XCTAssertFalse(eventProvider.isCurrentEvent(event: event, currentTime: now))
-    }
-
-    func testDoesEventLastLessThanTimeIntervalTrueIfLessThanDuration() {
-        // returns true if startDate - endDate <= timeInterval
-        let now = Date()
-        let event = getEvent(withStartDate: now, andEndDate: now + timeInterval)
-        XCTAssertTrue(eventProvider.doesEvent(event: event, lastLessThan: timeInterval + oneHour))
-    }
-
-    func testDoesEventLastLessThanTimeIntervalTrueIfEqualToDuration() {
-        // returns true if startDate - endDate <= timeInterval
-        let now = Date()
-        let timeInterval: Double = 3 * oneHour
-        let event = getEvent(withStartDate: now, andEndDate: now + timeInterval)
-        XCTAssertTrue(eventProvider.doesEvent(event: event, lastLessThan: timeInterval))
-    }
-
-    func testDoesEventLastLessThanTimeIntervalFalseIfGreaterThanDuration() {
-        // return false is startDate - endDate > timeInterval
-        let now = Date()
-        let event = getEvent(withStartDate: now, andEndDate: now + (timeInterval + oneHour))
-        XCTAssertFalse(eventProvider.doesEvent(event: event, lastLessThan: timeInterval))
-
-    }
-    func testDoesEventLastLessThanTimeIntervalFalseIfEndTimeNil() {
-        // returns false if endDate is nil
-        let now = Date()
-        let event = getEvent(withStartDate: now, andEndDate: nil)
-        XCTAssertFalse(eventProvider.doesEvent(event: event, lastLessThan: timeInterval))
+    func testCurrentTimeAfterEventStartsNoEndTime() {
+        let startTime = currentTime - oneHour
+        XCTAssertFalse(eventProvider.shouldShowEvent(withStartTime: startTime, endTime: nil, timeIntervalBeforeStartOfEvent: startTimeInterval, timeIntervalBeforeEndOfEvent: endTimeInterval, atCurrentTime: currentTime))
     }
 }

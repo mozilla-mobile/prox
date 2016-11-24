@@ -95,11 +95,11 @@ class FirebaseEventsDatabase: EventsDatabase {
         return placeIdsToEventMap
     }
 
-    func getPlacesWithEvents(forLocation location: CLLocation, withRadius radius: Double, withPlacesDatabase placesDatabase: PlacesDatabase, filterEventsUsing eventFilter: @escaping (Event, CLLocation) -> Bool) -> Future<[DatabaseResult<Place>]> {
+    func getPlacesWithEvents(forLocation location: CLLocation, withRadius radius: Double, withPlacesDatabase placesDatabase: PlacesDatabase, filterEventsUsing eventFilter: @escaping (Event) -> Bool) -> Future<[DatabaseResult<Place>]> {
         let dispatchQueue = DispatchQueue.global(qos: .userInitiated)
         // get the events within our event radius
         return getEvents(forLocation: location, withRadius: radius).andThen(upon: dispatchQueue) { events -> Future<[DatabaseResult<Place>]> in
-            let filteredEvents = events.flatMap { $0.successResult() } .filter { return eventFilter($0, location) }
+            let filteredEvents = events.flatMap { $0.successResult() } .filter { return eventFilter($0) }
             let eventToPlaceMap = self.mapEventsToPlaceIds(events: filteredEvents)
             var fetchedPlaces = [String: Place]()
             // loop through each event and fetch the place
