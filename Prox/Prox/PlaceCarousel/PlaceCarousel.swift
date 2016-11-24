@@ -91,7 +91,7 @@ extension PlaceCarousel: UICollectionViewDataSource {
     private func downloadAndSetImage(for place: Place, into cell: PlaceCarouselCollectionViewCell) {
         // Prepare for re-use.
         cell.placeImage.cancelImageDownloadTask()
-        cell.placeImage.image = UIImage(named: "place-placeholder") // TODO: issue #219
+        cell.placeImage.image = UIImage(named: "carousel_image_loading")
 
         guard let urlStr = place.photoURLs.first, let url = URL(string: urlStr) else {
             print("lol unable to create URL from photo url")

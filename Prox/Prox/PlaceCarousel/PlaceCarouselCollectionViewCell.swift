@@ -238,11 +238,14 @@ extension PlaceCarouselCollectionViewCell: TravelTimesView {
     func prepareTravelTimesUIForReuse() {
         locationImage.image = nil
         isSelected = false
-        // TODO: issue #219: should we nil text?
+        location.text = " " // We expect the text to be changed before the view is seen but just in case.
     }
 
     func setTravelTimesUIIsLoading(_ isLoading: Bool) {
-        // TODO: issue #219
+        if isLoading {
+            // This will be overwritten when the result is updated.
+            location.text = "Locating..."
+        }
     }
 
     func updateTravelTimesUIForResult(_ result: TravelTimesViewResult, durationInMinutes: Int?) {
@@ -259,7 +262,7 @@ extension PlaceCarouselCollectionViewCell: TravelTimesView {
             location.text = "\(durationInMinutes!) min drive away"
 
         case .noData:
-            break // TODO: issue #219
+            location.text = "Travel time unknown"
         }
     }
 }
