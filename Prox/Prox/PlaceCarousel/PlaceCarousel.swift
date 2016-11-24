@@ -54,6 +54,26 @@ class PlaceCarousel: NSObject {
         carousel.reloadData()
     }
 
+    func visibleCellFor(place: Place) -> PlaceCarouselCollectionViewCell? {
+        guard let indexPath = indexPathFor(place: place) else {
+           return nil
+        }
+        return carousel.cellForItem(at: indexPath) as? PlaceCarouselCollectionViewCell
+    }
+
+    func scrollTo(place: Place) {
+        guard let indexPath = indexPathFor(place: place) else {
+           return
+        }
+        carousel.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+    }
+
+    fileprivate func indexPathFor(place: Place) -> IndexPath? {
+        guard let index = dataSource?.index(forPlace: place) else {
+            return nil
+        }
+        return IndexPath(item: index, section: 0)
+    }
 }
 
 extension PlaceCarousel: UICollectionViewDataSource {

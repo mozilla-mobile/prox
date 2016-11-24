@@ -17,6 +17,7 @@ protocol PlaceDataSource: class {
     func previousPlace(forPlace place: Place) -> Place?
     func numberOfPlaces() -> Int
     func place(forIndex: Int) throws -> Place
+    func index(forPlace: Place) -> Int?
 }
 
 struct PlaceDataSourceError: Error {
@@ -41,11 +42,6 @@ class PlaceCarouselViewController: UIViewController {
             // TODO: how do we make sure the user wasn't interacting?
             headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
             placeCarousel.refresh()
-
-            if oldValue.isEmpty,
-                !places.isEmpty {
-                openFirstPlace()
-            }
         }
     }
 
@@ -210,6 +206,7 @@ class PlaceCarouselViewController: UIViewController {
         let placeDetailViewController = PlaceDetailViewController(place: place)
         placeDetailViewController.dataSource = self
         placeDetailViewController.locationProvider = self.locationMonitor
+        placeDetailViewController.transitioningDelegate = self
 
         self.present(placeDetailViewController, animated: true, completion: nil)
     }
@@ -335,6 +332,10 @@ extension PlaceCarouselViewController: PlaceDataSource {
 
         return places[index]
     }
+
+    func index(forPlace place: Place) -> Int? {
+        return places.index(of: place)
+    }
 }
 
 extension PlaceCarouselViewController: PlaceCarouselDelegate {
@@ -375,9 +376,18 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
     }
 
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
+        let oldPlaces = self.places
         self.places = places
 
         (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
+
+        if oldPlaces.count == 0 {
+            // Wrap the openClosedPlace in an async block to make sure its queued after the
+            // carousel's refresh so the cells load before we invoke the transition
+            DispatchQueue.main.async {
+                self.openFirstPlace()
+            }
+        }
     }
 
     func placesProvider(_ controller: PlacesProvider, didError error: Error) {
@@ -385,6 +395,27 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
             // placeholder for the error state.
             headerView.numberOfPlacesLabel.text = "Error"
         }
+    }
+}
+
+extension PlaceCarouselViewController: UIViewControllerTransitioningDelegate {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController,
+                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        if let _ = presented as? PlaceDetailViewController {
+            let transition = MapPlacesTransition()
+            transition.presenting = true
+            return transition
+        }
+        return nil
+    }
+
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        if let _ = dismissed as? PlaceDetailViewController {
+            let transition = MapPlacesTransition()
+            transition.presenting = false
+            return transition
+        }
+        return nil
     }
 }
 

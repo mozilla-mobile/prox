@@ -10,6 +10,15 @@ enum PanDirection {
     case vertical, horizontal, none
 }
 
+struct PlaceDetailAnimatableViews {
+    var nextCard: PlaceDetailsCardView?
+    var previousCard: PlaceDetailsCardView?
+    var mapButton: MapButton
+    var currentCard: PlaceDetailsCardView
+    var mapButtonBadge: BadgeSwift
+    var backgroundImage: UIImageView
+}
+
 /**
  * This class has essentially implemented it's own version of a paging collection view
 
@@ -92,6 +101,10 @@ class PlaceDetailViewController: UIViewController {
     fileprivate var backgroundImageHeightConstraint: NSLayoutConstraint?
 
     var imageCarousel: UIView!
+
+    var currentPlace: Place {
+        return currentCardViewController.place
+    }
 
     fileprivate let cardViewTopAnchorConstant: CGFloat = 204
     fileprivate let cardViewSpacingConstant: CGFloat = 6
@@ -185,6 +198,10 @@ class PlaceDetailViewController: UIViewController {
 
         cardViewWidth = self.view.bounds.width - (2 * cardEdgeMarginConstant)
 
+        // Add some additional height to the background image so when the spring animation runs when
+        // transitioning to the this VC we don't see a blank space poke through the bottom due to the spring
+        let springOverlap: CGFloat = 5
+        
         view.addSubview(scrollView)
         var constraints = [scrollView.topAnchor.constraint(equalTo: view.topAnchor),
                            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -197,7 +214,7 @@ class PlaceDetailViewController: UIViewController {
 
         backgroundImageHeightConstraint = backgroundImage.heightAnchor.constraint(equalToConstant: scrollView.contentSize.height)
 
-        constraints += [backgroundImage.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageCarouselHeightConstant),
+        constraints += [backgroundImage.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageCarouselHeightConstant - springOverlap),
                            backgroundImage.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
                            backgroundImageHeightConstraint!,
                            backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor)]
@@ -652,5 +669,18 @@ extension PlaceDetailViewController: UIGestureRecognizerDelegate {
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return gestureRecognizer == panGestureRecognizer && otherGestureRecognizer == scrollView.panGestureRecognizer
+    }
+}
+
+extension PlaceDetailViewController: Animatable {
+    func animatableProperties() -> PlaceDetailAnimatableViews {
+        return PlaceDetailAnimatableViews(
+            nextCard: self.nextCardViewController?.cardView,
+            previousCard: self.previousCardViewController?.cardView,
+            mapButton: self.mapButton,
+            currentCard: self.currentCardViewController.cardView,
+            mapButtonBadge: self.mapButtonBadge,
+            backgroundImage: self.backgroundImage
+        )
     }
 }
