@@ -20,11 +20,11 @@ struct PlaceDetailAnimatableViews {
 }
 
 // MARK: Animation Constants
-private let cardFadeOutAlpha: CGFloat = 0.6
+fileprivate let cardFadeOutAlpha: CGFloat = 0.6
 
 // Transforms for card swipe animation
-private let scaleOutTransformLeft = CGAffineTransform.identity.translatedBy(x: 3, y: 20).scaledBy(x: 0.96, y: 0.96)
-private let scaleOutTransformRight = CGAffineTransform.identity.translatedBy(x: -3, y: 20).scaledBy(x: 0.96, y: 0.96)
+fileprivate let scaleOutTransformLeft = CGAffineTransform.identity.translatedBy(x: 3, y: 20).scaledBy(x: 0.96, y: 0.96)
+fileprivate let scaleOutTransformRight = CGAffineTransform.identity.translatedBy(x: -3, y: 20).scaledBy(x: 0.96, y: 0.96)
 
 /**
  * This class has essentially implemented it's own version of a paging collection view
