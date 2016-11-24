@@ -307,6 +307,10 @@ class PlaceDetailViewController: UIViewController {
         self.currentCardViewController.beginAutoMovingOfCarousel()
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     func addGestureRecognizers(toViewController viewController: PlaceDetailsCardViewController) {
         viewController.cardView.addGestureRecognizer(panGestureRecognizer)
     }
