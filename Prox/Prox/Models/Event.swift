@@ -71,10 +71,11 @@ class Event {
         guard data.exists(), data.hasChildren(),
             let value = data.value as? NSDictionary,
             let id = value["id"] as? String,
+            let placeId = value["placeId"] as? String,
             let description = value["description"] as? String,
             let localStartTimeString = value["localStartTime"] as? String,
             let localStartTime = formatter.date(from: localStartTimeString) else {
-                print("lol dropping event: missing data, id, description, start time \(data.value)")
+                print("lol dropping event: missing data, id, placeId, description, start time \(data.value)")
                 return nil
         }
 
@@ -86,7 +87,7 @@ class Event {
 
 
         self.init(id: id,
-                  placeId: id,
+                  placeId: placeId,
                   description: description,
                   url:value["url"] as? String,
                   startTime: localStartTime,
