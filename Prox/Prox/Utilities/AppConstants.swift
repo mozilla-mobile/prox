@@ -93,4 +93,17 @@ public struct AppConstants {
     }()
 
     public static let APIKEYS_PATH = "APIKeys"
+
+    // The root child in the Realtime Firebase database.
+    public static let firebaseRoot: String = {
+        #if MOZ_CHANNEL_DEBUG
+            return ""
+        #elseif MOZ_CHANNEL_ENTERPRISE
+            return "production/"
+        #elseif MOZ_CHANNEL_RELEASE
+            return "production/"
+        #else
+            return ""
+        #endif
+    }()
 }
