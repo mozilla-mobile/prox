@@ -82,11 +82,10 @@ public struct AppConstants {
     public static let serverURL: URL = {
         #if MOZ_CHANNEL_DEBUG
             return URL(string: "https://prox-dev.moo.mx")!
-            //return URL(string: "http://192.168.1.86:5000")!
         #elseif MOZ_CHANNEL_ENTERPRISE
-            return URL(string: "https://prox-dev.moo.mx")!
+            return URL(string: "https://prox.moo.mx")!
         #elseif MOZ_CHANNEL_RELEASE
-            return URL(string: "https://prox-dev.moo.mx")!
+            return URL(string: "https://prox.moo.mx")!
         #else
             return URL(string: "https://prox-dev.moo.mx")!
         #endif
