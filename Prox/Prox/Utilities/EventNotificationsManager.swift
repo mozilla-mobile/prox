@@ -104,16 +104,13 @@ class EventNotificationsManager {
                     guard let place = place,
                     let currentLocation = self.locationProvider?.getCurrentLocation()?.coordinate else { return }
                     // check that travel times are within current location limits before deciding whether to send notification
-                    TravelTimesProvider.travelTime(fromLocation: currentLocation, toLocation: place.latLong, byTransitType: [.automobile], withCompletion: { (times) in
-                        guard let travelTimes = times,
-                        let drivingTime = travelTimes.drivingTime else { return }
-                        if drivingTime <= self.maxTravelTimeToEvent {
-                            DispatchQueue.main.async {
-                                self.sendNotification(forEvent: event, atPlace: place, inSeconds: TimeInterval(index + 1))
-                                self.markAsSent(event: event)
-                            }
+                    TravelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: place.latLong, withinTimeInterval: self.maxTravelTimeToEvent) { canTravel in
+                        guard canTravel else { return }
+                        DispatchQueue.main.async {
+                            self.sendNotification(forEvent: event, atPlace: place, inSeconds: TimeInterval(index + 1))
+                            self.markAsSent(event: event)
                         }
-                    })
+                    }
                 }
             }
         }

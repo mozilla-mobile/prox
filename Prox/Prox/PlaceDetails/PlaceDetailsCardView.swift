@@ -225,8 +225,6 @@ class PlaceDetailsCardView: UIView {
     }
 
     func updateUI(forPlace place: Place) {
-        updateEventUI(forPlace: place)
-
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories.names)
@@ -269,7 +267,7 @@ class PlaceDetailsCardView: UIView {
         }
     }
 
-    private func updateEventUI(forPlace place: Place) {
+     func updateEventUI(forPlace place: Place) {
         if let event = place.events.first {
             setContainingStackViewMargins(isTopMarginPresent: false)
             eventView.isHidden = false

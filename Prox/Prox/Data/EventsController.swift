@@ -56,9 +56,8 @@ class EventsProvider {
     }
 
     internal func shouldShowEvent(withStartTime startTime: Date, endTime: Date?, timeIntervalBeforeStartOfEvent startTimeInterval: TimeInterval, timeIntervalBeforeEndOfEvent endTimeInterval: TimeInterval, atCurrentTime currentTime: Date) -> Bool {
-        if isFutureEvent(eventStartTime: startTime, currentTime: currentTime)
-            && (startTime - startTimeInterval) <= currentTime {
-            return true
+        if isFutureEvent(eventStartTime: startTime, currentTime: currentTime) {
+            return (startTime - startTimeInterval) <= currentTime
         }
         guard let endTime = endTime else {
             return false

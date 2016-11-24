@@ -8,6 +8,8 @@ import MapKit
 
 struct TravelTimesProvider {
 
+    static fileprivate let travelTimePadding: Double = 10 * 60
+
     static var MIN_WALKING_TIME: Int = {
         // Note that this is semantically maximum walking time, 
         // rather than minimum walking time (as used throughout the codebase).
@@ -76,6 +78,17 @@ struct TravelTimesProvider {
                 }
             }
         }
+    }
+
+    static func canTravelFrom(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, withinTimeInterval timeInterval: TimeInterval, withCompletion completion: @escaping (Bool) -> ()) {
+        TravelTimesProvider.travelTime(fromLocation: fromLocation, toLocation: toLocation, byTransitType: [.automobile], withCompletion: { (times) in
+            guard let travelTimes = times,
+                let drivingTime = travelTimes.drivingTime else {
+                    return completion(false)
+            }
+
+            completion((drivingTime + travelTimePadding)  <= timeInterval)
+        })
     }
 }
 
