@@ -19,7 +19,12 @@ struct PlaceDetailAnimatableViews {
     var backgroundImage: UIImageView
 }
 
+// MARK: Animation Constants
 private let cardFadeOutAlpha: CGFloat = 0.6
+
+// Transforms for card swipe animation
+private let scaleOutTransformLeft = CGAffineTransform.identity.translatedBy(x: 3, y: 20).scaledBy(x: 0.96, y: 0.96)
+private let scaleOutTransformRight = CGAffineTransform.identity.translatedBy(x: -3, y: 20).scaledBy(x: 0.96, y: 0.96)
 
 /**
  * This class has essentially implemented it's own version of a paging collection view
@@ -141,6 +146,7 @@ class PlaceDetailViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         self.currentCardViewController = dequeuePlaceCardViewController(forPlace: place)
         self.currentCardViewController.cardView.alpha = 1
+        self.currentCardViewController.cardView.transform = .identity
         setBackgroundImage(toPhotoAtURL: place.photoURLs.first)
     }
     
@@ -157,6 +163,7 @@ class PlaceDetailViewController: UIViewController {
                 nextCardViewController.place = nextPlace
             } else {
                 nextCardViewController = dequeuePlaceCardViewController(forPlace: nextPlace)
+                nextCardViewController?.cardView.transform = scaleOutTransformRight
                 scrollView.addSubview(nextCardViewController!.cardView)
                 nextCardViewLeadingConstraint = nextCardViewController!.cardView.leadingAnchor.constraint(equalTo: currentCardViewController.cardView.trailingAnchor, constant: cardViewSpacingConstant)
                 NSLayoutConstraint.activate( [nextCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
@@ -173,6 +180,7 @@ class PlaceDetailViewController: UIViewController {
                 previousCardViewController.place = previousPlace
             } else  {
                 previousCardViewController = dequeuePlaceCardViewController(forPlace: previousPlace)
+                previousCardViewController?.cardView.transform = scaleOutTransformLeft
                 scrollView.addSubview(previousCardViewController!.cardView)
                 previousCardViewTrailingConstraint = previousCardViewController!.cardView.trailingAnchor.constraint(equalTo: currentCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
                 NSLayoutConstraint.activate( [previousCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
@@ -256,6 +264,7 @@ class PlaceDetailViewController: UIViewController {
 
         if let previousPlace = dataSource?.previousPlace(forPlace: currentCardViewController.place) {
             previousCardViewController = dequeuePlaceCardViewController(forPlace: previousPlace)
+            previousCardViewController?.cardView.transform = scaleOutTransformLeft
             scrollView.addSubview(previousCardViewController!.cardView)
             previousCardViewTrailingConstraint = previousCardViewController!.cardView.trailingAnchor.constraint(equalTo: currentCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
             constraints += [previousCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
@@ -265,6 +274,7 @@ class PlaceDetailViewController: UIViewController {
 
         if let nextPlace = dataSource?.nextPlace(forPlace: currentCardViewController.place) {
             nextCardViewController = dequeuePlaceCardViewController(forPlace: nextPlace)
+            nextCardViewController?.cardView.transform = scaleOutTransformRight
             scrollView.addSubview(nextCardViewController!.cardView)
             nextCardViewLeadingConstraint = nextCardViewController!.cardView.leadingAnchor.constraint(equalTo: currentCardViewController.cardView.trailingAnchor, constant: cardViewSpacingConstant)
             constraints += [nextCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
@@ -486,6 +496,8 @@ class PlaceDetailViewController: UIViewController {
         previousCardViewController?.cardView.isHidden = true
 
         let newNextCardViewController = insertNewCardViewController(forPlace: dataSource?.nextPlace(forPlace: nextCardViewController.place))
+        newNextCardViewController?.cardView.transform = scaleOutTransformRight
+
         let springDamping:CGFloat = newNextCardViewController == nil ? 0.8 : 1.0
         setupConstraints(forNewPreviousCard: currentCardViewController, newCurrentCard: nextCardViewController, newNextCard: newNextCardViewController)
 
@@ -506,6 +518,9 @@ class PlaceDetailViewController: UIViewController {
             self.currentCardViewController.cardView.alpha = cardFadeOutAlpha
             self.setBackgroundImage(toPhotoAtURL: nextCardViewController.place.photoURLs.first)
             self.view.layoutIfNeeded()
+
+            self.nextCardViewController?.cardView.transform = CGAffineTransform.identity
+            self.currentCardViewController.cardView.transform = scaleOutTransformLeft
         }, completion: { finished in
             if finished {
                 // ensure that the correct current, previous and next view controller references are set
@@ -551,6 +566,8 @@ class PlaceDetailViewController: UIViewController {
         nextCardViewController?.cardView.isHidden = true
 
         let newPreviousCardViewController = insertNewCardViewController(forPlace: dataSource?.previousPlace(forPlace: previousCardViewController.place))
+        newPreviousCardViewController?.cardView.transform = scaleOutTransformLeft
+
         let springDamping:CGFloat = newPreviousCardViewController == nil ? 0.8 : 1.0
         setupConstraints(forNewPreviousCard: newPreviousCardViewController, newCurrentCard: previousCardViewController, newNextCard: currentCardViewController)
 
@@ -571,6 +588,9 @@ class PlaceDetailViewController: UIViewController {
             self.currentCardViewController.cardView.alpha = cardFadeOutAlpha
             self.setBackgroundImage(toPhotoAtURL: previousCardViewController.place.photoURLs.first)
             self.view.layoutIfNeeded()
+
+            self.previousCardViewController?.cardView.transform = CGAffineTransform.identity
+            self.currentCardViewController.cardView.transform = scaleOutTransformRight
         }, completion: { finished in
             if finished {
                 self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
