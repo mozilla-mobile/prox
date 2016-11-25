@@ -42,6 +42,9 @@ class RemoteConfigKeys {
     // This is measured in minutes. The default value is 1 minute.
     public static let youAreHereWalkingTimeMins = RemoteConfigInt(key: "you_are_here_walking_time_mins", defaultValue: 1)
 
+    // The distance the user must travel before the travel times on a location are reloaded.
+    public static let travelTimeExpirationDistance = RemoteConfigDouble(key: "travel_time_expiration_distance", defaultValue: 0.2) // default: ~2.5min walk.
+
     // This is the maximum time interval that we display walking directions before switching to driving directions.
     // This is measure in minutes. The default value is 30 minutes.
     public static let maxWalkingTimeInMins = RemoteConfigInt(key: "max_walking_time_in_mins", defaultValue: 30)

@@ -56,13 +56,14 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
     lazy var yelpReview: ReviewContainerView = {
         let view = ReviewContainerView(color: Colors.yelp, mode: .carouselView)
         view.accessibilityIdentifier = "YelpReview"
-
+        view.reviewSiteLogo.image = UIImage(named: "logo_yelp")
         return view
     }()
 
     lazy var tripAdvisorReview: ReviewContainerView = {
         let view = ReviewContainerView(color: Colors.tripAdvisor, mode: .carouselView)
         view.accessibilityIdentifier = "TripAdvisorReview"
+        view.reviewSiteLogo.image = UIImage(named: "logo_ta")
         return view
     }()
 
@@ -104,6 +105,8 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
     private var locationLabelLeadingConstraint: NSLayoutConstraint?
     private var locationImageHeightConstraint: NSLayoutConstraint?
     private var locationImageWidthConstraint: NSLayoutConstraint?
+
+    fileprivate var idForTravelTimesView: String? // For extension.
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -236,7 +239,42 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.deactivate(deactivateConstraints)
         NSLayoutConstraint.activate(updatedConstraints)
     }
-    
+}
+
+extension PlaceCarouselCollectionViewCell: TravelTimesView {
+    func getIDForTravelTimesView() -> String? { return idForTravelTimesView }
+    func setIDForTravelTimesView(_ id: String) { idForTravelTimesView = id }
+
+    func prepareTravelTimesUIForReuse() {
+        locationImage.image = nil
+        isSelected = false
+        location.text = " " // We expect the text to be changed before the view is seen but just in case.
+    }
+
+    func setTravelTimesUIIsLoading(_ isLoading: Bool) {
+        if isLoading {
+            // This will be overwritten when the result is updated.
+            location.text = "Locating..."
+        }
+    }
+
+    func updateTravelTimesUIForResult(_ result: TravelTimesViewResult, durationInMinutes: Int?) {
+        switch result {
+        case .userHere:
+            locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+            location.text = "You're here"
+            isSelected = true
+
+        case .walkingDist:
+            location.text = "\(durationInMinutes!) min walk away"
+
+        case .drivingDist:
+            location.text = "\(durationInMinutes!) min drive away"
+
+        case .noData:
+            location.text = "Travel time unknown"
+        }
+    }
 }
 
 extension PlaceCarouselCollectionViewCell: Animatable {

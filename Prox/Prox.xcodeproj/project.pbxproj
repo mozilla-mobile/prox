@@ -71,6 +71,8 @@
 		E6101A961DDA481800D05B74 /* CategoriesUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6101A951DDA481800D05B74 /* CategoriesUtilTests.swift */; };
 		E6101A981DDA7B8500D05B74 /* CategoriesUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6101A971DDA7B8500D05B74 /* CategoriesUtil.swift */; };
 		E61252F11DDF761C007E33B7 /* MapPlacesTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61252F01DDF761C007E33B7 /* MapPlacesTransition.swift */; };
+		E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61831981DE0BDBA00D1810F /* TravelTimesView.swift */; };
+		E618319B1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */; };
 		E61972141DD28B7A00C9D093 /* PlaceDetailsEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */; };
 		E65857DE1DB69F4200CD18F8 /* ReviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65857DD1DB69F4200CD18F8 /* ReviewProvider.swift */; };
 		E662FF4A1DC022940042C4A9 /* PlaceDetailsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662FF491DC022940042C4A9 /* PlaceDetailsCardView.swift */; };
@@ -189,6 +191,8 @@
 		E6101A951DDA481800D05B74 /* CategoriesUtilTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoriesUtilTests.swift; sourceTree = "<group>"; };
 		E6101A971DDA7B8500D05B74 /* CategoriesUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoriesUtil.swift; sourceTree = "<group>"; };
 		E61252F01DDF761C007E33B7 /* MapPlacesTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapPlacesTransition.swift; sourceTree = "<group>"; };
+		E61831981DE0BDBA00D1810F /* TravelTimesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TravelTimesView.swift; sourceTree = "<group>"; };
+		E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsTravelTimesView.swift; sourceTree = "<group>"; };
 		E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsEventView.swift; sourceTree = "<group>"; };
 		E65857DD1DB69F4200CD18F8 /* ReviewProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewProvider.swift; sourceTree = "<group>"; };
 		E662FF491DC022940042C4A9 /* PlaceDetailsCardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsCardView.swift; sourceTree = "<group>"; };
@@ -329,6 +333,7 @@
 				7B50956D1DB53429007C54F0 /* HorizontalLineView.swift */,
 				7B5095691DB53382007C54F0 /* ReviewContainerView.swift */,
 				7B50956A1DB53382007C54F0 /* ReviewScoreView.swift */,
+				E61831981DE0BDBA00D1810F /* TravelTimesView.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -381,6 +386,7 @@
 				7BB1CA481DC8C6C5004AEE56 /* MapButton.swift */,
 				7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */,
 				E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */,
+				E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */,
 			);
 			path = PlaceDetails;
 			sourceTree = "<group>";
@@ -784,6 +790,7 @@
 				E6101A981DDA7B8500D05B74 /* CategoriesUtil.swift in Sources */,
 				7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */,
 				7BA05BEB1DD4D602009AC121 /* EventNotificationsManager.swift in Sources */,
+				E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */,
 				7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */,
 				E61252F11DDF761C007E33B7 /* MapPlacesTransition.swift in Sources */,
 				7BB1CA451DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift in Sources */,
@@ -794,6 +801,7 @@
 				7B9DA15A1DBE6F7500A68C82 /* PlaceDetailViewController.swift in Sources */,
 				7BA05BE51DD4CCB1009AC121 /* Event.swift in Sources */,
 				7BD5CC801DAFF07E00BCF50D /* GFGeoHashQuery.m in Sources */,
+				E618319B1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift in Sources */,
 				7B1C657B1DDCA9A90047559C /* FirebaseEventsDatabase.swift in Sources */,
 				E681E7581DE3562200902CDA /* Animatable.swift in Sources */,
 				7B9DA1571DBE6EE300A68C82 /* PlaceCarouselViewController.swift in Sources */,
