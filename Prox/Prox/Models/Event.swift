@@ -97,6 +97,7 @@ class Event {
                 return nil
         }
 
+        // TODO: remove the double date formatting when the server has sorted out the mismatched dates
         let eventfulDateFormatter = DateFormatter()
         eventfulDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
 
