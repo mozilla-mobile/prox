@@ -16,6 +16,7 @@
 		7B0ECE481DD6145500ABBD72 /* LocationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */; };
 		7B1C657B1DDCA9A90047559C /* FirebaseEventsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */; };
 		7B1C657D1DDF28F00047559C /* TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1C657C1DDF28F00047559C /* TimeInterval.swift */; };
+		7B23BD1F1DE862F500A23604 /* ChevronView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B23BD1E1DE862F500A23604 /* ChevronView.swift */; };
 		7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */; };
 		7B29E7CA1DA3EC360099AF38 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7C91DA3EC360099AF38 /* Assets.xcassets */; };
 		7B29E7CD1DA3EC360099AF38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B29E7CB1DA3EC360099AF38 /* LaunchScreen.storyboard */; };
@@ -120,6 +121,7 @@
 		7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationMonitor.swift; sourceTree = "<group>"; };
 		7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FirebaseEventsDatabase.swift; path = Data/FirebaseEventsDatabase.swift; sourceTree = "<group>"; };
 		7B1C657C1DDF28F00047559C /* TimeInterval.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TimeInterval.swift; path = Extensions/TimeInterval.swift; sourceTree = "<group>"; };
+		7B23BD1E1DE862F500A23604 /* ChevronView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChevronView.swift; sourceTree = "<group>"; };
 		7B29E7BF1DA3EC360099AF38 /* Prox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7B29E7C91DA3EC360099AF38 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -330,6 +332,7 @@
 		7B5095681DB53382007C54F0 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				7B23BD1E1DE862F500A23604 /* ChevronView.swift */,
 				7B50956D1DB53429007C54F0 /* HorizontalLineView.swift */,
 				7B5095691DB53382007C54F0 /* ReviewContainerView.swift */,
 				7B50956A1DB53382007C54F0 /* ReviewScoreView.swift */,
@@ -817,6 +820,7 @@
 				7B50956E1DB53429007C54F0 /* HorizontalLineView.swift in Sources */,
 				7B9DA14B1DBE332E00A68C82 /* AppConstants.swift in Sources */,
 				392F3D901DD20EAE00B44B01 /* PlacesController.swift in Sources */,
+				7B23BD1F1DE862F500A23604 /* ChevronView.swift in Sources */,
 				7B5095781DB64E76007C54F0 /* TravelTimesProvider.swift in Sources */,
 				7BA05BE31DD4CC75009AC121 /* EventsDatabase.swift in Sources */,
 				7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */,
