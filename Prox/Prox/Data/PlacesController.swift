@@ -16,6 +16,7 @@ protocol PlacesProviderDelegate: class {
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place])
     func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider)
     func placesProvider(_ controller: PlacesProvider, didError error: Error)
+    func placesProviderDidTimeout(_ controller: PlacesProvider)
 }
 
 private let apiSuffix = "/api/v1.0/at/%f/%f"
@@ -103,6 +104,7 @@ class PlacesProvider {
             failure: { (task, err) in
                 NSLog("Error from server: \(err)")
                 DispatchQueue.main.async {
+                    self.isUpdating = false
                     self.delegate?.placesProvider(self, didError: err)
                 }
             }
@@ -121,8 +123,17 @@ class PlacesProvider {
         database.getPlaces(forLocation: location, withRadius: radius).upon { results in
             let places = results.flatMap { $0.successResult() }
             let placeCount = places.count
+
+            guard retriesLeft > 0 else {
+                self.isUpdating = false
+                DispatchQueue.main.async {
+                    self.delegate?.placesProviderDidTimeout(self)
+                }
+                return
+            }
+            
             // Check if we have a stable number of places.
-            if (placeCount > 0 && lastCount == placeCount) || retriesLeft == 0 {
+            if placeCount > 0 && lastCount == placeCount {
                 self.didFinishFetchingPlaces(places: places, forLocation: location)
             } else {
                 // We either have zero places, or the server is adding stuff to firebase,

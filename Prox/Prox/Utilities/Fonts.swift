@@ -33,3 +33,9 @@ extension Fonts {
 
     public static let detailsViewEventText = UIFont.systemFont(ofSize: 16, weight: UIFontWeightMedium)
 }
+
+// Loading View
+extension Fonts {
+    public static let loadingErrorMessage = UIFont.systemFont(ofSize: 24, weight: UIFontWeightSemibold)
+    public static let loadingRestartButton = UIFont.systemFont(ofSize: 16, weight: UIFontWeightMedium)
+}

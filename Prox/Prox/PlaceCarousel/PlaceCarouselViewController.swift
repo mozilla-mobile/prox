@@ -11,7 +11,6 @@ import Deferred
 private let MAP_SPAN_DELTA = 0.05
 private let MAP_LATITUDE_OFFSET = 0.015
 
-
 protocol PlaceDataSource: class {
     func nextPlace(forPlace place: Place) -> Place?
     func previousPlace(forPlace place: Place) -> Place?
@@ -64,7 +63,9 @@ class PlaceCarouselViewController: UIViewController {
 
         return view
     }()
- 
+
+    lazy var loadingOverlay = LoadingOverlayView(frame: CGRect.zero)
+
     // label displaying sunrise and sunset times
     lazy var sunriseSetTimesLabel: UILabel = {
         let label = UILabel()
@@ -152,14 +153,16 @@ class PlaceCarouselViewController: UIViewController {
             self.view.layer.contents = backgroundImage.cgImage
         }
 
+        var constraints = [NSLayoutConstraint]()
+
         // add the views to the stack view
         view.addSubview(headerView)
 
         // setting up the layout constraints
-        var constraints = [headerView.topAnchor.constraint(equalTo: view.topAnchor),
-                           headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                           headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                           headerView.heightAnchor.constraint(equalToConstant: 150)]
+        constraints.append(contentsOf: [headerView.topAnchor.constraint(equalTo: view.topAnchor),
+                                        headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                                        headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                                        headerView.heightAnchor.constraint(equalToConstant: 150)])
 
         view.addSubview(sunView)
         constraints.append(contentsOf: [sunView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
@@ -181,8 +184,17 @@ class PlaceCarouselViewController: UIViewController {
                                         placeCarousel.carousel.topAnchor.constraint(equalTo: sunView.bottomAnchor, constant: -35),
                                         placeCarousel.carousel.heightAnchor.constraint(equalToConstant: 275)])
 
+        loadingOverlay.delegate = self
+        view.addSubview(loadingOverlay)
+        constraints.append(contentsOf: [loadingOverlay.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor),
+                                        loadingOverlay.bottomAnchor.constraint(equalTo: self.bottomLayoutGuide.topAnchor),
+                                        loadingOverlay.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+                                        loadingOverlay.rightAnchor.constraint(equalTo: self.view.rightAnchor)])
+
         // apply the constraints
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+
+        toggleLoadingUI(loading: true)
     }
 
     override func didReceiveMemoryWarning() {
@@ -223,6 +235,12 @@ class PlaceCarouselViewController: UIViewController {
         }
 
         updatePlaces(forLocation: location)
+    }
+
+    fileprivate func toggleLoadingUI(loading: Bool) {
+        headerView.alpha = loading ? 0 : 1
+        sunView.alpha = loading ? 0 : 1
+        loadingOverlay.alpha = loading ? 1 : 0
     }
 
     fileprivate func updatePlaces(forLocation location: CLLocation) {
@@ -363,25 +381,29 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
 }
 
 extension PlaceCarouselViewController: PlacesProviderDelegate {
-    func placesProviderWillStartFetchingPlaces(_ controller: PlacesProvider) {
-        // TODO placeholder for the waiting state.
-        headerView.numberOfPlacesLabel.text = "Waiting"
-    }
-
-    func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider) {
-        // no op
+    fileprivate func showErrorMessageIfNoPlaces() {
         if self.places.isEmpty {
+            loadingOverlay.fadeInMessaging()
             headerView.numberOfPlacesLabel.text = "No Places Found"
         }
     }
 
+    func placesProviderWillStartFetchingPlaces(_ controller: PlacesProvider) {
+    }
+
+    func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider) {
+        showErrorMessageIfNoPlaces()
+    }
+
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
-        let oldPlaces = self.places
+        let wasEmpty = self.places.isEmpty
         self.places = places
 
         (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
 
-        if oldPlaces.count == 0 {
+        if wasEmpty && !places.isEmpty {
+            toggleLoadingUI(loading: false)
+
             // Wrap the openClosedPlace in an async block to make sure its queued after the
             // carousel's refresh so the cells load before we invoke the transition
             DispatchQueue.main.async {
@@ -391,10 +413,20 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
     }
 
     func placesProvider(_ controller: PlacesProvider, didError error: Error) {
-        if self.places.count == 0 {
-            // placeholder for the error state.
-            headerView.numberOfPlacesLabel.text = "Error"
+        showErrorMessageIfNoPlaces()
+    }
+
+    func placesProviderDidTimeout(_ controller: PlacesProvider) {
+        showErrorMessageIfNoPlaces()
+    }
+}
+
+extension PlaceCarouselViewController: LoadingOverlayDelegate {
+    func loadingOverlayDidTapSearchAgain() {
+        guard let location = locationMonitor.getCurrentLocation() else {
+            return
         }
+        self.placesProvider.updatePlaces(forLocation: location)
     }
 }
 
