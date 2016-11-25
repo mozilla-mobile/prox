@@ -19,7 +19,7 @@ class PlaceDetailsDescriptionView: UIView {
 
     let horizontalMargin: CGFloat
 
-    fileprivate var uiMode: UIMode = .collapsed
+    fileprivate var uiMode: UIMode
     var collapsedConstraints: [NSLayoutConstraint]!
     var expandedConstraints: [NSLayoutConstraint]!
 
@@ -89,20 +89,21 @@ class PlaceDetailsDescriptionView: UIView {
     }()
 
     lazy var expandableViewBottomConstraint: NSLayoutConstraint = {
-        return self.expandableView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+        return self.expandableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: self.uiMode == .collapsed ? 0 : -10)
     }()
 
     lazy var logoBottomConstraint: NSLayoutConstraint = {
-        return self.logoView.bottomAnchor.constraint(equalTo: self.descriptionTitleView.bottomAnchor)
+        return self.logoView.bottomAnchor.constraint(equalTo: self.descriptionTitleView.bottomAnchor, constant: self.uiMode == .collapsed ? 0 : -20)
     }()
 
     init(labelText: String,
          icon: UIImage?,
          horizontalMargin: CGFloat,
-         type: DetailType) {
+         type: DetailType,
+         expanded: Bool = true) {
         self.horizontalMargin = horizontalMargin
         toggleEventType = type == DetailType.yelp ? AnalyticsEvent.YELP_TOGGLE : AnalyticsEvent.WIKIPEDIA_TOGGLE
-
+        uiMode = expanded ? .expanded : .collapsed
         super.init(frame: .zero)
 
         logoView.image = icon
@@ -142,10 +143,13 @@ class PlaceDetailsDescriptionView: UIView {
 
         addSubview(expandableView)
         constraints += [expandableView.topAnchor.constraint(equalTo: descriptionTitleView.bottomAnchor),
-                        expandableView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                        expandableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                        expandableViewHeightConstraint,
+                        expandableView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalMargin),
+                        expandableView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -horizontalMargin),
                         expandableViewBottomConstraint]
+
+        if uiMode == .collapsed {
+            constraints += [expandableViewHeightConstraint]
+        }
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }

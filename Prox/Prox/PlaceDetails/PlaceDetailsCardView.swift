@@ -136,7 +136,8 @@ class PlaceDetailsCardView: UIView {
         let view = PlaceDetailsDescriptionView(labelText: "The top line from Wikipedia",
                                         icon: UIImage(named: "logo_wikipedia"),
                                         horizontalMargin: 16,
-                                        type: DetailType.wikipedia)
+                                        type: DetailType.wikipedia,
+                                        expanded: true)
         let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
         let underlineAttributedString = NSAttributedString(string: "Read more on Wikipedia", attributes: underlineAttribute)
         view.readMoreLink.attributedText = underlineAttributedString
@@ -147,7 +148,8 @@ class PlaceDetailsCardView: UIView {
         let view = PlaceDetailsDescriptionView(labelText: "The latest from Yelp",
                                                                icon: UIImage(named: "logo_yelp_small"),
                                                                horizontalMargin: 16,
-                                                               type: DetailType.yelp)
+                                                               type: DetailType.yelp,
+                                                               expanded: true)
         let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
         let underlineAttributedString = NSAttributedString(string: "Read more on Yelp", attributes: underlineAttribute)
         view.readMoreLink.attributedText = underlineAttributedString
@@ -267,10 +269,11 @@ class PlaceDetailsCardView: UIView {
         if let text = text {
             view.isHidden = false
             view.expandableLabel.text = text
-            view.setExpandableView(isExpanded: false)
+            view.setExpandableView(isExpanded: true)
         } else {
             view.isHidden = true
             view.expandableLabel.text = nil
+            view.setExpandableView(isExpanded: false)
         }
     }
 
