@@ -10,6 +10,7 @@ import Deferred
 private let PROVIDERS_PATH = "providers/"
 private let YELP_PATH = PROVIDERS_PATH + "yelp"
 private let TRIP_ADVISOR_PATH = PROVIDERS_PATH + "tripAdvisor"
+private let WIKIPEDIA_PATH = PROVIDERS_PATH + "wikipedia"
 
 class Place: Hashable {
 
@@ -40,6 +41,7 @@ class Place: Hashable {
 
     let yelpProvider: ReviewProvider
     let tripAdvisorProvider: ReviewProvider?
+    let wikipediaProvider: ReviewProvider?
 
     let hours: OpenHours? // if nil, there are no listed hours for this place
 
@@ -53,7 +55,7 @@ class Place: Hashable {
     init(id: String, name: String, wikiDescription: String? = nil, yelpDescription: String? = nil,
          latLong: CLLocationCoordinate2D, categories: (names: [String], ids: [String]), url: String? = nil,
          address: String? = nil, yelpProvider: ReviewProvider,
-         tripAdvisorProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: OpenHours? = nil) {
+         tripAdvisorProvider: ReviewProvider? = nil, wikipediaProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: OpenHours? = nil) {
         self.id = id
         self.name = name
         self.wikiDescription = wikiDescription
@@ -64,6 +66,7 @@ class Place: Hashable {
         self.address = address
         self.yelpProvider = yelpProvider
         self.tripAdvisorProvider = tripAdvisorProvider
+        self.wikipediaProvider = wikipediaProvider
         self.photoURLs = photoURLs
         self.hours = hours
     }
@@ -123,6 +126,7 @@ class Place: Hashable {
                   address: (value["address"] as? [String])?.joined(separator: " "),
                   yelpProvider: yelpProvider,
                   tripAdvisorProvider: ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: TRIP_ADVISOR_PATH)),
+                  wikipediaProvider: ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: WIKIPEDIA_PATH)),
                   photoURLs: photoURLs,
                   hours: hours)
     }

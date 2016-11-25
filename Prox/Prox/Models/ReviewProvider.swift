@@ -25,7 +25,6 @@ class ReviewProvider {
         guard data.exists(), data.hasChildren(),
                 let value = data.value as? NSDictionary,
                 let url = value["url"] as? String else {
-            print("lol unable to init ReviewProvider")
             return nil
         }
 

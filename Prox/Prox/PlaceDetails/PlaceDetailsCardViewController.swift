@@ -139,6 +139,8 @@ class PlaceDetailsCardViewController: UIViewController {
         cardView.tripAdvisorReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTripAdvisorReview(gestureRecgonizer:))))
         cardView.travelTimeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openDirections(gestureRecgonizer:))))
         cardView.eventView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openEventURL(gestureRecognizer:))))
+        cardView.wikiDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openWikipediaURL(gestureRecognizer:))))
+        cardView.yelpDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openYelpReview(gestureRecgonizer:))))
     }
 
     @objc private func openPlaceURL(gestureRecgonizer: UITapGestureRecognizer) {
@@ -180,6 +182,14 @@ class PlaceDetailsCardViewController: UIViewController {
             let url = URL(string: urlString) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open web address")
+        }
+    }
+
+    @objc private func openWikipediaURL(gestureRecognizer: UITapGestureRecognizer) {
+        guard let wikipediaProvider = place.wikipediaProvider,
+            let url = URL(string: wikipediaProvider.url) else { return }
+        if !OpenInHelper.open(url: url) {
+            print("lol unable to open wikipedia review")
         }
     }
 
