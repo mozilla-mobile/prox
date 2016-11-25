@@ -130,17 +130,7 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     private func setLocation(location: CLLocation?) {
-        if let lastTravelTimes = place.lastTravelTime {
-            self.cardView.updateTravelTimesUI(travelTimes: lastTravelTimes)
-        } else {
-            self.cardView.travelTimeView.isLoading = true
-        }
-        if let location = location {
-            place.travelTimes(fromLocation: location, withCallback: { travelTimes in
-                self.cardView.travelTimeView.isLoading = false
-                self.cardView.updateTravelTimesUI(travelTimes: travelTimes)
-            })
-        }
+        PlaceUtilities.updateTravelTimeUI(fromPlace: place, toLocation: location, forView: cardView.travelTimeView)
     }
 
     private func setupCardInteractions() {

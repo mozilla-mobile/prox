@@ -86,6 +86,61 @@ struct PlaceUtilities {
         view.numberOfReviewersLabel.text = reviewPrefix + " Reviews"
     }
 
+    // assumes called from UI thread.
+    static func updateTravelTimeUI(fromPlace place: Place, toLocation location: CLLocation?, forView view: TravelTimesView) {
+        view.prepareTravelTimesUIForReuse()
+
+        guard let location = location else {
+            // TODO: how to handle? Previously, this was unhandled.
+            return
+        }
+
+        // TODO: need to cancel long running requests or users may be stuck with a loading spinner
+        // rather than a "View on Map" button. I think this only happens when you swipe real fast.
+        let travelTimesResult = place.travelTimes(fromLocation: location)
+        if !travelTimesResult.isFilled {
+            view.setTravelTimesUIIsLoading(true)
+        }
+
+        let idAtCallTime = place.id
+        view.setIDForTravelTimesView(idAtCallTime)
+        travelTimesResult.upon(DispatchQueue.main) { res in
+            guard let idAtResultTime = view.getIDForTravelTimesView(), // should never be nil
+                    idAtCallTime == idAtResultTime else {
+                // Someone has requested new travel times for this view (re-used?) before we could
+                // display the result: cancel view update.
+                return
+            }
+
+            view.setTravelTimesUIIsLoading(false)
+
+            guard let travelTimes = res.successResult() else {
+                view.updateTravelTimesUIForResult(.noData, durationInMinutes: nil)
+                return
+            }
+
+            if let walkingTimeSeconds = travelTimes.walkingTime {
+                let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
+                if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
+                    if walkingTimeMinutes < TravelTimesProvider.YOU_ARE_HERE_WALKING_TIME {
+                        view.updateTravelTimesUIForResult(.userHere, durationInMinutes: nil)
+                    } else {
+                        view.updateTravelTimesUIForResult(.walkingDist, durationInMinutes: walkingTimeMinutes)
+                    }
+                    return
+                }
+            }
+
+            if let drivingTimeSeconds = travelTimes.drivingTime {
+                let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
+                view.updateTravelTimesUIForResult(.drivingDist, durationInMinutes: drivingTimeMinutes)
+                return
+            }
+
+            view.updateTravelTimesUIForResult(.noData, durationInMinutes: nil)
+        }
+    }
+
     private static func setSubviewAlpha(_ alpha: CGFloat, forParent parentView: ReviewContainerView) {
         for view in parentView.subviews {
             view.alpha = alpha
