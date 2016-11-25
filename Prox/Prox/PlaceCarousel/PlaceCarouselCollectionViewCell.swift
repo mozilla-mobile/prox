@@ -10,14 +10,6 @@ struct PlaceCarouselCVCAnimatableProperties {
     var labelContainer: UIView
 }
 
-fileprivate struct CellShadowAttributes {
-    let radius: CGFloat
-    let offset: CGSize
-}
-
-fileprivate let selectedShadowAttributes = CellShadowAttributes(radius: 5, offset: CGSize(width: 0, height: 2))
-fileprivate let unselectedShadowAttributes = CellShadowAttributes(radius: 2, offset: CGSize(width: 0, height: 0.5))
-
 class PlaceCarouselCollectionViewCell: UICollectionViewCell {
 
     lazy var roundedBackgroundView: UIView = {
@@ -32,13 +24,12 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
     lazy var shadowView: UIView = {
         let view = UIView()
         view.backgroundColor = Colors.carouselViewPlaceCardBackground
-        view.layer.shadowOpacity = 0.6
         view.layer.cornerRadius = 5
+
         view.layer.shadowColor = UIColor.darkGray.cgColor
         view.layer.shouldRasterize = true
         view.accessibilityIdentifier = "Shadow"
 
-        self.setShadow(attributes: unselectedShadowAttributes)
         return view
     }()
 
@@ -128,15 +119,18 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
 
     override var isSelected: Bool {
         didSet {
-            setShadow(attributes: isSelected ? selectedShadowAttributes : unselectedShadowAttributes)
+            if isSelected {
+                shadowView.layer.shadowOffset = CGSize(width: 2, height: 2)
+                shadowView.layer.shadowOpacity = 0.5
+                shadowView.layer.shadowRadius = 2
+            } else {
+                shadowView.layer.shadowOffset = CGSize(width: 1, height: 1)
+                shadowView.layer.shadowOpacity = 0.25
+                shadowView.layer.shadowRadius = 1
+            }
         }
     }
-
-    fileprivate func setShadow(attributes: CellShadowAttributes) {
-        shadowView.layer.shadowOffset = attributes.offset
-        shadowView.layer.shadowRadius = attributes.radius
-    }
-
+    
     private func setupViews() {
         contentView.addSubview(roundedBackgroundView)
 

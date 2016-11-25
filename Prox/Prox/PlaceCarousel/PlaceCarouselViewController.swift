@@ -181,7 +181,7 @@ class PlaceCarouselViewController: UIViewController {
         constraints.append(contentsOf: [placeCarousel.carousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                         placeCarousel.carousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                                         placeCarousel.carousel.topAnchor.constraint(equalTo: sunView.bottomAnchor, constant: -35),
-                                        placeCarousel.carousel.heightAnchor.constraint(equalToConstant: 300)])
+                                        placeCarousel.carousel.heightAnchor.constraint(equalToConstant: 275)])
 
         loadingOverlay.delegate = self
         view.addSubview(loadingOverlay)
