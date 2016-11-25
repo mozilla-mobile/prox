@@ -8,8 +8,6 @@ import MapKit
 
 struct TravelTimesProvider {
 
-    static fileprivate let travelTimePadding: Double = 10 * 60
-
     static var MIN_WALKING_TIME: Int = {
         // Note that this is semantically maximum walking time, 
         // rather than minimum walking time (as used throughout the codebase).
@@ -87,7 +85,7 @@ struct TravelTimesProvider {
                 let drivingTime = travelTimes.drivingTime else {
                     return completion(false)
             }
-
+            let travelTimePadding = RemoteConfigKeys.travelTimePaddingMins.value * 60
             completion((drivingTime + travelTimePadding)  <= timeInterval)
         })
     }
