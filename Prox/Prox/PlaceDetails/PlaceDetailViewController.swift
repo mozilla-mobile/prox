@@ -198,6 +198,17 @@ class PlaceDetailViewController: UIViewController {
     fileprivate func setBackgroundImage(toPhotoAtURL photoURLString: String?) {
         if let imageURLString = photoURLString,
             let imageURL = URL(string: imageURLString) {
+
+            let imageRequest = URLRequest(url: imageURL)
+            let cachedImage = UIImageView.sharedImageDownloader().imageCache?.imageforRequest(imageRequest, withAdditionalIdentifier: nil)
+
+            // Perform a cross fade between the existing/new images
+            let crossFade = CABasicAnimation(keyPath: "contents")
+            crossFade.duration = 0.4
+            crossFade.fromValue = backgroundImage.image?.cgImage
+            crossFade.toValue = cachedImage
+            backgroundImage.layer.add(crossFade, forKey: "animateContents")
+
             self.backgroundImage.setImageWith(imageURL)
         } else {
             backgroundImage.image = UIImage(named: "place-placeholder")
@@ -693,7 +704,7 @@ class PlaceDetailViewController: UIViewController {
 extension PlaceDetailViewController: PlaceDetailsImageDelegate {
     func imageCarousel(imageCarousel: UIView, placeImageDidChange newImageURL: URL) {
         if imageCarousel == self.imageCarousel {
-            self.backgroundImage.setImageWith(newImageURL)
+            setBackgroundImage(toPhotoAtURL: newImageURL.absoluteString)
         }
     }
 
