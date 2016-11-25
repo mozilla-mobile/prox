@@ -95,4 +95,10 @@ struct TravelTimes {
     let walkingTime: TimeInterval?
     let drivingTime: TimeInterval?
     let publicTransportTime: TimeInterval?
+
+    func getShortestTravelTime() -> TimeInterval {
+        let driveTimePadding: Double = 10 * 60 // TODO: Replace this with the value from RemoteConfigKeys once https://github.com/mozilla-mobile/prox/pull/272 is merged
+        let driveTime = drivingTime ?? (Double.greatestFiniteMagnitude - driveTimePadding)
+        return min(walkingTime ?? Double.greatestFiniteMagnitude, driveTime + driveTimePadding )
+    }
 }

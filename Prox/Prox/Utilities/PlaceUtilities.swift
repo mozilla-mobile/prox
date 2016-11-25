@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
+import Deferred
 
 struct PlaceUtilities {
 
@@ -19,6 +20,43 @@ struct PlaceUtilities {
 
             return placeADistance > placeBDistance
         }
+    }
+
+    static func sort(places: [Place], byTravelTimeFromLocation location: CLLocation, ascending: Bool = true, completion: @escaping ([Place]) -> ()) {
+        PlaceUtilities.getTravelTimes(forPlaces: places, fromLocation: location).upon { result in
+            let sortedPlaces = places.sorted { (placeA, placeB) -> Bool in
+                guard let placeATravelTimes = PlaceUtilities.lastTravelTimes(forPlace: placeA),
+                    let placeBTravelTimes = PlaceUtilities.lastTravelTimes(forPlace: placeB) else {
+                        return false
+                }
+
+                let placeAETA = placeATravelTimes.getShortestTravelTime()
+                let placeBETA = placeBTravelTimes.getShortestTravelTime()
+
+                guard ascending else {
+                    return placeAETA > placeBETA
+                }
+                return placeAETA < placeBETA
+            }
+            completion(sortedPlaces)
+        }
+    }
+
+    private static func getTravelTimes(forPlaces places: [Place], fromLocation location: CLLocation) -> Future<[DatabaseResult<TravelTimes>]> {
+        var placesWithTimes = [Deferred<DatabaseResult<TravelTimes>>]()
+        for place in places {
+            let placeDeferred = place.travelTimes(fromLocation: location)
+            placesWithTimes.append(placeDeferred)
+        }
+        return placesWithTimes.allFilled()
+    }
+
+    private static func lastTravelTimes(forPlace place: Place) -> TravelTimes? {
+        guard let (deferred, _) = place.lastTravelTime,
+        let result = deferred.peek() else {
+            return nil
+        }
+        return result.successResult()
     }
 
     static func filterPlacesForCarousel(_ places: [Place]) -> [Place] {

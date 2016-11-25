@@ -156,10 +156,12 @@ class PlacesProvider {
     * all the places that we need to show to the user.
     **/
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
-        let preparedPlaces = self.preparePlaces(places: places, forLocation: location)
-        DispatchQueue.main.async {
-            self.delegate?.placesProvider(self, didReceivePlaces: preparedPlaces)
-        }
+        let filteredPlaces = PlaceUtilities.filterPlacesForCarousel(places)
+        return PlaceUtilities.sort(places: filteredPlaces, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
+            DispatchQueue.main.async {
+                self.delegate?.placesProvider(self, didReceivePlaces: sortedPlaces)
+            }
+        })
     }
 
     private func didFinishFetchingPlaces(places: [Place], forLocation location: CLLocation) {
@@ -193,10 +195,5 @@ class PlacesProvider {
             }
         }
         return unionOfPlaces
-    }
-
-    private func preparePlaces(places: [Place], forLocation location: CLLocation) -> [Place] {
-        let filteredPlaces = PlaceUtilities.filterPlacesForCarousel(places)
-        return PlaceUtilities.sort(places: filteredPlaces, byDistanceFromLocation: location)
     }
 }
