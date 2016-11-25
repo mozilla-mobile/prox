@@ -37,8 +37,6 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         view.layer.shadowColor = UIColor.darkGray.cgColor
         view.layer.shouldRasterize = true
         view.accessibilityIdentifier = "Shadow"
-
-        self.setShadow(attributes: unselectedShadowAttributes)
         return view
     }()
 
