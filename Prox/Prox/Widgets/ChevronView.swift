@@ -18,7 +18,11 @@ enum ChevronStyle {
 
 class ChevronView: UIView {
     private let Padding: CGFloat = 2.5
-    private var direction = ChevronDirection.right
+    var direction = ChevronDirection.right {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
     private var lineCapStyle = CGLineCap.round
     private var lineJoinStyle = CGLineJoin.round
 

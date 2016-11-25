@@ -47,4 +47,6 @@ extension Colors {
 
     public static let detailsViewBackgroundGradientStart = UIColor(red: 0, green: 0.01, blue: 0.53, alpha: 0.5)
     public static let detailsViewBackgroundGradientEnd = UIColor(red: 0, green: 0.48, blue: 1.00, alpha: 0.1)
+
+    public static let detailsViewDescriptionExpandArrow = UIColor(red: 0.78, green: 0.78, blue: 0.78, alpha: 1.0)
 }

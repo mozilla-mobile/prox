@@ -31,7 +31,13 @@ class PlaceDetailsDescriptionView: UIView {
     }()
 
     // TODO: icon
-    lazy var expandButton: UIImageView = UIImageView()
+    lazy var expandButton: ChevronView = {
+        let view = ChevronView(direction: self.uiMode == .collapsed ? .down : .up)
+        view.style = .angular
+        view.tintColor = Colors.detailsViewDescriptionExpandArrow
+        view.lineWidth = 1.0
+        return view
+    }()
 
     lazy var expandableLabel: UILabel = {
         let view = UILabel()
@@ -124,11 +130,13 @@ class PlaceDetailsDescriptionView: UIView {
             expandableLabelHeightConstraint.isActive = false
             expandableLabelBottomConstraint.constant = -10
             logoBottomConstraint.constant = -20
+            expandButton.direction = .up
         } else {
             uiMode = .collapsed
             expandableLabelBottomConstraint.constant = 0
             expandableLabelHeightConstraint.isActive = true
             logoBottomConstraint.constant = 0
+            expandButton.direction = .down
         }
 
         setNeedsLayout()
