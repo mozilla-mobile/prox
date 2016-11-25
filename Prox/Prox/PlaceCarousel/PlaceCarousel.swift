@@ -14,17 +14,6 @@ protocol PlaceCarouselDelegate: class {
 
 class PlaceCarousel: NSObject {
 
-    lazy var imageDownloader: AFImageDownloader = {
-        // TODO: Maybe we want more control over the configuration.
-        let sessionManager = AFHTTPSessionManager(sessionConfiguration: .default)
-        sessionManager.responseSerializer = AFImageResponseSerializer() // sets correct mime-type.
-
-        let activeDownloadCount = 4 // TODO: value?
-        let cache = AFAutoPurgingImageCache() // defaults 100 MB max -> 60 MB after purge
-        return AFImageDownloader(sessionManager: sessionManager, downloadPrioritization: .FIFO,
-                                 maximumActiveDownloads: activeDownloadCount, imageCache: cache)
-    }()
-
     let defaultPadding: CGFloat = 15.0
 
     weak var delegate: PlaceCarouselDelegate?
