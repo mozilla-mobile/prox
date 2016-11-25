@@ -74,6 +74,7 @@ class PlaceDetailsDescriptionView: UIView {
         let label = UILabel()
         label.textColor = Colors.detailsViewCardLinkText
         label.font = Fonts.detailsViewCategoryText
+
         label.isUserInteractionEnabled = true
         return label
     }()

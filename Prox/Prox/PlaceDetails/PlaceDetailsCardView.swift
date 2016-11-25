@@ -136,7 +136,9 @@ class PlaceDetailsCardView: UIView {
         let view = PlaceDetailsDescriptionView(labelText: "Wikipedia summary",
                                         icon: UIImage(named: "logo_wikipedia"),
                                         horizontalMargin: 16)
-        view.readMoreLink.text = "Read more on Wikipedia"
+        let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
+        let underlineAttributedString = NSAttributedString(string: "Read more on Wikipedia", attributes: underlineAttribute)
+        view.readMoreLink.attributedText = underlineAttributedString
         return view
     }()
 
@@ -144,7 +146,9 @@ class PlaceDetailsCardView: UIView {
         let view = PlaceDetailsDescriptionView(labelText: "Yelp top review",
                                                                icon: UIImage(named: "logo_yelp_small"),
                                                                horizontalMargin: 16)
-        view.readMoreLink.text = "Read more on Yelp"
+        let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
+        let underlineAttributedString = NSAttributedString(string: "Read more on Yelp", attributes: underlineAttribute)
+        view.readMoreLink.attributedText = underlineAttributedString
         return view
     } ()
 
