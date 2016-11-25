@@ -126,7 +126,9 @@ class PlacesProvider {
 
             guard retriesLeft > 0 else {
                 self.isUpdating = false
-                self.delegate?.placesProviderDidTimeout(self)
+                DispatchQueue.main.async {
+                    self.delegate?.placesProviderDidTimeout(self)
+                }
                 return
             }
             
