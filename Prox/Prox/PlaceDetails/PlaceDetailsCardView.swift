@@ -132,13 +132,21 @@ class PlaceDetailsCardView: UIView {
         return view
     }()
 
-    lazy var wikiDescriptionView = PlaceDetailsDescriptionView(labelText: "Wikipedia summary",
-                                                               icon: UIImage(named: "logo_wikipedia"),
-                                                               horizontalMargin: 16)
+    lazy var wikiDescriptionView: PlaceDetailsDescriptionView = {
+        let view = PlaceDetailsDescriptionView(labelText: "Wikipedia summary",
+                                        icon: UIImage(named: "logo_wikipedia"),
+                                        horizontalMargin: 16)
+        view.readMoreLink.text = "Read more on Wikipedia"
+        return view
+    }()
 
-    lazy var yelpDescriptionView = PlaceDetailsDescriptionView(labelText: "Yelp top review",
+    lazy var yelpDescriptionView: PlaceDetailsDescriptionView = {
+        let view = PlaceDetailsDescriptionView(labelText: "Yelp top review",
                                                                icon: UIImage(named: "logo_yelp_small"),
                                                                horizontalMargin: 16)
+        view.readMoreLink.text = "Read more on Yelp"
+        return view
+    } ()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
