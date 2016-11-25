@@ -396,8 +396,6 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
     }
 
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
-
-
         let wasEmpty = self.places.isEmpty
         self.places = places
 
