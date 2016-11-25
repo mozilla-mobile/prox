@@ -123,21 +123,7 @@ class PlacesProvider {
             let placeCount = places.count
             // Check if we have a stable number of places.
             if (placeCount > 0 && lastCount == placeCount) || retriesLeft == 0 {
-                let eventsProvider = EventsProvider()
-                eventsProvider.getEventsWithPlaces(forLocation: location, usingPlacesDatabase: self.database) { placesWithEvents in
-                    let placesSet = Set<Place>(places)
-                    let eventPlacesSet = Set<Place>(placesWithEvents)
-                    let union = eventPlacesSet.union(placesSet)
-
-                    self.displayPlaces(places: Array(union), forLocation: location)
-                    DispatchQueue.main.async {
-                        // TODO refactor for a more incremental load, and therefore
-                        // insertion sort approach to ranking. We shouldn't do too much of this until
-                        // we have the waiting states implemented.
-                        self.isUpdating = false
-                        self.delegate?.placesProviderDidFinishFetchingPlaces(self)
-                    }
-                }
+                self.didFinishFetchingPlaces(places: places, forLocation: location)
             } else {
                 // We either have zero places, or the server is adding stuff to firebase,
                 // and we should wait. 
@@ -162,6 +148,24 @@ class PlacesProvider {
         let preparedPlaces = self.preparePlaces(places: places, forLocation: location)
         DispatchQueue.main.async {
             self.delegate?.placesProvider(self, didReceivePlaces: preparedPlaces)
+        }
+    }
+
+    private func didFinishFetchingPlaces(places: [Place], forLocation location: CLLocation) {
+        let eventsProvider = EventsProvider()
+        eventsProvider.getEventsWithPlaces(forLocation: location, usingPlacesDatabase: self.database) { placesWithEvents in
+            let placesSet = Set<Place>(places)
+            let eventPlacesSet = Set<Place>(placesWithEvents)
+            let union = eventPlacesSet.union(placesSet)
+
+            self.displayPlaces(places: Array(union), forLocation: location)
+            DispatchQueue.main.async {
+                // TODO refactor for a more incremental load, and therefore
+                // insertion sort approach to ranking. We shouldn't do too much of this until
+                // we have the waiting states implemented.
+                self.isUpdating = false
+                self.delegate?.placesProviderDidFinishFetchingPlaces(self)
+            }
         }
     }
 
