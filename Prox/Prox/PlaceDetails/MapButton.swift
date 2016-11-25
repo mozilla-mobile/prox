@@ -23,15 +23,13 @@ class MapButton: UIButton {
         context.setShadow(offset: shadow.shadowOffset, blur: shadow.shadowBlurRadius, color: (shadow.shadowColor as! UIColor).cgColor)
         Colors.detailsViewMapButtonBackground.setFill()
         ovalPath.fill()
+        context.restoreGState()
 
         if let image = mapImage {
-            let mapFrame = CGRect(x: rect.width / 2 - image.size.width / 2,
-                                  y: rect.height / 2 - image.size.height / 2,
-                                  width: image.size.width,
-                                  height: image.size.height)
-            context.draw(image.cgImage!, in: mapFrame)
+            UIGraphicsPushContext(context)
+            mapImage?.draw(at: CGPoint(x: rect.width / 2 - image.size.width / 2 - 0.5,
+                                       y: rect.height / 2 - image.size.height / 2 - 0.5))
+            UIGraphicsPopContext()
         }
-        
-        context.restoreGState()
     }
 }
