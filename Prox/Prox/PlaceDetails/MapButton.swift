@@ -6,7 +6,9 @@ import UIKit
 
 class MapButton: UIButton {
 
-    private let shadowRadius: CGFloat = 3
+    fileprivate let shadowRadius: CGFloat = 3
+
+    fileprivate let mapImage = UIImage(named: "icon_mapview")
 
     override func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
@@ -21,8 +23,15 @@ class MapButton: UIButton {
         context.setShadow(offset: shadow.shadowOffset, blur: shadow.shadowBlurRadius, color: (shadow.shadowColor as! UIColor).cgColor)
         Colors.detailsViewMapButtonBackground.setFill()
         ovalPath.fill()
+
+        if let image = mapImage {
+            let mapFrame = CGRect(x: rect.width / 2 - image.size.width / 2,
+                                  y: rect.height / 2 - image.size.height / 2,
+                                  width: image.size.width,
+                                  height: image.size.height)
+            context.draw(image.cgImage!, in: mapFrame)
+        }
+        
         context.restoreGState()
     }
-
-
 }

@@ -79,7 +79,6 @@ class PlaceDetailViewController: UIViewController {
     
     lazy var mapButton: MapButton = {
         let button = MapButton()
-        button.setImage(UIImage(named: "icon_mapview"), for: .normal)
         button.addTarget(self, action: #selector(self.close), for: .touchUpInside)
         button.clipsToBounds = false
         return button
