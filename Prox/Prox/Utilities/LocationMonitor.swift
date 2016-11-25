@@ -170,24 +170,17 @@ extension LocationMonitor: CLLocationManagerDelegate {
         if var location = locations.last {
             // In iOS9, didUpdateLocations can be unexpectedly called multiple
             // times for a single `requestLocation`: we guard against that here.
-            if timeOfLastLocationUpdate == nil ||
-                (location.timestamp - MIN_SECS_BETWEEN_LOCATION_UPDATES) > timeOfLastLocationUpdate! {
 
-                if AppConstants.MOZ_LOCATION_FAKING {
-                    // fake the location to Hilton Waikaloa Village, Kona, Hawaii
-                    location = fakeLocation
-                }
-                self.currentLocation = location
-
-                self.delegate?.locationMonitor(self, didUpdateLocation: location)
-
-                timeOfLastLocationUpdate = location.timestamp
-                locationManager.stopUpdatingLocation()
-            } else if currentLocation == nil {
-                self.currentLocation = location
-                self.delegate?.locationMonitor(self, didUpdateLocation: location)
-                locationManager.stopUpdatingLocation()
+            if AppConstants.MOZ_LOCATION_FAKING {
+                // fake the location to Hilton Waikaloa Village, Kona, Hawaii
+                location = fakeLocation
             }
+            self.currentLocation = location
+
+            self.delegate?.locationMonitor(self, didUpdateLocation: location)
+
+            timeOfLastLocationUpdate = location.timestamp
+            locationManager.stopUpdatingLocation()
         }
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

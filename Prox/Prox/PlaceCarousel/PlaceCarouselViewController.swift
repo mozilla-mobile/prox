@@ -146,6 +146,8 @@ class PlaceCarouselViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+
         if let backgroundImage = UIImage(named: "map_background") {
             self.view.layer.contents = backgroundImage.cgImage
         }
@@ -218,6 +220,10 @@ class PlaceCarouselViewController: UIViewController {
         placeDetailViewController.transitioningDelegate = self
 
         self.present(placeDetailViewController, animated: true, completion: nil)
+    }
+
+    @objc fileprivate func willEnterForeground() {
+        self.shouldFetchPlaces = true
     }
 
     // MARK: Location Handling
