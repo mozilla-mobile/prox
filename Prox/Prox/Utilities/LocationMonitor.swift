@@ -91,7 +91,7 @@ class LocationMonitor: NSObject {
         guard let currentLocation = getCurrentLocation(),
             !monitoredRegions.keys.contains(currentLocationIdentifier) else { return }
         startTimeAtLocationTimer()
-        startMonitoring(location: currentLocation, withIdentifier: currentLocationIdentifier, withRadius: AppConstants.currentLocationMonitoringRadius, forEntry: nil, forExit: { region in
+        startMonitoring(location: currentLocation, withIdentifier: currentLocationIdentifier, withRadius: RemoteConfigKeys.radiusForCurrentLocationMonitoringMeters.value, forEntry: nil, forExit: { region in
             self.cancelTimeAtLocationTimer()
             self.stopMonitoringRegion(withIdentifier: self.currentLocationIdentifier)
             self.delegate?.locationMonitor(self, userDidExitCurrentLocation: currentLocation)

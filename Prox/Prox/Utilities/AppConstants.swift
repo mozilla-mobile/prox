@@ -28,7 +28,6 @@ public struct AppConstants {
     }
     #endif
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
-    public static let currentLocationMonitoringRadius: CLLocationDistance = 50.0
     public static let ONE_DAY: TimeInterval = (60 * 60) * 24
 
     /// Build Channel.

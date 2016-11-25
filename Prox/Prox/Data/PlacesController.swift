@@ -20,7 +20,7 @@ protocol PlacesProviderDelegate: class {
 }
 
 private let apiSuffix = "/api/v1.0/at/%f/%f"
-private let numberOfRetries = 60
+private let numberOfRetries = RemoteConfigKeys.numberOfPlaceFetchRetries.value
 private let timeBetweenRetries = 1
 
 class PlacesProvider {

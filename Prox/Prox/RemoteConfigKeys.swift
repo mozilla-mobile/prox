@@ -77,6 +77,12 @@ class RemoteConfigKeys {
     public static let minTimeFromEndOfEventForNotificationMins = RemoteConfigDouble(key: "min_time_from_end_of_event_for_notifications_mins", defaultValue: 120.0)
     public static let placeCategoriesToHideCSV = RemoteConfigStringArray(key: "place_categories_to_hide_csv", defaultValue: [])
     public static let significantLocationChangeDistanceMeters = RemoteConfigDouble(key: "significant_location_change_distance_meters", defaultValue: 100)
+
+    // this is the distance a user has to move from their current location to trigger a "visit" to kick off notifications
+    public static let radiusForCurrentLocationMonitoringMeters = RemoteConfigDouble(key: "radius_for_current_location_meters", defaultValue: 50.0)
+    
+    // the number of times the PlaceProvider should try to fetch places before timing out
+    public static let numberOfPlaceFetchRetries = RemoteConfigInt(key: "number_of_place_fetch_retries", defaultValue: 60)
 }
 
 /*
