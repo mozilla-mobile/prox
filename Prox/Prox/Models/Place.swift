@@ -53,15 +53,15 @@ class Place: Hashable {
 
     var events = [Event]()
 
-    init(id: String, name: String, descriptions: (wiki: String?, yelp: String?, ta: String?),
+    init(id: String, name: String, descriptions: (wiki: String?, yelp: String?, ta: String?)? = nil,
          latLong: CLLocationCoordinate2D, categories: (names: [String], ids: [String]), url: String? = nil,
          address: String? = nil, yelpProvider: ReviewProvider,
          tripAdvisorProvider: ReviewProvider? = nil, wikipediaProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: OpenHours? = nil) {
         self.id = id
         self.name = name
-        self.wikiDescription = descriptions.wiki
-        self.yelpDescription = descriptions.yelp
-        self.tripAdvisorDescription = descriptions.ta
+        self.wikiDescription = descriptions?.wiki
+        self.yelpDescription = descriptions?.yelp
+        self.tripAdvisorDescription = descriptions?.ta
         self.latLong = latLong
         self.categories = categories
         self.url = url

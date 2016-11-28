@@ -28,7 +28,7 @@ class PlaceCarouselViewControllerTests: XCTestCase {
         for index in 0..<number {
             let placeID = index + 1
 
-            places.append(Place(id: "\(index)", name: "Place \(placeID)", latLong: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0), categories: (names: [""], ids: [""]), yelpProvider: yelpProvider))
+            places.append(Place(id: "\(index)", name: "Place \(placeID)", latLong: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0), categories: ([""], ids: [""]), yelpProvider: yelpProvider))
         }
 
         return places
