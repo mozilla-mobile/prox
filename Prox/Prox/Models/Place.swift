@@ -43,7 +43,7 @@ class Place: Hashable {
     let tripAdvisorProvider: ReviewProvider?
     let wikipediaProvider: ReviewProvider?
 
-    let hours: OpenHours? // if nil, there are no listed hours for this place
+    let hours: [OpenHours] // if nil, there are no listed hours for this place
 
     fileprivate(set) var lastTravelTime: (deferred: Deferred<DatabaseResult<TravelTimes>>, forLocation: CLLocation)?
 
@@ -56,7 +56,7 @@ class Place: Hashable {
     init(id: String, name: String, descriptions: (wiki: String?, yelp: String?, ta: String?)? = nil,
          latLong: CLLocationCoordinate2D, categories: (names: [String], ids: [String]), url: String? = nil,
          address: String? = nil, yelpProvider: ReviewProvider,
-         tripAdvisorProvider: ReviewProvider? = nil, wikipediaProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: OpenHours? = nil) {
+         tripAdvisorProvider: ReviewProvider? = nil, wikipediaProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: [OpenHours] = []) {
         self.id = id
         self.name = name
         self.wikiDescription = descriptions?.wiki
@@ -106,16 +106,10 @@ class Place: Hashable {
             return nil
         }
 
-        let hours: OpenHours?
-        if value["hours"] == nil {
-            hours = nil // no listed hours
-        } else {
-            if let hoursDictFromServer = value["hours"] as? [String : [[String]]],
-                    let hoursFromServer = OpenHours.fromFirebaseValue(hoursDictFromServer) {
-                hours = hoursFromServer
-            } else {
-                return nil // malformed hours object: fail to make the Place
-            }
+        var hours = [OpenHours]()
+        if let hoursDictFromServer = value["hours"] as? [String : [[String]]],
+                let hoursFromServer = OpenHours.fromFirebaseValue(hoursDictFromServer) {
+            hours.append(hoursFromServer)
         }
 
         self.init(id: id,

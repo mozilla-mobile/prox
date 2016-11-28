@@ -248,7 +248,7 @@ class PlaceDetailsCardView: UIView {
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories.names)
         updateURLText(place.url)
 
-        updateHoursUI(place.hours)
+        updateHoursUI(place.hours.first)
 
         updateDescriptionViewUI(forText: place.wikiDescription, onView: wikiDescriptionView, expanded: place.wikiDescription != nil)
         updateDescriptionViewUI(forText: place.tripAdvisorDescription, onView: tripAdvisorDescriptionView, expanded: place.wikiDescription == nil && place.tripAdvisorDescription != nil)
