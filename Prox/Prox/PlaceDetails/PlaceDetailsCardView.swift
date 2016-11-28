@@ -111,7 +111,11 @@ class PlaceDetailsCardView: UIView {
         return view
     }()
 
-    lazy var travelTimeView = PlaceDetailsTravelTimesView()
+    lazy var travelTimeView: PlaceDetailsTravelTimesView = {
+        let view = PlaceDetailsTravelTimesView()
+        view.delegate = self
+        return view
+    }()
 
     lazy var hoursView: PlaceDetailsIconInfoView = {
         let view = PlaceDetailsIconInfoView(enableForwardArrow: false)
@@ -241,6 +245,18 @@ class PlaceDetailsCardView: UIView {
         delegate?.placeDetailsCardView(cardView: self, heightDidChange: bounds.height)
     }
 
+    func hideClockIconViewIfOverlap() {
+        hoursView.iconView.isHidden = false // Reset state before layout.
+        layoutIfNeeded() // Make sure view coords are up-to-date before we calculate with them.
+
+        // Convert coords to coords in CardView.
+        let clockIconMinX = hoursView.iconView.frame.minX + hoursView.frame.minX
+        let travelForwardMaxX = travelTimeView.forwardArrowView.frame.maxX + travelTimeView.frame.minX
+
+        let isOverlapped = clockIconMinX <= travelForwardMaxX
+        hoursView.iconView.isHidden = isOverlapped
+    }
+
     func updateUI(forPlace place: Place) {
         showEventView(isHidden: true)
         // Labels will gracefully collapse on nil.
@@ -273,6 +289,8 @@ class PlaceDetailsCardView: UIView {
         let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date())
         hoursView.primaryTextLabel.text = primaryText
         hoursView.secondaryTextLabel.text = secondaryText
+
+        hideClockIconViewIfOverlap()
     }
 
     private func updateDescriptionViewUI(forText text: String?, onView view: PlaceDetailsDescriptionView, expanded: Bool) {
@@ -321,5 +339,11 @@ class PlaceDetailsCardView: UIView {
         }
 
         return ("Not sure", "Closing time")
+    }
+}
+
+extension PlaceDetailsCardView: PlaceDetailsTravelTimesViewDelegate {
+    func placeDetailsTravelTimesView(_ view: PlaceDetailsTravelTimesView, updateTravelTimesUIForResult result: TravelTimesViewResult) {
+        hideClockIconViewIfOverlap()
     }
 }
