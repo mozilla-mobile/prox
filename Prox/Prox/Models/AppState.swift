@@ -49,8 +49,11 @@ class AppState {
         var params: [String: Any] = [:]
         if (cardVisits.count > 0) {
             params[AnalyticsEvent.NUM_CARDS] = cardVisits.count
-            print(cardVisits.count)
+            print("[debug] total cards seen: \(cardVisits.count)")
             cardVisits.removeAll()
+
+            // Try to close a Detail card session, it's okay if it doesn't exist
+            Analytics.endSession(sessionName: AnalyticsEvent.DETAILS_CARD_SESSION_DURATION, params: [:])
         }
         Analytics.endSession(sessionName: state.rawValue + AnalyticsEvent.SESSION_SUFFIX, params: params)
 
@@ -63,6 +66,9 @@ class AppState {
     }
 
     static func trackCardVisit(cardPos: Int) {
+        // Try to close any Detail card sessions.
+        Analytics.endSession(sessionName: AnalyticsEvent.DETAILS_CARD_SESSION_DURATION, params: [:])
         cardVisits.insert(cardPos)
+        Analytics.startSession(sessionName: AnalyticsEvent.DETAILS_CARD_SESSION_DURATION, params: [AnalyticsEvent.CARD_INDEX: cardPos])
     }
 }
