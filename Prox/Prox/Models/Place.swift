@@ -301,6 +301,9 @@ enum DayOfWeek: String {
     }
 }
 
+typealias OpenTime = (openTime: DateComponents, closeTime: DateComponents)
+typealias OpenPeriod = (openTime: Date, closeTime: Date)
+
 struct OpenHours {
 
     private static let calendar = Calendar(identifier: .gregorian)
@@ -318,7 +321,7 @@ struct OpenHours {
      *   - Use all open intervals
      *   - Use accurate days of week in Date (maybe? It adds complexity for little gain).
      */
-    let hours: [DayOfWeek : [(openTime: DateComponents, closeTime: DateComponents)]]
+    let hours: [DayOfWeek : [OpenTime]]
 
     private static let inputTimeFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -344,34 +347,31 @@ struct OpenHours {
      * TODO: return nil ^ or just remove the days that are malformed?
      */
     static func fromFirebaseValue(_ hoursDict: [String : [[String]]]) -> OpenHours? {
-        var out = [DayOfWeek : [(openTime: DateComponents, closeTime: DateComponents)]]()
+        var out = [DayOfWeek : [OpenTime]]()
 
         // Note: we don't check if a day is missing because if it is,
         // it's closed for the day and we're supposed to omit it anyway.
         for dayFromServer in hoursDict.keys {
-            var hoursForDay = [(openTime: DateComponents, closeTime: DateComponents)]()
+            var hoursForDay = [OpenTime]()
             guard let day = DayOfWeek(rawValue: dayFromServer) else {
                 print("lol unknown day of week from server: \(dayFromServer)")
                 return nil
             }
 
             let hoursArr = hoursDict[dayFromServer]! // force unwrap: we're iterating over the keys.
-            guard let lastInterval = hoursArr.last else {
-                print("lol hours array for \(dayFromServer) unexpectedly empty")
-                return nil
-            }
+            hoursArr.forEach { interval in
+                guard interval.count == 2 else {
+                    print("lol last opening interval unexpectedly has \(interval.count) entries")
+                    return
+                }
 
-            guard lastInterval.count == 2 else {
-                print("lol last opening interval unexpectedly has \(lastInterval.count) entries")
-                return nil
+                guard let openTime = getTimeComponents(fromServerStr: interval[0]),
+                        let closeTime = getTimeComponents(fromServerStr: interval[1]) else {
+                    print("lol unable to convert date str, \(interval[0]) & \(interval[1]), to Date")
+                    return
+                }
+                hoursForDay.append((openTime: openTime, closeTime: closeTime))
             }
-
-            guard let openTime = getTimeComponents(fromServerStr: lastInterval[0]),
-                    let closeTime = getTimeComponents(fromServerStr: lastInterval[1]) else {
-                print("lol unable to convert date str, \(lastInterval[0]) & \(lastInterval[1]), to Date")
-                return nil
-            }
-            hoursForDay.append((openTime: openTime, closeTime: closeTime))
             out[day] = hoursForDay
         }
 
@@ -386,58 +386,79 @@ struct OpenHours {
         return OpenHours.calendar.dateComponents(timeComponentsSet, from: dateFromTime)
     }
 
-    private func getOpeningTime(forDate date: Date) -> Date? {
-        guard let openDatesComponents = hours[DayOfWeek.forDate(date)],
-            let openDateComponents = openDatesComponents.last?.openTime,
-            let openingTime = getDate(forTime: openDateComponents, onDate: date) else {
+    private func getOpeningTimes(forDate date: Date) -> [OpenPeriod]? {
+        guard let openTimesForDay = hours[DayOfWeek.forDate(date)] else {
+            NSLog("There are no open time for \(DayOfWeek.forDate(date)) in \(hours)")
             return nil
         }
 
-        return openingTime
+        let allOpeningTimes: [OpenPeriod] = openTimesForDay.flatMap { times in
+            guard let openingTime = getDate(forTime: times.openTime, onDate: date),
+                var closingTime = getDate(forTime: times.closeTime, onDate: date) else {
+                    NSLog("No opening times opening: \(getDate(forTime: times.openTime, onDate: date)), closing: \(getDate(forTime: times.closeTime, onDate: date))")
+                    return nil
+            }
+
+            if closingTime < openingTime {
+                closingTime += AppConstants.ONE_DAY
+            }
+            return (openTime: openingTime, closeTime: closingTime)
+        }
+        return allOpeningTimes.sorted { (periodA, periodB) in
+            return  periodA.openTime < periodB.openTime
+        }
     }
 
-    private func getClosingTime(forDate date: Date) -> Date? {
-        guard let openingTime = getOpeningTime(forDate: date),
-            let closeDatesComponents = hours[DayOfWeek.forDate(date)],
-            let closeDateComponents = closeDatesComponents.last?.closeTime,
-            var closingTime = getDate(forTime: closeDateComponents, onDate: date) else {
-                return nil
-        }
-
-        // Add 24 hours to the closing time if the closing time if before the opening time
-        if closingTime <= openingTime {
-            closingTime += AppConstants.ONE_DAY
-        }
-        return  closingTime
+    private func getCurrentOpeningPeriod(fromOpeningPeriods openingPeriods: [OpenPeriod], forDate date: Date) -> OpenPeriod? {
+        let currentPeriods = openingPeriods.filter { isTime(date, duringOpeningPeriod: $0) }
+        return currentPeriods.first
     }
 
-    /** 
-    * The logic for isOpen is as follows:
-    * Apply opening time and closing time to the current date (provided as an argument)
-    * If the closing time is < the opening time, then the venue is open over midnight and we have to add 24hrs to the closing time
-    * If the current time is before the opening time, but the venue closed before midnight the previous day, the venue is closed
-    * If the current time if before the opening time, but the venue closed after midnight the previous day, the venue is closed if the 
-      current time is after yesterdays closing time, otherwise the venue is open
-    * If the current time is before the closing time and after the opening time, the venue is open
-    * If the current time is after the closing time and before the opening time, the venue is closed
-    **/
+    private func getNextOpeningPeriod(fromOpeningPeriods openingPeriods: [OpenPeriod], forDate date: Date) -> OpenPeriod? {
+        var nextOpenPeriod: OpenPeriod? = nil
+        for openPeriod in openingPeriods {
+            if openPeriod.openTime > date {
+                guard let currentOpenTime = nextOpenPeriod else {
+                    nextOpenPeriod = openPeriod
+                    break
+                }
+
+                if openPeriod.openTime < currentOpenTime.openTime {
+                    nextOpenPeriod = openPeriod
+                }
+            }
+        }
+
+        return nextOpenPeriod
+    }
+
+    private func getEarliestOpeningPeriod(fromOpeningPeriods periods: [OpenPeriod]) -> OpenPeriod? {
+        return periods.first
+    }
+
+
     func isOpen(atTime time: Date) -> Bool {
-        guard let openingTime = getOpeningTime(forDate: time),
-            let closingTime = getClosingTime(forDate: time) else {
+        guard let allOpeningTimes = getOpeningTimes(forDate: time) else {
             return false
         }
 
-        // Is the current time before the opening time and the venue closed after midnight the previous day?
-        if time < openingTime,
-            let yesterdaysClosingTime = getClosingTime(forDate: time.addingTimeInterval(-AppConstants.ONE_DAY)),
-            yesterdaysClosingTime < openingTime {
+        guard let _ = getCurrentOpeningPeriod(fromOpeningPeriods: allOpeningTimes, forDate: time) else {
+            // check to see if the current time is before the earliest open time. If it is, it may be before yesterdays closing time too
+            // otherwise we're just not open
+            guard let earliestOpeningPeriod = getEarliestOpeningPeriod(fromOpeningPeriods: allOpeningTimes),
+                time < earliestOpeningPeriod.openTime,
+                let yesterdaysOpeningTimes = getOpeningTimes(forDate: time - AppConstants.ONE_DAY),
+                let _ = getCurrentOpeningPeriod(fromOpeningPeriods: yesterdaysOpeningTimes, forDate: time) else {
+                return false
+            }
 
-                // the venue is open if our current time is before yesterdays close time
-                return time < yesterdaysClosingTime
+            return true
         }
+        return true
+    }
 
-        // the venue is open if our current time is after or at the opening time and before the closing time
-        return time >= openingTime && time < closingTime
+    fileprivate func isTime(_ time: Date, duringOpeningPeriod openingPeriod: OpenPeriod) -> Bool {
+        return time >= openingPeriod.openTime && time < openingPeriod.closeTime
     }
 
     private func getDate(forTime time: DateComponents, onDate date: Date) -> Date? {
@@ -449,25 +470,30 @@ struct OpenHours {
     }
 
     func nextOpeningTime(forTime time: Date) -> String? {
-        guard let openingTime = getOpeningTime(forDate: time) else {
-                return nil
+        guard let allOpeningTimes = getOpeningTimes(forDate: time),
+            let openingTime = getNextOpeningPeriod(fromOpeningPeriods: allOpeningTimes, forDate: time) else {
+
+                guard let tomorrowsOpeningPeriods = getOpeningTimes(forDate: time + AppConstants.ONE_DAY),
+                    let openingPeriod = getEarliestOpeningPeriod(fromOpeningPeriods: tomorrowsOpeningPeriods) else {
+                        return nil
+                }
+                return timeString(forDate: openingPeriod.openTime)
         }
 
-        if time < openingTime {
-            return timeString(forDate: openingTime)
-        }
-
-        if let tomorrowOpeningTime = getOpeningTime(forDate: time.addingTimeInterval(AppConstants.ONE_DAY)) {
-            return timeString(forDate: tomorrowOpeningTime)
-        }
-        return nil
+        return timeString(forDate: openingTime.openTime)
     }
 
     func closingTime(forTime time: Date) -> String? {
-        guard let closingTime = getClosingTime(forDate: time) else {
-                return nil
+        guard let allOpeningTimes = getOpeningTimes(forDate: time) else {
+            return nil
         }
-        return timeString(forDate: closingTime)
+        if let openingTime = getCurrentOpeningPeriod(fromOpeningPeriods: allOpeningTimes, forDate: time) {
+            return timeString(forDate: openingTime.closeTime)
+        } else if let nextOpeningTime = getNextOpeningPeriod(fromOpeningPeriods: allOpeningTimes, forDate: time) {
+            return timeString(forDate: nextOpeningTime.closeTime)
+        }
+
+        return nil
     }
 
     func timeString(forDate date: Date) -> String {
