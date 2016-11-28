@@ -49,17 +49,19 @@ class Place: Hashable {
 
     let wikiDescription: String?
     let yelpDescription: String?
+    let tripAdvisorDescription: String?
 
     var events = [Event]()
 
-    init(id: String, name: String, wikiDescription: String? = nil, yelpDescription: String? = nil,
+    init(id: String, name: String, descriptions: (wiki: String?, yelp: String?, ta: String?),
          latLong: CLLocationCoordinate2D, categories: (names: [String], ids: [String]), url: String? = nil,
          address: String? = nil, yelpProvider: ReviewProvider,
          tripAdvisorProvider: ReviewProvider? = nil, wikipediaProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: OpenHours? = nil) {
         self.id = id
         self.name = name
-        self.wikiDescription = wikiDescription
-        self.yelpDescription = yelpDescription
+        self.wikiDescription = descriptions.wiki
+        self.yelpDescription = descriptions.yelp
+        self.tripAdvisorDescription = descriptions.ta
         self.latLong = latLong
         self.categories = categories
         self.url = url
@@ -95,7 +97,7 @@ class Place: Hashable {
         // TODO:
         // * validate incoming data
         // * b/c ^, tests
-        let (wikiDescription, yelpDescription) = Place.getDescriptions(fromFirebaseValue: value)
+        let descriptions = Place.getDescriptions(fromFirebaseValue: value)
         let photoURLs = (value["images"] as? [[String:String]])?.flatMap { $0["src"] } ?? []
 
         guard photoURLs.count > 0 else {
@@ -118,8 +120,7 @@ class Place: Hashable {
 
         self.init(id: id,
                   name: name,
-                  wikiDescription: wikiDescription,
-                  yelpDescription: yelpDescription,
+                  descriptions: descriptions,
                   latLong: CLLocationCoordinate2D(latitude: lat, longitude: lng),
                   categories: categories,
                   url: value["url"] as? String,
@@ -152,9 +153,10 @@ class Place: Hashable {
         return (names, ids)
     }
 
-    private static func getDescriptions(fromFirebaseValue value: NSDictionary) -> (wiki: String?, yelp: String?) {
+    private static func getDescriptions(fromFirebaseValue value: NSDictionary) -> (wiki: String?, yelp: String?, ta: String?) {
         var wikiDescription: String?
         var yelpDescription: String?
+        var taDescription: String?
         if let descArr = value["description"] as? [[String:String]] {
             for providerDict in descArr {
                 if let provider = providerDict["provider"],
@@ -164,6 +166,8 @@ class Place: Hashable {
                         yelpDescription = text
                     case "wikipedia":
                         wikiDescription = text
+                    case "tripadvisor":
+                        taDescription = text
                     default:
                         break
                     }
@@ -171,7 +175,7 @@ class Place: Hashable {
             }
         }
 
-        return (wiki: wikiDescription, yelp: yelpDescription)
+        return (wiki: wikiDescription, yelp: yelpDescription, ta: taDescription)
     }
 
     // assumes will always be called from UI thread.

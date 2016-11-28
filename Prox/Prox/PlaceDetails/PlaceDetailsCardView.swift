@@ -29,6 +29,7 @@ class PlaceDetailsCardView: UIView {
                                                  self.iconInfoViewContainer,
                                                  self.reviewViewContainer,
                                                  self.wikiDescriptionView,
+                                                 self.tripAdvisorDescriptionView,
                                                  self.yelpDescriptionView
             ])
         view.axis = .vertical
@@ -132,6 +133,17 @@ class PlaceDetailsCardView: UIView {
         return view
     }()
 
+    lazy var tripAdvisorDescriptionView: PlaceDetailsDescriptionView = {
+        let view = PlaceDetailsDescriptionView(labelText: "Trip Advisor Highlight",
+                                               icon: UIImage(named: "logo_tripadvisor"),
+                                               horizontalMargin: 16,
+                                               expanded: true)
+        let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
+        let underlineAttributedString = NSAttributedString(string: "Read more on Trip Advisor", attributes: underlineAttribute)
+        view.readMoreLink.attributedText = underlineAttributedString
+        return view
+    }()
+
     lazy var wikiDescriptionView: PlaceDetailsDescriptionView = {
         let view = PlaceDetailsDescriptionView(labelText: "The top line from Wikipedia",
                                         icon: UIImage(named: "logo_wikipedia"),
@@ -203,6 +215,7 @@ class PlaceDetailsCardView: UIView {
 
 
     private func setupGestureRecognizers() {
+        tripAdvisorDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
         wikiDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
         yelpDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
     }
@@ -241,8 +254,9 @@ class PlaceDetailsCardView: UIView {
 
         updateHoursUI(place.hours)
 
-        updateDescriptionViewUI(forText: place.wikiDescription, onView: wikiDescriptionView)
-        updateDescriptionViewUI(forText: place.yelpDescription, onView: yelpDescriptionView)
+        updateDescriptionViewUI(forText: place.wikiDescription, onView: wikiDescriptionView, expanded: place.wikiDescription != nil)
+        updateDescriptionViewUI(forText: place.tripAdvisorDescription, onView: tripAdvisorDescriptionView, expanded: place.wikiDescription == nil && place.tripAdvisorDescription != nil)
+        updateDescriptionViewUI(forText: place.yelpDescription, onView: yelpDescriptionView, expanded: place.tripAdvisorDescription == nil && place.wikiDescription == nil && place.yelpDescription != nil)
 
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)
@@ -265,16 +279,10 @@ class PlaceDetailsCardView: UIView {
         hoursView.secondaryTextLabel.text = secondaryText
     }
 
-    private func updateDescriptionViewUI(forText text: String?, onView view: PlaceDetailsDescriptionView) {
-        if let text = text {
-            view.isHidden = false
-            view.expandableLabel.text = text
-            view.setExpandableView(isExpanded: true)
-        } else {
-            view.isHidden = true
-            view.expandableLabel.text = nil
-            view.setExpandableView(isExpanded: false)
-        }
+    private func updateDescriptionViewUI(forText text: String?, onView view: PlaceDetailsDescriptionView, expanded: Bool) {
+        view.isHidden = text == nil ? true : false
+        view.expandableLabel.text = text
+        view.setExpandableView(isExpanded: expanded)
     }
 
     fileprivate func showEventView(isHidden: Bool) {
