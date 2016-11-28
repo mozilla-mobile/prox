@@ -135,11 +135,11 @@ class PlaceDetailsCardView: UIView {
 
     lazy var tripAdvisorDescriptionView: PlaceDetailsDescriptionView = {
         let view = PlaceDetailsDescriptionView(labelText: "TripAdvisor highlight",
-                                               icon: UIImage(named: "logo_tripadvisor"),
-                                               horizontalMargin: 16,
+                                               icon: UIImage(named: "logo_TA_small"),
+                                               type: DetailType.tripadvisor,
                                                expanded: true)
         let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
-        let underlineAttributedString = NSAttributedString(string: "Read more on Trip Advisor", attributes: underlineAttribute)
+        let underlineAttributedString = NSAttributedString(string: "Read more on TripAdvisor", attributes: underlineAttribute)
         view.readMoreLink.attributedText = underlineAttributedString
         return view
     }()
@@ -147,7 +147,6 @@ class PlaceDetailsCardView: UIView {
     lazy var wikiDescriptionView: PlaceDetailsDescriptionView = {
         let view = PlaceDetailsDescriptionView(labelText: "The top line from Wikipedia",
                                         icon: UIImage(named: "logo_wikipedia"),
-                                        horizontalMargin: 16,
                                         type: DetailType.wikipedia,
                                         expanded: true)
         let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
@@ -159,7 +158,6 @@ class PlaceDetailsCardView: UIView {
     lazy var yelpDescriptionView: PlaceDetailsDescriptionView = {
         let view = PlaceDetailsDescriptionView(labelText: "The latest from Yelp",
                                                                icon: UIImage(named: "logo_yelp_small"),
-                                                               horizontalMargin: 16,
                                                                type: DetailType.yelp,
                                                                expanded: true)
         let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]

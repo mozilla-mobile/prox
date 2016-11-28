@@ -9,7 +9,7 @@ fileprivate enum UIMode {
 }
 
 enum DetailType {
-    case wikipedia, yelp
+    case wikipedia, yelp, tripadvisor
 }
 
 class PlaceDetailsDescriptionView: UIView {
@@ -17,7 +17,7 @@ class PlaceDetailsDescriptionView: UIView {
     private let CollapseExpandSeconds = 1.0
     private let toggleEventType: String
 
-    let horizontalMargin: CGFloat
+    let horizontalMargin: CGFloat = 16.0
 
     fileprivate var uiMode: UIMode
     var collapsedConstraints: [NSLayoutConstraint]!
@@ -98,11 +98,16 @@ class PlaceDetailsDescriptionView: UIView {
 
     init(labelText: String,
          icon: UIImage?,
-         horizontalMargin: CGFloat,
          type: DetailType,
          expanded: Bool = true) {
-        self.horizontalMargin = horizontalMargin
-        toggleEventType = type == DetailType.yelp ? AnalyticsEvent.YELP_TOGGLE : AnalyticsEvent.WIKIPEDIA_TOGGLE
+        switch type {
+        case .yelp:
+            toggleEventType = AnalyticsEvent.YELP_TOGGLE
+        case .wikipedia:
+            toggleEventType = AnalyticsEvent.WIKIPEDIA_TOGGLE
+        case .tripadvisor:
+            toggleEventType = AnalyticsEvent.TRIPADVISOR_TOGGLE
+        }
         uiMode = expanded ? .expanded : .collapsed
         super.init(frame: .zero)
 
@@ -124,15 +129,14 @@ class PlaceDetailsDescriptionView: UIView {
                            descriptionTitleView.trailingAnchor.constraint(equalTo: trailingAnchor)]
 
         descriptionTitleView.addSubview(logoView)
-        constraints += [logoView.leadingAnchor.constraint(equalTo: descriptionTitleView.leadingAnchor, constant: horizontalMargin),
-                           logoView.widthAnchor.constraint(equalToConstant: 16),
+        constraints += [logoView.centerXAnchor.constraint(equalTo: descriptionTitleView.leadingAnchor, constant: 24),
                            logoView.heightAnchor.constraint(equalToConstant: 16),
                            logoView.topAnchor.constraint(equalTo: descriptionTitleView.topAnchor, constant: 20),
                            logoBottomConstraint]
 
         descriptionTitleView.addSubview(label)
         constraints += [label.centerYAnchor.constraint(equalTo: logoView.centerYAnchor),
-                        label.leadingAnchor.constraint(equalTo: logoView.trailingAnchor, constant: horizontalMargin),
+                        label.leadingAnchor.constraint(equalTo: descriptionTitleView.leadingAnchor, constant: 48),
                         label.trailingAnchor.constraint(equalTo: expandButton.leadingAnchor, constant: -horizontalMargin)]
 
         descriptionTitleView.addSubview(expandButton)

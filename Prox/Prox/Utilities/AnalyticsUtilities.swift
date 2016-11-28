@@ -44,6 +44,7 @@ public struct AnalyticsEvent {
     // Place Details
     static let YELP               = "yelp_link"
     static let YELP_TOGGLE        = "yelp_review_toggle"
+    static let TRIPADVISOR_TOGGLE = "tripadvisor_review_toggle"
     static let TRIPADVISOR        = "tripadvisor_link"
     static let WIKIPEDIA          = "wikipedia_link"
     static let WIKIPEDIA_TOGGLE   = "wikipedia_toggle"
