@@ -79,6 +79,7 @@ class EventNotificationsManager {
 
     func persistNotificationCache() {
         UserDefaults.standard.set([String(Date().timeIntervalSinceReferenceDate): Array(sentNotifications)], forKey: sentNotificationDictKey)
+        UserDefaults.standard.synchronize()
     }
 
     private func requestNotifications() {
@@ -118,6 +119,17 @@ class EventNotificationsManager {
                 self.markAsSent(event: event)
             }
         }
+
+        let applicationState = UIApplication.shared.applicationState
+        if applicationState == .background
+            || applicationState == .inactive {
+            backgroundTask = UIApplication.shared.beginBackgroundTask { [weak self] in
+                self?.persistNotificationCache()
+                self?.backgroundTask = UIBackgroundTaskInvalid
+            }
+        } else {
+            self.persistNotificationCache()
+        }
     }
 
     private func sendNotification(forEvent event: Event, inSeconds timeInterval: TimeInterval) {
@@ -139,7 +151,7 @@ class EventNotificationsManager {
                         if let theError = error {
                             print(theError.localizedDescription)
                         } else {
-                            print("Notification scheduled")
+                            print("Notification scheduled for \(event.description)")
                         }
                     }
                 } else {
@@ -184,13 +196,5 @@ class EventNotificationsManager {
 
     fileprivate func markAsSent(event: Event) {
         sentNotifications.insert(event.id)
-        let applicationState = UIApplication.shared.applicationState
-        if applicationState == .background
-            || applicationState == .inactive {
-            backgroundTask = UIApplication.shared.beginBackgroundTask { [weak self] in
-                self?.persistNotificationCache()
-                self?.backgroundTask = UIBackgroundTaskInvalid
-            }
-        }
     }
 }
