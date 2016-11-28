@@ -228,7 +228,7 @@ class Event {
     }
 
     private func replaceTimeToEnd(string: String) -> String {
-        guard let endTime = endTime else { return string}
+        guard let endTime = endTime else { return string.replacingOccurrences(of: "{time_to_end}", with: "unknown") }
         let now = Date()
         let timeToEvent = endTime.timeIntervalSince(now)
         let timeString = timeToEvent.asHoursAndMinutesString()
@@ -242,7 +242,7 @@ class Event {
     }
 
     private func replaceEndTime(string: String) -> String {
-        guard let endTime = endTime else { return string}
+        guard let endTime = endTime else { return string.replacingOccurrences(of: "{end_time}", with: "unknown") }
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
         return string.replacingOccurrences(of: "{end_time}", with: formatter.string(from: endTime))
