@@ -83,7 +83,7 @@ class PlaceDetailsIconInfoView: UIView {
 
         addSubview(iconView)
         constraints += [iconView.centerYAnchor.constraint(equalTo: labelContainer.centerYAnchor),
-                        iconView.trailingAnchor.constraint(equalTo: labelContainer.leadingAnchor, constant: -9)]
+                        iconView.trailingAnchor.constraint(equalTo: labelContainer.leadingAnchor, constant: -6)]
 
         if enableForwardArrow {
             addSubview(forwardArrowView)
