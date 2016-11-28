@@ -134,7 +134,7 @@ class PlaceDetailsCardView: UIView {
     }()
 
     lazy var tripAdvisorDescriptionView: PlaceDetailsDescriptionView = {
-        let view = PlaceDetailsDescriptionView(labelText: "Trip Advisor Highlight",
+        let view = PlaceDetailsDescriptionView(labelText: "TripAdvisor highlight",
                                                icon: UIImage(named: "logo_tripadvisor"),
                                                horizontalMargin: 16,
                                                expanded: true)
