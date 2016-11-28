@@ -8,6 +8,10 @@ fileprivate enum UIMode {
     case collapsed, expanded
 }
 
+enum DetailType {
+    case wikipedia, yelp
+}
+
 class PlaceDetailsDescriptionView: UIView {
 
     private let CollapseExpandSeconds = 1.0
@@ -94,9 +98,10 @@ class PlaceDetailsDescriptionView: UIView {
 
     init(labelText: String,
          icon: UIImage?,
-         horizontalMargin: CGFloat) {
+         horizontalMargin: CGFloat,
+         type: DetailType) {
         self.horizontalMargin = horizontalMargin
-        toggleEventType = labelText == "Yelp top review" ? AnalyticsEvent.YELP_TOGGLE : AnalyticsEvent.WIKIPEDIA_TOGGLE
+        toggleEventType = type == DetailType.yelp ? AnalyticsEvent.YELP_TOGGLE : AnalyticsEvent.WIKIPEDIA_TOGGLE
 
         super.init(frame: .zero)
 
