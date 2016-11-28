@@ -145,6 +145,8 @@ class PlaceDetailViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         AppState.enterDetails()
+        let index = dataSource != nil ? dataSource!.index(forPlace: place) ?? 0 : 0
+        AppState.trackCardVisit(cardPos: index)
 
         self.currentCardViewController = dequeuePlaceCardViewController(forPlace: place)
         self.currentCardViewController.cardView.alpha = 1
@@ -517,6 +519,7 @@ class PlaceDetailViewController: UIViewController {
 
         let springDamping:CGFloat = newNextCardViewController == nil ? 0.8 : 1.0
         setupConstraints(forNewPreviousCard: currentCardViewController, newCurrentCard: nextCardViewController, newNextCard: newNextCardViewController)
+        AppState.trackCardVisit(cardPos: (dataSource?.index(forPlace: nextCardViewController.place))!)
 
         view.layoutIfNeeded()
 
@@ -587,6 +590,7 @@ class PlaceDetailViewController: UIViewController {
 
         let springDamping:CGFloat = newPreviousCardViewController == nil ? 0.8 : 1.0
         setupConstraints(forNewPreviousCard: newPreviousCardViewController, newCurrentCard: previousCardViewController, newNextCard: currentCardViewController)
+        AppState.trackCardVisit(cardPos: (dataSource?.index(forPlace: previousCardViewController.place))!)
 
         view.layoutIfNeeded()
 

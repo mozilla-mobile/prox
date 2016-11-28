@@ -27,7 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private var eventsNotificationsManager: EventNotificationsManager!
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
         Analytics.startAppSession()

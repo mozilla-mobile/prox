@@ -50,8 +50,7 @@ public struct AnalyticsEvent {
     static let DIRECTIONS         = "directions_link"
     static let WEBSITE            = "website_link"
     static let MAP_BUTTON         = "map_button" // For returning to the Carousel
-    static let NUM_DETAILS_CARDS  = "num_details"
-    static let NUM_CAROUSEL_CARDS = "num_carousel"
+    static let NUM_CARDS          = "num_cards"
 
     // Event Actions
     static let EVENT_BANNER_LINK  = "event_banner_link"
