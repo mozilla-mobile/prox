@@ -135,7 +135,8 @@ class PlaceDetailsCardView: UIView {
     lazy var wikiDescriptionView: PlaceDetailsDescriptionView = {
         let view = PlaceDetailsDescriptionView(labelText: "Wikipedia summary",
                                         icon: UIImage(named: "logo_wikipedia"),
-                                        horizontalMargin: 16)
+                                        horizontalMargin: 16,
+                                        type: DetailType.wikipedia)
         let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
         let underlineAttributedString = NSAttributedString(string: "Read more on Wikipedia", attributes: underlineAttribute)
         view.readMoreLink.attributedText = underlineAttributedString
@@ -145,7 +146,8 @@ class PlaceDetailsCardView: UIView {
     lazy var yelpDescriptionView: PlaceDetailsDescriptionView = {
         let view = PlaceDetailsDescriptionView(labelText: "Yelp top review",
                                                                icon: UIImage(named: "logo_yelp_small"),
-                                                               horizontalMargin: 16)
+                                                               horizontalMargin: 16,
+                                                               type: DetailType.yelp)
         let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
         let underlineAttributedString = NSAttributedString(string: "Read more on Yelp", attributes: underlineAttribute)
         view.readMoreLink.attributedText = underlineAttributedString

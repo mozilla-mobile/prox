@@ -52,6 +52,7 @@ PODS:
     - GoogleInterchangeUtilities (~> 1.2)
     - GoogleSymbolUtilities (~> 1.1)
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+  - Flurry-iOS-SDK/FlurrySDK (7.8.1)
   - FXPageControl (1.4)
   - GoogleInterchangeUtilities (1.2.2):
     - GoogleSymbolUtilities (~> 1.1)
@@ -78,6 +79,7 @@ DEPENDENCIES:
   - Firebase/Core
   - Firebase/Database
   - Firebase/RemoteConfig
+  - Flurry-iOS-SDK/FlurrySDK
   - FXPageControl (= 1.4)
 
 SPEC CHECKSUMS:
@@ -93,12 +95,13 @@ SPEC CHECKSUMS:
   FirebaseDatabase: 3ebb2edb6007c3f0f87b248f3fa212bde56a1468
   FirebaseInstanceID: ba1e640935235e5fac39dfa816fe7660e72e1a8a
   FirebaseRemoteConfig: 383a9afe0a9291ada949e3f615257928a823b594
+  Flurry-iOS-SDK: 3d1daff95d43b8fead3bb43590d54c6e8244d410
   FXPageControl: 5057bf21537579b40ff30e119cd425d16d8ef90a
   GoogleInterchangeUtilities: d5bc4d88d5b661ab72f9d70c58d02ca8c27ad1f7
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
 
-PODFILE CHECKSUM: 1a7be293519adba2ae2c33e63485fbf548317cfc
+PODFILE CHECKSUM: bc14f242ef24f4392a58f0205f4a9778542dd932
 
 COCOAPODS: 1.1.1

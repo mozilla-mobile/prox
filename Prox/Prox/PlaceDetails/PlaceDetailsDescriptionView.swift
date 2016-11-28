@@ -8,9 +8,14 @@ fileprivate enum UIMode {
     case collapsed, expanded
 }
 
+enum DetailType {
+    case wikipedia, yelp
+}
+
 class PlaceDetailsDescriptionView: UIView {
 
     private let CollapseExpandSeconds = 1.0
+    private let toggleEventType: String
 
     let horizontalMargin: CGFloat
 
@@ -93,8 +98,11 @@ class PlaceDetailsDescriptionView: UIView {
 
     init(labelText: String,
          icon: UIImage?,
-         horizontalMargin: CGFloat) {
+         horizontalMargin: CGFloat,
+         type: DetailType) {
         self.horizontalMargin = horizontalMargin
+        toggleEventType = type == DetailType.yelp ? AnalyticsEvent.YELP_TOGGLE : AnalyticsEvent.WIKIPEDIA_TOGGLE
+
         super.init(frame: .zero)
 
         logoView.image = icon
@@ -143,6 +151,8 @@ class PlaceDetailsDescriptionView: UIView {
     }
 
     func didTap() {
+        let action = uiMode == .collapsed ? "expand" : "collapse"
+        Analytics.logEvent(event: toggleEventType, params: [AnalyticsEvent.PARAM_ACTION: action])
         setExpandableView(isExpanded: uiMode == .collapsed)
     }
 

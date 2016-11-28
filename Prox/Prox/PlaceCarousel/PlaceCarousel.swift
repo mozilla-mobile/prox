@@ -55,6 +55,7 @@ class PlaceCarousel: NSObject {
         guard let indexPath = indexPathFor(place: place) else {
            return
         }
+        AppState.trackCardVisit(cardPos: indexPath[1])
         carousel.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
     }
 
@@ -149,6 +150,10 @@ fileprivate class CarouselFlowLayout: UICollectionViewFlowLayout {
         let currentPage = velocity.x > 0 ? floor(rawPageValue) : ceil(rawPageValue)
         let nextPage = velocity.x > 0 ? ceil(rawPageValue) : floor(rawPageValue)
 
+        if (currentPage >= 0 && nextPage >= 0) {
+            AppState.trackCardVisit(cardPos: Int(currentPage))
+            AppState.trackCardVisit(cardPos: Int(nextPage))
+        }
         let pannedLessThanAPage = fabs(1 + currentPage - rawPageValue) > 0.5
         let flicked = fabs(velocity.x) > flickVelocity
 
