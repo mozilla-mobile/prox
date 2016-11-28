@@ -68,7 +68,7 @@ class PlaceDetailsDescriptionView: UIView {
         view.axis = .vertical
         view.spacing = 10
         view.distribution = .fillProportionally
-        view.layoutMargins = UIEdgeInsets(top: 0, left: self.horizontalMargin,
+        view.layoutMargins = UIEdgeInsets(top: 0, left: 0,
                                           bottom: 0, right: self.horizontalMargin)
         view.isLayoutMarginsRelativeArrangement = true
 
