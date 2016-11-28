@@ -37,7 +37,7 @@ class PlacesProvider {
     }()
 
     private lazy var radius: Double = {
-        return RemoteConfigKeys.searchRadiusInKm.value
+        return 5.0//RemoteConfigKeys.searchRadiusInKm.value
     }()
 
     func place(forKey key: String, callback: @escaping (Place?) -> ()) {

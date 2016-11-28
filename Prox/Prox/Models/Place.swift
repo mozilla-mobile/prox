@@ -43,7 +43,7 @@ class Place: Hashable {
     let tripAdvisorProvider: ReviewProvider?
     let wikipediaProvider: ReviewProvider?
 
-    let hours: [OpenHours] // if nil, there are no listed hours for this place
+    let hours: OpenHours? // if nil, there are no listed hours for this place
 
     fileprivate(set) var lastTravelTime: (deferred: Deferred<DatabaseResult<TravelTimes>>, forLocation: CLLocation)?
 
@@ -56,7 +56,7 @@ class Place: Hashable {
     init(id: String, name: String, descriptions: (wiki: String?, yelp: String?, ta: String?)? = nil,
          latLong: CLLocationCoordinate2D, categories: (names: [String], ids: [String]), url: String? = nil,
          address: String? = nil, yelpProvider: ReviewProvider,
-         tripAdvisorProvider: ReviewProvider? = nil, wikipediaProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: [OpenHours] = []) {
+         tripAdvisorProvider: ReviewProvider? = nil, wikipediaProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: OpenHours? = nil) {
         self.id = id
         self.name = name
         self.wikiDescription = descriptions?.wiki
@@ -106,10 +106,16 @@ class Place: Hashable {
             return nil
         }
 
-        var hours = [OpenHours]()
-        if let hoursDictFromServer = value["hours"] as? [String : [[String]]],
-                let hoursFromServer = OpenHours.fromFirebaseValue(hoursDictFromServer) {
-            hours.append(hoursFromServer)
+        let hours: OpenHours?
+        if value["hours"] == nil {
+            hours = nil // no listed hours
+        } else {
+            if let hoursDictFromServer = value["hours"] as? [String : [[String]]],
+                    let hoursFromServer = OpenHours.fromFirebaseValue(hoursDictFromServer) {
+                hours = hoursFromServer
+            } else {
+                return nil // malformed hours object: fail to make the Place
+            }
         }
 
         self.init(id: id,
@@ -312,7 +318,7 @@ struct OpenHours {
      *   - Use all open intervals
      *   - Use accurate days of week in Date (maybe? It adds complexity for little gain).
      */
-    let hours: [DayOfWeek : (openTime: DateComponents, closeTime: DateComponents)]
+    let hours: [DayOfWeek : [(openTime: DateComponents, closeTime: DateComponents)]]
 
     private static let inputTimeFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -338,11 +344,12 @@ struct OpenHours {
      * TODO: return nil ^ or just remove the days that are malformed?
      */
     static func fromFirebaseValue(_ hoursDict: [String : [[String]]]) -> OpenHours? {
-        var out = [DayOfWeek : (openTime: DateComponents, closeTime: DateComponents)]()
+        var out = [DayOfWeek : [(openTime: DateComponents, closeTime: DateComponents)]]()
 
         // Note: we don't check if a day is missing because if it is,
         // it's closed for the day and we're supposed to omit it anyway.
         for dayFromServer in hoursDict.keys {
+            var hoursForDay = [(openTime: DateComponents, closeTime: DateComponents)]()
             guard let day = DayOfWeek(rawValue: dayFromServer) else {
                 print("lol unknown day of week from server: \(dayFromServer)")
                 return nil
@@ -364,8 +371,8 @@ struct OpenHours {
                 print("lol unable to convert date str, \(lastInterval[0]) & \(lastInterval[1]), to Date")
                 return nil
             }
-
-            out[day] = (openTime: openTime, closeTime: closeTime)
+            hoursForDay.append((openTime: openTime, closeTime: closeTime))
+            out[day] = hoursForDay
         }
 
         return OpenHours(hours: out)
@@ -380,7 +387,8 @@ struct OpenHours {
     }
 
     private func getOpeningTime(forDate date: Date) -> Date? {
-        guard let openDateComponents = hours[DayOfWeek.forDate(date)]?.openTime,
+        guard let openDatesComponents = hours[DayOfWeek.forDate(date)],
+            let openDateComponents = openDatesComponents.last?.openTime,
             let openingTime = getDate(forTime: openDateComponents, onDate: date) else {
             return nil
         }
@@ -390,7 +398,8 @@ struct OpenHours {
 
     private func getClosingTime(forDate date: Date) -> Date? {
         guard let openingTime = getOpeningTime(forDate: date),
-            let closeDateComponents = hours[DayOfWeek.forDate(date)]?.closeTime,
+            let closeDatesComponents = hours[DayOfWeek.forDate(date)],
+            let closeDateComponents = closeDatesComponents.last?.closeTime,
             var closingTime = getDate(forTime: closeDateComponents, onDate: date) else {
                 return nil
         }
