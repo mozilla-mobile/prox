@@ -295,6 +295,12 @@ extension PlaceDetailsCardViewController: UIScrollViewDelegate {
 
     fileprivate func didChangePage(scrollView: UIScrollView) {
         let pageSize = imageCarouselCollectionView.bounds.size
+
+        // Unable to change pages if we don't have anything to page!
+        guard pageSize != CGSize.zero && pageSize.width != 0 else {
+            return
+        }
+        
         let selectedPageIndex = Int(floor((scrollView.contentOffset.x-pageSize.width/2)/pageSize.width))+1
         pageControl.currentPage = selectedPageIndex
 
