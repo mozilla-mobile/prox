@@ -7,10 +7,12 @@ import UIKit
 
 public struct Colors { }
 
+fileprivate let dividerColor = UIColor(colorLiteralRed: 0.8, green: 0.8, blue: 0.8, alpha: 0.3)
+
 // Place Carousel Colors
 extension Colors {
     public static let carouselViewHeaderBackground = UIColor.white
-    public static let carouselViewHeaderHorizontalLine = UIColor(colorLiteralRed: 0.78, green: 0.78, blue: 0.78, alpha: 1.0)
+    public static let carouselViewHeaderHorizontalLine = dividerColor
     public static let carouselViewPlaceCardBackground = UIColor.white
     public static let carouselViewSunriseSetTimesLabelText = UIColor.black.withAlphaComponent(0.5)
     public static let carouselViewImageOpacityLayer = UIColor.black.withAlphaComponent(0.2)
@@ -33,7 +35,7 @@ extension Colors {
     public static let detailsViewCardSecondaryText = UIColor.black.withAlphaComponent(0.5)
     public static let detailsViewCardLinkText = UIColor(red: 0.00, green: 0.48, blue: 1.00, alpha: 1.0)
     public static let pageIndicatorTintColor = UIColor.black.withAlphaComponent(0.4)
-    public static let detailsViewCardSeparator = UIColor(hue: 0, saturation: 0, brightness: 0.94, alpha: 1)
+    public static let detailsViewCardSeparator = dividerColor
     public static let currentPageIndicatorTintColor = UIColor.white
     public static let detailsViewMapButtonBadgeBackground = UIColor(colorLiteralRed: 0.07, green: 0.40, blue: 0.98, alpha: 1.0)
     public static let detailsViewMapButtonBadgeFont = UIColor.white
