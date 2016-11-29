@@ -25,6 +25,7 @@ class PlaceCarousel: NSObject {
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = self.defaultPadding
         layout.sectionInset = UIEdgeInsets(top: 0.0, left: self.defaultPadding, bottom: 0.0, right: self.defaultPadding)
+        layout.pageDelegate = self
         return layout
     }()
 
@@ -59,11 +60,27 @@ class PlaceCarousel: NSObject {
         carousel.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
     }
 
+    func clearSelections() {
+        carousel.visibleCells.forEach { ($0 as? PlaceCarouselCollectionViewCell)?.toggleShadow(on: false) }
+    }
+
+    func select(index: Int) {
+        (carousel.cellForItem(at: IndexPath(item: index, section: 0)) as?
+            PlaceCarouselCollectionViewCell)?.toggleShadow(on: true)
+    }
+
     fileprivate func indexPathFor(place: Place) -> IndexPath? {
         guard let index = dataSource?.index(forPlace: place) else {
             return nil
         }
         return IndexPath(item: index, section: 0)
+    }
+}
+
+extension PlaceCarousel: CarouselPageDelegate {
+    func didPage(toIndex: Int) {
+        clearSelections()
+        select(index: toIndex)
     }
 }
 
@@ -120,11 +137,19 @@ extension PlaceCarousel: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        clearSelections()
+        select(index: indexPath.item)
         delegate?.placeCarousel(placeCarousel: self, didSelectPlaceAtIndex: indexPath.item)
     }
 }
 
+fileprivate protocol CarouselPageDelegate: class {
+    func didPage(toIndex: Int)
+}
+
 fileprivate class CarouselFlowLayout: UICollectionViewFlowLayout {
+    weak var pageDelegate: CarouselPageDelegate?
+
     var pageWidth: CGFloat {
         return 200 + minimumLineSpacing
     }
@@ -158,8 +183,10 @@ fileprivate class CarouselFlowLayout: UICollectionViewFlowLayout {
         let flicked = fabs(velocity.x) > flickVelocity
 
         if pannedLessThanAPage && flicked {
+            pageDelegate?.didPage(toIndex: Int(max(0, nextPage)))
             return CGPoint(x: nextPage * pageWidth, y: proposedContentOffset.y)
         } else {
+            pageDelegate?.didPage(toIndex: Int(round(rawPageValue)))
             return CGPoint(x: round(rawPageValue) * pageWidth, y: proposedContentOffset.y)
         }
     }

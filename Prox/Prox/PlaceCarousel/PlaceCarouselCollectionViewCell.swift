@@ -33,7 +33,8 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         let view = UIView()
         view.backgroundColor = Colors.carouselViewPlaceCardBackground
         view.layer.shadowOpacity = 0.6
-        view.layer.cornerRadius = 5
+        view.layer.cornerRadius = 2
+        view.layer.shadowOffset = CGSize(width: 0, height: 0.5)
         view.layer.shadowColor = UIColor.darkGray.cgColor
         view.layer.shouldRasterize = true
         view.accessibilityIdentifier = "Shadow"
@@ -124,15 +125,14 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override var isSelected: Bool {
-        didSet {
-            setShadow(attributes: isSelected ? selectedShadowAttributes : unselectedShadowAttributes)
-        }
+    func toggleShadow(on: Bool) {
+        setShadow(attributes: on ? selectedShadowAttributes : unselectedShadowAttributes)
     }
 
     fileprivate func setShadow(attributes: CellShadowAttributes) {
         shadowView.layer.shadowOffset = attributes.offset
         shadowView.layer.shadowRadius = attributes.radius
+        shadowView.setNeedsDisplay()
     }
 
     private func setupViews() {
@@ -242,6 +242,11 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
 
         NSLayoutConstraint.deactivate(deactivateConstraints)
         NSLayoutConstraint.activate(updatedConstraints)
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        toggleShadow(on: false)
     }
 }
 

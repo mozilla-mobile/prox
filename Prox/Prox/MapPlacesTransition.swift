@@ -145,6 +145,9 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
                 return
             }
 
+            mapVC.placeCarousel.clearSelections()
+            toPlacesCell.toggleShadow(on: true)
+
             let cellViews = toPlacesCell.animatableProperties()
 
             // Scale back the maps view to calculate the frames correctly, then scale back down
