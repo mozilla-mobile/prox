@@ -198,8 +198,4 @@ class EventNotificationsManager {
     fileprivate func markAsSent(event: Event) {
         sentNotifications.insert(event.id)
     }
-
-    func fakeEvents() -> [Event] {
-        return [Event(id: "Beginners-Jive-Classes2016-11-28 19:30:00", placeId: "gaucho-tower-bridge-london", coordinates: CLLocationCoordinate2D(latitude: 51.5045923, longitude: -0.0992805), description: "Free Jazz Concert", url: nil, startTime: Date() + (30 * 60), endTime: nil)]
-    }
 }
