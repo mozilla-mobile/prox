@@ -23,32 +23,32 @@ struct PlaceUtilities {
     }
 
     static func sort(places: [Place], byTravelTimeFromLocation location: CLLocation, ascending: Bool = true, completion: @escaping ([Place]) -> ()) {
-        PlaceUtilities.getTravelTimes(forPlaces: places, fromLocation: location).upon { result in
-            let sortedPlaces = places.sorted { (placeA, placeB) -> Bool in
-                guard let placeATravelTimes = PlaceUtilities.lastTravelTimes(forPlace: placeA),
-                    let placeBTravelTimes = PlaceUtilities.lastTravelTimes(forPlace: placeB) else {
-                        return false
-                }
+        var sortedPlaces = PlaceUtilities.sort(places: places, byDistanceFromLocation: location)
+        // sort the first 10 places by travel time
+        // or the whole array is the number of places in the array < 10
+        let numberSortedByTravelTime = Int(min(10.0, Double(sortedPlaces.count)))
+        let slice: Array<Place> = Array(sortedPlaces[0..<numberSortedByTravelTime])
+        PlaceUtilities.getTravelTimes(forPlaces: slice, fromLocation: location).upon { result in
+            let sortedByTravelTime = places.sorted { (placeA, placeB) -> Bool in
+                let placeAETA = PlaceUtilities.lastTravelTimes(forPlace: placeA)?.getShortestTravelTime() ?? Double.greatestFiniteMagnitude
+                let placeBETA = PlaceUtilities.lastTravelTimes(forPlace: placeB)?.getShortestTravelTime() ?? Double.greatestFiniteMagnitude
 
-                let placeAETA = placeATravelTimes.getShortestTravelTime()
-                let placeBETA = placeBTravelTimes.getShortestTravelTime()
-
-                guard ascending else {
-                    return placeAETA > placeBETA
+                if ascending {
+                    return placeAETA <= placeBETA
+                } else {
+                    return placeAETA >= placeBETA
                 }
-                return placeAETA < placeBETA
+            }
+
+            for (index, place) in sortedByTravelTime.enumerated() {
+                sortedPlaces[index] = place
             }
             completion(sortedPlaces)
         }
     }
 
     private static func getTravelTimes(forPlaces places: [Place], fromLocation location: CLLocation) -> Future<[DatabaseResult<TravelTimes>]> {
-        var placesWithTimes = [Deferred<DatabaseResult<TravelTimes>>]()
-        for place in places {
-            let placeDeferred = place.travelTimes(fromLocation: location)
-            placesWithTimes.append(placeDeferred)
-        }
-        return placesWithTimes.allFilled()
+        return places.map { $0.travelTimes(fromLocation: location) }.allFilled()
     }
 
     private static func lastTravelTimes(forPlace place: Place) -> TravelTimes? {
