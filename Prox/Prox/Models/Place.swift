@@ -163,11 +163,11 @@ class Place: Hashable {
                         let text = providerDict["text"] {
                     switch provider {
                     case "yelp":
-                        yelpDescription = text
+                        yelpDescription = Place.description(fromText: text)
                     case "wikipedia":
-                        wikiDescription = text
+                        wikiDescription = Place.description(fromText: text)
                     case "tripadvisor":
-                        taDescription = text
+                        taDescription = Place.description(fromText: text)
                     default:
                         break
                     }
@@ -176,6 +176,12 @@ class Place: Hashable {
         }
 
         return (wiki: wikiDescription, yelp: yelpDescription, ta: taDescription)
+    }
+
+    private static func description(fromText text: String?) -> String? {
+        guard let descriptionText = text,
+            !descriptionText.isEmpty else { return nil }
+        return descriptionText
     }
 
     // assumes will always be called from UI thread.
