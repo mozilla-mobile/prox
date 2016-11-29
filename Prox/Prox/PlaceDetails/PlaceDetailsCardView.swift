@@ -133,7 +133,7 @@ class PlaceDetailsCardView: UIView {
     }()
 
     lazy var wikiDescriptionView: PlaceDetailsDescriptionView = {
-        let view = PlaceDetailsDescriptionView(labelText: "Wikipedia summary",
+        let view = PlaceDetailsDescriptionView(labelText: "The top line from Wikipedia",
                                         icon: UIImage(named: "logo_wikipedia"),
                                         horizontalMargin: 16,
                                         type: DetailType.wikipedia)
@@ -144,7 +144,7 @@ class PlaceDetailsCardView: UIView {
     }()
 
     lazy var yelpDescriptionView: PlaceDetailsDescriptionView = {
-        let view = PlaceDetailsDescriptionView(labelText: "Yelp top review",
+        let view = PlaceDetailsDescriptionView(labelText: "The latest from Yelp",
                                                                icon: UIImage(named: "logo_yelp_small"),
                                                                horizontalMargin: 16,
                                                                type: DetailType.yelp)
