@@ -23,7 +23,15 @@ class PlaceDetailsTravelTimesView: PlaceDetailsIconInfoView, TravelTimesView {
     }
 
     func setTravelTimesUIIsLoading(_ isLoading: Bool) {
-        self.isLoading = isLoading
+        // Problem: we get rate-limited for travel times requests. When rate limited, one of the
+        // requests never returns, leaving the user with a loading spinner. The loading spinner
+        // hides the "View on Map" text, which allows the user to click through for directions.
+        //
+        // HACK: We request travel times on startup in order to sort the list of places. In practice,
+        // this means we never see a spinner when the content is loading but only in the problem
+        // situtation above. So instead of adding complexity by managing the state of our active
+        // directions requests, we just show "View on Map" instead.
+        updateTravelTimesUIForResult(.noData, durationInMinutes: nil)
     }
 
     func updateTravelTimesUIForResult(_ result: TravelTimesViewResult, durationInMinutes: Int?) {
