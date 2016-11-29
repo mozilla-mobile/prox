@@ -4,14 +4,8 @@
 
 import Foundation
 
-protocol PlaceDetailsTravelTimesViewDelegate: class {
-    func placeDetailsTravelTimesView(_ view: PlaceDetailsTravelTimesView, updateTravelTimesUIForResult result: TravelTimesViewResult)
-}
-
 class PlaceDetailsTravelTimesView: PlaceDetailsIconInfoView, TravelTimesView {
     fileprivate var idForTravelTimesView: String?
-
-    weak var delegate: PlaceDetailsTravelTimesViewDelegate?
 
     convenience init() {
         self.init(enableForwardArrow: true)
@@ -63,10 +57,6 @@ class PlaceDetailsTravelTimesView: PlaceDetailsIconInfoView, TravelTimesView {
 
             iconView.tintColor = Colors.detailsViewTravelTimeErrorPinTint
             iconView.image = UIImage(named: "icon_here")?.withRenderingMode(.alwaysTemplate)
-        }
-
-        if let delegate = self.delegate {
-            delegate.placeDetailsTravelTimesView(self, updateTravelTimesUIForResult: result)
         }
     }
 }
