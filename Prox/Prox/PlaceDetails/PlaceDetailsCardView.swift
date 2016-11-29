@@ -134,7 +134,7 @@ class PlaceDetailsCardView: UIView {
     }()
 
     lazy var tripAdvisorDescriptionView: PlaceDetailsDescriptionView = {
-        let view = PlaceDetailsDescriptionView(labelText: "TripAdvisor highlight",
+        let view = PlaceDetailsDescriptionView(labelText: "Highlights from TripAdvisor",
                                                icon: UIImage(named: "logo_TA_small"),
                                                type: DetailType.tripadvisor,
                                                expanded: true)
@@ -279,7 +279,7 @@ class PlaceDetailsCardView: UIView {
 
     private func updateDescriptionViewUI(forText text: String?, onView view: PlaceDetailsDescriptionView, expanded: Bool) {
         view.isHidden = text == nil ? true : false
-        view.expandableLabel.text = text
+        view.descriptionLabel.text = text
         view.setExpandableView(isExpanded: expanded)
     }
 
