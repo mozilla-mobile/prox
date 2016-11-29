@@ -137,7 +137,8 @@ class PlaceDetailsCardView: UIView {
         let view = PlaceDetailsDescriptionView(labelText: "Highlights from TripAdvisor",
                                                icon: UIImage(named: "logo_TA_small"),
                                                type: DetailType.tripadvisor,
-                                               expanded: true)
+                                               expanded: false)
+
         let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
         let underlineAttributedString = NSAttributedString(string: "Read more on TripAdvisor", attributes: underlineAttribute)
         view.readMoreLink.attributedText = underlineAttributedString
@@ -148,7 +149,8 @@ class PlaceDetailsCardView: UIView {
         let view = PlaceDetailsDescriptionView(labelText: "The top line from Wikipedia",
                                         icon: UIImage(named: "logo_wikipedia"),
                                         type: DetailType.wikipedia,
-                                        expanded: true)
+                                        expanded: false)
+
         let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
         let underlineAttributedString = NSAttributedString(string: "Read more on Wikipedia", attributes: underlineAttribute)
         view.readMoreLink.attributedText = underlineAttributedString
@@ -159,7 +161,7 @@ class PlaceDetailsCardView: UIView {
         let view = PlaceDetailsDescriptionView(labelText: "The latest from Yelp",
                                                                icon: UIImage(named: "logo_yelp_small"),
                                                                type: DetailType.yelp,
-                                                               expanded: true)
+                                                               expanded: false)
         let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
         let underlineAttributedString = NSAttributedString(string: "Read more on Yelp", attributes: underlineAttribute)
         view.readMoreLink.attributedText = underlineAttributedString
@@ -232,10 +234,6 @@ class PlaceDetailsCardView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         updateViewSize()
-    }
-
-    func prepareForReuse() {
-        self.showEventView(isHidden: false)
     }
 
     // TODO: when else can we call this? layoutSubviews is called when we scroll and we don't want to calculate all this each time...

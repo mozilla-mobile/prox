@@ -44,7 +44,7 @@ class PlaceDetailsDescriptionView: UIView {
         return view
     }()
 
-    lazy var expandableLabel: UILabel = {
+    lazy var descriptionLabel: UILabel = {
         let view = UILabel()
         view.font = Fonts.detailsViewDescriptionText
         view.textColor = Colors.detailsViewCardSecondaryText
@@ -63,8 +63,7 @@ class PlaceDetailsDescriptionView: UIView {
     }()
 
     lazy var expandableView: UIStackView = {
-        let view = UIStackView(arrangedSubviews: [self.expandableLabel, self.readMoreLink])
-
+        let view = UIStackView(arrangedSubviews: [self.descriptionLabel, self.readMoreLink])
         view.axis = .vertical
         view.spacing = 10
         view.distribution = .fillProportionally
@@ -85,15 +84,21 @@ class PlaceDetailsDescriptionView: UIView {
     }()
 
     lazy var expandableViewHeightConstraint: NSLayoutConstraint = {
-        return self.expandableView.heightAnchor.constraint(equalToConstant: 0)
+        let constraint = self.expandableView.heightAnchor.constraint(equalToConstant: 0)
+        constraint.priority = 999
+        return constraint
     }()
 
     lazy var expandableViewBottomConstraint: NSLayoutConstraint = {
-        return self.expandableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: self.uiMode == .collapsed ? 0 : -10)
+        let constraint = self.expandableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: self.uiMode == .collapsed ? 0 : -10)
+        constraint.priority = 999
+        return constraint
     }()
 
     lazy var logoBottomConstraint: NSLayoutConstraint = {
-        return self.logoView.bottomAnchor.constraint(equalTo: self.descriptionTitleView.bottomAnchor, constant: self.uiMode == .collapsed ? 0 : -20)
+        let constraint = self.logoView.bottomAnchor.constraint(equalTo: self.descriptionTitleView.bottomAnchor, constant: self.uiMode == .collapsed ? 0 : -20)
+        constraint.priority = 999
+        return constraint
     }()
 
     init(labelText: String,
@@ -122,17 +127,37 @@ class PlaceDetailsDescriptionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    private func resetConstraints() {
+        self.expandableViewHeightConstraint.constant = 0
+        self.expandableViewBottomConstraint.constant = self.uiMode == .collapsed ? 0 : -10
+        self.logoBottomConstraint.constant = self.uiMode == .collapsed ? 0 : -20
+        if uiMode == .collapsed {
+            expandableViewHeightConstraint.isActive = true
+        } else {
+            expandableViewHeightConstraint.isActive = false
+        }
+    }
+
     private func setupSubviews() {
         addSubview(descriptionTitleView)
+        descriptionTitleView.addSubview(logoView)
+        descriptionTitleView.addSubview(label)
+        descriptionTitleView.addSubview(expandButton)
+        addSubview(expandableView)
+
+        activateDefaultConstraints()
+    }
+
+    private func activateDefaultConstraints() {
         var constraints = [descriptionTitleView.topAnchor.constraint(equalTo: topAnchor),
                            descriptionTitleView.leadingAnchor.constraint(equalTo: leadingAnchor),
                            descriptionTitleView.trailingAnchor.constraint(equalTo: trailingAnchor)]
 
         descriptionTitleView.addSubview(logoView)
         constraints += [logoView.centerXAnchor.constraint(equalTo: descriptionTitleView.leadingAnchor, constant: 24),
-                           logoView.heightAnchor.constraint(equalToConstant: 16),
-                           logoView.topAnchor.constraint(equalTo: descriptionTitleView.topAnchor, constant: 20),
-                           logoBottomConstraint]
+                        logoView.heightAnchor.constraint(equalToConstant: 16),
+                        logoView.topAnchor.constraint(equalTo: descriptionTitleView.topAnchor, constant: 20),
+                        logoBottomConstraint]
 
         descriptionTitleView.addSubview(label)
         constraints += [label.centerYAnchor.constraint(equalTo: logoView.centerYAnchor),

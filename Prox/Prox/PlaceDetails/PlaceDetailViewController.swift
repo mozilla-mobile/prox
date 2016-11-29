@@ -99,7 +99,6 @@ class PlaceDetailViewController: UIViewController {
     fileprivate var previousCardViewController: PlaceDetailsCardViewController?
     fileprivate var currentCardViewController: PlaceDetailsCardViewController!
     fileprivate var nextCardViewController: PlaceDetailsCardViewController?
-    fileprivate var unusedPlaceCardViewControllers = [PlaceDetailsCardViewController]()
 
     fileprivate var currentCardViewCenterXConstraint: NSLayoutConstraint?
     fileprivate var previousCardViewTrailingConstraint: NSLayoutConstraint?
@@ -391,18 +390,15 @@ class PlaceDetailViewController: UIViewController {
                     previousCardViewController.cardView.removeFromSuperview()
                     previousCardViewController.cardView.isHidden = false
                     previousCardViewController.removeFromParentViewController()
-                    self.unusedPlaceCardViewControllers.append(previousCardViewController)
                 }
                 if let nextCardViewController = self.nextCardViewController {
                     nextCardViewController.cardView.removeFromSuperview()
                     nextCardViewController.cardView.isHidden = false
                     nextCardViewController.removeFromParentViewController()
-                    self.unusedPlaceCardViewControllers.append(nextCardViewController)
                 }
                 self.currentCardViewController.cardView.removeFromSuperview()
                 self.currentCardViewController.cardView.isHidden = false
                 self.currentCardViewController.removeFromParentViewController()
-                self.unusedPlaceCardViewControllers.append(self.currentCardViewController)
 
                 self.previousCardViewController = newPreviousCardViewController
                 self.currentCardViewController = newCurrentViewController
@@ -413,20 +409,12 @@ class PlaceDetailViewController: UIViewController {
     }
 
     fileprivate func dequeuePlaceCardViewController(forPlace place: Place) -> PlaceDetailsCardViewController {
-        guard let placeCardVC = unusedPlaceCardViewControllers.last else {
-            let newController = PlaceDetailsCardViewController(place: place)
-            newController.placeImageDelegate = self
-            newController.cardView.delegate = self
-            newController.locationProvider = locationProvider
-            newController.cardView.alpha = cardFadeOutAlpha
-            return newController
-        }
-
-        placeCardVC.prepareForReuse()
-        unusedPlaceCardViewControllers.removeLast()
-        placeCardVC.place = place
-        placeCardVC.cardView.alpha = cardFadeOutAlpha
-        return placeCardVC
+        let newController = PlaceDetailsCardViewController(place: place)
+        newController.placeImageDelegate = self
+        newController.cardView.delegate = self
+        newController.locationProvider = locationProvider
+        newController.cardView.alpha = cardFadeOutAlpha
+        return newController
     }
 
     @objc fileprivate func didPan(gestureRecognizer: UIPanGestureRecognizer) {
@@ -552,7 +540,6 @@ class PlaceDetailViewController: UIViewController {
                     previousCardViewController.cardView.removeFromSuperview()
                     previousCardViewController.cardView.isHidden = false
                     previousCardViewController.removeFromParentViewController()
-                    self.unusedPlaceCardViewControllers.append(previousCardViewController)
                 }
                 self.previousCardViewController = self.currentCardViewController
                 self.currentCardViewController = nextCardViewController
@@ -620,7 +607,6 @@ class PlaceDetailViewController: UIViewController {
                     nextCardViewController.cardView.removeFromSuperview()
                     nextCardViewController.cardView.isHidden = false
                     nextCardViewController.removeFromParentViewController()
-                    self.unusedPlaceCardViewControllers.append(nextCardViewController)
                 }
                 self.imageCarousel.removeFromSuperview()
                 self.imageCarousel = previousCardImageCarousel
