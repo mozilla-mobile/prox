@@ -8,7 +8,8 @@ import UserNotifications
 
 private let sentNotificationDictKey = "sent_notifications_dict"
 
-let notificationEventIDKey = "eventPlaceID"
+let notificationEventPlaceIDKey = "eventPlaceID"
+let notificationEventIDKey = "eventID"
 
 fileprivate typealias EventID = String
 
@@ -144,7 +145,7 @@ class EventNotificationsManager {
                     content.title = NSString.localizedUserNotificationString(forKey: alertTitle, arguments: nil)
                     content.body =  NSString.localizedUserNotificationString(forKey: alertBody, arguments: nil)
                     content.categoryIdentifier = "EVENTS"
-                    content.userInfo = [notificationEventIDKey: event.placeId]
+                    content.userInfo = [notificationEventIDKey: event.id, notificationEventPlaceIDKey: event.placeId]
                     let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
                     let request = UNNotificationRequest(identifier: event.id, content: content, trigger: trigger)
                     center.add(request) { error in
@@ -167,7 +168,7 @@ class EventNotificationsManager {
                 notification.alertBody = alertBody
                 notification.alertAction = alertActionTitle
                 notification.fireDate = Date().addingTimeInterval(timeInterval)
-                notification.userInfo = [notificationEventIDKey: event.placeId]
+                notification.userInfo = [notificationEventIDKey: event.id, notificationEventPlaceIDKey: event.placeId]
                 UIApplication.shared.scheduleLocalNotification(notification)
             }
         }
@@ -196,5 +197,9 @@ class EventNotificationsManager {
 
     fileprivate func markAsSent(event: Event) {
         sentNotifications.insert(event.id)
+    }
+
+    func fakeEvents() -> [Event] {
+        return [Event(id: "Beginners-Jive-Classes2016-11-28 19:30:00", placeId: "gaucho-tower-bridge-london", coordinates: CLLocationCoordinate2D(latitude: 51.5045923, longitude: -0.0992805), description: "Free Jazz Concert", url: nil, startTime: Date() + (30 * 60), endTime: nil)]
     }
 }

@@ -305,10 +305,21 @@ class PlaceCarouselViewController: UIViewController {
         self.present(alertController, animated: true)
     }
 
-    func openPlaceForEvent(withKey key: String) {
-        placesProvider.placeWithEvent(forKey: key) { place in
+
+    fileprivate func openPlace(_ place: Place) {
+        guard let presentedVC = self.presentedViewController as? PlaceDetailViewController else {
+            // open the details screen for the place
+            return self.openDetail(forPlace: place)
+        }
+
+        // handle when the user is already looking at the app
+        presentedVC.openCard(forPlaceWithEvent: place)
+    }
+
+    func openPlace(placeKey: String, forEventWithKey eventKey: String) {
+        placesProvider.place(withKey: placeKey, forEventWithKey: eventKey) { place in
+            guard let place = place else { return }
             DispatchQueue.main.async {
-                guard let place = place else { return }
                 guard let presentedVC = self.presentedViewController else {
                     // open the details screen for the place
                     return self.openDetail(forPlace: place)
@@ -374,6 +385,7 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
         let eventNotificationsManager = EventNotificationsManager(withLocationProvider: locationMonitor)
         eventNotificationsManager.sendEventNotifications(forLocation: location)
     }
+    
     func locationMonitorNeedsUserPermissionsPrompt(_ locationMonitor: LocationMonitor) {
         presentSettingsOrQuitPrompt()
     }

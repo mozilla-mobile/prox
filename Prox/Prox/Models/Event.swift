@@ -151,7 +151,7 @@ class Event {
     }
 
     internal func shouldShowEvent(withStartTime startTime: Date, endTime: Date?, timeIntervalBeforeStartOfEvent startTimeInterval: TimeInterval, timeIntervalBeforeEndOfEvent endTimeInterval: TimeInterval, atCurrentTime currentTime: Date) -> Bool {
-        if isFutureEvent(eventStartTime: startTime, currentTime: currentTime) {
+        if isFutureEvent(currentTime: currentTime) {
             return (startTime - startTimeInterval) <= currentTime
         }
         guard let endTime = endTime else {
@@ -177,7 +177,7 @@ class Event {
     }
 
     private func isUpcomingEvent(currentTime: Date) -> Bool {
-        return isFutureEvent(eventStartTime: currentTime, currentTime: Date()) && (startTime - Event.eventStartNotificationInterval) <= currentTime
+        return isFutureEvent(currentTime: currentTime) && (startTime - Event.eventStartNotificationInterval) <= currentTime
     }
 
     private func isOngoingEvent(currentTime: Date) -> Bool {
@@ -202,8 +202,8 @@ class Event {
         return currentTime > lastNotificationTime - Event.eventStartNotificationInterval && currentTime < lastNotificationTime
     }
 
-    private func isFutureEvent(eventStartTime: Date, currentTime: Date) -> Bool {
-        return currentTime < eventStartTime
+    private func isFutureEvent(currentTime: Date) -> Bool {
+        return currentTime < startTime
     }
 
     private func formatEventString(string: String) -> String {

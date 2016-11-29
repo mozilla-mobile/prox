@@ -44,12 +44,12 @@ class PlacesProvider {
         database.getPlace(forKey: key).upon { callback($0.successResult() )}
     }
 
-    func placeWithEvent(forKey key: String, callback: @escaping (Place?) -> ()) {
+    func place(withKey placeKey: String, forEventWithKey eventKey: String, callback: @escaping (Place?) -> ()) {
         let eventProvider = EventsProvider()
         var placeWithEvent: Place?
         var eventForPlace: Event?
         let lock = NSLock()
-        place(forKey: key) { place in
+        place(forKey: placeKey) { place in
             defer {
                 lock.unlock()
             }
@@ -63,7 +63,7 @@ class PlacesProvider {
             callback(foundPlace)
         }
 
-        eventProvider.event(forKey: key) { event in
+        eventProvider.event(forKey: eventKey) { event in
             defer {
                 lock.unlock()
             }

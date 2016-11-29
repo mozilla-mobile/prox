@@ -159,8 +159,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-        if let eventKey = notification.userInfo?[notificationEventIDKey] as? String {
-            placeCarouselViewController?.openPlaceForEvent(withKey: eventKey)
+        if let eventKey = notification.userInfo?[notificationEventIDKey] as? String,
+            let placeKey = notification.userInfo?[notificationEventPlaceIDKey] as? String {
+            placeCarouselViewController?.openPlace(placeKey: placeKey, forEventWithKey: eventKey)
         }
     }
 }
@@ -185,9 +186,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
         if response.notification.request.content.categoryIdentifier == "EVENTS" {
-            if let eventKey = response.notification.request.content.userInfo[notificationEventIDKey] as? String {
+            if let eventKey = response.notification.request.content.userInfo[notificationEventIDKey] as? String,
+                let placeKey = response.notification.request.content.userInfo[notificationEventPlaceIDKey] as? String {
                 Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [:])
-                placeCarouselViewController?.openPlaceForEvent(withKey: eventKey)
+                placeCarouselViewController?.openPlace(placeKey: placeKey, forEventWithKey: eventKey)
             }
         }
     }
