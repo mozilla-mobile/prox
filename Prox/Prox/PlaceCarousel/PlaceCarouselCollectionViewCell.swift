@@ -251,6 +251,8 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
 }
 
 extension PlaceCarouselCollectionViewCell: TravelTimesView {
+    private static let travelTimesLoadingText = "Locating..."
+
     func getIDForTravelTimesView() -> String? { return idForTravelTimesView }
     func setIDForTravelTimesView(_ id: String) { idForTravelTimesView = id }
 
@@ -263,7 +265,7 @@ extension PlaceCarouselCollectionViewCell: TravelTimesView {
     func setTravelTimesUIIsLoading(_ isLoading: Bool) {
         if isLoading {
             // This will be overwritten when the result is updated.
-            location.text = "Locating..."
+            location.text = PlaceCarouselCollectionViewCell.travelTimesLoadingText
         }
     }
 
@@ -281,7 +283,12 @@ extension PlaceCarouselCollectionViewCell: TravelTimesView {
             location.text = "\(durationInMinutes!) min drive away"
 
         case .noData:
-            location.text = "Travel time unknown"
+            // Note: I don't know this is necessary. But it'd waste time to research so I set it in any case.
+            //
+            // UX wants to continue to display the loading text if we were unable to get data
+            // because we will retry to get the travel times the next time they're expected to
+            // be shown so in some sense, it's as if they continued to load.
+            location.text = PlaceCarouselCollectionViewCell.travelTimesLoadingText
         }
     }
 }
