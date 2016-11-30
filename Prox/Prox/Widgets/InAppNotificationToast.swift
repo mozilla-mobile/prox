@@ -37,6 +37,9 @@ class InAppNotificationToastProvider: NSObject {
 
     weak var delegate: InAppNotificationToastDelegate?
 
+    fileprivate var viewBottomAnchor: NSLayoutConstraint!
+    fileprivate var viewTopAnchor: NSLayoutConstraint!
+
     init(placeId: String, eventId: String, text: String) {
         self.placeId = placeId
         self.eventId = eventId
@@ -58,20 +61,35 @@ class InAppNotificationToastProvider: NSObject {
     }
 
     func presentOnView(_ view: UIView) {
+        viewTopAnchor = notificationView.topAnchor.constraint(equalTo: view.bottomAnchor)
+
         view.addSubview(notificationView)
         NSLayoutConstraint.activate([notificationView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                      notificationView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                                     notificationView.bottomAnchor.constraint(equalTo: view.bottomAnchor)],
+                                     viewTopAnchor],
                                     translatesAutoresizingMaskIntoConstraints: false)
         view.bringSubview(toFront: notificationView)
+        view.layoutIfNeeded()
 
-        presentationTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
+        viewTopAnchor.constant = -notificationView.bounds.size.height
+
+        UIView.animate(withDuration: 0.4, delay: 0.0, options: .curveEaseInOut, animations: {
+            view.layoutIfNeeded()
+        }, completion: { _ in
+            self.presentationTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(self.dismiss), userInfo: nil, repeats: false)
+        })
     }
 
     func dismiss() {
-        notificationView.removeFromSuperview()
-        presentationTimer?.invalidate()
-        delegate?.inAppNotificationToastProviderDidDismiss(self)
+        viewTopAnchor.constant = 0
+
+        UIView.animate(withDuration: 0.4, delay: 0.0, options: .curveEaseInOut, animations: {
+            self.notificationView.superview?.layoutIfNeeded()
+        }, completion: { _ in
+            self.notificationView.removeFromSuperview()
+            self.presentationTimer?.invalidate()
+            self.delegate?.inAppNotificationToastProviderDidDismiss(self)
+        })
     }
     
     required init?(coder aDecoder: NSCoder) {

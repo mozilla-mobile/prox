@@ -774,7 +774,6 @@ extension PlaceDetailViewController: InAppNotificationToastDelegate {
             }
             DispatchQueue.main.async {
                 self.openCard(forPlaceWithEvent: place)
-                self.notificationToastProvider = nil
             }
         }
     }

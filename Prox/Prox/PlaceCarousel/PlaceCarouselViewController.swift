@@ -372,7 +372,6 @@ extension PlaceCarouselViewController: InAppNotificationToastDelegate {
             DispatchQueue.main.async {
                 self.openDetail(forPlace: place)
             }
-            self.notificationToastProvider = nil
         }
     }
 
