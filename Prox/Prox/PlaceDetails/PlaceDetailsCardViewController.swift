@@ -296,7 +296,7 @@ extension PlaceDetailsCardViewController: UIScrollViewDelegate {
     fileprivate func didChangePage(scrollView: UIScrollView) {
         let pageSize = imageCarouselCollectionView.bounds.size
 
-        // Unable to change pages if we don't have anything to page!
+        // There isn't anything to page if the image carousel is empty
         guard pageSize != CGSize.zero && pageSize.width != 0 else {
             return
         }
