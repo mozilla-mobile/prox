@@ -427,10 +427,6 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
         }
     }
 
-    func placesProvider(_ controller: PlacesProvider, didError error: Error) {
-        showErrorMessageIfNoPlaces()
-    }
-
     func placesProviderDidTimeout(_ controller: PlacesProvider) {
         showErrorMessageIfNoPlaces()
     }
