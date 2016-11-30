@@ -43,6 +43,7 @@
 		7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095841DB903B7007C54F0 /* DatabaseResult.swift */; };
 		7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */; };
 		7B561BBA1DAC02B90096D8BC /* hilton_location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7B561BB91DAC02B90096D8BC /* hilton_location.gpx */; };
+		7B699A9E1DEDD635004A671B /* InAppNotificationToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B699A9D1DEDD635004A671B /* InAppNotificationToast.swift */; };
 		7B8651901DBF8544002A666A /* PlaceCarouselViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B86518F1DBF8544002A666A /* PlaceCarouselViewControllerTests.swift */; };
 		7B8651921DBFAF19002A666A /* PlaceUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8651911DBFAF19002A666A /* PlaceUtilities.swift */; };
 		7B8651941DBFAFA8002A666A /* PlaceUtilitiesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8651931DBFAFA8002A666A /* PlaceUtilitiesTests.swift */; };
@@ -159,6 +160,7 @@
 		7B5095841DB903B7007C54F0 /* DatabaseResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatabaseResult.swift; path = Data/DatabaseResult.swift; sourceTree = "<group>"; };
 		7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselHeaderView.swift; path = PlaceCarousel/PlaceCarouselHeaderView.swift; sourceTree = "<group>"; };
 		7B561BB91DAC02B90096D8BC /* hilton_location.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hilton_location.gpx; sourceTree = "<group>"; };
+		7B699A9D1DEDD635004A671B /* InAppNotificationToast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppNotificationToast.swift; sourceTree = "<group>"; };
 		7B86518F1DBF8544002A666A /* PlaceCarouselViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCarouselViewControllerTests.swift; sourceTree = "<group>"; };
 		7B8651911DBFAF19002A666A /* PlaceUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceUtilities.swift; sourceTree = "<group>"; };
 		7B8651931DBFAFA8002A666A /* PlaceUtilitiesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceUtilitiesTests.swift; sourceTree = "<group>"; };
@@ -353,6 +355,7 @@
 				E61831981DE0BDBA00D1810F /* TravelTimesView.swift */,
 				E63C346E1DDCDFBB005B6B15 /* LocationLoadingView.swift */,
 				E67D49FC1DDE42F0005E17F9 /* LoadingOverlayView.swift */,
+				7B699A9D1DEDD635004A671B /* InAppNotificationToast.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -579,7 +582,7 @@
 				TargetAttributes = {
 					7B29E7BE1DA3EC360099AF38 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 9G8J6YA743;
+						DevelopmentTeam = 43AQ936H96;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -817,6 +820,7 @@
 				7BA05BEB1DD4D602009AC121 /* EventNotificationsManager.swift in Sources */,
 				E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */,
 				7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */,
+				7B699A9E1DEDD635004A671B /* InAppNotificationToast.swift in Sources */,
 				E61252F11DDF761C007E33B7 /* MapPlacesTransition.swift in Sources */,
 				7BB1CA451DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift in Sources */,
 				7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */,

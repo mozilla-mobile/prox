@@ -108,7 +108,7 @@ class EventNotificationsManager {
                 guard let currentLocation = self.locationProvider?.getCurrentLocation()?.coordinate else { return }
                 // check that travel times are within current location limits before deciding whether to send notification
                 TravelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: event.coordinates, before: event.arrivalByTime()) { canTravel in
-                    guard canTravel else { return }
+//                    guard canTravel else { return }
                     DispatchQueue.main.async {
                         var timeInterval = 1
                         if index > 0 {
@@ -192,10 +192,15 @@ class EventNotificationsManager {
     }
 
     fileprivate func isUnsent(event: Event) -> Bool {
-        return !sentNotifications.contains(event.id)
+//        return !sentNotifications.contains(event.id)
+        return true
     }
 
     fileprivate func markAsSent(event: Event) {
         sentNotifications.insert(event.id)
     }
+
+//    func fakeEvents() -> [Event] {
+//        return [Event(id: "Beginners-Jive-Classes2016-11-28 19:30:00", placeId: "gaucho-tower-bridge-london", coordinates: CLLocationCoordinate2D(latitude: 51.5045923, longitude: -0.0992805), description: "Free Jazz Concert", url: nil, startTime: Date() + (30 * 60), endTime: nil)]
+//    }
 }

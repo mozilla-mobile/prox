@@ -98,6 +98,8 @@ class PlaceCarouselViewController: UIViewController {
         }
     }
 
+    fileprivate var notificationToastProvider: InAppNotificationToastProvider?
+
     private func setSunriseSetTimes() {
         let today = Date()
 
@@ -217,7 +219,7 @@ class PlaceCarouselViewController: UIViewController {
         openDetail(forPlace: place)
     }
 
-    func openDetail(forPlace place: Place) {
+    func openDetail(forPlace place: Place, withCompletion completion: (() -> ())? = nil) {
         // if we are already displaying a place detail, don't try and display another one
         // places should be able to update beneath without affecting what the user currently sees
         if let _ = self.presentedViewController {
@@ -228,7 +230,7 @@ class PlaceCarouselViewController: UIViewController {
         placeDetailViewController.locationProvider = self.locationMonitor
         placeDetailViewController.transitioningDelegate = self
 
-        self.present(placeDetailViewController, animated: true, completion: nil)
+        self.present(placeDetailViewController, animated: true, completion: completion)
     }
 
     @objc fileprivate func willEnterForeground() {
@@ -308,17 +310,6 @@ class PlaceCarouselViewController: UIViewController {
         self.present(alertController, animated: true)
     }
 
-
-    fileprivate func openPlace(_ place: Place) {
-        guard let presentedVC = self.presentedViewController as? PlaceDetailViewController else {
-            // open the details screen for the place
-            return self.openDetail(forPlace: place)
-        }
-
-        // handle when the user is already looking at the app
-        presentedVC.openCard(forPlaceWithEvent: place)
-    }
-
     func openPlace(placeKey: String, forEventWithKey eventKey: String) {
         placesProvider.place(withKey: placeKey, forEventWithKey: eventKey) { place in
             guard let place = place else { return }
@@ -332,6 +323,50 @@ class PlaceCarouselViewController: UIViewController {
                 (presentedVC as? PlaceDetailViewController)?.openCard(forPlaceWithEvent: place)
             }
         }
+    }
+
+    fileprivate func openPlace(_ place: Place) {
+        guard let presentedVC = self.presentedViewController as? PlaceDetailViewController else {
+        // open the details screen for the place
+            return self.openDetail(forPlace: place)
+        }
+
+        // handle when the user is already looking at the app
+        presentedVC.openCard(forPlaceWithEvent: place)
+    }
+
+    func presentInAppEventNotification(forEventWithKey eventKey: String, atPlaceWithKey placeKey: String, withDescription description: String) {
+        placesProvider.place(withKey: placeKey, forEventWithKey: eventKey) { place in
+            guard let place = place else { return }
+            DispatchQueue.main.async {
+                guard let presentedVC = self.presentedViewController as? PlaceDetailViewController else {
+                    // open the details screen for the place
+                    return self.presentToast(withText: description, forPlace: place)
+                }
+
+                // handle when the user is already looking at the app
+                presentedVC.presentToast(withText: description, forPlace: place)
+            }
+        }
+    }
+
+    private func presentToast(withText text: String, forPlace place: Place) {
+        if notificationToastProvider == nil {
+            notificationToastProvider = InAppNotificationToastProvider(place: place, text: text)
+            notificationToastProvider?.delegate = self
+            notificationToastProvider?.presentOnView(self.view)
+        }
+    }
+}
+
+extension PlaceCarouselViewController: InAppNotificationToastDelegate {
+    func inAppNotificationToastProvider(_ toast: InAppNotificationToastProvider, userDidRespondToNotificationForPlace place: Place) {
+//        if let placeIndex = places.index(where: { $0.id == place.id }) {
+//            places[placeIndex] = place
+//        } else {
+//            places.append(place)
+//        }
+        openFirstPlace()
     }
 }
 

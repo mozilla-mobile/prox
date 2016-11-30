@@ -138,6 +138,8 @@ class PlaceDetailViewController: UIViewController {
         return layer
     }()
 
+    fileprivate var notificationToastProvider: InAppNotificationToastProvider?
+
     fileprivate var panDirection: PanDirection = .none
 
     init(place: Place) {
@@ -309,6 +311,7 @@ class PlaceDetailViewController: UIViewController {
                         mapButtonBadge.widthAnchor.constraint(greaterThanOrEqualToConstant: 20.0)]
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+        NSLog("View finished loading")
     }
 
     override func viewDidLayoutSubviews() {
@@ -345,6 +348,18 @@ class PlaceDetailViewController: UIViewController {
         }
     }
 
+    func presentToast(withText text: String, forPlace place: Place) {
+        if currentCardViewController.place == place {
+            return openCard(forPlaceWithEvent: place)
+        }
+
+        if notificationToastProvider == nil {
+            notificationToastProvider = InAppNotificationToastProvider(place: place, text: text)
+            notificationToastProvider?.delegate = self
+            notificationToastProvider?.presentOnView(self.view)
+        }
+    }
+
     fileprivate func pageForwardToCard(forPlace place: Place) {
         guard let newCurrentViewController = insertNewCardViewController(forPlace: place) else { return }
 
@@ -378,6 +393,10 @@ class PlaceDetailViewController: UIViewController {
         UIView.animate(withDuration: 0.1, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
             self.imageCarousel.alpha = 0
             nextCardImageCarousel.alpha = 1
+            newCurrentViewController.cardView.alpha = 1
+            self.currentCardViewController.cardView.alpha = cardFadeOutAlpha
+            newPreviousCardViewController?.cardView.alpha = cardFadeOutAlpha
+            newNextCardViewController?.cardView.alpha = cardFadeOutAlpha
             self.setBackgroundImage(toPhotoAtURL: newCurrentViewController.place.photoURLs.first)
             self.view.layoutIfNeeded()
         }, completion: { finished in
@@ -404,6 +423,7 @@ class PlaceDetailViewController: UIViewController {
                 self.currentCardViewController = newCurrentViewController
                 self.nextCardViewController = newNextCardViewController
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
+                self.currentCardViewController.beginAutoMovingOfCarousel()
             }
         })
     }
@@ -578,7 +598,9 @@ class PlaceDetailViewController: UIViewController {
 
         let springDamping:CGFloat = newPreviousCardViewController == nil ? 0.8 : 1.0
         setupConstraints(forNewPreviousCard: newPreviousCardViewController, newCurrentCard: previousCardViewController, newNextCard: currentCardViewController)
-        AppState.trackCardVisit(cardPos: (dataSource?.index(forPlace: previousCardViewController.place))!)
+        if let placeIndex = dataSource?.index(forPlace: previousCardViewController.place) {
+            AppState.trackCardVisit(cardPos: placeIndex)
+        }
 
         view.layoutIfNeeded()
 
@@ -688,9 +710,10 @@ class PlaceDetailViewController: UIViewController {
     }
 
     func close() {
-        Analytics.logEvent(event: AnalyticsEvent.MAP_BUTTON, params: [:])
-        AppState.enterCarousel()
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true) {
+            Analytics.logEvent(event: AnalyticsEvent.MAP_BUTTON, params: [:])
+            AppState.enterCarousel()
+        }
 
     }
 
@@ -738,5 +761,12 @@ extension PlaceDetailViewController: Animatable {
             mapButtonBadge: self.mapButtonBadge,
             backgroundImage: self.backgroundImage
         )
+    }
+}
+
+extension PlaceDetailViewController: InAppNotificationToastDelegate {
+    func inAppNotificationToastProvider(_ toast: InAppNotificationToastProvider, userDidRespondToNotificationForPlace place: Place) {
+        openCard(forPlaceWithEvent: place)
+        notificationToastProvider = nil
     }
 }

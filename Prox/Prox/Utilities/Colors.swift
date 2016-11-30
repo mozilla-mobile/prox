@@ -21,6 +21,7 @@ extension Colors {
     public static let restartButtonColor = UIColor(red:0.00, green:0.48, blue:1.00, alpha:1.0)
 }
 
+// review provider colours
 extension Colors {
     public static let yelp = UIColor(colorLiteralRed: 0.83, green: 0.14, blue: 0.14, alpha: 1.0)
     public static let tripAdvisor = UIColor(colorLiteralRed: 0.18, green: 0.62, blue: 0.27, alpha: 1.0)
@@ -53,4 +54,10 @@ extension Colors {
     public static let detailsViewBackgroundGradientEnd = UIColor(red: 0, green: 0.48, blue: 1.00, alpha: 0.1)
 
     public static let detailsViewDescriptionExpandArrow = UIColor(red: 0.78, green: 0.78, blue: 0.78, alpha: 1.0)
+}
+
+// notification colours
+extension Colors {
+    public static let notificationText = Colors.detailsViewEventText
+    public static let notificationBackground = Colors.detailsViewEventBackground
 }

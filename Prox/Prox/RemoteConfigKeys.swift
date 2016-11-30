@@ -54,9 +54,9 @@ class RemoteConfigKeys {
     public static let eventSearchRadiusInKm = RemoteConfigDouble(key: "event_search_radius_in_km", defaultValue: 40.0)
 
     // the strings that are in the config for event notifications and display of events on cards
-    public static let endingEventNotificationString = RemoteConfigString(key: "ending_event_notification_string", defaultValue: "{event_name} - will end soon and you&apos;re close by!")
+    public static let endingEventNotificationString = RemoteConfigString(key: "ending_event_notification_string", defaultValue: "{event_name} - will end soon and you're close by!")
     public static let ongoingEventNotificationString = RemoteConfigString(key: "ongoing_event_notification_string", defaultValue: "{event_name} - underway now at a place near you.")
-    public static let upcomingEventNotificationString = RemoteConfigString(key: "upcoming_event_notification_string", defaultValue: "{event_name} will start soon and you&apos;re close by!")
+    public static let upcomingEventNotificationString = RemoteConfigString(key: "upcoming_event_notification_string", defaultValue: "{event_name} will start soon and you're close by!")
     public static let endingEventCardString = RemoteConfigString(key: "ending_event_card_string", defaultValue: "{event_name} will end at {end_time}")
     public static let ongoingEventCardString = RemoteConfigString(key: "ongoing_event_card_string", defaultValue: "{event_name} has started")
     public static let upcomingEventCardString = RemoteConfigString(key: "upcoming_event_card_string", defaultValue: "{event_name} starts in {time_to_start}")

@@ -179,7 +179,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // show a badge.
-        completionHandler(UNNotificationPresentationOptions.alert)
+        if let eventKey = notification.request.content.userInfo[notificationEventIDKey] as? String,
+            let placeKey = notification.request.content.userInfo[notificationEventPlaceIDKey] as? String {
+            Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [:])
+            placeCarouselViewController?.presentInAppEventNotification(forEventWithKey: eventKey, atPlaceWithKey: placeKey, withDescription: notification.request.content.body)
+        }
+        completionHandler(UNNotificationPresentationOptions.badge)
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter,
