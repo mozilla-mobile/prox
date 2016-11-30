@@ -5,12 +5,14 @@
 import UIKit
 
 protocol InAppNotificationToastDelegate: class {
-    func inAppNotificationToastProvider(_ toast: InAppNotificationToastProvider, userDidRespondToNotificationForPlace place: Place)
+    func inAppNotificationToastProvider(_ toast: InAppNotificationToastProvider, userDidRespondToNotificationForEventWithId eventId: String, atPlaceWithId placeId: String)
+    func inAppNotificationToastProviderDidDismiss(_ toast: InAppNotificationToastProvider)
 }
 
 class InAppNotificationToastProvider: NSObject {
 
-    fileprivate let place: Place
+    fileprivate let placeId: String
+    fileprivate let eventId: String
 
     fileprivate lazy var notificationView: UIView = {
         let view = UIView()
@@ -35,8 +37,9 @@ class InAppNotificationToastProvider: NSObject {
 
     weak var delegate: InAppNotificationToastDelegate?
 
-    init(place: Place, text: String) {
-        self.place = place
+    init(placeId: String, eventId: String, text: String) {
+        self.placeId = placeId
+        self.eventId = eventId
         super.init()
         notificationLabel.text = text
 
@@ -62,12 +65,13 @@ class InAppNotificationToastProvider: NSObject {
                                     translatesAutoresizingMaskIntoConstraints: false)
         view.bringSubview(toFront: notificationView)
 
-//        presentationTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
+        presentationTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
     }
 
     func dismiss() {
         notificationView.removeFromSuperview()
         presentationTimer?.invalidate()
+        delegate?.inAppNotificationToastProviderDidDismiss(self)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -75,7 +79,7 @@ class InAppNotificationToastProvider: NSObject {
     }
 
     @objc fileprivate func userDidRespondToToast(recognizer: UITapGestureRecognizer) {
-        delegate?.inAppNotificationToastProvider(self, userDidRespondToNotificationForPlace: place)
+        delegate?.inAppNotificationToastProvider(self, userDidRespondToNotificationForEventWithId: eventId, atPlaceWithId: placeId)
         dismiss()
     }
 

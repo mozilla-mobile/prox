@@ -348,13 +348,14 @@ class PlaceDetailViewController: UIViewController {
         }
     }
 
-    func presentToast(withText text: String, forPlace place: Place) {
-        if currentCardViewController.place == place {
-            return openCard(forPlaceWithEvent: place)
+    func presentToast(withText text: String, forEvent eventId: String, atPlace placeId: String) {
+        if currentCardViewController.place.id == placeId {
+            // ensure that the place has an event with that ID, otherwise fetch
+            return openCard(forPlaceWithEvent: currentCardViewController.place)
         }
 
         if notificationToastProvider == nil {
-            notificationToastProvider = InAppNotificationToastProvider(place: place, text: text)
+            notificationToastProvider = InAppNotificationToastProvider(placeId: placeId, eventId: eventId, text: text)
             notificationToastProvider?.delegate = self
             notificationToastProvider?.presentOnView(self.view)
         }
@@ -765,8 +766,20 @@ extension PlaceDetailViewController: Animatable {
 }
 
 extension PlaceDetailViewController: InAppNotificationToastDelegate {
-    func inAppNotificationToastProvider(_ toast: InAppNotificationToastProvider, userDidRespondToNotificationForPlace place: Place) {
-        openCard(forPlaceWithEvent: place)
-        notificationToastProvider = nil
+    internal func inAppNotificationToastProvider(_ toast: InAppNotificationToastProvider, userDidRespondToNotificationForEventWithId eventId: String, atPlaceWithId placeId: String) {
+        dataSource?.fetchPlace(placeKey: placeId, withEvent: eventId) { place in
+            guard let place = place else {
+                NSLog("unable to fetch place with id \(placeId) and event \(eventId)")
+                return
+            }
+            DispatchQueue.main.async {
+                self.openCard(forPlaceWithEvent: place)
+                self.notificationToastProvider = nil
+            }
+        }
+    }
+
+    func inAppNotificationToastProviderDidDismiss(_ toast: InAppNotificationToastProvider) {
+        self.notificationToastProvider = nil
     }
 }

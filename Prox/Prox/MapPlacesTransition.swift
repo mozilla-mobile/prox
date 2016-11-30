@@ -56,6 +56,11 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
         }
         containerView.layoutIfNeeded()
 
+        // Since we could be at a different place than the one we selected to enter the detail view,
+        // make sure we scroll the carousel to the new view before doing anything
+        mapVC.placeCarousel.scrollTo(place: currentPlace)
+        mapsView.layoutIfNeeded()
+
         if presenting {
             guard let selectedCell = mapVC.placeCarousel.visibleCellFor(place: currentPlace),
                   let imageURL = URL(string: placesVC.currentPlace.photoURLs.first ?? "") else {
@@ -134,12 +139,6 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             // Delay the views from the places view controller a bit so we don't cover the animation with the background image
             fadeDelay(placesViews: placesViews, show: true, delay: duration * 1/6, duration: duration  * 1/4)
         } else {
-            // Since we could be at a different place than the one we selected to enter the detail view,
-            // make sure we scroll the carousel to the new view before doing anything
-            let currentPlace = placesVC.currentPlace
-            mapVC.placeCarousel.scrollTo(place: currentPlace)
-            mapsView.layoutIfNeeded()
-
             guard let toPlacesCell = mapVC.placeCarousel.visibleCellFor(place: currentPlace),
                   let imageURL = URL(string: placesVC.currentPlace.photoURLs.first ?? "") else {
                 return

@@ -14,6 +14,7 @@ protocol PlaceDataSource: class {
     func numberOfPlaces() -> Int
     func place(forIndex: Int) throws -> Place
     func index(forPlace: Place) -> Int?
+    func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ())
 }
 
 struct PlaceDataSourceError: Error {
@@ -23,6 +24,8 @@ struct PlaceDataSourceError: Error {
 fileprivate let placesFetchMonitorIdentifier = "PlaceFetchRadiusMonitor"
 
 class PlaceCarouselViewController: UIViewController {
+
+    lazy var placesWithEvents = Set<Place>()
 
     lazy var placesProvider: PlacesProvider = {
         let controller = PlacesProvider()
@@ -216,7 +219,9 @@ class PlaceCarouselViewController: UIViewController {
         guard let place = places.first else {
             return
         }
-        openDetail(forPlace: place)
+        if self.presentedViewController == nil {
+            openDetail(forPlace: place)
+        }
     }
 
     func openDetail(forPlace place: Place, withCompletion completion: (() -> ())? = nil) {
@@ -225,6 +230,7 @@ class PlaceCarouselViewController: UIViewController {
         if let _ = self.presentedViewController {
             return
         }
+
         let placeDetailViewController = PlaceDetailViewController(place: place)
         placeDetailViewController.dataSource = self
         placeDetailViewController.locationProvider = self.locationMonitor
@@ -336,23 +342,20 @@ class PlaceCarouselViewController: UIViewController {
     }
 
     func presentInAppEventNotification(forEventWithKey eventKey: String, atPlaceWithKey placeKey: String, withDescription description: String) {
-        placesProvider.place(withKey: placeKey, forEventWithKey: eventKey) { place in
-            guard let place = place else { return }
-            DispatchQueue.main.async {
-                guard let presentedVC = self.presentedViewController as? PlaceDetailViewController else {
-                    // open the details screen for the place
-                    return self.presentToast(withText: description, forPlace: place)
-                }
-
-                // handle when the user is already looking at the app
-                presentedVC.presentToast(withText: description, forPlace: place)
+        DispatchQueue.main.async {
+            guard let presentedVC = self.presentedViewController as? PlaceDetailViewController else {
+                // open the details screen for the place
+                return self.presentToast(withText: description, forEventWithId: eventKey, atPlaceWithId: placeKey)
             }
+
+            // handle when the user is already looking at the app
+            presentedVC.presentToast(withText: description, forEvent: eventKey, atPlace: placeKey)
         }
     }
 
-    private func presentToast(withText text: String, forPlace place: Place) {
+    private func presentToast(withText text: String, forEventWithId eventId: String, atPlaceWithId placeId: String) {
         if notificationToastProvider == nil {
-            notificationToastProvider = InAppNotificationToastProvider(place: place, text: text)
+            notificationToastProvider = InAppNotificationToastProvider(placeId: placeId, eventId: eventId, text: text)
             notificationToastProvider?.delegate = self
             notificationToastProvider?.presentOnView(self.view)
         }
@@ -360,13 +363,21 @@ class PlaceCarouselViewController: UIViewController {
 }
 
 extension PlaceCarouselViewController: InAppNotificationToastDelegate {
-    func inAppNotificationToastProvider(_ toast: InAppNotificationToastProvider, userDidRespondToNotificationForPlace place: Place) {
-//        if let placeIndex = places.index(where: { $0.id == place.id }) {
-//            places[placeIndex] = place
-//        } else {
-//            places.append(place)
-//        }
-        openFirstPlace()
+    internal func inAppNotificationToastProvider(_ toast: InAppNotificationToastProvider, userDidRespondToNotificationForEventWithId eventId: String, atPlaceWithId placeId: String) {
+        fetchPlace(placeKey: placeId, withEvent: eventId) { place in
+            guard let place = place else {
+                NSLog("Unable to find place with id \(placeId) and event with id \(eventId)")
+                return
+            }
+            DispatchQueue.main.async {
+                self.openDetail(forPlace: place)
+            }
+            self.notificationToastProvider = nil
+        }
+    }
+
+    func inAppNotificationToastProviderDidDismiss(_ toast: InAppNotificationToastProvider) {
+        self.notificationToastProvider = nil
     }
 }
 
@@ -374,37 +385,58 @@ extension PlaceCarouselViewController: PlaceDataSource {
 
     func nextPlace(forPlace place: Place) -> Place? {
         // if the place isn't in the list, make the first item in the list the next item
-        guard let currentPlaceIndex = places.index(where: {$0 == place}) else {
-            return places.count > 0 ? places[places.startIndex] : nil
+        let allPlaces = places + Array(placesWithEvents)
+        guard let currentPlaceIndex = allPlaces.index(where: {$0 == place}) else {
+            return allPlaces.count > 0 ? allPlaces[allPlaces.startIndex] : nil
         }
 
-        guard currentPlaceIndex + 1 < places.endIndex else { return nil }
+        guard currentPlaceIndex + 1 < allPlaces.endIndex else { return nil }
 
-        return places[places.index(after: currentPlaceIndex)]
+        return allPlaces[allPlaces.index(after: currentPlaceIndex)]
     }
 
     func previousPlace(forPlace place: Place) -> Place? {
-        guard let currentPlaceIndex = places.index(where: {$0 == place}),
-            currentPlaceIndex > places.startIndex else { return nil }
+        let allPlaces = places + Array(placesWithEvents)
+        guard let currentPlaceIndex = allPlaces.index(where: {$0 == place}),
+            currentPlaceIndex > allPlaces.startIndex else { return nil }
 
-        return places[places.index(before: currentPlaceIndex)]
+        return allPlaces[allPlaces.index(before: currentPlaceIndex)]
     }
 
     func numberOfPlaces() -> Int {
-        return places.count
+        return places.count + placesWithEvents.count
     }
 
     func place(forIndex index: Int) throws -> Place {
-        guard index < places.endIndex,
-            index >= places.startIndex else {
+        let allPlaces = places + Array(placesWithEvents)
+        guard index < allPlaces.endIndex,
+            index >= allPlaces.startIndex else {
             throw PlaceDataSourceError(message: "There is no place at index: \(index)")
         }
 
-        return places[index]
+        return allPlaces[index]
     }
 
     func index(forPlace place: Place) -> Int? {
-        return places.index(of: place)
+        let allPlaces = places + Array(placesWithEvents)
+        return allPlaces.index(of: place)
+    }
+
+    func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ()) {
+        if let placeIndex = places.index(where: { $0.id == placeKey }) {
+            let place = places[placeIndex]
+            if place.events.contains(where: { $0.id == eventKey }) {
+                callback(place)
+            }
+            let eventProvider = EventsProvider()
+            eventProvider.event(forKey: eventKey) { event in
+                callback(place)
+            }
+        } else {
+            placesProvider.place(withKey: placeKey, forEventWithKey: eventKey) { place in
+                callback(place)
+            }
+        }
     }
 }
 
@@ -481,7 +513,8 @@ extension PlaceCarouselViewController: LoadingOverlayDelegate {
 extension PlaceCarouselViewController: UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController, presenting: UIViewController,
                              source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        if let _ = presented as? PlaceDetailViewController {
+        if let detailVC = presented as? PlaceDetailViewController,
+            places.contains(detailVC.currentPlace) {
             if isLoading {
                 let fadeTransition = CrossFadeTransition()
 
@@ -500,7 +533,8 @@ extension PlaceCarouselViewController: UIViewControllerTransitioningDelegate {
     }
 
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        if let _ = dismissed as? PlaceDetailViewController {
+        if let detailVC = dismissed as? PlaceDetailViewController,
+            places.contains(detailVC.currentPlace) {
             let transition = MapPlacesTransition()
             transition.presenting = false
             return transition
