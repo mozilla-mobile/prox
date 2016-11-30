@@ -12,6 +12,8 @@ private let YELP_PATH = PROVIDERS_PATH + "yelp"
 private let TRIP_ADVISOR_PATH = PROVIDERS_PATH + "tripAdvisor"
 private let WIKIPEDIA_PATH = PROVIDERS_PATH + "wikipedia"
 
+typealias CachedTravelTime = (deferred: Deferred<DatabaseResult<TravelTimes>>, forLocation: CLLocation)
+
 class Place: Hashable {
 
     fileprivate static var travelTimeExpirationDistance: CLLocationDistance = {
@@ -45,8 +47,7 @@ class Place: Hashable {
 
     let hours: OpenHours? // if nil, there are no listed hours for this place
 
-    fileprivate(set) var lastTravelTime: (deferred: Deferred<DatabaseResult<TravelTimes>>, forLocation: CLLocation)?
-
+    fileprivate(set) var lastTravelTime: CachedTravelTime?
     let wikiDescription: String?
     let yelpDescription: String?
     let tripAdvisorDescription: String?
