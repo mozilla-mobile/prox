@@ -11,6 +11,7 @@ fileprivate func createCircle(color: CGColor, frame: CGRect) -> CAShapeLayer {
     circle.path = CGPath(ellipseIn: frame, transform: nil)
     circle.fillColor = color
     circle.frame = frame
+    circle.opacity = 0.2
     return circle
 }
 
@@ -93,12 +94,21 @@ class LocationLoadingView: UIView {
             self.dot.centerYAnchor.constraint(equalTo: self.centerYAnchor)
         ]
         NSLayoutConstraint.activate(dotConstraints, translatesAutoresizingMaskIntoConstraints: false)
+        startPulsing()
 
-        let aAnim = animation(fromState: .shrunk, toState: .enlarged)
-        self.circleA.add(aAnim, forKey: "a")
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(LocationLoadingView.didEnterBackground),
+                                               name: .UIApplicationDidEnterBackground,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(LocationLoadingView.willEnterForeground),
+                                               name: .UIApplicationWillEnterForeground,
+                                               object: nil)
+    }
 
-        let bAnim = animation(fromState: .enlarged, toState: .shrunk)
-        self.circleB.add(bAnim, forKey: "b")
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillEnterForeground, object: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -107,5 +117,28 @@ class LocationLoadingView: UIView {
 
     override var intrinsicContentSize: CGSize {
         return CGSize(width: 100, height: 100)
+    }
+
+    fileprivate func startPulsing() {
+        let aAnim = animation(fromState: .shrunk, toState: .enlarged)
+        self.circleA.add(aAnim, forKey: "a")
+
+        let bAnim = animation(fromState: .enlarged, toState: .shrunk)
+        self.circleB.add(bAnim, forKey: "b")
+    }
+
+    fileprivate func stopPulsing() {
+        self.circleA.removeAnimation(forKey: "a")
+        self.circleB.removeAnimation(forKey: "b")
+    }
+}
+
+fileprivate extension LocationLoadingView {
+    @objc func didEnterBackground() {
+        stopPulsing()
+    }
+
+    @objc func willEnterForeground() {
+        startPulsing()
     }
 }
