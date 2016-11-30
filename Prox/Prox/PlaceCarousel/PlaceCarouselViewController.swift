@@ -83,6 +83,15 @@ class PlaceCarouselViewController: UIViewController {
 
     fileprivate var shouldFetchPlaces: Bool = true
 
+    fileprivate var isLoading: Bool = false {
+        didSet {
+            headerView.alpha = isLoading ? 0 : 1
+            sunView.alpha = isLoading ? 0 : 1
+            placeCarousel.carousel.alpha = isLoading ? 0 : 1
+            loadingOverlay.alpha = isLoading ? 1 : 0
+        }
+    }
+
     var sunriseSet: EDSunriseSet? {
         didSet {
             setSunriseSetTimes()
@@ -193,7 +202,7 @@ class PlaceCarouselViewController: UIViewController {
         // apply the constraints
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
 
-        toggleLoadingUI(loading: true)
+        isLoading = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -238,12 +247,6 @@ class PlaceCarouselViewController: UIViewController {
         }
 
         updatePlaces(forLocation: location)
-    }
-
-    fileprivate func toggleLoadingUI(loading: Bool) {
-        headerView.alpha = loading ? 0 : 1
-        sunView.alpha = loading ? 0 : 1
-        loadingOverlay.alpha = loading ? 1 : 0
     }
 
     fileprivate func updatePlaces(forLocation location: CLLocation) {
@@ -417,7 +420,6 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
         (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
 
         if wasEmpty && !places.isEmpty {
-            toggleLoadingUI(loading: false)
 
             // Wrap the openClosedPlace in an async block to make sure its queued after the
             // carousel's refresh so the cells load before we invoke the transition
@@ -445,9 +447,19 @@ extension PlaceCarouselViewController: UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController, presenting: UIViewController,
                              source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         if let _ = presented as? PlaceDetailViewController {
-            let transition = MapPlacesTransition()
-            transition.presenting = true
-            return transition
+            if isLoading {
+                let fadeTransition = CrossFadeTransition()
+
+                // Hide the loading state after we've transitioned away from this view controller
+                fadeTransition.completionCallback = {
+                    self.isLoading = false
+                }
+                return fadeTransition
+            } else {
+                let transition = MapPlacesTransition()
+                transition.presenting = true
+                return transition
+            }
         }
         return nil
     }

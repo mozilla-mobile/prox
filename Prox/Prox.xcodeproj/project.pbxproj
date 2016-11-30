@@ -84,10 +84,11 @@
 		E662FF4C1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */; };
 		E662FF4E1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662FF4D1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift */; };
 		E67146361DB54896007A99E4 /* CLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67146351DB54896007A99E4 /* CLLocationManager.swift */; };
-		E681E7581DE3562200902CDA /* Animatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E681E7571DE3562200902CDA /* Animatable.swift */; };
 		E67D49FD1DDE42F0005E17F9 /* LoadingOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D49FC1DDE42F0005E17F9 /* LoadingOverlayView.swift */; };
+		E681E7581DE3562200902CDA /* Animatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E681E7571DE3562200902CDA /* Animatable.swift */; };
 		E68BD90D1DCA9E8E007B51A3 /* DayOfWeekTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68BD90C1DCA9E8E007B51A3 /* DayOfWeekTests.swift */; };
 		E68BD90F1DCAAD6B007B51A3 /* OpenHoursTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68BD90E1DCAAD6B007B51A3 /* OpenHoursTests.swift */; };
+		E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */; };
 		EC42FE32127D2BD0FE36402D /* Pods_ProxUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -210,10 +211,11 @@
 		E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsIconInfoView.swift; sourceTree = "<group>"; };
 		E662FF4D1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsDescriptionView.swift; sourceTree = "<group>"; };
 		E67146351DB54896007A99E4 /* CLLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLLocationManager.swift; path = Extensions/CLLocationManager.swift; sourceTree = "<group>"; };
-		E681E7571DE3562200902CDA /* Animatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Animatable.swift; sourceTree = "<group>"; };
 		E67D49FC1DDE42F0005E17F9 /* LoadingOverlayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingOverlayView.swift; sourceTree = "<group>"; };
+		E681E7571DE3562200902CDA /* Animatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Animatable.swift; sourceTree = "<group>"; };
 		E68BD90C1DCA9E8E007B51A3 /* DayOfWeekTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayOfWeekTests.swift; sourceTree = "<group>"; };
 		E68BD90E1DCAAD6B007B51A3 /* OpenHoursTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenHoursTests.swift; sourceTree = "<group>"; };
+		E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossFadeTransition.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -381,6 +383,7 @@
 				7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */,
 				7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */,
 				E61252F01DDF761C007E33B7 /* MapPlacesTransition.swift */,
+				E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */,
 			);
 			name = "Place Carousel";
 			sourceTree = "<group>";
@@ -797,6 +800,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B9D15C61DC0D2E70051B760 /* OpenInHelper.swift in Sources */,
+				E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */,
 				7B1C657D1DDF28F00047559C /* TimeInterval.swift in Sources */,
 				7B5095731DB5352E007C54F0 /* Fonts.swift in Sources */,
 				7BB1CA471DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift in Sources */,
