@@ -15,7 +15,6 @@ protocol PlacesProviderDelegate: class {
     func placesProviderWillStartFetchingPlaces(_ controller: PlacesProvider)
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place])
     func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider)
-    func placesProvider(_ controller: PlacesProvider, didError error: Error)
     func placesProviderDidTimeout(_ controller: PlacesProvider)
 }
 
@@ -103,10 +102,6 @@ class PlacesProvider {
             },
             failure: { (task, err) in
                 NSLog("Error from server: \(err)")
-                DispatchQueue.main.async {
-                    self.isUpdating = false
-                    self.delegate?.placesProvider(self, didError: err)
-                }
             }
         )
 
