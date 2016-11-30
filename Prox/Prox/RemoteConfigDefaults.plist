@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>place_categories_to_hide_csv</key>
-	<string></string>
+	<string>professional,publicservicesgovt,localservices,beautysvc,pets,health,artsupplies,stationery,costumes,embroideryandcrochet,fabricstores,framing,ateliers,homeandgarden,flowers,fashion,carrental,bedbreakfast,opticians,antiques,galleries,wildlifehunting,musicalinstrumentsandteachers,photographers,fitness,transport,airlines,realestate,huntingfishingsupplies,medicalsupplies,vacation_rentals,bartenders,stationery,caricatures,catering,clowns,facepainting,djs,gametruckrental,golfcartrentals,hennaartists,magicians,officiants,eventplanning,partybusrentals,partybikerentals,partysupplies,personalchefs,photoboothrentals,silentdisco,sommelierservices,teambuilding,triviahosts,valetservices,videographers,wedding_planning,weddingchappels,education,adult,homeservices,musicvideo,auctionhouses,baby_gear,batterystores,bespoke,media,bridal,cannabisdispensaries,chinesebazaar,computers,concept_shops,cosmetics,custommerchandise,discountstore,drugstores,dutyfreeshops,electronics,farmingequipment,jewelry,playgrounds,partyequipmentrentals,guesthouses,sessionphotography,eventphotography</string>
 </dict>
 </plist>
