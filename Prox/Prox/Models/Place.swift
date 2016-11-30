@@ -20,6 +20,9 @@ class Place: Hashable {
         return RemoteConfigKeys.travelTimeExpirationDistance.value
     }()
 
+    // HACK: probably shouldn't be a static member.
+    static var travelTimesCache = TravelTimesCache()
+
     var hashValue : Int {
         get {
             return id.hashValue
@@ -47,7 +50,6 @@ class Place: Hashable {
 
     let hours: OpenHours? // if nil, there are no listed hours for this place
 
-    fileprivate(set) var lastTravelTime: CachedTravelTime?
     let wikiDescription: String?
     let yelpDescription: String?
     let tripAdvisorDescription: String?
@@ -185,16 +187,22 @@ class Place: Hashable {
         return descriptionText
     }
 
-    // assumes will always be called from UI thread.
     func travelTimes(fromLocation location: CLLocation) -> Deferred<DatabaseResult<TravelTimes>> {
-        if let lastTravelTime = lastTravelTime,
-                shouldReturnCachedTravelTimes(forLocation: location) {
+        // TODO: we get a value from the travel times cache and maybe set one later. If this truly
+        // happens concurrently, the value can change between accesses. We can solve by:
+        //   - locking thewhole time (which breaks the encapsulation I wrote)
+        //   - ensuring this is always run on the same thread.
+        // For now, I think this is good enough because I doubt we get called from different threads.
+        // I noticed this might be a problem because I tried to add `assert(Thread.isMainThread)`,
+        // which failed.
+        if let lastTravelTime = Place.travelTimesCache[id],
+                shouldReturnCachedTravelTimes(forCachedValue: lastTravelTime, forLocation: location) {
             return lastTravelTime.deferred
         }
 
         // TODO: In a better world, with an IDE that could refactor, I'd rename DatabaseResult.
         let deferred = Deferred<DatabaseResult<TravelTimes>>()
-        lastTravelTime = (deferred, location)
+        Place.travelTimesCache[id] = (deferred, location)
 
         TravelTimesProvider.travelTime(fromLocation: location.coordinate, toLocation: latLong,
                                        byTransitTypes: [.automobile, .walking]) { travelTimes in
@@ -210,12 +218,12 @@ class Place: Hashable {
         return deferred
     }
 
-    private func shouldReturnCachedTravelTimes(forLocation newLocation: CLLocation) -> Bool {
+    private func shouldReturnCachedTravelTimes(forCachedValue cachedValue: CachedTravelTime,
+                                               forLocation newLocation: CLLocation) -> Bool {
         // Return a cached success value or in-flight request.
         // If the initial request failed or we've moved too far, let's get a new value.
-        if let (lastDeferred, lastLocation) = lastTravelTime,
-            lastLocation.distance(from: newLocation) < Place.travelTimeExpirationDistance {
-
+        let (lastDeferred, lastLocation) = cachedValue
+        if lastLocation.distance(from: newLocation) < Place.travelTimeExpirationDistance {
             // TODO: It'd be great to combine these if statements but `if let` & `||` makes it not
             // worth my time.
             if !lastDeferred.isFilled { // request in-flight.
@@ -509,5 +517,28 @@ struct OpenHours {
 
     private func dateComponents(fromDate date: Date) -> DateComponents {
         return OpenHours.calendar.dateComponents(OpenHours.dateComponentsSet, from: date)
+    }
+}
+
+// This could be replaced with a thread-safe dictionary, but I didn't see one in the libs. :(
+class TravelTimesCache {
+    private var travelTimesCache = [String : CachedTravelTime]() // place-id : cached-value
+
+    subscript(id: String) -> CachedTravelTime? {
+        get {
+            var out: CachedTravelTime?
+            withLock { out = travelTimesCache[id] }
+            return out
+        }
+
+        set(newValue) {
+            withLock { travelTimesCache[id] = newValue }
+        }
+    }
+
+    private func withLock(_ callback: () -> ()) {
+        objc_sync_enter(self)
+        callback()
+        objc_sync_exit(self)
     }
 }

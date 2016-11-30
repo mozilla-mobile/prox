@@ -52,7 +52,7 @@ struct PlaceUtilities {
     }
 
     private static func lastTravelTimes(forPlace place: Place) -> TravelTimes? {
-        guard let (deferred, _) = place.lastTravelTime,
+        guard let (deferred, _) = Place.travelTimesCache[place.id],
         let result = deferred.peek() else {
             return nil
         }
