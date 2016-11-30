@@ -31,26 +31,26 @@ class RemoteConfigKeys {
     // Expiration time of the current remote config.
     // Any previously fetched and cached config would be considered expired because it would have been fetched
     // more than remoteConfigCacheExpiration seconds ago. Thus the next fetch would go to the server unless
-    // throttling is in progress. The default expiration duration is 43200 (12 hours).
+    // throttling is in progress.
     public static let remoteConfigCacheExpiration = RemoteConfigDouble(key: "remote_config_cache_expiration", defaultValue: 0.0)
 
     // The search radius the app will use to query the Firebase database.
-    // This is measured in kilometers. The default value is 4 km.
+    // This is measured in kilometers.
     public static let searchRadiusInKm = RemoteConfigDouble(key: "search_radius_in_km", defaultValue: 1.0)
 
     // The minimum number of minutes walking to the venue to be considered at the venue.at
-    // This is measured in minutes. The default value is 1 minute.
+    // This is measured in minutes.
     public static let youAreHereWalkingTimeMins = RemoteConfigInt(key: "you_are_here_walking_time_mins", defaultValue: 1)
 
     // The distance the user must travel before the travel times on a location are reloaded.
     public static let travelTimeExpirationDistance = RemoteConfigDouble(key: "travel_time_expiration_distance", defaultValue: 0.2) // default: ~2.5min walk.
 
     // This is the maximum time interval that we display walking directions before switching to driving directions.
-    // This is measure in minutes. The default value is 30 minutes.
+    // This is measure in minutes.
     public static let maxWalkingTimeInMins = RemoteConfigInt(key: "max_walking_time_in_mins", defaultValue: 30)
 
     // The event search radius the app will use to query the Firebase datbase
-    // This is measures in kilometers. The default value is 20 km.
+    // This is measures in kilometers.
     public static let eventSearchRadiusInKm = RemoteConfigDouble(key: "event_search_radius_in_km", defaultValue: 40.0)
 
     // the strings that are in the config for event notifications and display of events on cards
