@@ -192,6 +192,7 @@ class PlaceDetailViewController: UIViewController {
     }
 
     fileprivate func setBackgroundImage(toPhotoAtURL photoURLString: String?) {
+        let placeholder = UIImage(named: "place-placeholder")
         if let imageURLString = photoURLString,
             let imageURL = URL(string: imageURLString) {
 
@@ -202,12 +203,12 @@ class PlaceDetailViewController: UIViewController {
             let crossFade = CABasicAnimation(keyPath: "contents")
             crossFade.duration = 0.4
             crossFade.fromValue = backgroundImage.image?.cgImage
-            crossFade.toValue = cachedImage
+            crossFade.toValue = cachedImage ?? placeholder
             backgroundImage.layer.add(crossFade, forKey: "animateContents")
 
-            self.backgroundImage.setImageWith(imageURL)
+            self.backgroundImage.setImageWith(imageURL, placeholderImage: placeholder)
         } else {
-            backgroundImage.image = UIImage(named: "place-placeholder")
+            backgroundImage.image = placeholder
         }
     }
 
