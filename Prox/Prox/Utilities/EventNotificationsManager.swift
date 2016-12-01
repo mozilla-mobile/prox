@@ -106,18 +106,24 @@ class EventNotificationsManager {
         for (index, event) in events.enumerated() {
             if isUnsent(event: event) {
                 guard let currentLocation = self.locationProvider?.getCurrentLocation()?.coordinate else { return }
-                // check that travel times are within current location limits before deciding whether to send notification
-                TravelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: event.coordinates, before: event.arrivalByTime()) { canTravel in
-                    guard canTravel else { return }
-                    DispatchQueue.main.async {
-                        var timeInterval = 1
-                        if index > 0 {
-                            timeInterval = index * 30
+                // check to see if there is an associated place
+                // don't send the notification if there isn't
+                let placesDB = PlacesProvider()
+                placesDB.place(forKey: event.placeId) { place in
+                    guard let _ = place else { return }
+                    // check that travel times are within current location limits before deciding whether to send notification
+                    TravelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: event.coordinates, before: event.arrivalByTime()) { canTravel in
+                        guard canTravel else { return }
+                        DispatchQueue.main.async {
+                            var timeInterval = 1
+                            if index > 0 {
+                                timeInterval = index * 30
+                            }
+                            self.sendNotification(forEvent: event, inSeconds: TimeInterval(timeInterval))
                         }
-                        self.sendNotification(forEvent: event, inSeconds: TimeInterval(timeInterval))
                     }
+                    self.markAsSent(event: event)
                 }
-                self.markAsSent(event: event)
             }
         }
 
