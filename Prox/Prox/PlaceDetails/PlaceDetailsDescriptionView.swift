@@ -14,14 +14,11 @@ enum DetailType {
 
 class PlaceDetailsDescriptionView: UIView {
 
-    private let CollapseExpandSeconds = 1.0
     private let toggleEventType: String
 
     let horizontalMargin: CGFloat = 16.0
 
     fileprivate var uiMode: UIMode
-    var collapsedConstraints: [NSLayoutConstraint]!
-    var expandedConstraints: [NSLayoutConstraint]!
 
     lazy var logoView: UIImageView = {
         let view = UIImageView()
@@ -125,17 +122,6 @@ class PlaceDetailsDescriptionView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private func resetConstraints() {
-        self.expandableViewHeightConstraint.constant = 0
-        self.expandableViewBottomConstraint.constant = self.uiMode == .collapsed ? 0 : -10
-        self.logoBottomConstraint.constant = self.uiMode == .collapsed ? 0 : -20
-        if uiMode == .collapsed {
-            expandableViewHeightConstraint.isActive = true
-        } else {
-            expandableViewHeightConstraint.isActive = false
-        }
     }
 
     private func setupSubviews() {
