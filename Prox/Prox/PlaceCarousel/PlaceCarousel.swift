@@ -108,8 +108,8 @@ extension PlaceCarousel: UICollectionViewDataSource {
 
         downloadAndSetImage(for: place, into: cell)
 
-        PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: cell.yelpReview)
-        PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: cell.tripAdvisorReview)
+        PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: cell.yelpReview, isTextShortened: true)
+        PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: cell.tripAdvisorReview, isTextShortened: true)
 
         PlaceUtilities.updateTravelTimeUI(fromPlace: place, toLocation: locationProvider?.getCurrentLocation(), forView: cell)
 
