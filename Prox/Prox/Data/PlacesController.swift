@@ -48,7 +48,10 @@ class PlacesProvider {
         var placeWithEvent: Place?
         var eventForPlace: Event?
         let lock = NSLock()
+        var placeReturned = false
+        var eventReturned = false
         place(forKey: placeKey) { place in
+            placeReturned = true
             defer {
                 lock.unlock()
             }
@@ -56,6 +59,9 @@ class PlacesProvider {
             guard let foundPlace = place,
                 let event = eventForPlace else {
                     placeWithEvent = place
+                    if (eventReturned) {
+                        callback(nil)
+                    }
                     return
             }
             foundPlace.events.append(event)
@@ -63,6 +69,7 @@ class PlacesProvider {
         }
 
         eventProvider.event(forKey: eventKey) { event in
+            eventReturned = true
             defer {
                 lock.unlock()
             }
@@ -70,6 +77,9 @@ class PlacesProvider {
             guard let foundEvent = event,
                 let place = placeWithEvent else {
                     eventForPlace = event
+                    if (placeReturned) {
+                        callback(nil)
+                    }
                     return
             }
             place.events.append(foundEvent)
