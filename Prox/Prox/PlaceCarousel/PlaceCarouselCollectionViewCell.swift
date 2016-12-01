@@ -159,7 +159,7 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(labelContainer)
         constraints.append(contentsOf: [labelContainer.topAnchor.constraint(equalTo: placeImage.topAnchor),
                                         labelContainer.bottomAnchor.constraint(equalTo: placeImage.bottomAnchor),
-                                        labelContainer.trailingAnchor.constraint(equalTo: placeImage.trailingAnchor),
+                                        labelContainer.trailingAnchor.constraint(equalTo: placeImage.trailingAnchor, constant: -12),
                                         labelContainer.leadingAnchor.constraint(equalTo: placeImage.leadingAnchor)])
         
 
