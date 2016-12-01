@@ -105,7 +105,7 @@ struct PlaceUtilities {
                 !(provider.totalReviewCount == nil && provider.rating == nil) else { // intentional: if both null, short-circuit
             setSubviewAlpha(0.4, forParent: view)
             view.score = 0
-            view.numberOfReviewersLabel.text = "No data" + (isTextShortened ? "" : " available")
+            view.numberOfReviewersLabel.text = "No info" + (isTextShortened ? "" : " available")
             return
         }
 
