@@ -51,11 +51,11 @@ class PlacesProvider {
         var placeReturned = false
         var eventReturned = false
         place(forKey: placeKey) { place in
-            placeReturned = true
             defer {
                 lock.unlock()
             }
             lock.lock()
+            placeReturned = true
             guard let foundPlace = place,
                 let event = eventForPlace else {
                     placeWithEvent = place
@@ -69,11 +69,11 @@ class PlacesProvider {
         }
 
         eventProvider.event(forKey: eventKey) { event in
-            eventReturned = true
             defer {
                 lock.unlock()
             }
             lock.lock()
+            eventReturned = true
             guard let foundEvent = event,
                 let place = placeWithEvent else {
                     eventForPlace = event
