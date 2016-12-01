@@ -311,7 +311,6 @@ class PlaceDetailViewController: UIViewController {
                         mapButtonBadge.widthAnchor.constraint(greaterThanOrEqualToConstant: 20.0)]
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
-        NSLog("View finished loading")
     }
 
     override func viewDidLayoutSubviews() {

@@ -37,8 +37,7 @@ class InAppNotificationToastProvider: NSObject {
 
     weak var delegate: InAppNotificationToastDelegate?
 
-    fileprivate var viewBottomAnchor: NSLayoutConstraint!
-    fileprivate var viewTopAnchor: NSLayoutConstraint!
+    fileprivate var viewTopAnchor: NSLayoutConstraint?
 
     init(placeId: String, eventId: String, text: String) {
         self.placeId = placeId
@@ -66,12 +65,12 @@ class InAppNotificationToastProvider: NSObject {
         view.addSubview(notificationView)
         NSLayoutConstraint.activate([notificationView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                      notificationView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                                     viewTopAnchor],
+                                     viewTopAnchor!],
                                     translatesAutoresizingMaskIntoConstraints: false)
         view.bringSubview(toFront: notificationView)
         view.layoutIfNeeded()
 
-        viewTopAnchor.constant = -notificationView.bounds.size.height
+        viewTopAnchor?.constant = -notificationView.bounds.size.height
 
         UIView.animate(withDuration: 0.4, delay: 0.0, options: .curveEaseInOut, animations: {
             view.layoutIfNeeded()
@@ -81,7 +80,7 @@ class InAppNotificationToastProvider: NSObject {
     }
 
     func dismiss() {
-        viewTopAnchor.constant = 0
+        viewTopAnchor?.constant = 0
 
         UIView.animate(withDuration: 0.4, delay: 0.0, options: .curveEaseInOut, animations: {
             self.notificationView.superview?.layoutIfNeeded()

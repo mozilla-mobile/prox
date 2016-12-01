@@ -25,8 +25,6 @@ fileprivate let placesFetchMonitorIdentifier = "PlaceFetchRadiusMonitor"
 
 class PlaceCarouselViewController: UIViewController {
 
-    lazy var placesWithEvents = Set<Place>()
-
     lazy var placesProvider: PlacesProvider = {
         let controller = PlacesProvider()
         controller.delegate = self
@@ -384,41 +382,37 @@ extension PlaceCarouselViewController: PlaceDataSource {
 
     func nextPlace(forPlace place: Place) -> Place? {
         // if the place isn't in the list, make the first item in the list the next item
-        let allPlaces = places + Array(placesWithEvents)
-        guard let currentPlaceIndex = allPlaces.index(where: {$0 == place}) else {
-            return allPlaces.count > 0 ? allPlaces[allPlaces.startIndex] : nil
+        guard let currentPlaceIndex = places.index(where: {$0 == place}) else {
+            return places.count > 0 ? places[places.startIndex] : nil
         }
 
-        guard currentPlaceIndex + 1 < allPlaces.endIndex else { return nil }
+        guard currentPlaceIndex + 1 < places.endIndex else { return nil }
 
-        return allPlaces[allPlaces.index(after: currentPlaceIndex)]
+        return places[places.index(after: currentPlaceIndex)]
     }
 
     func previousPlace(forPlace place: Place) -> Place? {
-        let allPlaces = places + Array(placesWithEvents)
-        guard let currentPlaceIndex = allPlaces.index(where: {$0 == place}),
-            currentPlaceIndex > allPlaces.startIndex else { return nil }
+        guard let currentPlaceIndex = places.index(where: {$0 == place}),
+            currentPlaceIndex > places.startIndex else { return nil }
 
-        return allPlaces[allPlaces.index(before: currentPlaceIndex)]
+        return places[places.index(before: currentPlaceIndex)]
     }
 
     func numberOfPlaces() -> Int {
-        return places.count + placesWithEvents.count
+        return places.count
     }
 
     func place(forIndex index: Int) throws -> Place {
-        let allPlaces = places + Array(placesWithEvents)
-        guard index < allPlaces.endIndex,
-            index >= allPlaces.startIndex else {
+        guard index < places.endIndex,
+            index >= places.startIndex else {
             throw PlaceDataSourceError(message: "There is no place at index: \(index)")
         }
 
-        return allPlaces[index]
+        return places[index]
     }
 
     func index(forPlace place: Place) -> Int? {
-        let allPlaces = places + Array(placesWithEvents)
-        return allPlaces.index(of: place)
+        return places.index(of: place)
     }
 
     func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ()) {
@@ -429,6 +423,8 @@ extension PlaceCarouselViewController: PlaceDataSource {
             }
             let eventProvider = EventsProvider()
             eventProvider.event(forKey: eventKey) { event in
+                guard let event = event else { return callback(nil) }
+                place.events.append(event)
                 callback(place)
             }
         } else {
