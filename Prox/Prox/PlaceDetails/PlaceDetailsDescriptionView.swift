@@ -126,15 +126,6 @@ class PlaceDetailsDescriptionView: UIView {
 
     private func setupSubviews() {
         addSubview(descriptionTitleView)
-        descriptionTitleView.addSubview(logoView)
-        descriptionTitleView.addSubview(label)
-        descriptionTitleView.addSubview(expandButton)
-        addSubview(expandableView)
-
-        activateDefaultConstraints()
-    }
-
-    private func activateDefaultConstraints() {
         var constraints = [descriptionTitleView.topAnchor.constraint(equalTo: topAnchor),
                            descriptionTitleView.leadingAnchor.constraint(equalTo: leadingAnchor),
                            descriptionTitleView.trailingAnchor.constraint(equalTo: trailingAnchor)]
