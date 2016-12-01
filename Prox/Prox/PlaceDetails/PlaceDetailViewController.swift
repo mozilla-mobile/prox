@@ -530,7 +530,6 @@ class PlaceDetailViewController: UIViewController {
 
         let springDamping:CGFloat = newNextCardViewController == nil ? 0.8 : 1.0
         setupConstraints(forNewPreviousCard: currentCardViewController, newCurrentCard: nextCardViewController, newNextCard: newNextCardViewController)
-        AppState.trackCardVisit(cardPos: (dataSource?.index(forPlace: nextCardViewController.place))!)
 
         view.layoutIfNeeded()
 
@@ -569,6 +568,9 @@ class PlaceDetailViewController: UIViewController {
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
 
                 self.currentCardViewController.beginAutoMovingOfCarousel()
+
+                let cardPos = (self.dataSource != nil) ? self.dataSource!.index(forPlace: self.currentCardViewController.place)! : -1
+                AppState.trackCardVisit(cardPos: cardPos)
             }
         })
     }
@@ -600,9 +602,6 @@ class PlaceDetailViewController: UIViewController {
 
         let springDamping:CGFloat = newPreviousCardViewController == nil ? 0.8 : 1.0
         setupConstraints(forNewPreviousCard: newPreviousCardViewController, newCurrentCard: previousCardViewController, newNextCard: currentCardViewController)
-        if let placeIndex = dataSource?.index(forPlace: previousCardViewController.place) {
-            AppState.trackCardVisit(cardPos: placeIndex)
-        }
 
         view.layoutIfNeeded()
 
@@ -640,6 +639,8 @@ class PlaceDetailViewController: UIViewController {
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
 
                 self.currentCardViewController.beginAutoMovingOfCarousel()
+                let cardPos = (self.dataSource != nil) ? self.dataSource!.index(forPlace: self.currentCardViewController.place)! : -1
+                AppState.trackCardVisit(cardPos: cardPos)
             }
         })
     }
