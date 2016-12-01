@@ -11,6 +11,9 @@ fileprivate func createCircle(color: CGColor, frame: CGRect) -> CAShapeLayer {
     circle.path = CGPath(ellipseIn: frame, transform: nil)
     circle.fillColor = color
     circle.frame = frame
+
+    // Start the circles at opacity 0.2 which is between the enlarged (0.1) and shrunk (0.3) opacities so
+    // the circles don't look super blue when they are first created.
     circle.opacity = 0.2
     return circle
 }
@@ -127,6 +130,8 @@ class LocationLoadingView: UIView {
         self.circleB.add(bAnim, forKey: "b")
     }
 
+    // CoreAnimation will auto-remove the animations from the layer when the app is backgrounded but for
+    // balance I've included an explicit stop/remove call.
     fileprivate func stopPulsing() {
         self.circleA.removeAnimation(forKey: "a")
         self.circleB.removeAnimation(forKey: "b")
