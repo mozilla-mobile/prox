@@ -80,10 +80,8 @@ class PlaceDetailsDescriptionView: UIView {
         return label
     }()
 
-    lazy var expandableViewHeightConstraint: NSLayoutConstraint = {
-        let constraint = self.expandableView.heightAnchor.constraint(equalToConstant: 0)
-        constraint.priority = 999
-        return constraint
+    lazy var descriptionTitleViewBottomToParentBottomConstraint: NSLayoutConstraint = {
+        return self.descriptionTitleView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
     }()
 
     lazy var expandableViewBottomConstraint: NSLayoutConstraint = {
@@ -154,7 +152,7 @@ class PlaceDetailsDescriptionView: UIView {
                         expandableViewBottomConstraint]
 
         if uiMode == .collapsed {
-            constraints += [expandableViewHeightConstraint]
+            constraints += [descriptionTitleViewBottomToParentBottomConstraint]
         }
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
@@ -169,16 +167,20 @@ class PlaceDetailsDescriptionView: UIView {
     func setExpandableView(isExpanded shouldExpand: Bool) {
         if shouldExpand {
             uiMode = .expanded
-            expandableViewHeightConstraint.isActive = false
             expandableViewBottomConstraint.constant = -10
             logoBottomConstraint.constant = -20
             expandButton.direction = .up
+
+            expandableView.isHidden = false
+            descriptionTitleViewBottomToParentBottomConstraint.isActive = false
         } else {
             uiMode = .collapsed
             expandableViewBottomConstraint.constant = 0
-            expandableViewHeightConstraint.isActive = true
             logoBottomConstraint.constant = 0
             expandButton.direction = .down
+
+            descriptionTitleViewBottomToParentBottomConstraint.isActive = true
+            expandableView.isHidden = true
         }
 
         setNeedsLayout()
