@@ -4,6 +4,10 @@
 
 import Foundation
 
+// We intentionally use both because the images are rescaled if you use just one.
+private let cardviewImageLoadingName = "cardview_image_loading"
+private let carouselImageLoadingName = "carousel_image_loading"
+
 /*
  * MapPlacesTransition implements `UIViewControllerAnimatedTransitioning` and contains all of the animation
  * logic for presenting the place card carousel from the map view and dismissing it back to the maps view.
@@ -80,7 +84,7 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             fakeImageView.contentMode = UIViewContentMode.scaleAspectFill
             fakeImageView.clipsToBounds = true
             fakeImageView.layer.cornerRadius = 5
-            fakeImageView.setImageWith(imageURL)
+            fakeImageView.setImageWith(imageURL, placeholderImage: UIImage(named: cardviewImageLoadingName))
 
             let opacityView = createOpacityImageOverlay(frame: convertedPlacesImageFrame)
 
@@ -161,7 +165,7 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             fakeImageView.contentMode = UIViewContentMode.scaleAspectFill
             fakeImageView.clipsToBounds = true
             fakeImageView.backgroundColor = .red
-            fakeImageView.setImageWith(imageURL)
+            fakeImageView.setImageWith(imageURL, placeholderImage: UIImage(named: carouselImageLoadingName))
 
             let opacityView = createOpacityImageOverlay(frame: placesVC.imageCarousel.frame)
             opacityView.alpha = 0
