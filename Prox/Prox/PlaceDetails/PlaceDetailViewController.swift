@@ -178,6 +178,7 @@ class PlaceDetailViewController: UIViewController {
         } else {
             nextCardViewController?.cardView.removeFromSuperview()
             nextCardViewController?.removeFromParentViewController()
+            nextCardViewController = nil
         }
 
         if let previousPlace = dataSource?.previousPlace(forPlace: currentCardViewController.place) {
@@ -195,6 +196,7 @@ class PlaceDetailViewController: UIViewController {
         } else {
             previousCardViewController?.cardView.removeFromSuperview()
             previousCardViewController?.removeFromParentViewController()
+            previousCardViewController = nil
         }
 
         view.setNeedsLayout()
