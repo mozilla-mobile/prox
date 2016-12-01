@@ -152,6 +152,7 @@ class PlaceDetailsCardViewController: UIViewController {
         cardView.travelTimeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openDirections(gestureRecgonizer:))))
         cardView.eventView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openEventURL(gestureRecognizer:))))
         cardView.wikiDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openWikipediaURL(gestureRecognizer:))))
+        cardView.tripAdvisorDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTripAdvisorReview(gestureRecgonizer:))))
         cardView.yelpDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openYelpReview(gestureRecgonizer:))))
     }
 
