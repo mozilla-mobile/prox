@@ -16,7 +16,8 @@ class PlaceDetailsDescriptionView: UIView {
 
     private let toggleEventType: String
 
-    let horizontalMargin: CGFloat = 16.0
+    private let horizontalMargin: CGFloat = 16.0
+    private let expandableViewContentLeftMargin: CGFloat = 8 // aligned with card view title.
 
     fileprivate var uiMode: UIMode
 
@@ -64,7 +65,7 @@ class PlaceDetailsDescriptionView: UIView {
         view.axis = .vertical
         view.spacing = 10
         view.distribution = .equalSpacing
-        view.layoutMargins = UIEdgeInsets(top: 0, left: 0,
+        view.layoutMargins = UIEdgeInsets(top: 0, left: self.expandableViewContentLeftMargin,
                                           bottom: 0, right: self.horizontalMargin)
         view.isLayoutMarginsRelativeArrangement = true
 
