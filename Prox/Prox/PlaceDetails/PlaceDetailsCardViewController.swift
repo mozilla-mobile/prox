@@ -215,15 +215,21 @@ class PlaceDetailsCardViewController: UIViewController {
         }
     }
 
+    private func getNextCarouselPageIndex() -> Int {
+        var nextIndex = pageControl.currentPage + 1
+        if nextIndex >= place.photoURLs.count {
+            nextIndex = 0
+        }
+        return nextIndex
+    }
+
     @objc private func autoMoveToNextCarouselImage() {
-        let currentIndex = pageControl.currentPage
-        self.imageCarouselCollectionView.scrollToItem(at: IndexPath(item: currentIndex+1, section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
+        self.imageCarouselCollectionView.scrollToItem(at: IndexPath(item: getNextCarouselPageIndex(), section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
     }
 
     func pageControlDidPage(sender: AnyObject) {
         stopAutoMovingOfCarousel()
-
-        self.imageCarouselCollectionView.scrollToItem(at: IndexPath(item: pageControl.currentPage+1, section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
+        self.imageCarouselCollectionView.scrollToItem(at: IndexPath(item: getNextCarouselPageIndex(), section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
     }
 
     func beginAutoMovingOfCarousel() {
