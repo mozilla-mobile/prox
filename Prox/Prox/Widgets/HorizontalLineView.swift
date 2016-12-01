@@ -15,14 +15,17 @@ class HorizontalLineView: UIView {
     // draw the horizontal line at the bottom of the view
     override func draw(_ rect: CGRect) {
         super.draw(rect)
-        self.backgroundColor = .clear
+        guard let ctx = UIGraphicsGetCurrentContext() else {
+            return
+        }
+        
+        let startEnd = [
+            CGPoint(x: startX ?? rect.width, y: startY ?? rect.height),
+            CGPoint(x: endX ?? rect.width, y: endY ?? rect.height)
+        ]
 
-        let bezier2Path = UIBezierPath()
-        bezier2Path.move(to: CGPoint(x: startX ?? rect.width, y: startY ?? rect.height))
-        bezier2Path.addLine(to: CGPoint(x: endX ?? rect.width, y: endY ?? rect.height))
-        color.setStroke()
-        bezier2Path.lineWidth = 1.5
-        bezier2Path.stroke()
+        ctx.setLineWidth(1.5)
+        ctx.setStrokeColor(color.cgColor)
+        ctx.strokeLineSegments(between: startEnd)
     }
-
 }

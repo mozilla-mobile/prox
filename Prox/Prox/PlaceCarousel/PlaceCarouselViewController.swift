@@ -166,6 +166,12 @@ class PlaceCarouselViewController: UIViewController {
 
         var constraints = [NSLayoutConstraint]()
 
+        view.addSubview(sunView)
+        constraints.append(contentsOf: [sunView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
+                                        sunView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                                        sunView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                                        sunView.heightAnchor.constraint(equalToConstant: 90)])
+
         // add the views to the stack view
         view.addSubview(headerView)
 
@@ -174,13 +180,6 @@ class PlaceCarouselViewController: UIViewController {
                                         headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                         headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                                         headerView.heightAnchor.constraint(equalToConstant: 150)])
-
-        view.addSubview(sunView)
-        constraints.append(contentsOf: [sunView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
-                                        sunView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                                        sunView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                                        sunView.heightAnchor.constraint(equalToConstant: 90)])
-
 
         // set up the subviews for the sunrise/set view
         sunView.addSubview(sunriseSetTimesLabel)
