@@ -63,7 +63,7 @@ class PlaceDetailsDescriptionView: UIView {
         let view = UIStackView(arrangedSubviews: [self.descriptionLabel, self.readMoreLink])
         view.axis = .vertical
         view.spacing = 10
-        view.distribution = .fillProportionally
+        view.distribution = .equalSpacing
         view.layoutMargins = UIEdgeInsets(top: 0, left: 0,
                                           bottom: 0, right: self.horizontalMargin)
         view.isLayoutMarginsRelativeArrangement = true
