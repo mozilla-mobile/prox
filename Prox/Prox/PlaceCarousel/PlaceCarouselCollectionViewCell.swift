@@ -15,6 +15,8 @@ fileprivate struct CellShadowAttributes {
     let offset: CGSize
 }
 
+fileprivate let shadowRadius: CGFloat = 5
+
 fileprivate let selectedShadowAttributes = CellShadowAttributes(radius: 5, offset: CGSize(width: 0, height: 2))
 fileprivate let unselectedShadowAttributes = CellShadowAttributes(radius: 2, offset: CGSize(width: 0, height: 0.5))
 
@@ -23,7 +25,7 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
     lazy var roundedBackgroundView: UIView = {
         let view = UIView()
         view.backgroundColor = Colors.carouselViewPlaceCardBackground
-        view.layer.cornerRadius = 5
+        view.layer.cornerRadius = shadowRadius
         view.clipsToBounds = true
         view.accessibilityIdentifier = "Background"
         return view
@@ -33,7 +35,7 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         let view = UIView()
         view.backgroundColor = Colors.carouselViewPlaceCardBackground
         view.layer.shadowOpacity = 0.6
-        view.layer.cornerRadius = 2
+        view.layer.cornerRadius = shadowRadius
         view.layer.shadowOffset = CGSize(width: 0, height: 0.5)
         view.layer.shadowColor = UIColor.darkGray.cgColor
         view.layer.shouldRasterize = true
