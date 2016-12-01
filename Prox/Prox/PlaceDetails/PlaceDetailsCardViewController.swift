@@ -263,11 +263,12 @@ extension PlaceDetailsCardViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PlaceDetailsCardCellReuseIdentifier, for: indexPath) as! ImageCarouselCollectionViewCell
-        if let photoURL = URL(string: place.photoURLs[indexPath.item]) {
-            cell.imageView.setImageWith(photoURL)
 
+        let placeholder = UIImage(named: "cardview_image_loading")
+        if let photoURL = URL(string: place.photoURLs[indexPath.item]) {
+            cell.imageView.setImageWith(photoURL, placeholderImage: placeholder)
         } else {
-            cell.imageView.image = UIImage(named: "place-placeholder")
+            cell.imageView.image = placeholder
         }
         return cell
     }
