@@ -36,7 +36,7 @@ class RemoteConfigKeys {
 
     // The search radius the app will use to query the Firebase database.
     // This is measured in kilometers.
-    public static let searchRadiusInKm = RemoteConfigDouble(key: "search_radius_in_km", defaultValue: 1.0)
+    public static let searchRadiusInKm = RemoteConfigRadius(key: "search_radius_in_km", defaultValue: 1.0)
 
     // The minimum number of minutes walking to the venue to be considered at the venue.at
     // This is measured in minutes.
@@ -51,7 +51,7 @@ class RemoteConfigKeys {
 
     // The event search radius the app will use to query the Firebase datbase
     // This is measures in kilometers.
-    public static let eventSearchRadiusInKm = RemoteConfigDouble(key: "event_search_radius_in_km", defaultValue: 40.0)
+    public static let eventSearchRadiusInKm = RemoteConfigRadius(key: "event_search_radius_in_km", defaultValue: 40.0)
 
     // the strings that are in the config for event notifications and display of events on cards
     public static let endingEventNotificationString = RemoteConfigString(key: "ending_event_notification_string", defaultValue: "{event_name} - will end soon and you're close by!")
@@ -81,7 +81,7 @@ class RemoteConfigKeys {
     public static let significantLocationChangeDistanceMeters = RemoteConfigDouble(key: "significant_location_change_distance_meters", defaultValue: 100)
 
     // this is the distance a user has to move from their current location to trigger a "visit" to kick off notifications
-    public static let radiusForCurrentLocationMonitoringMeters = RemoteConfigDouble(key: "radius_for_current_location_meters", defaultValue: 50.0)
+    public static let radiusForCurrentLocationMonitoringMeters = RemoteConfigRadius(key: "radius_for_current_location_meters", defaultValue: 50.0)
     
     // the number of times the PlaceProvider should try to fetch places before timing out
     public static let numberOfPlaceFetchRetries = RemoteConfigInt(key: "number_of_place_fetch_retries", defaultValue: 60)
@@ -138,6 +138,18 @@ class RemoteConfigProperty<T> {
 
     fileprivate func convert(_ remoteConfigValue: String) -> T? {
         return nil
+    }
+}
+
+// Radius can be used in code that will crash (e.g. geofire) when
+// it's a questionable value - we guard against that here.
+class RemoteConfigRadius: RemoteConfigProperty<Double> {
+    fileprivate override func convert(_ string: String) -> Double? {
+        guard let val = Double(string),
+                val > 0 else {
+            return nil // will use default value
+        }
+        return val
     }
 }
 
