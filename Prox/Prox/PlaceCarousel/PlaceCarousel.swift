@@ -181,13 +181,14 @@ fileprivate class CarouselFlowLayout: UICollectionViewFlowLayout {
         }
         let pannedLessThanAPage = fabs(1 + currentPage - rawPageValue) > 0.5
         let flicked = fabs(velocity.x) > flickVelocity
+        let actualNextPage = pannedLessThanAPage && flicked ? nextPage : round(rawPageValue)
 
-        if pannedLessThanAPage && flicked {
-            pageDelegate?.didPage(toIndex: Int(max(0, nextPage)))
-            return CGPoint(x: nextPage * pageWidth, y: proposedContentOffset.y)
+        pageDelegate?.didPage(toIndex: Int(max(0, actualNextPage)))
+        if actualNextPage == 0 {
+            return CGPoint(x: 0, y: proposedContentOffset.y)
         } else {
-            pageDelegate?.didPage(toIndex: Int(round(rawPageValue)))
-            return CGPoint(x: round(rawPageValue) * pageWidth, y: proposedContentOffset.y)
+            // Peek the previous place card a bit so it's still visible
+            return CGPoint(x: actualNextPage * pageWidth - 16, y: proposedContentOffset.y)
         }
     }
 }
