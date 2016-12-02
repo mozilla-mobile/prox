@@ -75,7 +75,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 dump(user)
             }
         }
-        FIRDatabase.database().persistenceEnabled = false
+
+        // Allow Firebase data to be cached offline. TODO: explain the pitfalls here.
+        let db = FIRDatabase.database()
+        db.persistenceEnabled = true
+        let geofirePath = AppConstants.firebaseRoot + "/venues/locations/"
+        db.reference(withPath: geofirePath).keepSynced(true)
     }
 
     private func setupRemoteConfig() {
