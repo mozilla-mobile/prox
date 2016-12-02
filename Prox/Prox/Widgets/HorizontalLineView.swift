@@ -12,6 +12,15 @@ class HorizontalLineView: UIView {
     var startY: CGFloat?
     var endY: CGFloat?
 
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // draw the horizontal line at the bottom of the view
     override func draw(_ rect: CGRect) {
         super.draw(rect)
@@ -24,6 +33,7 @@ class HorizontalLineView: UIView {
             CGPoint(x: endX ?? rect.width, y: endY ?? rect.height)
         ]
 
+        // Regardless of how high this view is, the line will always be 1.5
         ctx.setLineWidth(1.5)
         ctx.setStrokeColor(color.cgColor)
         ctx.strokeLineSegments(between: startEnd)

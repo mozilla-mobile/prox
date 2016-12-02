@@ -52,7 +52,6 @@ class PlaceDetailsDescriptionView: UIView {
 
     lazy var descriptionTitleView: HorizontalLineView = {
         let view = HorizontalLineView()
-        view.backgroundColor = .clear
         view.color = Colors.detailsViewCardSeparator
         view.startX = 0.0
         view.startY = 0.0

@@ -169,7 +169,6 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
                                         category.bottomAnchor.constraint(equalTo: name.topAnchor, constant: -9)])
 
         let lineView = HorizontalLineView()
-        lineView.backgroundColor = .clear
         lineView.color = Colors.carouselViewPlaceCardImageText
         lineView.startX = 0.0
         labelContainer.addSubview(lineView)

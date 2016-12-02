@@ -21,7 +21,6 @@ class PlaceCarouselHeaderView: UIView {
 
         line.startX = 20.0
         line.color = Colors.carouselViewHeaderHorizontalLine
-        line.backgroundColor = .clear
         
         addSubview(numberOfPlacesLabel)
         addSubview(line)
