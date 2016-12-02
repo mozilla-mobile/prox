@@ -50,7 +50,7 @@ class LoadingOverlayView: UIView {
         addSubview(loadingAnimation)
         constraintsToAdd += [
             loadingAnimation.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            loadingAnimation.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -60)
+            loadingAnimation.centerYAnchor.constraint(equalTo: self.centerYAnchor)
         ]
 
         addSubview(messageLabel)
