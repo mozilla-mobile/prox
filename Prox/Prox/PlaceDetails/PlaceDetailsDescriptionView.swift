@@ -84,12 +84,6 @@ class PlaceDetailsDescriptionView: UIView {
         return self.descriptionTitleView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
     }()
 
-    lazy var expandableViewBottomConstraint: NSLayoutConstraint = {
-        let constraint = self.expandableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: self.uiMode == .collapsed ? 0 : -10)
-        constraint.priority = 999
-        return constraint
-    }()
-
     lazy var logoBottomConstraint: NSLayoutConstraint = {
         let constraint = self.logoView.bottomAnchor.constraint(equalTo: self.descriptionTitleView.bottomAnchor, constant: self.uiMode == .collapsed ? 0 : -20)
         constraint.priority = 999
@@ -149,7 +143,7 @@ class PlaceDetailsDescriptionView: UIView {
         constraints += [expandableView.topAnchor.constraint(equalTo: descriptionTitleView.bottomAnchor),
                         expandableView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalMargin),
                         expandableView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -horizontalMargin),
-                        expandableViewBottomConstraint]
+                        expandableView.bottomAnchor.constraint(equalTo: self.bottomAnchor)]
 
         if uiMode == .collapsed {
             constraints += [descriptionTitleViewBottomToParentBottomConstraint]
@@ -167,7 +161,6 @@ class PlaceDetailsDescriptionView: UIView {
     func setExpandableView(isExpanded shouldExpand: Bool) {
         if shouldExpand {
             uiMode = .expanded
-            expandableViewBottomConstraint.constant = -10
             logoBottomConstraint.constant = -20
             expandButton.direction = .up
 
@@ -175,7 +168,6 @@ class PlaceDetailsDescriptionView: UIView {
             descriptionTitleViewBottomToParentBottomConstraint.isActive = false
         } else {
             uiMode = .collapsed
-            expandableViewBottomConstraint.constant = 0
             logoBottomConstraint.constant = 0
             expandButton.direction = .down
 
