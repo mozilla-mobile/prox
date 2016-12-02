@@ -31,6 +31,26 @@ class Event {
         return RemoteConfigKeys.eventAboutToEndIntervalMins.value * 60
     }()
 
+    private lazy var eventAboutToStartCardString: String = {
+        return self.formatEventString(string: RemoteConfigKeys.eventAboutToStartCardString.value)
+    }()
+
+    private lazy var eventAboutToEndCardString: String = {
+        return self.formatEventString(string: RemoteConfigKeys.eventAboutToEndCardString.value)
+    }()
+
+    private lazy var upcomingEventCardString: String =  {
+        return self.formatEventString(string: RemoteConfigKeys.upcomingEventCardString.value)
+    }()
+
+    private lazy var ongoingEventCardString: String = {
+        return self.formatEventString(string: RemoteConfigKeys.ongoingEventCardString.value)
+    }()
+
+    private lazy var endingEventCardString: String = {
+        return self.formatEventString(string: RemoteConfigKeys.endingEventCardString.value)
+    }()
+
     var notificationString: String? {
         let now = Date()
         if isUpcomingEvent(currentTime: now) {
@@ -51,19 +71,19 @@ class Event {
     var placeDisplayString: String? {
         let now = Date()
         if isAboutToStart(currentTime: now) {
-            return formatEventString(string: RemoteConfigKeys.eventAboutToStartCardString.value)
+            return eventAboutToStartCardString
         }
 
         if isAboutToEnd(currentTime: now) {
-            return formatEventString(string: RemoteConfigKeys.eventAboutToEndCardString.value)
+            return eventAboutToEndCardString
         }
 
         if isUpcomingEvent(currentTime: now) {
-            return formatEventString(string: RemoteConfigKeys.upcomingEventCardString.value)
+            return upcomingEventCardString
         }
 
         if isOngoingEvent(currentTime: now) {
-            return formatEventString(string: RemoteConfigKeys.ongoingEventCardString.value)
+            return ongoingEventCardString
         }
 
         if isEndingEvent(currentTime: now) {
@@ -161,7 +181,7 @@ class Event {
     }
 
     func arrivalByTime() -> Date {
-        let eventEndTimeArrivalInterval = RemoteConfigKeys.minTimeFromEndOfEventForNotificationMins.value * 60
+        let eventEndTimeArrivalInterval = Event.minTimeFromEndOfEventForNotificationMins
         let arrivalByTime: Date
         if let endTime = self.endTime {
             arrivalByTime = endTime - eventEndTimeArrivalInterval
