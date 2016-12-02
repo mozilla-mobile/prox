@@ -14,23 +14,16 @@ let notificationEventIDKey = "eventID"
 fileprivate typealias EventID = String
 
 class EventNotificationsManager {
-    // caches events by their start time by place
-    fileprivate lazy var sentNotifications: Set<EventID> = {
-        var cache = Set<EventID>()
-        guard let savedNotifications = UserDefaults.standard.dictionary(forKey: sentNotificationDictKey) as? [String: [EventID]] else {
-            return cache
+
+    fileprivate var sentNotifications: Set<String> {
+        get {
+            return Set<String>(UserDefaults.standard.array(forKey: sentNotificationDictKey) as? [String] ?? [])
         }
-        for (dateString, eventIDs) in savedNotifications {
-            if let timestamp = TimeInterval(dateString) {
-                let date = Date(timeIntervalSinceReferenceDate: timestamp)
-                if Calendar.current.isDateInToday(date) {
-                    let newIdsSet = Set<EventID>(eventIDs)
-                    cache.formUnion(newIdsSet)
-                }
-            }
+
+        set {
+            UserDefaults.standard.set(Array(newValue), forKey: sentNotificationDictKey)
         }
-        return cache
-    }()
+    }
 
     fileprivate var shouldFetchEvents: Bool {
         guard let eventFetchStartTime = eventFetchStartTime else {
@@ -79,7 +72,6 @@ class EventNotificationsManager {
     }
 
     func persistNotificationCache() {
-        UserDefaults.standard.set([String(Date().timeIntervalSinceReferenceDate): Array(sentNotifications)], forKey: sentNotificationDictKey)
         UserDefaults.standard.synchronize()
     }
 
@@ -202,6 +194,8 @@ class EventNotificationsManager {
     }
 
     fileprivate func markAsSent(event: Event) {
-        sentNotifications.insert(event.id)
+        var sent = sentNotifications
+        sent.insert(event.id)
+        sentNotifications = sent
     }
 }
