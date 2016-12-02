@@ -19,6 +19,7 @@ class EventsProvider {
     func getEventsForNotifications(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
         return eventsDatabase.getEvents(forLocation: location, withRadius: radius).upon { results in
             let events = results.flatMap { $0.successResult() }.filter { self.isValidEvent(event: $0) }
+            NSLog("found \(events.count) events")
             DispatchQueue.main.async {
                 completion(events, nil)
             }
@@ -33,6 +34,8 @@ class EventsProvider {
     }
 
     internal func isValidEvent(event: Event) -> Bool {
-        return event.isValidEvent()
+        let valid = event.isValidEvent()
+        NSLog("event \(event.description) is a \(valid ? "valid" : "invalid") event")
+        return valid
     }
 }

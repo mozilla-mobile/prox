@@ -95,17 +95,17 @@ class EventNotificationsManager {
     }
 
     private func sendNotifications(forEvents events: [Event]) {
+        guard let currentLocation = self.locationProvider?.getCurrentLocation()?.coordinate else { return NSLog("Not sending notifications for events because we have no location") }
         for (index, event) in events.enumerated() {
             if isUnsent(event: event) {
-                guard let currentLocation = self.locationProvider?.getCurrentLocation()?.coordinate else { return }
                 // check to see if there is an associated place
                 // don't send the notification if there isn't
                 let placesDB = PlacesProvider()
                 placesDB.place(forKey: event.placeId) { place in
-                    guard let _ = place else { return }
+                    guard let _ = place else { return  NSLog("Not sending notification for \(event.description) as it has no place") }
                     // check that travel times are within current location limits before deciding whether to send notification
                     TravelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: event.coordinates, before: event.arrivalByTime()) { canTravel in
-                        guard canTravel else { return }
+                        guard canTravel else { return NSLog("Not sending notification for \(event.description) as used cannot travel to it in time") }
                         DispatchQueue.main.async {
                             var timeInterval = 1
                             if index > 0 {
@@ -116,6 +116,8 @@ class EventNotificationsManager {
                     }
                     self.markAsSent(event: event)
                 }
+            } else {
+                 NSLog("Not sending notification for \(event.description) as is has already been sent")
             }
         }
 
@@ -148,13 +150,13 @@ class EventNotificationsManager {
                     let request = UNNotificationRequest(identifier: event.id, content: content, trigger: trigger)
                     center.add(request) { error in
                         if let theError = error {
-                            print(theError.localizedDescription)
+                            NSLog(theError.localizedDescription)
                         } else {
-                            print("Notification scheduled for \(event.description)")
+                            NSLog("Notification scheduled for \(event.description)")
                         }
                     }
                 } else {
-                    print("Settings not authorized for notifications \(settings.authorizationStatus)")
+                    NSLog("Settings not authorized for notifications \(settings.authorizationStatus)")
                 }
             }
         } else {

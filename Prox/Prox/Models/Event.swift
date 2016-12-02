@@ -172,12 +172,22 @@ class Event {
 
     internal func shouldShowEvent(withStartTime startTime: Date, endTime: Date?, timeIntervalBeforeStartOfEvent startTimeInterval: TimeInterval, timeIntervalBeforeEndOfEvent endTimeInterval: TimeInterval, atCurrentTime currentTime: Date) -> Bool {
         if isFutureEvent(currentTime: currentTime) {
-            return (startTime - startTimeInterval) <= currentTime
+            let validFutureEvent = (startTime - startTimeInterval) <= currentTime
+            if !validFutureEvent {
+                NSLog("\(description) is a future event but (\(startTime) - \(startTimeInterval)) <= \(currentTime)")
+            }
+            return validFutureEvent
         }
         guard let endTime = endTime else {
+            NSLog("\(description) is not a future event and has no end time")
             return false
         }
-        return currentTime < endTime - endTimeInterval
+
+        let isOngoing = currentTime < endTime - endTimeInterval
+        if !isOngoing {
+            NSLog("\(description) is not an ongoing event because (\(currentTime) >= \(endTime)) - \(endTimeInterval)")
+        }
+        return isOngoing
     }
 
     func arrivalByTime() -> Date {
