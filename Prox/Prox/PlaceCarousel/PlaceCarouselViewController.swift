@@ -429,6 +429,9 @@ extension PlaceCarouselViewController: PlaceDataSource {
             }
         } else {
             placesProvider.place(withKey: placeKey, forEventWithKey: eventKey) { place in
+                if let place = place {
+                    self.places.append(place)
+                }
                 callback(place)
             }
         }
