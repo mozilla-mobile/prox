@@ -468,7 +468,7 @@ class PlaceDetailViewController: UIViewController {
                 // this is so that paging quickly feels natural
                 let velocityX = (0.2 * gestureRecognizer.velocity(in: self.view).x)
                 let finalX = startConstant + translationX + velocityX;
-                let animationDuration = 0.5
+                let animationDuration = 0.25
 
                 if canPageToNextPlaceCard(finalXPosition: finalX) {
                     pageToNextPlaceCard(animateWithDuration: animationDuration)
