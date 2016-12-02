@@ -437,6 +437,10 @@ class PlaceDetailViewController: UIViewController {
         return newController
     }
 
+    enum AnimDir { case left, right }
+    var isAnimating = false
+    var animQueue: AnimDir? = nil
+
     @objc fileprivate func didPan(gestureRecognizer: UIPanGestureRecognizer) {
         defer {
             if gestureRecognizer.state == .ended {
@@ -463,12 +467,17 @@ class PlaceDetailViewController: UIViewController {
         case .horizontal:
             let translationX = gestureRecognizer.translation(in: self.view).x
 
+            guard !isAnimating else {
+                animQueue = translationX < 0 ? .right : .left
+                return
+            }
+
             if gestureRecognizer.state == .ended {
                 // figure out where the view would stop based on the velocity with which the user is panning
                 // this is so that paging quickly feels natural
                 let velocityX = (0.2 * gestureRecognizer.velocity(in: self.view).x)
                 let finalX = startConstant + translationX + velocityX;
-                let animationDuration = 0.5
+                let animationDuration = 0.25
 
                 if canPageToNextPlaceCard(finalXPosition: finalX) {
                     pageToNextPlaceCard(animateWithDuration: animationDuration)
@@ -478,6 +487,8 @@ class PlaceDetailViewController: UIViewController {
                     unwindToCurrentPlaceCard(animateWithDuration: animationDuration)
                 }
             } else {
+                guard !isAnimating else { return }
+
                 currentCardViewCenterXConstraint?.constant = startConstant + translationX
 
                 let currentCenter = currentCardViewController.cardView.center
@@ -540,7 +551,8 @@ class PlaceDetailViewController: UIViewController {
         self.currentCardViewCenterXConstraint = nextCardViewController.cardView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
         NSLayoutConstraint.activate([self.currentCardViewCenterXConstraint!])
 
-        UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.5, options: [.curveEaseOut, .allowUserInteraction], animations: {
+            self.isAnimating = true
             self.imageCarousel.alpha = 0
             nextCardImageCarousel.alpha = 1
             nextCardViewController.cardView.alpha = 1
@@ -552,6 +564,7 @@ class PlaceDetailViewController: UIViewController {
             self.currentCardViewController.cardView.transform = scaleOutTransformLeft
         }, completion: { finished in
             if finished {
+                self.isAnimating = false
                 // ensure that the correct current, previous and next view controller references are set
                 self.imageCarousel.removeFromSuperview()
                 self.imageCarousel = nextCardImageCarousel
@@ -567,6 +580,19 @@ class PlaceDetailViewController: UIViewController {
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
 
                 self.currentCardViewController.beginAutoMovingOfCarousel()
+
+                if let nextDir = self.animQueue {
+                    switch nextDir {
+                    case .left:
+                        self.pageToPreviousPlaceCard(animateWithDuration: 0.5)
+                    case .right:
+                        self.pageToNextPlaceCard(animateWithDuration: 0.5)
+                    default:
+                        break
+                    }
+                    self.animQueue = nil
+
+                }
             }
         })
     }
