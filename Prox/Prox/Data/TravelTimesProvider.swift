@@ -18,6 +18,10 @@ struct TravelTimesProvider {
         return RemoteConfigKeys.youAreHereWalkingTimeMins.value
     }()
 
+    static var travelTimePadding: Double = {
+        return RemoteConfigKeys.travelTimePaddingMins.value * 60
+    }()
+
     private static func directions(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType) -> MKDirections {
 
         let directionsRequest = MKDirectionsRequest()
@@ -85,7 +89,7 @@ struct TravelTimesProvider {
                 let drivingTime = travelTimes.drivingTime else {
                     return completion(false)
             }
-            let travelTimePadding = RemoteConfigKeys.travelTimePaddingMins.value * 60
+            let travelTimePadding = TravelTimesProvider.travelTimePadding
             completion((drivingTime + travelTimePadding)  <= timeInterval)
         })
     }
@@ -97,7 +101,7 @@ struct TravelTimes {
     let publicTransportTime: TimeInterval?
 
     func getShortestTravelTime() -> TimeInterval {
-        let driveTimePadding: Double = RemoteConfigKeys.travelTimePaddingMins.value * 60 
+        let driveTimePadding: Double = TravelTimesProvider.travelTimePadding
         let driveTime = drivingTime ?? (Double.greatestFiniteMagnitude - driveTimePadding)
         return min(walkingTime ?? Double.greatestFiniteMagnitude, driveTime + driveTimePadding )
     }
