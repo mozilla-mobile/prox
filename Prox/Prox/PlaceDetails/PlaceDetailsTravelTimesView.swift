@@ -35,7 +35,8 @@ class PlaceDetailsTravelTimesView: PlaceDetailsIconInfoView, TravelTimesView {
     }
 
     func updateTravelTimesUIForResult(_ result: TravelTimesViewResult, durationInMinutes: Int?) {
-        iconView.tintColor = nil
+        iconView.isHidden = false
+        secondaryTextLabel.numberOfLines = 1
 
         switch result {
         case .userHere:
@@ -61,10 +62,9 @@ class PlaceDetailsTravelTimesView: PlaceDetailsIconInfoView, TravelTimesView {
         case .noData:
             isPrimaryTextLabelHidden = true
             forwardArrowView.isHidden = false
-            secondaryTextLabel.text = "View on Map"
-
-            iconView.tintColor = Colors.detailsViewTravelTimeErrorPinTint
-            iconView.image = UIImage(named: "icon_here")?.withRenderingMode(.alwaysTemplate)
+            secondaryTextLabel.numberOfLines = 2
+            secondaryTextLabel.text = "Check map\nfor distance"
+            iconView.isHidden = true
         }
     }
 }
