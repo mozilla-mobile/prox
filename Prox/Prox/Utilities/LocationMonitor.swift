@@ -14,6 +14,8 @@ protocol LocationMonitorDelegate: class {
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidExitCurrentLocation location: CLLocation)
     func locationMonitorNeedsUserPermissionsPrompt(_ locationMonitor: LocationMonitor)
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation)
+
+    func locationMonitor(_ locationMonitor: LocationMonitor, didFailInitialUpdateWithError error: Error)
 }
 
 // an extension on the delegate allows us to give default implementations to some of the functions, making them optional
@@ -184,8 +186,13 @@ extension LocationMonitor: CLLocationManagerDelegate {
         }
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        // TODO: handle
-        print("lol-location \(error.localizedDescription)")
+        guard currentLocation == nil else {
+            // If we have a cached location, we can use that - no need to display another error.
+            return
+        }
+
+        NSLog("lol-location \(error.localizedDescription)")
+        self.delegate?.locationMonitor(self, didFailInitialUpdateWithError: error)
     }
 
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
