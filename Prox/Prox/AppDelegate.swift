@@ -159,7 +159,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-        Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [:])
+        Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.FOREGROUND])
         if let eventKey = notification.userInfo?[notificationEventIDKey] as? String,
             let placeKey = notification.userInfo?[notificationEventPlaceIDKey] as? String {
             if ( application.applicationState == .inactive || application.applicationState == .background  ) {
@@ -186,7 +186,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // show a badge.
         if let eventKey = notification.request.content.userInfo[notificationEventIDKey] as? String,
             let placeKey = notification.request.content.userInfo[notificationEventPlaceIDKey] as? String {
-            Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [:])
+            Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.BACKGROUND])
             placeCarouselViewController?.presentInAppEventNotification(forEventWithKey: eventKey, atPlaceWithKey: placeKey, withDescription: notification.request.content.body)
         }
         completionHandler(UNNotificationPresentationOptions.badge)
@@ -198,7 +198,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         if response.notification.request.content.categoryIdentifier == "EVENTS" {
             if let eventKey = response.notification.request.content.userInfo[notificationEventIDKey] as? String,
                 let placeKey = response.notification.request.content.userInfo[notificationEventPlaceIDKey] as? String {
-                Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [:])
+                Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.CLICKED])
                 placeCarouselViewController?.openPlace(placeKey: placeKey, forEventWithKey: eventKey)
             }
         }
