@@ -70,6 +70,8 @@
 		7BD5CC8A1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7BD5CC8B1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7C79B23D6CD1B1AC5A860E9E /* Pods_ProxTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */; };
+		E60A42711DF28E01008BE74D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42701DF28E01008BE74D /* URL.swift */; };
+		E60A42771DF29127008BE74D /* URLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42761DF29127008BE74D /* URLTests.swift */; };
 		E6101A901DDA45CD00D05B74 /* Data.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E6101A8F1DDA45CD00D05B74 /* Data.bundle */; };
 		E6101A911DDA45CD00D05B74 /* Data.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E6101A8F1DDA45CD00D05B74 /* Data.bundle */; };
 		E6101A921DDA45CD00D05B74 /* Data.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E6101A8F1DDA45CD00D05B74 /* Data.bundle */; };
@@ -200,6 +202,8 @@
 		D3DA77821DC289A4009C114E /* Prox-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Prox-Bridging-Header.h"; sourceTree = "<group>"; };
 		D4ACFAE1468306F6BC08DB51 /* Pods-ProxUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProxUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E60A42701DF28E01008BE74D /* URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = URL.swift; path = Extensions/URL.swift; sourceTree = "<group>"; };
+		E60A42761DF29127008BE74D /* URLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLTests.swift; sourceTree = "<group>"; };
 		E6101A8F1DDA45CD00D05B74 /* Data.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Data.bundle; sourceTree = "<group>"; };
 		E6101A951DDA481800D05B74 /* CategoriesUtilTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoriesUtilTests.swift; sourceTree = "<group>"; };
 		E6101A971DDA7B8500D05B74 /* CategoriesUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoriesUtil.swift; sourceTree = "<group>"; };
@@ -320,6 +324,7 @@
 				E6101A951DDA481800D05B74 /* CategoriesUtilTests.swift */,
 				7B2EF5861DDF4D7200695515 /* TimeIntervalTests.swift */,
 				7B2EF58D1DE36E8600695515 /* EventTests.swift */,
+				E60A42761DF29127008BE74D /* URLTests.swift */,
 			);
 			path = ProxTests;
 			sourceTree = "<group>";
@@ -501,6 +506,7 @@
 				7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */,
 				E67146351DB54896007A99E4 /* CLLocationManager.swift */,
 				7B1C657C1DDF28F00047559C /* TimeInterval.swift */,
+				E60A42701DF28E01008BE74D /* URL.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -821,6 +827,7 @@
 				E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */,
 				7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */,
 				7B699A9E1DEDD635004A671B /* InAppNotificationToast.swift in Sources */,
+				E60A42711DF28E01008BE74D /* URL.swift in Sources */,
 				E61252F11DDF761C007E33B7 /* MapPlacesTransition.swift in Sources */,
 				7BB1CA451DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift in Sources */,
 				7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */,
@@ -873,6 +880,7 @@
 				7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */,
 				7B2EF5871DDF4D7200695515 /* TimeIntervalTests.swift in Sources */,
 				7B50957A1DB65342007C54F0 /* TravelTimesProvider.swift in Sources */,
+				E60A42771DF29127008BE74D /* URLTests.swift in Sources */,
 				E68BD90D1DCA9E8E007B51A3 /* DayOfWeekTests.swift in Sources */,
 				E68BD90F1DCAAD6B007B51A3 /* OpenHoursTests.swift in Sources */,
 				39C4EC9F1DDCA75500B53B77 /* RemoteConfigKeys.swift in Sources */,
