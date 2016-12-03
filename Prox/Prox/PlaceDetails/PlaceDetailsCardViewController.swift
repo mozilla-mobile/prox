@@ -200,7 +200,7 @@ class PlaceDetailsCardViewController: UIViewController {
     @objc private func openEventURL(gestureRecognizer: UITapGestureRecognizer) {
         guard let event = place.events.first,
             let urlString = event.url,
-            let url = URL(string: urlString) else { return }
+            let url = URL(httpStringMaybeWithScheme: urlString) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open web address")
         } else {
