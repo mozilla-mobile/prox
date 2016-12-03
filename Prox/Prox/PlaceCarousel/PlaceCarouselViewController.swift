@@ -493,8 +493,11 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
 extension PlaceCarouselViewController: PlacesProviderDelegate {
     fileprivate func showErrorMessageIfNoPlaces() {
         if self.places.isEmpty {
+            // We don't want to show two error pop-ups: checking for any VC is a superset, but simple.
+            let isOtherViewControllerShown = presentedViewController != nil
             let hasLocation = locationMonitor.getCurrentLocation() != nil
-            guard hasLocation else {
+            guard hasLocation,
+                    !isOtherViewControllerShown else {
                 presentNoLocationAlert()
                 return // Don't show "Try again" button - it could be misleading.
             }
