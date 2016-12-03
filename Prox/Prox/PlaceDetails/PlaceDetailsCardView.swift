@@ -270,9 +270,19 @@ class PlaceDetailsCardView: UIView {
     }
 
     private func updateHoursUI(_ hours: OpenHours?) {
-        let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date())
+        guard let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date()) else {
+            hoursView.iconView.isHidden = true
+            hoursView.isPrimaryTextLabelHidden = true
+            hoursView.secondaryTextLabel.text = "Check listing\nfor hours"
+            hoursView.secondaryTextLabel.numberOfLines = 2
+            return
+        }
+
+        hoursView.iconView.isHidden = false
+        hoursView.isPrimaryTextLabelHidden = false
         hoursView.primaryTextLabel.text = primaryText
         hoursView.secondaryTextLabel.text = secondaryText
+        hoursView.secondaryTextLabel.numberOfLines = 1
     }
 
     private func updateDescriptionViewUI(forText text: String?, onView view: PlaceDetailsDescriptionView, expanded: Bool) {
@@ -306,10 +316,10 @@ class PlaceDetailsCardView: UIView {
         self.layoutIfNeeded()
     }
 
-    private func getStringsForOpenHours(_ openHours: OpenHours?, forDate date: Date) -> (primary: String, secondary: String) {
+    private func getStringsForOpenHours(_ openHours: OpenHours?, forDate date: Date) -> (primary: String, secondary: String)? {
         guard let openHours = openHours else {
             // if hours is nil, we assume this place has no listed hours (e.g. beach).
-            return ("Not sure", "Closing time")
+            return nil
         }
 
         let now = Date()
@@ -320,6 +330,6 @@ class PlaceDetailsCardView: UIView {
             return ("Closed", "Until \(openingTime)")
         }
 
-        return ("Not sure", "Closing time")
+        return nil
     }
 }
