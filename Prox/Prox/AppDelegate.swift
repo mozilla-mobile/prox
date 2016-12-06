@@ -159,13 +159,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-        Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.FOREGROUND])
         if let eventKey = notification.userInfo?[notificationEventIDKey] as? String,
             let placeKey = notification.userInfo?[notificationEventPlaceIDKey] as? String {
             if ( application.applicationState == .inactive || application.applicationState == .background  ) {
                 placeCarouselViewController?.openPlace(placeKey: placeKey, forEventWithKey: eventKey)
+                Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.BACKGROUND])
             } else if let body = notification.alertBody {
                 placeCarouselViewController?.presentInAppEventNotification(forEventWithKey: eventKey, atPlaceWithKey: placeKey, withDescription: body)
+                Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.FOREGROUND])
             }
         }
     }
