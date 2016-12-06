@@ -8,7 +8,7 @@ import Firebase
 
 // Adding "$name/" allows you to develop against a locally run database.
 // TODO prox-server – allow this string to be passed in as a URL parameter when in debug mode.
-private let ROOT_PATH = ""
+private let ROOT_PATH = AppConstants.firebaseRoot
 private let EVENTS_PATH = ROOT_PATH + "events/"
 private let GEOFIRE_PATH = EVENTS_PATH + "locations/"
 private let DETAILS_PATH = EVENTS_PATH + "details/"
