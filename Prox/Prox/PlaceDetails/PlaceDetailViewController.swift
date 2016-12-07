@@ -629,7 +629,7 @@ class PlaceDetailViewController: UIViewController {
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
 
                 self.currentCardViewController.beginAutoMovingOfCarousel()
-                let cardPos = (self.dataSource != nil) ? self.dataSource!.index(forPlace: self.currentCardViewController.place)! : -1
+                let cardPos = self.dataSource?.index(forPlace: self.currentCardViewController.place) ?? -1
                 AppState.trackCardVisit(cardPos: cardPos)
             }
         })
