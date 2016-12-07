@@ -16,6 +16,7 @@ protocol PlacesProviderDelegate: class {
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place])
     func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider)
     func placesProviderDidTimeout(_ controller: PlacesProvider)
+    func placesProviderDidFetchFirstPlace()
 }
 
 private let apiSuffix = "/api/v1.0/at/%f/%f"
@@ -38,6 +39,10 @@ class PlacesProvider {
     private lazy var radius: Double = {
         return RemoteConfigKeys.searchRadiusInKm.value
     }()
+
+    fileprivate lazy var places = [Place]()
+
+    fileprivate var firstFetch = true
 
     func place(forKey key: String, callback: @escaping (Place?) -> ()) {
         database.getPlace(forKey: key).upon { callback($0.successResult() )}
@@ -163,8 +168,13 @@ class PlacesProvider {
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
         let filteredPlaces = PlaceUtilities.filterPlacesForCarousel(places)
         return PlaceUtilities.sort(places: filteredPlaces, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
+            self.places = sortedPlaces
             DispatchQueue.main.async {
-                self.delegate?.placesProvider(self, didReceivePlaces: sortedPlaces)
+                self.delegate?.placesProvider(self, didReceivePlaces: self.places)
+                if self.firstFetch {
+                    self.delegate?.placesProviderDidFetchFirstPlace()
+                    self.firstFetch = false
+                }
             }
         })
     }
@@ -200,5 +210,70 @@ class PlacesProvider {
             }
         }
         return unionOfPlaces
+    }
+}
+
+extension PlacesProvider: PlaceDataSource {
+    func nextPlace(forPlace place: Place) -> Place? {
+        // if the place isn't in the list, make the first item in the list the next item
+        guard let currentPlaceIndex = places.index(where: {$0 == place}) else {
+            return places.count > 0 ? places[places.startIndex] : nil
+        }
+
+        guard currentPlaceIndex + 1 < places.endIndex else { return nil }
+
+        return places[places.index(after: currentPlaceIndex)]
+    }
+
+    func previousPlace(forPlace place: Place) -> Place? {
+        guard let currentPlaceIndex = places.index(where: {$0 == place}),
+            currentPlaceIndex > places.startIndex else { return nil }
+
+        return places[places.index(before: currentPlaceIndex)]
+    }
+
+    func numberOfPlaces() -> Int {
+        return places.count
+    }
+
+    func place(forIndex index: Int) throws -> Place {
+        guard index < places.endIndex,
+            index >= places.startIndex else {
+                throw PlaceDataSourceError(message: "There is no place at index: \(index)")
+        }
+
+        return places[index]
+    }
+
+    func index(forPlace place: Place) -> Int? {
+        return places.index(of: place)
+    }
+
+    func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ()) {
+        if let placeIndex = places.index(where: { $0.id == placeKey }) {
+            let place = places[placeIndex]
+            if place.events.contains(where: { $0.id == eventKey }) {
+                callback(place)
+            }
+            let eventProvider = EventsProvider()
+            eventProvider.event(forKey: eventKey) { event in
+                guard let event = event else { return callback(nil) }
+                place.events.append(event)
+                callback(place)
+            }
+        } else {
+            self.place(withKey: placeKey, forEventWithKey: eventKey) { place in
+                callback(place)
+            }
+        }
+    }
+
+    func allPlaces() -> [Place] {
+        return places
+    }
+
+    func sortPlaces(byLocation location: CLLocation) {
+        let sortedPlaces = PlaceUtilities.sort(places: places, byDistanceFromLocation: location)
+        self.places = sortedPlaces
     }
 }

@@ -15,6 +15,7 @@ protocol PlaceDataSource: class {
     func place(forIndex: Int) throws -> Place
     func index(forPlace: Place) -> Int?
     func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ())
+    func sortPlaces(byLocation location: CLLocation)
 }
 
 struct PlaceDataSourceError: Error {
@@ -30,17 +31,6 @@ class PlaceCarouselViewController: UIViewController {
         controller.delegate = self
         return controller
     }()
-
-    var places: [Place] = [Place]() {
-        didSet {
-            if oldValue == places {
-                return
-            }
-            // TODO: how do we make sure the user wasn't interacting?
-            headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
-            placeCarousel.refresh()
-        }
-    }
 
     // the top part of the background. Contains Number of Places, horizontal line & (soon to be) Current Location button
     lazy var headerView: PlaceCarouselHeaderView = {
@@ -78,7 +68,7 @@ class PlaceCarouselViewController: UIViewController {
     lazy var placeCarousel: PlaceCarousel = {
         let carousel = PlaceCarousel()
         carousel.delegate = self
-        carousel.dataSource = self
+        carousel.dataSource = self.placesProvider
         carousel.locationProvider = self.locationMonitor
         return carousel
     }()
@@ -214,11 +204,13 @@ class PlaceCarouselViewController: UIViewController {
     }
 
     func openFirstPlace() {
-        guard let place = places.first else {
-            return
-        }
-        if self.presentedViewController == nil {
-            openDetail(forPlace: place)
+        do {
+            let place = try placesProvider.place(forIndex: 0)
+            if self.presentedViewController == nil {
+                openDetail(forPlace: place)
+            }
+        } catch {
+            NSLog("Unable to open first place as there are no places")
         }
     }
 
@@ -230,7 +222,7 @@ class PlaceCarouselViewController: UIViewController {
         }
 
         let placeDetailViewController = PlaceDetailViewController(place: place)
-        placeDetailViewController.dataSource = self
+        placeDetailViewController.dataSource = placesProvider
         placeDetailViewController.locationProvider = self.locationMonitor
         placeDetailViewController.transitioningDelegate = self
 
@@ -262,8 +254,8 @@ class PlaceCarouselViewController: UIViewController {
                 fetchPlaces(forLocation: location)
             } else {
                 // re-sort places based on new location
-                let sortedPlaces = PlaceUtilities.sort(places: self.places, byDistanceFromLocation: location)
-                self.places = sortedPlaces
+                placesProvider.sortPlaces(byLocation: location)
+                placeCarousel.refresh()
             }
         }
     }
@@ -377,7 +369,7 @@ class PlaceCarouselViewController: UIViewController {
 
 extension PlaceCarouselViewController: InAppNotificationToastDelegate {
     internal func inAppNotificationToastProvider(_ toast: InAppNotificationToastProvider, userDidRespondToNotificationForEventWithId eventId: String, atPlaceWithId placeId: String) {
-        fetchPlace(placeKey: placeId, withEvent: eventId) { place in
+        placesProvider.fetchPlace(placeKey: placeId, withEvent: eventId) { place in
             guard let place = place else {
                 NSLog("Unable to find place with id \(placeId) and event with id \(eventId)")
                 return
@@ -393,66 +385,9 @@ extension PlaceCarouselViewController: InAppNotificationToastDelegate {
     }
 }
 
-extension PlaceCarouselViewController: PlaceDataSource {
-
-    func nextPlace(forPlace place: Place) -> Place? {
-        // if the place isn't in the list, make the first item in the list the next item
-        guard let currentPlaceIndex = places.index(where: {$0 == place}) else {
-            return places.count > 0 ? places[places.startIndex] : nil
-        }
-
-        guard currentPlaceIndex + 1 < places.endIndex else { return nil }
-
-        return places[places.index(after: currentPlaceIndex)]
-    }
-
-    func previousPlace(forPlace place: Place) -> Place? {
-        guard let currentPlaceIndex = places.index(where: {$0 == place}),
-            currentPlaceIndex > places.startIndex else { return nil }
-
-        return places[places.index(before: currentPlaceIndex)]
-    }
-
-    func numberOfPlaces() -> Int {
-        return places.count
-    }
-
-    func place(forIndex index: Int) throws -> Place {
-        guard index < places.endIndex,
-            index >= places.startIndex else {
-            throw PlaceDataSourceError(message: "There is no place at index: \(index)")
-        }
-
-        return places[index]
-    }
-
-    func index(forPlace place: Place) -> Int? {
-        return places.index(of: place)
-    }
-
-    func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ()) {
-        if let placeIndex = places.index(where: { $0.id == placeKey }) {
-            let place = places[placeIndex]
-            if place.events.contains(where: { $0.id == eventKey }) {
-                callback(place)
-            }
-            let eventProvider = EventsProvider()
-            eventProvider.event(forKey: eventKey) { event in
-                guard let event = event else { return callback(nil) }
-                place.events.append(event)
-                callback(place)
-            }
-        } else {
-            placesProvider.place(withKey: placeKey, forEventWithKey: eventKey) { place in
-                callback(place)
-            }
-        }
-    }
-}
-
 extension PlaceCarouselViewController: PlaceCarouselDelegate {
     func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int) {
-        openDetail(forPlace: places[index])
+        openDetail(forPlace: try! placesProvider.place(forIndex: index))
     }
 }
 
@@ -492,7 +427,7 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
 
 extension PlaceCarouselViewController: PlacesProviderDelegate {
     fileprivate func showErrorMessageIfNoPlaces() {
-        if self.places.isEmpty {
+        if placesProvider.numberOfPlaces() == 0 {
             // We don't want to show two error pop-ups: checking for any VC is a superset, but simple.
             let isOtherViewControllerShown = presentedViewController != nil
             let hasLocation = locationMonitor.getCurrentLocation() != nil
@@ -515,23 +450,24 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
     }
 
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
-        let wasEmpty = self.places.isEmpty
-        self.places = places
+
+        // TODO: how do we make sure the user wasn't interacting?
+        headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
+        placeCarousel.refresh()
 
         (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
-
-        if wasEmpty && !places.isEmpty {
-
-            // Wrap the openClosedPlace in an async block to make sure its queued after the
-            // carousel's refresh so the cells load before we invoke the transition
-            DispatchQueue.main.async {
-                self.openFirstPlace()
-            }
-        }
     }
 
     func placesProviderDidTimeout(_ controller: PlacesProvider) {
         showErrorMessageIfNoPlaces()
+    }
+
+    func placesProviderDidFetchFirstPlace() {
+        // Wrap the openClosedPlace in an async block to make sure its queued after the
+        // carousel's refresh so the cells load before we invoke the transition
+        DispatchQueue.main.async {
+            self.openFirstPlace()
+        }
     }
 }
 
@@ -548,7 +484,7 @@ extension PlaceCarouselViewController: UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController, presenting: UIViewController,
                              source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         if let detailVC = presented as? PlaceDetailViewController,
-            places.contains(detailVC.currentPlace) {
+            let _ = placesProvider.index(forPlace: detailVC.currentPlace) {
             if isLoading {
                 let fadeTransition = CrossFadeTransition()
 
@@ -568,7 +504,7 @@ extension PlaceCarouselViewController: UIViewControllerTransitioningDelegate {
 
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         if let detailVC = dismissed as? PlaceDetailViewController,
-            places.contains(detailVC.currentPlace) {
+            let _ = placesProvider.index(forPlace: detailVC.currentPlace) {
             let transition = MapPlacesTransition()
             transition.presenting = false
             return transition
