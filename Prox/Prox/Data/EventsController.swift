@@ -10,7 +10,7 @@ class EventsProvider {
     lazy var eventsDatabase: EventsDatabase = FirebaseEventsDatabase()
 
     private lazy var radius: Double = {
-        return RemoteConfigKeys.eventSearchRadiusInKm.value
+        return 1.5//RemoteConfigKeys.eventSearchRadiusInKm.value
     }()
     func event(forKey key: String, completion: @escaping (Event?) -> ()) {
         eventsDatabase.getEvent(withKey: key).upon { completion($0.successResult() )}
