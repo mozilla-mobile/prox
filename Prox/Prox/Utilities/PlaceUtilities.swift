@@ -28,7 +28,7 @@ struct PlaceUtilities {
         // or the whole array is the number of places in the array < 10
         let numberSortedByTravelTime = Int(min(10.0, Double(sortedPlaces.count)))
         let slice: Array<Place> = Array(sortedPlaces[0..<numberSortedByTravelTime])
-        PlaceUtilities.getTravelTimes(forPlaces: slice, fromLocation: location).upon { result in
+        PlaceUtilities.getTravelTimes(forPlaces: slice, fromLocation: location, withTransitTypes: [.walking]).upon { result in
             let sortedByTravelTime = places.sorted { (placeA, placeB) -> Bool in
                 let placeAETA = PlaceUtilities.lastTravelTimes(forPlace: placeA)?.getShortestTravelTime() ?? Double.greatestFiniteMagnitude
                 let placeBETA = PlaceUtilities.lastTravelTimes(forPlace: placeB)?.getShortestTravelTime() ?? Double.greatestFiniteMagnitude
@@ -47,8 +47,8 @@ struct PlaceUtilities {
         }
     }
 
-    private static func getTravelTimes(forPlaces places: [Place], fromLocation location: CLLocation) -> Future<[DatabaseResult<TravelTimes>]> {
-        return places.map { $0.travelTimes(fromLocation: location) }.allFilled()
+    private static func getTravelTimes(forPlaces places: [Place], fromLocation location: CLLocation, withTransitTypes transitTypes: [MKDirectionsTransportType]) -> Future<[DatabaseResult<TravelTimes>]> {
+        return places.map { $0.travelTimes(fromLocation: location, withTransitTypes: transitTypes) }.allFilled()
     }
 
     private static func lastTravelTimes(forPlace place: Place) -> TravelTimes? {

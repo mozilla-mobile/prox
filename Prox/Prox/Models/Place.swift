@@ -187,7 +187,7 @@ class Place: Hashable {
         return descriptionText
     }
 
-    func travelTimes(fromLocation location: CLLocation) -> Deferred<DatabaseResult<TravelTimes>> {
+    func travelTimes(fromLocation location: CLLocation, withTransitTypes transitTypes: [MKDirectionsTransportType] = [.automobile, .walking]) -> Deferred<DatabaseResult<TravelTimes>> {
         // TODO: we get a value from the travel times cache and maybe set one later. If this truly
         // happens concurrently, the value can change between accesses. We can solve by:
         //   - locking thewhole time (which breaks the encapsulation I wrote)
@@ -205,7 +205,7 @@ class Place: Hashable {
         Place.travelTimesCache[id] = (deferred, location)
 
         TravelTimesProvider.travelTime(fromLocation: location.coordinate, toLocation: latLong,
-                                       byTransitTypes: [.automobile, .walking]) { travelTimes in
+                                       byTransitTypes: transitTypes) { travelTimes in
             let res: DatabaseResult<TravelTimes>
             if let travelTimes = travelTimes {
                 res = DatabaseResult.succeed(value: travelTimes)
