@@ -24,11 +24,7 @@ struct PlaceUtilities {
 
     static func sort(places: [Place], byTravelTimeFromLocation location: CLLocation, ascending: Bool = true, completion: @escaping ([Place]) -> ()) {
         var sortedPlaces = PlaceUtilities.sort(places: places, byDistanceFromLocation: location)
-        // sort the first 10 places by travel time
-        // or the whole array is the number of places in the array < 10
-        let numberSortedByTravelTime = Int(min(10.0, Double(sortedPlaces.count)))
-        let slice: Array<Place> = Array(sortedPlaces[0..<numberSortedByTravelTime])
-        PlaceUtilities.getTravelTimes(forPlaces: slice, fromLocation: location, withTransitTypes: [.walking]).upon { result in
+        PlaceUtilities.getTravelTimes(forPlaces: sortedPlaces, fromLocation: location, withTransitTypes: [.walking]).upon { result in
             let sortedByTravelTime = places.sorted { (placeA, placeB) -> Bool in
                 let placeAETA = PlaceUtilities.lastTravelTimes(forPlace: placeA)?.getShortestTravelTime() ?? Double.greatestFiniteMagnitude
                 let placeBETA = PlaceUtilities.lastTravelTimes(forPlace: placeB)?.getShortestTravelTime() ?? Double.greatestFiniteMagnitude
