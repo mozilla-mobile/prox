@@ -24,6 +24,7 @@ struct PlaceUtilities {
 
     static func sort(places: [Place], byTravelTimeFromLocation location: CLLocation, ascending: Bool = true, completion: @escaping ([Place]) -> ()) {
         var sortedPlaces = PlaceUtilities.sort(places: places, byDistanceFromLocation: location)
+        // this means we will probably only get walking directions for places, but I think that will be OK for now
         PlaceUtilities.getTravelTimes(forPlaces: sortedPlaces, fromLocation: location, withTransitTypes: [.walking]).upon { result in
             let sortedByTravelTime = places.sorted { (placeA, placeB) -> Bool in
                 let placeAETA = PlaceUtilities.lastTravelTimes(forPlace: placeA)?.getShortestTravelTime() ?? Double.greatestFiniteMagnitude
