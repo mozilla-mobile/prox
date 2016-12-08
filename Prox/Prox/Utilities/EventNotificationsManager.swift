@@ -104,7 +104,7 @@ class EventNotificationsManager {
                 placesDB.place(forKey: event.placeId) { place in
                     guard let _ = place else { return  NSLog("Not sending notification for \(event.id) as it has no place") }
                     // check that travel times are within current location limits before deciding whether to send notification
-                    TravelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: event.coordinates, before: event.arrivalByTime()) { canTravel in
+                    travelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: event.coordinates, before: event.arrivalByTime()) { canTravel in
                         guard canTravel else { return NSLog("Not sending notification for \(event.id) as used cannot travel to it in time") }
                         DispatchQueue.main.async {
                             var timeInterval = 1

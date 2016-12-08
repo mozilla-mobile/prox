@@ -135,7 +135,7 @@ class PlaceDetailsCardViewController: UIViewController {
         if let location = location {
             if let event = self.place.events.first {
                 // check that travel times are within current location limits before deciding whether to send notification
-                TravelTimesProvider.canTravelFrom(fromLocation: location.coordinate, toLocation: place.latLong, before: event.arrivalByTime()) { canTravel in
+                travelTimesProvider.canTravelFrom(fromLocation: location.coordinate, toLocation: place.latLong, before: event.arrivalByTime()) { canTravel in
                     guard canTravel else { return }
                     DispatchQueue.main.async {
                         self.cardView.showEvent(atPlace: self.place)

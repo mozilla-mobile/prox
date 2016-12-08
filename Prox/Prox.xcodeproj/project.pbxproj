@@ -16,6 +16,8 @@
 		39C4EC9E1DDCA75400B53B77 /* RemoteConfigKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */; };
 		39C4EC9F1DDCA75500B53B77 /* RemoteConfigKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */; };
 		4F00E2C2201E3A088D934AE0 /* Pods_Prox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29190FCA903C1D1AF4C77316 /* Pods_Prox.framework */; };
+		7B079A7A1DF896C100631029 /* TravelTimesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B079A791DF896C100631029 /* TravelTimesProvider.swift */; };
+		7B079A7C1DF8990900631029 /* GoogleDirectionsMatrixTravelTimesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B079A7B1DF8990900631029 /* GoogleDirectionsMatrixTravelTimesProvider.swift */; };
 		7B0ECE481DD6145500ABBD72 /* LocationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */; };
 		7B1C657B1DDCA9A90047559C /* FirebaseEventsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */; };
 		7B1C657D1DDF28F00047559C /* TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1C657C1DDF28F00047559C /* TimeInterval.swift */; };
@@ -37,8 +39,8 @@
 		7B5095721DB5352E007C54F0 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095701DB5352E007C54F0 /* Colors.swift */; };
 		7B5095731DB5352E007C54F0 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095711DB5352E007C54F0 /* Fonts.swift */; };
 		7B5095751DB62590007C54F0 /* NSLayoutConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */; };
-		7B5095781DB64E76007C54F0 /* TravelTimesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */; };
-		7B50957A1DB65342007C54F0 /* TravelTimesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */; };
+		7B5095781DB64E76007C54F0 /* MKDirectionsTravelTimesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095771DB64E76007C54F0 /* MKDirectionsTravelTimesProvider.swift */; };
+		7B50957A1DB65342007C54F0 /* MKDirectionsTravelTimesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095771DB64E76007C54F0 /* MKDirectionsTravelTimesProvider.swift */; };
 		7B5095811DB65FD4007C54F0 /* TravelTimesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095801DB65FD4007C54F0 /* TravelTimesTests.swift */; };
 		7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095841DB903B7007C54F0 /* DatabaseResult.swift */; };
 		7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */; };
@@ -130,6 +132,8 @@
 		55740F6C4426324FDA569848 /* Pods-Prox.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.enterprise.xcconfig"; sourceTree = "<group>"; };
 		64E189E4D93A85A43CF269E2 /* Pods-ProxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		75091F0A7DE7F3D6E008D07B /* Pods-Prox.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.debug.xcconfig"; sourceTree = "<group>"; };
+		7B079A791DF896C100631029 /* TravelTimesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TravelTimesProvider.swift; sourceTree = "<group>"; };
+		7B079A7B1DF8990900631029 /* GoogleDirectionsMatrixTravelTimesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleDirectionsMatrixTravelTimesProvider.swift; sourceTree = "<group>"; };
 		7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationMonitor.swift; sourceTree = "<group>"; };
 		7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FirebaseEventsDatabase.swift; path = Data/FirebaseEventsDatabase.swift; sourceTree = "<group>"; };
 		7B1C657C1DDF28F00047559C /* TimeInterval.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TimeInterval.swift; path = Extensions/TimeInterval.swift; sourceTree = "<group>"; };
@@ -157,7 +161,7 @@
 		7B5095701DB5352E007C54F0 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		7B5095711DB5352E007C54F0 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NSLayoutConstraint.swift; path = Extensions/NSLayoutConstraint.swift; sourceTree = "<group>"; };
-		7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TravelTimesProvider.swift; path = ../Data/TravelTimesProvider.swift; sourceTree = "<group>"; };
+		7B5095771DB64E76007C54F0 /* MKDirectionsTravelTimesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MKDirectionsTravelTimesProvider.swift; path = ../Data/MKDirectionsTravelTimesProvider.swift; sourceTree = "<group>"; };
 		7B5095801DB65FD4007C54F0 /* TravelTimesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TravelTimesTests.swift; sourceTree = "<group>"; };
 		7B5095841DB903B7007C54F0 /* DatabaseResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatabaseResult.swift; path = Data/DatabaseResult.swift; sourceTree = "<group>"; };
 		7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselHeaderView.swift; path = PlaceCarousel/PlaceCarouselHeaderView.swift; sourceTree = "<group>"; };
@@ -370,7 +374,7 @@
 			children = (
 				7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */,
 				E681E7571DE3562200902CDA /* Animatable.swift */,
-				7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */,
+				7B5095771DB64E76007C54F0 /* MKDirectionsTravelTimesProvider.swift */,
 				7B5095701DB5352E007C54F0 /* Colors.swift */,
 				7B5095711DB5352E007C54F0 /* Fonts.swift */,
 				7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */,
@@ -379,6 +383,8 @@
 				7BA05BEA1DD4D602009AC121 /* EventNotificationsManager.swift */,
 				E6101A971DDA7B8500D05B74 /* CategoriesUtil.swift */,
 				234AF1591DDFD91C00097B0B /* AnalyticsUtilities.swift */,
+				7B079A791DF896C100631029 /* TravelTimesProvider.swift */,
+				7B079A7B1DF8990900631029 /* GoogleDirectionsMatrixTravelTimesProvider.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -588,7 +594,7 @@
 				TargetAttributes = {
 					7B29E7BE1DA3EC360099AF38 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 43AQ936H96;
+						DevelopmentTeam = 9G8J6YA743;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -823,8 +829,10 @@
 				E662FF4A1DC022940042C4A9 /* PlaceDetailsCardView.swift in Sources */,
 				E6101A981DDA7B8500D05B74 /* CategoriesUtil.swift in Sources */,
 				7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */,
+				7B079A7C1DF8990900631029 /* GoogleDirectionsMatrixTravelTimesProvider.swift in Sources */,
 				7BA05BEB1DD4D602009AC121 /* EventNotificationsManager.swift in Sources */,
 				E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */,
+				7B079A7A1DF896C100631029 /* TravelTimesProvider.swift in Sources */,
 				7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */,
 				7B699A9E1DEDD635004A671B /* InAppNotificationToast.swift in Sources */,
 				E60A42711DF28E01008BE74D /* URL.swift in Sources */,
@@ -856,7 +864,7 @@
 				7B9DA14B1DBE332E00A68C82 /* AppConstants.swift in Sources */,
 				392F3D901DD20EAE00B44B01 /* PlacesController.swift in Sources */,
 				7B23BD1F1DE862F500A23604 /* ChevronView.swift in Sources */,
-				7B5095781DB64E76007C54F0 /* TravelTimesProvider.swift in Sources */,
+				7B5095781DB64E76007C54F0 /* MKDirectionsTravelTimesProvider.swift in Sources */,
 				7BA05BE31DD4CC75009AC121 /* EventsDatabase.swift in Sources */,
 				7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */,
 				7BB1CA491DC8C6C5004AEE56 /* MapButton.swift in Sources */,
@@ -879,7 +887,7 @@
 				7B8651941DBFAFA8002A666A /* PlaceUtilitiesTests.swift in Sources */,
 				7B29E7D81DA3EC360099AF38 /* ProxTests.swift in Sources */,
 				7B2EF5871DDF4D7200695515 /* TimeIntervalTests.swift in Sources */,
-				7B50957A1DB65342007C54F0 /* TravelTimesProvider.swift in Sources */,
+				7B50957A1DB65342007C54F0 /* MKDirectionsTravelTimesProvider.swift in Sources */,
 				E60A42771DF29127008BE74D /* URLTests.swift in Sources */,
 				E68BD90D1DCA9E8E007B51A3 /* DayOfWeekTests.swift in Sources */,
 				E68BD90F1DCAAD6B007B51A3 /* OpenHoursTests.swift in Sources */,
@@ -1265,6 +1273,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Enterprise;

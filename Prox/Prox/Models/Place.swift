@@ -204,7 +204,7 @@ class Place: Hashable {
         let deferred = Deferred<DatabaseResult<TravelTimes>>()
         Place.travelTimesCache[id] = (deferred, location)
 
-        TravelTimesProvider.travelTime(fromLocation: location.coordinate, toLocation: latLong,
+        travelTimesProvider.travelTime(fromLocation: location.coordinate, toLocation: latLong,
                                        byTransitTypes: transitTypes) { travelTimes in
             let res: DatabaseResult<TravelTimes>
             if let travelTimes = travelTimes {
