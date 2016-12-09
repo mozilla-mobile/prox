@@ -103,17 +103,15 @@ class Event {
         self.endTime = endTime
     }
 
-    convenience init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
-        guard data.exists(), data.hasChildren(),
-            let value = data.value as? NSDictionary,
-            let id = value["id"] as? String,
+    convenience init?(fromDictionary value: NSDictionary) {
+        guard let id = value["id"] as? String,
             let placeId = (value["placeId"] as? String),
             let coords = value["coordinates"] as? [String:String],
             let latStr = coords["lat"], let lat = Double(latStr),
             let lngStr = coords["lng"], let lng = Double(lngStr),
             let description = value["description"] as? String,
             let localStartTimeString = value["localStartTime"] as? String else {
-                print("lol dropping event: missing data, id, placeId, description, start time \(data.value)")
+                print("lol dropping event: missing data, id, placeId, description, start time \(value)")
                 return nil
         }
 
@@ -153,6 +151,15 @@ class Event {
                   url:value["url"] as? String,
                   startTime: localStartTime,
                   endTime: localEndTime)
+    }
+
+    convenience init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
+        guard data.exists(), data.hasChildren(),
+            let value = data.value as? NSDictionary else {
+                return nil
+        }
+
+        self.init(fromDictionary: value)
     }
 
 

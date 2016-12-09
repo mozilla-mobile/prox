@@ -18,20 +18,79 @@ class FirebaseEventsDatabase: EventsDatabase {
     private let eventDetailsRef: FIRDatabaseReference
     private let geofire: GeoFire
 
+    private lazy var cachedLastResponse: [String: NSDictionary]? = {
+        guard let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first else {
+            return nil
+        }
+        let appFile = URL(fileURLWithPath: documentsPath).appendingPathComponent("events.json")
+        do {
+            let jsonData = try Data(contentsOf: appFile, options: .mappedIfSafe)
+            let json = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.mutableContainers ) as? [String: NSDictionary]
+            if json != nil {
+                return json
+            }
+        } catch {
+            NSLog("Unable to fetch file from disk \(error)")
+        }
+        return nil
+    }()
+
+    private lazy var fetchedEvents = [String: NSDictionary]()
+
     init() {
         let rootRef = FIRDatabase.database().reference()
         eventDetailsRef = rootRef.child(DETAILS_PATH)
         geofire = GeoFire(firebaseRef: rootRef.child(GEOFIRE_PATH))
     }
 
-    internal func getEvents(forLocation location: CLLocation, withRadius radius: Double) -> Future<[DatabaseResult<Event>]> {
+    internal func getEvents(forLocation location: CLLocation, withRadius radius: Double, isBackground: Bool = false) -> Future<[DatabaseResult<Event>]> {
+        if isBackground {
+            return fetchEventsInBackground(forLocation: location, withRadius: radius)
+        }
+        return fetchEventsInForeground(forLocation: location, withRadius: radius)
+
+    }
+
+    fileprivate func fetchEventsInForeground(forLocation location: CLLocation, withRadius radius: Double)-> Future<[DatabaseResult<Event>]> {
         let queue = DispatchQueue.global(qos: .userInitiated)
         let events = getEventKeys(aroundPoint: location, withRadius: radius).andThen(upon: queue) { (eventKeyToLoc) -> Future<[DatabaseResult<Event>]> in
             let eventKeys = Array(eventKeyToLoc.keys)
             let fetchedEvents = eventKeys.map { self.getEvent(withKey: $0) }
-            return fetchedEvents.allFilled()
+            return fetchedEvents.allFilled().andThen(upon: queue) { result -> Future<[DatabaseResult<Event>]> in
+                self.cacheEvents()
+                return Future(value: result)
+            }
         }
         return events
+    }
+
+    fileprivate func fetchEventsInBackground(forLocation location: CLLocation, withRadius radius: Double)-> Future<[DatabaseResult<Event>]> {
+        guard let eventsResponse = cachedLastResponse else {
+            return fetchEventsInForeground(forLocation: location, withRadius: radius)
+        }
+        let events:[DatabaseResult<Event>]  = eventsResponse.values.flatMap { Event(fromDictionary: $0) }.map { DatabaseResult<Event>.succeed(value: $0) }
+        return Future(value: events)
+    }
+
+    fileprivate func cacheEvents() {
+        guard let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first else {
+            NSLog("Unable to find documentsPath at \(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true))")
+            return
+        }
+        do {
+            let data = try JSONSerialization.data(withJSONObject: fetchedEvents)
+            let appFile = (documentsPath as NSString).appendingPathComponent("events.json")
+            guard let fileHandle = FileHandle(forWritingAtPath: appFile) else {
+                if !FileManager.default.createFile(atPath: appFile, contents: data, attributes: nil) {
+                    NSLog("Unable to create file at \(appFile)")
+                }
+                return
+            }
+            fileHandle.write(data)
+        } catch {
+            NSLog("Error converting fetched events to JSON object \(error)")
+        }
+
     }
 
     /*
@@ -74,6 +133,9 @@ class FirebaseEventsDatabase: EventsDatabase {
             }
 
             if let event = Event(fromFirebaseSnapshot: data) {
+                if let eventDict = data.value as? NSDictionary {
+                    self.fetchedEvents[key] = eventDict
+                }
                 deferred.fill(with: DatabaseResult.succeed(value: event))
             } else {
                 deferred.fill(with: DatabaseResult.fail(withMessage: "Snapshot missing required Event data: \(data)"))

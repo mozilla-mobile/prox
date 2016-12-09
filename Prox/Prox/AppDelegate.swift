@@ -144,7 +144,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard let currentLocation =  placeCarouselViewController?.locationMonitor.getCurrentLocation() else {
             return completionHandler(.noData)
         }
-        eventsNotificationsManager.sendEventNotifications(forLocation: currentLocation) { (events, error) in
+        eventsNotificationsManager.checkForEventsToNotify(forLocation: currentLocation, isBackground: AppConstants.cacheEvents) { (events, error) in
             if let _ = error {
                 return completionHandler(.failed)
             }

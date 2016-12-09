@@ -27,6 +27,9 @@ public struct AppConstants {
         return RemoteConfigKeys.notificationVisitIntervalMins.value * 60.0
     }
     #endif
+    public static var cacheEvents: Bool {
+        return RemoteConfigKeys.cacheEvents.value == 1
+    }
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
     public static let ONE_DAY: TimeInterval = (60 * 60) * 24
 

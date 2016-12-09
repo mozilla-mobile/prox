@@ -16,8 +16,8 @@ class EventsProvider {
         eventsDatabase.getEvent(withKey: key).upon { completion($0.successResult() )}
     }
 
-    func getEventsForNotifications(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
-        return eventsDatabase.getEvents(forLocation: location, withRadius: radius).upon { results in
+    func getEventsForNotifications(forLocation location: CLLocation, isBackground: Bool, completion: @escaping (([Event]?, Error?) -> Void)) {
+        return eventsDatabase.getEvents(forLocation: location, withRadius: radius, isBackground: isBackground).upon { results in
             let events = results.flatMap { $0.successResult() }.filter { self.isValidEvent(event: $0) }
             NSLog("found \(events.count) events")
             DispatchQueue.main.async {
