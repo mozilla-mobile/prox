@@ -163,7 +163,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let placeKey = notification.userInfo?[notificationEventPlaceIDKey] as? String {
             if ( application.applicationState == .inactive || application.applicationState == .background  ) {
                 placeCarouselViewController?.openPlace(placeKey: placeKey, forEventWithKey: eventKey)
-                Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.BACKGROUND])
+                Analytics.logEvent(event: AnalyticsEvent.EVENT_CLICKED, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.BACKGROUND])
             } else if let body = notification.alertBody {
                 placeCarouselViewController?.presentInAppEventNotification(forEventWithKey: eventKey, atPlaceWithKey: placeKey, withDescription: body)
                 Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.FOREGROUND])
@@ -199,7 +199,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         if response.notification.request.content.categoryIdentifier == "EVENTS" {
             if let eventKey = response.notification.request.content.userInfo[notificationEventIDKey] as? String,
                 let placeKey = response.notification.request.content.userInfo[notificationEventPlaceIDKey] as? String {
-                Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.CLICKED])
+                Analytics.logEvent(event: AnalyticsEvent.EVENT_CLICKED, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.BACKGROUND])
                 placeCarouselViewController?.openPlace(placeKey: placeKey, forEventWithKey: eventKey)
             }
         }
