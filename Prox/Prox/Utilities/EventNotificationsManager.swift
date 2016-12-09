@@ -174,12 +174,12 @@ class EventNotificationsManager {
         }
     }
 
-    func sendEventNotifications(forLocation location: CLLocation, completion: (([Event]?, Error?) -> Void)? = nil) {
+    func checkForEventsToNotify(forLocation location: CLLocation, isBackground: Bool = false, completion: (([Event]?, Error?) -> Void)? = nil) {
         guard shouldFetchEvents else {
             completion?(nil, nil)
             return
         }
-        eventsProvider.getEventsForNotifications(forLocation: location, completion: { events, error in
+        eventsProvider.getEventsForNotifications(forLocation: location, isBackground: isBackground, completion: { events, error in
             defer {
                 completion?(events, error)
             }

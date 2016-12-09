@@ -38,6 +38,10 @@ public struct AppConstants {
             UserDefaults.standard.set(newValue, forKey: AppConstants.hereBeDragonsKey)
         }
     }
+
+    public static var cacheEvents: Bool {
+        return RemoteConfigKeys.cacheEvents.value == 1
+    }
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
     public static let ONE_DAY: TimeInterval = (60 * 60) * 24
 
