@@ -151,12 +151,15 @@ class EventNotificationsManager {
                     center.add(request) { error in
                         if let theError = error {
                             NSLog(theError.localizedDescription)
+                            Analytics.logEvent(event: AnalyticsEvent.ERROR_STATE, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.EVENT_NOTIFICATION])
                         } else {
                             NSLog("Notification scheduled for \(event.id)")
+                            Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.BACKGROUND_SCHEDULED])
                         }
                     }
                 } else {
                     NSLog("Settings not authorized for notifications \(settings.authorizationStatus)")
+                    Analytics.logEvent(event: AnalyticsEvent.ERROR_STATE, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.PERMISSIONS])
                 }
             }
         } else {
@@ -170,6 +173,9 @@ class EventNotificationsManager {
                 notification.fireDate = Date().addingTimeInterval(timeInterval)
                 notification.userInfo = [notificationEventIDKey: event.id, notificationEventPlaceIDKey: event.placeId]
                 UIApplication.shared.scheduleLocalNotification(notification)
+                Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.BACKGROUND_SCHEDULED])
+            } else {
+                Analytics.logEvent(event: AnalyticsEvent.ERROR_STATE, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.PERMISSIONS])
             }
         }
     }

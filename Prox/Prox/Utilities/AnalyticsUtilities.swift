@@ -61,11 +61,16 @@ public struct AnalyticsEvent {
     static let PARAM_ACTION       = "action"
     static let NUM_CARDS          = "num_cards"
     static let CARD_INDEX         = "card_index"
+    static let FOREGROUND         = "foreground"
+    static let BACKGROUND         = "background"
+    static let BACKGROUND_SCHEDULED = "background_scheduled"
 
     // Events
     static let EVENT_BANNER_LINK  = "event_banner_link"
     static let EVENT_NOTIFICATION = "event_notification"
-    static let BACKGROUND         = "notified_background" // Event was notified while app was in the background
-    static let FOREGROUND         = "notified_foreground" // Event was notified while the app is open
-    static let CLICKED            = "notification_clicked" // Clicked on the notification
+    static let EVENT_CLICKED      = "event_clicked"
+
+    // Errors
+    static let ERROR_STATE        = "error_state"
+    static let PERMISSIONS        = "permissions"
 }
