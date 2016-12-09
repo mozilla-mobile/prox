@@ -182,6 +182,7 @@ class EventNotificationsManager {
 
     func checkForEventsToNotify(forLocation location: CLLocation, isBackground: Bool = false, completion: (([Event]?, Error?) -> Void)? = nil) {
         guard shouldFetchEvents else {
+            NSLog("Events not fetched as user has not been at the current location for long enough")
             completion?(nil, nil)
             return
         }
@@ -191,6 +192,7 @@ class EventNotificationsManager {
             }
             guard let foundEvents = events,
                 !foundEvents.isEmpty else {
+                    NSLog("Not sending notifications as no events found")
                 return
             }
             self.sendNotifications(forEvents: foundEvents)
