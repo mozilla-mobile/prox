@@ -223,7 +223,7 @@ class PlaceDetailsCardViewController: UIViewController {
         if !OpenInHelper.open(url: url) {
             print("lol unable to open web address")
         } else {
-            Analytics.logEvent(event: AnalyticsEvent.EVENT_BANNER_LINK, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.CLICKED])
+            Analytics.logEvent(event: AnalyticsEvent.EVENT_BANNER_LINK, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.EVENT_CLICKED])
         }
     }
 
