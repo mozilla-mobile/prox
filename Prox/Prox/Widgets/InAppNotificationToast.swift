@@ -97,6 +97,7 @@ class InAppNotificationToastProvider: NSObject {
 
     @objc fileprivate func userDidRespondToToast(recognizer: UITapGestureRecognizer) {
         delegate?.inAppNotificationToastProvider(self, userDidRespondToNotificationForEventWithId: eventId, atPlaceWithId: placeId)
+        Analytics.logEvent(event: AnalyticsEvent.EVENT_CLICKED, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.FOREGROUND])
         dismiss()
     }
 
