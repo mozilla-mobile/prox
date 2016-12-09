@@ -83,7 +83,7 @@ struct TravelTimesProvider {
     }
 
     static func canTravelFrom(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, before: Date, withCompletion completion: @escaping (Bool) -> ()) {
-        let timeInterval = before.timeIntervalSince(Date())
+        let timeInterval = Date().timeIntervalSince(before)
         TravelTimesProvider.travelTime(fromLocation: fromLocation, toLocation: toLocation, byTransitType: [.automobile], withCompletion: { (times) in
             guard let travelTimes = times,
                 let drivingTime = travelTimes.drivingTime else {
