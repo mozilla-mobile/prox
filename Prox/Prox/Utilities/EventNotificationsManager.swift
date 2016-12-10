@@ -102,10 +102,10 @@ class EventNotificationsManager {
                 // don't send the notification if there isn't
                 let placesDB = PlacesProvider()
                 placesDB.place(forKey: event.placeId) { place in
-                    guard let _ = place else { return  NSLog("Not sending notification for \(event.id) as it has no place") }
+                    guard let _ = place else { return  NSLog("Not sending notification for \(event.description) as it has no place") }
                     // check that travel times are within current location limits before deciding whether to send notification
                     TravelTimesProvider.canTravelFrom(fromLocation: currentLocation, toLocation: event.coordinates, before: event.arrivalByTime()) { canTravel in
-                        guard canTravel else { return NSLog("Not sending notification for \(event.id) as used cannot travel to it in time") }
+                        guard canTravel else { return NSLog("Not sending notification for \(event.description) as used cannot travel to it in time") }
                         DispatchQueue.main.async {
                             var timeInterval = 1
                             if index > 0 {
@@ -117,7 +117,7 @@ class EventNotificationsManager {
                     self.markAsSent(event: event)
                 }
             } else {
-                 NSLog("Not sending notification for \(event.id) as is has already been sent")
+                 NSLog("Not sending notification for \(event.description) as is has already been sent")
             }
         }
 
@@ -134,7 +134,7 @@ class EventNotificationsManager {
     }
 
     private func sendNotification(forEvent event: Event, inSeconds timeInterval: TimeInterval) {
-        guard let notificationString = event.notificationString else { return NSLog("Not sending notification for \(event.id) because we were unable to format a notifcation string") }
+        guard let notificationString = event.notificationString else { return NSLog("Not sending notification for \(event.description) because we were unable to format a notifcation string") }
         let alertTitle = "It’s Happening!"
         let alertBody = notificationString
         if #available(iOS 10.0, *) {
@@ -153,7 +153,7 @@ class EventNotificationsManager {
                             NSLog(theError.localizedDescription)
                             Analytics.logEvent(event: AnalyticsEvent.ERROR_STATE, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.EVENT_NOTIFICATION])
                         } else {
-                            NSLog("Notification scheduled for \(event.id)")
+                            NSLog("Notification scheduled for \(event.description)")
                             Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.BACKGROUND_SCHEDULED])
                         }
                     }

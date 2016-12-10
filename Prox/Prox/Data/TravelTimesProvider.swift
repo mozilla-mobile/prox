@@ -83,15 +83,22 @@ struct TravelTimesProvider {
     }
 
     static func canTravelFrom(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, before: Date, withCompletion completion: @escaping (Bool) -> ()) {
-        let timeInterval = Date().timeIntervalSince(before)
-        TravelTimesProvider.travelTime(fromLocation: fromLocation, toLocation: toLocation, byTransitType: [.automobile], withCompletion: { (times) in
-            guard let travelTimes = times,
-                let drivingTime = travelTimes.drivingTime else {
-                    return completion(false)
-            }
-            let travelTimePadding = TravelTimesProvider.travelTimePadding
-            completion((drivingTime + travelTimePadding)  <= timeInterval)
-        })
+        // temporarily remove travel time check as it's not working right
+//        let now = Date()
+//        let timeInterval = before.timeIntervalSince(now)
+//        NSLog("Time between \(now) and \(before) is \(timeInterval / 60) minutes")
+//        TravelTimesProvider.travelTime(fromLocation: fromLocation, toLocation: toLocation, byTransitType: [.automobile, .walking], withCompletion: { (times) in
+//            guard let travelTimes = times else {
+//                    return completion(false)
+//            }
+//            let travelTime = travelTimes.getShortestTravelTime()
+//            let travelTimePadding = TravelTimesProvider.travelTimePadding
+//            let totalTravelTime = travelTime + travelTimePadding
+//            NSLog("The travel time from \(fromLocation) to \(toLocation) is \(totalTravelTime / 60) minutes and we have \(timeInterval / 60) minutes to get there")
+//            let canTravel = totalTravelTime <= timeInterval
+//            completion(canTravel)
+//        })
+        completion(true)
     }
 }
 
