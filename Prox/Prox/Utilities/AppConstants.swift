@@ -43,7 +43,9 @@ public struct AppConstants {
         return RemoteConfigKeys.cacheEvents.value == 1
     }
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
-    public static let ONE_DAY: TimeInterval = (60 * 60) * 24
+    public static let ONE_MINUTE: TimeInterval = 60
+    public static let ONE_HOUR: TimeInterval = ONE_MINUTE * 60
+    public static let ONE_DAY: TimeInterval = ONE_HOUR * 24
 
     /// Build Channel.
     public static let BuildChannel: AppBuildChannel = {

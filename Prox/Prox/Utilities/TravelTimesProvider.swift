@@ -25,7 +25,7 @@ protocol TravelTimesProvider {
     static func canTravelFrom(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, before: Date, withCompletion completion: @escaping (Bool) -> ())
 }
 
-var travelTimesProvider = MKDirectionsTravelTimesProvider.self
+var travelTimesProvider = GoogleDirectionsMatrixTravelTimesProvider.self //MKDirectionsTravelTimesProvider.self  //
 
 struct TravelTimes {
     let walkingTime: TimeInterval?
