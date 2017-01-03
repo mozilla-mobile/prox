@@ -4,6 +4,7 @@
 
 import Foundation
 import CoreLocation
+import Deferred
 
 var travelTimePadding: Double = {
     return RemoteConfigKeys.travelTimePaddingMins.value * 60
@@ -20,6 +21,7 @@ var YOU_ARE_HERE_WALKING_TIME: Int = {
 }()
 
 protocol TravelTimesProvider {
+    static func travelTimes(fromLocation: CLLocationCoordinate2D, toLocations: [PlaceKey: CLLocationCoordinate2D], byTransitType transitType: MKDirectionsTransportType) -> Deferred<DatabaseResult<[TravelTimes]>>
     static func travelTime(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType, withCompletion completion: @escaping ((TravelTimes?) -> ()))
     static func travelTime(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitTypes transitTypes: [MKDirectionsTransportType], withCompletion completion: @escaping ((TravelTimes?) -> ()))
     static func canTravelFrom(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, before: Date, withCompletion completion: @escaping (Bool) -> ())
@@ -28,6 +30,9 @@ protocol TravelTimesProvider {
 var travelTimesProvider = GoogleDirectionsMatrixTravelTimesProvider.self //MKDirectionsTravelTimesProvider.self  //
 
 struct TravelTimes {
+    let origin: CLLocationCoordinate2D
+    let destination: CLLocationCoordinate2D?
+    let destinationPlaceKey: PlaceKey?
     let walkingTime: TimeInterval?
     let drivingTime: TimeInterval?
     let publicTransportTime: TimeInterval?

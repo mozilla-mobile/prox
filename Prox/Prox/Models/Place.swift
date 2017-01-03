@@ -13,6 +13,7 @@ private let TRIP_ADVISOR_PATH = PROVIDERS_PATH + "tripAdvisor"
 private let WIKIPEDIA_PATH = PROVIDERS_PATH + "wikipedia"
 
 typealias CachedTravelTime = (deferred: Deferred<DatabaseResult<TravelTimes>>, forLocation: CLLocation)
+typealias PlaceKey = String
 
 class Place: Hashable {
 
@@ -31,7 +32,7 @@ class Place: Hashable {
 
     private let transitTypes: [MKDirectionsTransportType] = [.automobile, .walking]
 
-    let id: String
+    let id: PlaceKey
 
     let name: String
     let categories: (names: [String], ids: [String]) // Indices correlate.

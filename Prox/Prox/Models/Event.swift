@@ -9,7 +9,7 @@ import CoreLocation
 
 class Event {
     var id: String
-    var placeId: String
+    var placeId: PlaceKey
     var description: String
     var startTime: Date
     var endTime: Date?

@@ -4,6 +4,7 @@
 
 import Foundation
 import AFNetworking
+import Deferred
 
 class GoogleDirectionsMatrixTravelTimesProvider: TravelTimesProvider {
 
@@ -20,10 +21,12 @@ class GoogleDirectionsMatrixTravelTimesProvider: TravelTimesProvider {
         return "https://maps.googleapis.com/maps/api/distancematrix/json?origins=%@&destinations=%@&mode=%@&key=" + apiKey
     }()
 
-    fileprivate static func distanceMatrixURL(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransportType transportType: String) -> URL? {
+    fileprivate static func distanceMatrixURL(fromLocation: CLLocationCoordinate2D, toLocations: [CLLocationCoordinate2D], byTransportType transportType: String) -> URL? {
         guard let urlString = directionsURL else { return nil }
 
-        let distanceMatrixURL = NSString(format: urlString as NSString, "\(fromLocation.latitude),\(fromLocation.longitude)", "\(toLocation.latitude),\(toLocation.longitude)", transportType) as String
+        let toLocationString = toLocations.map { "\($0.latitude),\($0.longitude)" }.joined(separator: "%7C")
+
+        let distanceMatrixURL = NSString(format: urlString as NSString, "\(fromLocation.latitude),\(fromLocation.longitude)", toLocationString, transportType) as String
         return URL(string: distanceMatrixURL)
     }
 
@@ -43,8 +46,71 @@ class GoogleDirectionsMatrixTravelTimesProvider: TravelTimesProvider {
         return AFURLSessionManager(sessionConfiguration: configuration)
     }()
 
+    static func travelTimes(fromLocation: CLLocationCoordinate2D, toLocations: [PlaceKey : CLLocationCoordinate2D], byTransitType transitType: MKDirectionsTransportType) -> Deferred<DatabaseResult<[TravelTimes]>> {
+        NSLog("Calculating travel times for \(toLocations)")
+        let locations = Array(toLocations.values)
+        var index = 0
+        var fetchSize = min(locations.endIndex, 25) - 1
+        var expectedResponseCount = 0
+        var allTravelTimes = [TravelTimes]()
+        let deferred = Deferred<DatabaseResult<[TravelTimes]>>()
+        while index < locations.endIndex {
+            let subarray = Array(locations[index...fetchSize])
+
+            if let url = distanceMatrixURL(fromLocation: fromLocation, toLocations: subarray, byTransportType: mapTransportTypeToMode(transportType: transitType)) {
+                let request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.returnCacheDataElseLoad, timeoutInterval: 2 * AppConstants.ONE_MINUTE)
+                let dataTask = sessionManager.dataTask(with: request) { response, object, error in
+                    expectedResponseCount -= 1
+                    if error != nil {
+                        NSLog("Error fetching Google Distance Matrix request \(error)")
+                        return
+                    }
+
+                    guard let responseObject = object as? [String: Any],
+                        let row = (responseObject["rows"] as? [[String: Any]])?.first,
+                        let elements = row["elements"] as? [[String: Any]]
+                        else {
+                            NSLog("Error parsing Google Distance Matrix Response \(object)")
+                            return
+                    }
+                    for (index, result) in elements.enumerated() {
+                        guard index < subarray.count,
+                        let duration = result["duration"] as? [String: Any],
+                        let value = duration["value"] as? Double else {
+                            continue
+                        }
+
+                        let latLon = subarray[index]
+                        let key = (toLocations as NSDictionary).allKeys(for: latLon).first as? PlaceKey
+
+                        let travelTime: TravelTimes
+                        switch transitType {
+                        case MKDirectionsTransportType.automobile:
+                            travelTime = TravelTimes(origin: fromLocation, destination: latLon, destinationPlaceKey: key, walkingTime: nil, drivingTime: value, publicTransportTime: nil)
+                        case MKDirectionsTransportType.transit:
+                            travelTime = TravelTimes(origin: fromLocation, destination: latLon, destinationPlaceKey: key, walkingTime: nil, drivingTime: nil, publicTransportTime: value)
+                        default:
+                            travelTime = TravelTimes(origin: fromLocation, destination: latLon, destinationPlaceKey: key, walkingTime: value, drivingTime: nil, publicTransportTime: nil)
+                        }
+                        allTravelTimes.append(travelTime)
+                    }
+                    if expectedResponseCount == 0 {
+                        deferred.fill(with: DatabaseResult.succeed(value: allTravelTimes))
+                    }
+                }
+                
+                dataTask.resume()
+            }
+            index += fetchSize + 1
+            fetchSize = min(locations.endIndex, index + 25) - 1
+            expectedResponseCount += 1
+        }
+
+        return deferred
+    }
+
     static func travelTime(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType = .any, withCompletion completion: @escaping ((TravelTimes?) -> ())) {
-        guard let url = distanceMatrixURL(fromLocation: fromLocation, toLocation: toLocation, byTransportType: mapTransportTypeToMode(transportType: transitType)) else { return completion(nil) }
+        guard let url = distanceMatrixURL(fromLocation: fromLocation, toLocations: [toLocation], byTransportType: mapTransportTypeToMode(transportType: transitType)) else { return completion(nil) }
         let request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.returnCacheDataElseLoad, timeoutInterval: 2 * AppConstants.ONE_MINUTE)
         let dataTask = sessionManager.dataTask(with: request) { response, object, error in
             if error != nil {
@@ -65,11 +131,11 @@ class GoogleDirectionsMatrixTravelTimesProvider: TravelTimesProvider {
             let travelTime: TravelTimes?
             switch transitType {
             case MKDirectionsTransportType.automobile:
-                travelTime = TravelTimes(walkingTime: nil, drivingTime: value, publicTransportTime: nil)
+                travelTime = TravelTimes(origin: fromLocation, destination: toLocation, destinationPlaceKey: nil, walkingTime: nil, drivingTime: value, publicTransportTime: nil)
             case MKDirectionsTransportType.transit:
-                travelTime = TravelTimes(walkingTime: nil, drivingTime: nil, publicTransportTime: value)
+                travelTime = TravelTimes(origin: fromLocation, destination: toLocation, destinationPlaceKey: nil, walkingTime: nil, drivingTime: nil, publicTransportTime: value)
             default:
-                travelTime = TravelTimes(walkingTime: value, drivingTime: nil, publicTransportTime: nil)
+                travelTime = TravelTimes(origin: fromLocation, destination: toLocation, destinationPlaceKey: nil, walkingTime: value, drivingTime: nil, publicTransportTime: nil)
             }
             completion(travelTime)
         }
@@ -94,7 +160,7 @@ class GoogleDirectionsMatrixTravelTimesProvider: TravelTimesProvider {
                     if walking == nil && driving == nil && transit == nil {
                         return completion(nil)
                     }
-                    return completion(TravelTimes(walkingTime: walking, drivingTime: driving, publicTransportTime: transit))
+                    return completion(TravelTimes(origin: fromLocation, destination: toLocation, destinationPlaceKey: nil, walkingTime: walking, drivingTime: driving, publicTransportTime: transit))
                 }
             }
         }

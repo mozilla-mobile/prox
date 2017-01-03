@@ -23,12 +23,17 @@ struct PlaceUtilities {
     }
 
     static func sort(places: [Place], byTravelTimeFromLocation location: CLLocation, ascending: Bool = true, completion: @escaping ([Place]) -> ()) {
-        var sortedPlaces = PlaceUtilities.sort(places: places, byDistanceFromLocation: location)
+        var sortedByDistance = PlaceUtilities.sort(places: places, byDistanceFromLocation: location)
         // this means we will probably only get walking directions for places, but I think that will be OK for now
-        PlaceUtilities.getTravelTimes(forPlaces: sortedPlaces, fromLocation: location, withTransitTypes: [.walking]).upon { result in
-            let sortedByTravelTime = places.sorted { (placeA, placeB) -> Bool in
-                let placeAETA = PlaceUtilities.lastTravelTimes(forPlace: placeA)?.getShortestTravelTime() ?? Double.greatestFiniteMagnitude
-                let placeBETA = PlaceUtilities.lastTravelTimes(forPlace: placeB)?.getShortestTravelTime() ?? Double.greatestFiniteMagnitude
+        var placeLocations = [PlaceKey: CLLocationCoordinate2D]()
+        sortedByDistance.forEach { placeLocations[$0.id] = $0.latLong }
+
+        travelTimesProvider.travelTimes(fromLocation: location.coordinate, toLocations: placeLocations, byTransitType: .walking).upon { result in
+            guard let travelTimes = result.successResult(),
+            !travelTimes.isEmpty else { return completion(sortedByDistance) }
+            let sortedTravelTimes = travelTimes.sorted { (timeA, timeB) -> Bool in
+                let placeAETA = timeA.getShortestTravelTime()
+                let placeBETA = timeB.getShortestTravelTime()
 
                 if ascending {
                     return placeAETA <= placeBETA
@@ -36,16 +41,20 @@ struct PlaceUtilities {
                     return placeAETA >= placeBETA
                 }
             }
-
-            for (index, place) in sortedByTravelTime.enumerated() {
-                sortedPlaces[index] = place
+            let sortedByTravelTime: [Place] = sortedTravelTimes.flatMap { time in
+                let placeIndex = sortedByDistance.index { place in
+                    return time.destinationPlaceKey == place.id
+                        || (time.destination?.latitude == place.latLong.latitude && time.destination?.longitude == place.latLong.longitude)
+                }
+                if placeIndex != nil {
+                    let place = sortedByDistance[placeIndex!]
+                    sortedByDistance.remove(at: placeIndex!)
+                    return place
+                }
+                return nil
             }
-            completion(sortedPlaces)
+            completion(sortedByTravelTime + sortedByDistance)
         }
-    }
-
-    private static func getTravelTimes(forPlaces places: [Place], fromLocation location: CLLocation, withTransitTypes transitTypes: [MKDirectionsTransportType]) -> Future<[DatabaseResult<TravelTimes>]> {
-        return places.map { $0.travelTimes(fromLocation: location, withTransitTypes: transitTypes) }.allFilled()
     }
 
     private static func lastTravelTimes(forPlace place: Place) -> TravelTimes? {

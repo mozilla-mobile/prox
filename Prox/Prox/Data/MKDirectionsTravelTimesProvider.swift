@@ -5,6 +5,7 @@
 import FirebaseRemoteConfig
 import Foundation
 import MapKit
+import Deferred
 
 struct MKDirectionsTravelTimesProvider: TravelTimesProvider {
 
@@ -17,6 +18,11 @@ struct MKDirectionsTravelTimesProvider: TravelTimesProvider {
         directionsRequest.transportType = transitType
 
         return MKDirections(request: directionsRequest)
+    }
+
+
+    static func travelTimes(fromLocation: CLLocationCoordinate2D, toLocations: [PlaceKey : CLLocationCoordinate2D], byTransitType transitType: MKDirectionsTransportType)  -> Deferred<DatabaseResult<[TravelTimes]>> {
+        return Deferred<DatabaseResult<[TravelTimes]>>()
     }
 
     static func travelTime(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType = .any, withCompletion completion: @escaping ((TravelTimes?) -> ())) {
@@ -33,11 +39,11 @@ struct MKDirectionsTravelTimesProvider: TravelTimesProvider {
             let travelTime: TravelTimes?
             switch response.transportType {
             case MKDirectionsTransportType.automobile:
-                travelTime = TravelTimes(walkingTime: nil, drivingTime: response.expectedTravelTime, publicTransportTime: nil)
+                travelTime = TravelTimes(origin: fromLocation, destination: toLocation, destinationPlaceKey: nil, walkingTime: nil, drivingTime: response.expectedTravelTime, publicTransportTime: nil)
             case MKDirectionsTransportType.transit:
-                travelTime = TravelTimes(walkingTime: nil, drivingTime: nil, publicTransportTime: response.expectedTravelTime)
+                travelTime = TravelTimes(origin: fromLocation, destination: toLocation, destinationPlaceKey: nil, walkingTime: nil, drivingTime: nil, publicTransportTime: response.expectedTravelTime)
             case MKDirectionsTransportType.walking:
-                travelTime = TravelTimes(walkingTime: response.expectedTravelTime, drivingTime: nil, publicTransportTime: nil)
+                travelTime = TravelTimes(origin: fromLocation, destination: toLocation, destinationPlaceKey: nil, walkingTime: response.expectedTravelTime, drivingTime: nil, publicTransportTime: nil)
             default:
                 travelTime = nil
             }
@@ -62,7 +68,7 @@ struct MKDirectionsTravelTimesProvider: TravelTimesProvider {
                     if walking == nil && driving == nil && transit == nil {
                         return completion(nil)
                     }
-                    return completion(TravelTimes(walkingTime: walking, drivingTime: driving, publicTransportTime: transit))
+                    return completion(TravelTimes(origin: fromLocation, destination: toLocation, destinationPlaceKey: nil, walkingTime: walking, drivingTime: driving, publicTransportTime: transit))
                 }
             }
         }
