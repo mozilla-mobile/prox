@@ -22,7 +22,20 @@ struct MKDirectionsTravelTimesProvider: TravelTimesProvider {
 
 
     static func travelTimes(fromLocation: CLLocationCoordinate2D, toLocations: [PlaceKey : CLLocationCoordinate2D], byTransitType transitType: MKDirectionsTransportType)  -> Deferred<DatabaseResult<[TravelTimes]>> {
-        return Deferred<DatabaseResult<[TravelTimes]>>()
+        let deferred = Deferred<DatabaseResult<[TravelTimes]>>()
+        var allTimes = [TravelTimes]()
+        for (index, location) in Array(toLocations.values).enumerated() {
+            self.travelTime(fromLocation: fromLocation, toLocation: location, byTransitType: transitType) { (travelTime) in
+                defer {
+                    if index == toLocations.count-1 {
+                        deferred.fill(with: DatabaseResult.succeed(value: allTimes))
+                    }
+                }
+                guard let time = travelTime else { return }
+                allTimes.append(time)
+            }
+        }
+        return deferred
     }
 
     static func travelTime(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType = .any, withCompletion completion: @escaping ((TravelTimes?) -> ())) {
