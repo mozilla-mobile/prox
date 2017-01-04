@@ -44,6 +44,8 @@ class PlacesProvider {
 
     fileprivate var firstFetch = true
 
+    fileprivate let placesLock = NSLock()
+
     func place(forKey key: String, callback: @escaping (Place?) -> ()) {
         database.getPlace(forKey: key).upon { callback($0.successResult() )}
     }
@@ -125,12 +127,43 @@ class PlacesProvider {
         retryQueryPlaces(location: location, withRadius: radius, retriesLeft: numberOfRetries, lastCount: 0)
     }
 
+
+    /*
+     * Queries GeoFire to get the place keys around the given location and then queries Firebase to
+     * get the place details for the place keys.
+     */
+    func getPlaces(forLocation location: CLLocation, withRadius radius: Double) -> Future<[DatabaseResult<Place>]> {
+        let queue = DispatchQueue.global(qos: .userInitiated)
+
+
+        let places = database.getPlaceKeys(aroundPoint: location, withRadius: radius).andThen(upon: queue) { (placeKeyToLoc) -> Future<[DatabaseResult<Place>]> in
+            var unfetchedPlaces = [String]()
+            var fetchedPlaces = [Deferred<DatabaseResult<Place>>]()
+            self.placesLock.lock()
+            for placeKey in Array(placeKeyToLoc.keys) {
+                if let index = (self.places.index { (place) -> Bool in
+                    place.id == placeKey
+                }) {
+                    let place = self.places[index]
+                    fetchedPlaces.append(Deferred(filledWith: DatabaseResult.succeed(value: place)))
+                } else {
+                    unfetchedPlaces.append(placeKey)
+                }
+            }
+            self.placesLock.unlock()
+            // TODO: limit the number of place details we look up. X closest places?
+            // TODO: These should be ordered by display order
+            return (self.database.getPlaceDetails(fromKeys: unfetchedPlaces) + fetchedPlaces).allFilled()
+        }
+        return places
+    }
+
     private func retryQueryPlaces(location: CLLocation, withRadius radius: Double, retriesLeft: Int, lastCount: Int) {
         // Fetch a stable list of places from firebase.
         // In the event of the server crawling (from a cold start, for example)
         // the server will be adding places to firebase.
         // We want to wait for the number of firebase results to stop changing.
-        database.getPlaces(forLocation: location, withRadius: radius).upon { results in
+        getPlaces(forLocation: location, withRadius: radius).upon { results in
             let places = results.flatMap { $0.successResult() }
             let placeCount = places.count
 
@@ -168,14 +201,17 @@ class PlacesProvider {
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
         let filteredPlaces = PlaceUtilities.filterPlacesForCarousel(places)
         return PlaceUtilities.sort(places: filteredPlaces, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
+            self.placesLock.lock()
             self.places = sortedPlaces
             DispatchQueue.main.async {
                 self.delegate?.placesProvider(self, didReceivePlaces: self.places)
+                self.placesLock.unlock()
                 if self.firstFetch {
                     self.delegate?.placesProviderDidFetchFirstPlace()
                     self.firstFetch = false
                 }
             }
+
         })
     }
 
@@ -215,6 +251,10 @@ class PlacesProvider {
 
 extension PlacesProvider: PlaceDataSource {
     func nextPlace(forPlace place: Place) -> Place? {
+        self.placesLock.lock()
+        defer {
+            self.placesLock.unlock()
+        }
         // if the place isn't in the list, make the first item in the list the next item
         guard let currentPlaceIndex = places.index(where: {$0 == place}) else {
             return places.count > 0 ? places[places.startIndex] : nil
@@ -226,6 +266,10 @@ extension PlacesProvider: PlaceDataSource {
     }
 
     func previousPlace(forPlace place: Place) -> Place? {
+        self.placesLock.lock()
+        defer {
+            self.placesLock.unlock()
+        }
         guard let currentPlaceIndex = places.index(where: {$0 == place}),
             currentPlaceIndex > places.startIndex else { return nil }
 
@@ -233,10 +277,18 @@ extension PlacesProvider: PlaceDataSource {
     }
 
     func numberOfPlaces() -> Int {
+        self.placesLock.lock()
+        defer {
+            self.placesLock.unlock()
+        }
         return places.count
     }
 
     func place(forIndex index: Int) throws -> Place {
+        self.placesLock.lock()
+        defer {
+            self.placesLock.unlock()
+        }
         guard index < places.endIndex,
             index >= places.startIndex else {
                 throw PlaceDataSourceError(message: "There is no place at index: \(index)")
@@ -246,6 +298,10 @@ extension PlacesProvider: PlaceDataSource {
     }
 
     func index(forPlace place: Place) -> Int? {
+        self.placesLock.lock()
+        defer {
+            self.placesLock.unlock()
+        }
         return places.index(of: place)
     }
 
@@ -273,7 +329,9 @@ extension PlacesProvider: PlaceDataSource {
     }
 
     func sortPlaces(byLocation location: CLLocation) {
+        self.placesLock.lock()
         let sortedPlaces = PlaceUtilities.sort(places: places, byDistanceFromLocation: location)
         self.places = sortedPlaces
+        self.placesLock.unlock()
     }
 }
