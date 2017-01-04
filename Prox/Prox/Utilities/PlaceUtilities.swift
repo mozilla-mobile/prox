@@ -24,13 +24,15 @@ struct PlaceUtilities {
 
     static func sort(places: [Place], byTravelTimeFromLocation location: CLLocation, ascending: Bool = true, completion: @escaping ([Place]) -> ()) {
         var sortedByDistance = PlaceUtilities.sort(places: places, byDistanceFromLocation: location)
-        // this means we will probably only get walking directions for places, but I think that will be OK for now
+        let placesWithTimes = sortedByDistance.filter { $0.cachedTravelTime(fromLocation: location) != nil }
+        let placesWithoutTimes = sortedByDistance.filter { !placesWithTimes.contains($0) }
         var placeLocations = [PlaceKey: CLLocationCoordinate2D]()
-        sortedByDistance.forEach { placeLocations[$0.id] = $0.latLong }
+        placesWithoutTimes.forEach { placeLocations[$0.id] = $0.latLong }
 
+        // this means we will probably only get walking directions for places, but I think that will be OK for now
         travelTimesProvider.travelTimes(fromLocation: location.coordinate, toLocations: placeLocations, byTransitType: .walking).upon { result in
-            guard let travelTimes = result.successResult(),
-            !travelTimes.isEmpty else { return completion(sortedByDistance) }
+            guard var travelTimes = result.successResult() else { return completion(sortedByDistance) }
+            travelTimes += placesWithTimes.flatMap { $0.cachedTravelTime(fromLocation: location) }
             let sortedTravelTimes = travelTimes.sorted { (timeA, timeB) -> Bool in
                 let placeAETA = timeA.getShortestTravelTime()
                 let placeBETA = timeB.getShortestTravelTime()
@@ -48,6 +50,7 @@ struct PlaceUtilities {
                 }
                 if placeIndex != nil {
                     let place = sortedByDistance[placeIndex!]
+                    Place.travelTimesCache[place.id] = CachedTravelTime(Deferred(filledWith: DatabaseResult.succeed(value: time)), location)
                     sortedByDistance.remove(at: placeIndex!)
                     return place
                 }

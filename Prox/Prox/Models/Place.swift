@@ -219,6 +219,15 @@ class Place: Hashable {
         return deferred
     }
 
+    func cachedTravelTime(fromLocation: CLLocation) -> TravelTimes? {
+        guard let lastTravelTime = Place.travelTimesCache[self.id],
+            shouldReturnCachedTravelTimes(forCachedValue: lastTravelTime, forLocation: fromLocation) else {
+            return nil
+        }
+
+        return lastTravelTime.deferred.peek()?.successResult()
+    }
+
     private func shouldReturnCachedTravelTimes(forCachedValue cachedValue: CachedTravelTime,
                                                forLocation newLocation: CLLocation) -> Bool {
         // Return a cached success value or in-flight request.
