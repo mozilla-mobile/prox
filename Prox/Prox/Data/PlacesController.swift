@@ -46,6 +46,15 @@ class PlacesProvider {
 
     fileprivate let placesLock = NSLock()
 
+    init() {
+
+    }
+
+    convenience init(places: [Place]) {
+        self.init()
+        self.places = places
+    }
+
     func place(forKey key: String, callback: @escaping (Place?) -> ()) {
         database.getPlace(forKey: key).upon { callback($0.successResult() )}
     }

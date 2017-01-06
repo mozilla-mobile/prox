@@ -44,7 +44,7 @@
 		7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */; };
 		7B561BBA1DAC02B90096D8BC /* hilton_location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7B561BB91DAC02B90096D8BC /* hilton_location.gpx */; };
 		7B699A9E1DEDD635004A671B /* InAppNotificationToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B699A9D1DEDD635004A671B /* InAppNotificationToast.swift */; };
-		7B8651901DBF8544002A666A /* PlaceCarouselViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B86518F1DBF8544002A666A /* PlaceCarouselViewControllerTests.swift */; };
+		7B8651901DBF8544002A666A /* PlacesProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B86518F1DBF8544002A666A /* PlacesProviderTests.swift */; };
 		7B8651921DBFAF19002A666A /* PlaceUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8651911DBFAF19002A666A /* PlaceUtilities.swift */; };
 		7B8651941DBFAFA8002A666A /* PlaceUtilitiesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8651931DBFAFA8002A666A /* PlaceUtilitiesTests.swift */; };
 		7B9D15C61DC0D2E70051B760 /* OpenInHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9D15C51DC0D2E70051B760 /* OpenInHelper.swift */; };
@@ -163,7 +163,7 @@
 		7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselHeaderView.swift; path = PlaceCarousel/PlaceCarouselHeaderView.swift; sourceTree = "<group>"; };
 		7B561BB91DAC02B90096D8BC /* hilton_location.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hilton_location.gpx; sourceTree = "<group>"; };
 		7B699A9D1DEDD635004A671B /* InAppNotificationToast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppNotificationToast.swift; sourceTree = "<group>"; };
-		7B86518F1DBF8544002A666A /* PlaceCarouselViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCarouselViewControllerTests.swift; sourceTree = "<group>"; };
+		7B86518F1DBF8544002A666A /* PlacesProviderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlacesProviderTests.swift; sourceTree = "<group>"; };
 		7B8651911DBFAF19002A666A /* PlaceUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceUtilities.swift; sourceTree = "<group>"; };
 		7B8651931DBFAFA8002A666A /* PlaceUtilitiesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceUtilitiesTests.swift; sourceTree = "<group>"; };
 		7B9D15C51DC0D2E70051B760 /* OpenInHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenInHelper.swift; sourceTree = "<group>"; };
@@ -319,7 +319,7 @@
 				7B29E7D71DA3EC360099AF38 /* ProxTests.swift */,
 				7B29E7D91DA3EC360099AF38 /* Info.plist */,
 				7B5095801DB65FD4007C54F0 /* TravelTimesTests.swift */,
-				7B86518F1DBF8544002A666A /* PlaceCarouselViewControllerTests.swift */,
+				7B86518F1DBF8544002A666A /* PlacesProviderTests.swift */,
 				7B8651931DBFAFA8002A666A /* PlaceUtilitiesTests.swift */,
 				E6101A951DDA481800D05B74 /* CategoriesUtilTests.swift */,
 				7B2EF5861DDF4D7200695515 /* TimeIntervalTests.swift */,
@@ -873,7 +873,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7B8651901DBF8544002A666A /* PlaceCarouselViewControllerTests.swift in Sources */,
+				7B8651901DBF8544002A666A /* PlacesProviderTests.swift in Sources */,
 				E6101A961DDA481800D05B74 /* CategoriesUtilTests.swift in Sources */,
 				7B5095811DB65FD4007C54F0 /* TravelTimesTests.swift in Sources */,
 				7B8651941DBFAFA8002A666A /* PlaceUtilitiesTests.swift in Sources */,
