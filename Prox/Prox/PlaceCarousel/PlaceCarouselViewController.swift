@@ -454,8 +454,10 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
         // TODO: how do we make sure the user wasn't interacting?
         headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
         placeCarousel.refresh()
-
-        (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
+        // calling async to prevent deadlock inside placesUpdated
+        DispatchQueue.main.async {
+            (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
+        }
     }
 
     func placesProviderDidTimeout(_ controller: PlacesProvider) {
