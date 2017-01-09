@@ -16,6 +16,7 @@ protocol PlacesProviderDelegate: class {
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place])
     func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider)
     func placesProviderDidTimeout(_ controller: PlacesProvider)
+    func placesProviderDidFetchFirstPlace()
 }
 
 private let apiSuffix = "/api/v1.0/at/%f/%f"
@@ -38,6 +39,35 @@ class PlacesProvider {
     private lazy var radius: Double = {
         return RemoteConfigKeys.searchRadiusInKm.value
     }()
+
+    fileprivate var displayedPlaces = [Place]() {
+        didSet {
+            var placesMap = [String: Int]()
+            for (index, place) in displayedPlaces.enumerated() {
+                placesMap[place.id] = index
+            }
+            self.placeKeyMap = placesMap
+        }
+    }
+    fileprivate var placeKeyMap = [String: Int]()
+
+    fileprivate var firstFetch = true
+
+    fileprivate let placesLock = NSLock()
+
+    init() {
+
+    }
+
+    convenience init(places: [Place]) {
+        self.init()
+        self.displayedPlaces = places
+        var placesMap = [String: Int]()
+        for (index, place) in displayedPlaces.enumerated() {
+            placesMap[place.id] = index
+        }
+        self.placeKeyMap = placesMap
+    }
 
     func place(forKey key: String, callback: @escaping (Place?) -> ()) {
         database.getPlace(forKey: key).upon { callback($0.successResult() )}
@@ -120,12 +150,39 @@ class PlacesProvider {
         retryQueryPlaces(location: location, withRadius: radius, retriesLeft: numberOfRetries, lastCount: 0)
     }
 
+
+    /*
+     * Queries GeoFire to get the place keys around the given location and then queries Firebase to
+     * get the place details for the place keys.
+     */
+    func getPlaces(forLocation location: CLLocation, withRadius radius: Double) -> Future<[DatabaseResult<Place>]> {
+        let queue = DispatchQueue.global(qos: .userInitiated)
+
+
+        let places = database.getPlaceKeys(aroundPoint: location, withRadius: radius).andThen(upon: queue) { (placeKeyToLoc) -> Future<[DatabaseResult<Place>]> in
+            var unfetchedPlaces = [String]()
+            var fetchedPlaces = [Deferred<DatabaseResult<Place>>]()
+            self.placesLock.withReadLock {
+                for placeKey in Array(placeKeyToLoc.keys) {
+                    if let index = self.placeKeyMap[placeKey] {
+                        let place = self.displayedPlaces[index]
+                        fetchedPlaces.append(Deferred(filledWith: DatabaseResult.succeed(value: place)))
+                    } else {
+                        unfetchedPlaces.append(placeKey)
+                    }
+                }
+            }
+            return (self.database.getPlaceDetails(fromKeys: unfetchedPlaces) + fetchedPlaces).allFilled()
+        }
+        return places
+    }
+
     private func retryQueryPlaces(location: CLLocation, withRadius radius: Double, retriesLeft: Int, lastCount: Int) {
         // Fetch a stable list of places from firebase.
         // In the event of the server crawling (from a cold start, for example)
         // the server will be adding places to firebase.
         // We want to wait for the number of firebase results to stop changing.
-        database.getPlaces(forLocation: location, withRadius: radius).upon { results in
+        getPlaces(forLocation: location, withRadius: radius).upon { results in
             let places = results.flatMap { $0.successResult() }
             let placeCount = places.count
 
@@ -163,9 +220,19 @@ class PlacesProvider {
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
         let filteredPlaces = PlaceUtilities.filterPlacesForCarousel(places)
         return PlaceUtilities.sort(places: filteredPlaces, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
-            DispatchQueue.main.async {
-                self.delegate?.placesProvider(self, didReceivePlaces: sortedPlaces)
+            self.placesLock.withWriteLock {
+                self.displayedPlaces = sortedPlaces
             }
+            DispatchQueue.main.async {
+                self.placesLock.withReadLock {
+                    self.delegate?.placesProvider(self, didReceivePlaces: self.displayedPlaces)
+                }
+                if self.firstFetch {
+                    self.delegate?.placesProviderDidFetchFirstPlace()
+                    self.firstFetch = false
+                }
+            }
+
         })
     }
 
@@ -200,5 +267,86 @@ class PlacesProvider {
             }
         }
         return unionOfPlaces
+    }
+}
+
+extension PlacesProvider: PlaceDataSource {
+    func nextPlace(forPlace place: Place) -> Place? {
+        return self.placesLock.withReadLock {
+            // if the place isn't in the list, make the first item in the list the next item
+            guard let currentPlaceIndex = self.placeKeyMap[place.id] else {
+                return displayedPlaces.count > 0 ? displayedPlaces[displayedPlaces.startIndex] : nil
+            }
+
+            guard currentPlaceIndex + 1 < displayedPlaces.endIndex else { return nil }
+
+            return displayedPlaces[displayedPlaces.index(after: currentPlaceIndex)]
+        }
+    }
+
+    func previousPlace(forPlace place: Place) -> Place? {
+        return self.placesLock.withReadLock {
+            guard let currentPlaceIndex = self.placeKeyMap[place.id],
+                currentPlaceIndex > displayedPlaces.startIndex else { return nil }
+
+            return displayedPlaces[displayedPlaces.index(before: currentPlaceIndex)]
+        }
+    }
+
+    func numberOfPlaces() -> Int {
+        return self.placesLock.withReadLock {
+            return displayedPlaces.count
+        }
+    }
+
+    func place(forIndex index: Int) throws -> Place {
+        return try self.placesLock.withReadLock {
+            guard index < displayedPlaces.endIndex,
+                index >= displayedPlaces.startIndex else {
+                    throw PlaceDataSourceError(message: "There is no place at index: \(index)")
+            }
+
+            return displayedPlaces[index]
+        }
+    }
+
+    func index(forPlace place: Place) -> Int? {
+        return self.placesLock.withReadLock {
+            return placeKeyMap[place.id]
+        }
+    }
+
+    func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ()) {
+        self.placesLock.withReadLock {
+            if let placeIndex = placeKeyMap[placeKey] {
+                let place = displayedPlaces[placeIndex]
+                if place.events.contains(where: { $0.id == eventKey }) {
+                    callback(place)
+                }
+                let eventProvider = EventsProvider()
+                eventProvider.event(forKey: eventKey) { event in
+                    guard let event = event else { return callback(nil) }
+                    self.placesLock.withWriteLock {
+                        place.events.append(event)
+                    }
+                    callback(place)
+                }
+            } else {
+                self.place(withKey: placeKey, forEventWithKey: eventKey) { place in
+                    callback(place)
+                }
+            }
+        }
+    }
+
+    func allPlaces() -> [Place] {
+        return displayedPlaces
+    }
+
+    func sortPlaces(byLocation location: CLLocation) {
+        self.placesLock.withWriteLock {
+            let sortedPlaces = PlaceUtilities.sort(places: displayedPlaces, byDistanceFromLocation: location)
+            self.displayedPlaces = sortedPlaces
+        }
     }
 }
