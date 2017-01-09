@@ -10,7 +10,7 @@ import CoreLocation
  * A listing of all the places we'd want to show a user.
  */
 protocol PlacesDatabase {
-    func getPlaceKeys(aroundPoint location: CLLocation, withRadius radius: Double) -> Deferred<[String:CLLocation]>
-    func getPlaceDetails(fromKeys placeKeys: [String]) -> [Deferred<DatabaseResult<Place>>]
-    func getPlace(forKey key: String) -> Deferred<DatabaseResult<Place>>
+    func getPlaceKeys(aroundPoint location: CLLocation, withRadius radius: Double) -> Deferred<[PlaceKey:CLLocation]>
+    func getPlaceDetails(fromKeys placeKeys: [PlaceKey]) -> [Deferred<DatabaseResult<Place>>]
+    func getPlace(forKey key: PlaceKey) -> Deferred<DatabaseResult<Place>>
 }

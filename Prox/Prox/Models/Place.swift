@@ -14,6 +14,7 @@ private let WIKIPEDIA_PATH = PROVIDERS_PATH + "wikipedia"
 
 typealias CachedTravelTime = (deferred: Deferred<DatabaseResult<TravelTimes>>, forLocation: CLLocation)
 typealias PlaceKey = String
+typealias EventKey = String
 
 class Place: Hashable {
 
@@ -57,7 +58,7 @@ class Place: Hashable {
 
     var events = [Event]()
 
-    init(id: String, name: String, descriptions: (wiki: String?, yelp: String?, ta: String?)? = nil,
+    init(id: EventKey, name: String, descriptions: (wiki: String?, yelp: String?, ta: String?)? = nil,
          latLong: CLLocationCoordinate2D, categories: (names: [String], ids: [String]), url: String? = nil,
          address: String? = nil, yelpProvider: ReviewProvider,
          tripAdvisorProvider: ReviewProvider? = nil, wikipediaProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: OpenHours? = nil) {
@@ -532,7 +533,7 @@ struct OpenHours {
 
 // This could be replaced with a thread-safe dictionary, but I didn't see one in the libs. :(
 class TravelTimesCache {
-    private var travelTimesCache = [String : CachedTravelTime]() // place-id : cached-value
+    private var travelTimesCache = [PlaceKey : CachedTravelTime]() // place-id : cached-value
 
     subscript(id: String) -> CachedTravelTime? {
         get {

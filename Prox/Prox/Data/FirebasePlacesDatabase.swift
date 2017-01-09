@@ -28,9 +28,9 @@ class FirebasePlacesDatabase: PlacesDatabase {
     /*
      * Queries GeoFire to find keys that represent locations around the given point.
      */
-    func getPlaceKeys(aroundPoint location: CLLocation, withRadius radius: Double) -> Deferred<[String:CLLocation]> {
-        let deferred = Deferred<[String:CLLocation]>()
-        var placeKeyToLoc = [String:CLLocation]()
+    func getPlaceKeys(aroundPoint location: CLLocation, withRadius radius: Double) -> Deferred<[PlaceKey:CLLocation]> {
+        let deferred = Deferred<[PlaceKey:CLLocation]>()
+        var placeKeyToLoc = [PlaceKey:CLLocation]()
 
         guard let circleQuery = geofire.query(at: location, withRadius: radius) else {
             deferred.fill(with: placeKeyToLoc)

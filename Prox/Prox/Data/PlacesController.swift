@@ -42,14 +42,14 @@ class PlacesProvider {
 
     fileprivate var displayedPlaces = [Place]() {
         didSet {
-            var placesMap = [String: Int]()
+            var placesMap = [PlaceKey: Int]()
             for (index, place) in displayedPlaces.enumerated() {
                 placesMap[place.id] = index
             }
             self.placeKeyMap = placesMap
         }
     }
-    fileprivate var placeKeyMap = [String: Int]()
+    fileprivate var placeKeyMap = [PlaceKey: Int]()
 
     fileprivate var firstFetch = true
 
@@ -62,7 +62,7 @@ class PlacesProvider {
     convenience init(places: [Place]) {
         self.init()
         self.displayedPlaces = places
-        var placesMap = [String: Int]()
+        var placesMap = [PlaceKey: Int]()
         for (index, place) in displayedPlaces.enumerated() {
             placesMap[place.id] = index
         }

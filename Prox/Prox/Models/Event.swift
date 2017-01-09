@@ -8,7 +8,7 @@ import FirebaseRemoteConfig
 import CoreLocation
 
 class Event {
-    var id: String
+    var id: EventKey
     var placeId: PlaceKey
     var description: String
     var startTime: Date

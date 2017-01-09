@@ -35,7 +35,7 @@ class FirebaseEventsDatabase: EventsDatabase {
         return nil
     }()
 
-    private lazy var fetchedEvents = [String: NSDictionary]()
+    private lazy var fetchedEvents = [EventKey: NSDictionary]()
 
     init() {
         let rootRef = FIRDatabase.database().reference()
@@ -96,9 +96,9 @@ class FirebaseEventsDatabase: EventsDatabase {
     /*
      * Queries GeoFire to find keys that represent locations around the given point.
      */
-    private func getEventKeys(aroundPoint location: CLLocation, withRadius radius: Double) -> Deferred<[String:CLLocation]> {
-        let deferred = Deferred<[String:CLLocation]>()
-        var eventKeyToLoc = [String:CLLocation]()
+    private func getEventKeys(aroundPoint location: CLLocation, withRadius radius: Double) -> Deferred<[EventKey:CLLocation]> {
+        let deferred = Deferred<[EventKey:CLLocation]>()
+        var eventKeyToLoc = [EventKey:CLLocation]()
 
         guard let circleQuery = geofire.query(at: location, withRadius: radius) else {
             deferred.fill(with: eventKeyToLoc)
@@ -122,7 +122,7 @@ class FirebaseEventsDatabase: EventsDatabase {
         return deferred
     }
 
-    func getEvent(withKey key: String) -> Deferred<DatabaseResult<Event>> {
+    func getEvent(withKey key: EventKey) -> Deferred<DatabaseResult<Event>> {
         let deferred = Deferred<DatabaseResult<Event>>()
 
         let detailRef = eventDetailsRef.child(key)
@@ -145,8 +145,8 @@ class FirebaseEventsDatabase: EventsDatabase {
         return deferred
     }
 
-    private func mapEventsToPlaceIds(events: [Event]) -> [String: [Event]] {
-        var placeIdsToEventMap = [String: [Event]]()
+    private func mapEventsToPlaceIds(events: [Event]) -> [PlaceKey: [Event]] {
+        var placeIdsToEventMap = [PlaceKey: [Event]]()
         for event in events {
             if var mappedEvents = placeIdsToEventMap[event.placeId] {
                 mappedEvents.append(event)
@@ -163,7 +163,7 @@ class FirebaseEventsDatabase: EventsDatabase {
         return getEvents(forLocation: location, withRadius: radius).andThen(upon: dispatchQueue) { events -> Future<[DatabaseResult<Place>]> in
             let filteredEvents = events.flatMap { $0.successResult() } .filter { return eventFilter($0) }
             let eventToPlaceMap = self.mapEventsToPlaceIds(events: filteredEvents)
-            var fetchedPlaces = [String: Place]()
+            var fetchedPlaces = [PlaceKey: Place]()
             // loop through each event and fetch the place
             return eventToPlaceMap.keys.map { placeKey -> Deferred<DatabaseResult<Place>> in
                 let deferred = Deferred<DatabaseResult<Place>>()
