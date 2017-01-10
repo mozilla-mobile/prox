@@ -130,19 +130,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        if !AppConstants.userSeenHereBeDragons {
-            if var topController: UIViewController = placeCarouselViewController {
-                while let presentedViewController = topController.presentedViewController {
-                    topController = presentedViewController
-                }
-                let alert = UIAlertController(title: "Here Be Dragons", message: "Abandon Hope All Ye Who Enter Here!", preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "OK", style: .default) { action in
-                    AppConstants.userSeenHereBeDragons = true
-                }
-                alert.addAction(okAction)
-                topController.present(alert, animated: true)
-            }
-        }
         placeCarouselViewController?.locationMonitor.refreshLocation()
     }
 

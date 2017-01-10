@@ -14,8 +14,6 @@ public enum AppBuildChannel {
 
 public struct AppConstants {
 
-    private static let hereBeDragonsKey = "here-be-dragons"
-
     public static let isRunningTest = NSClassFromString("XCTestCase") != nil
     
     #if MOZ_CHANNEL_DEBUG
@@ -29,19 +27,11 @@ public struct AppConstants {
         return RemoteConfigKeys.notificationVisitIntervalMins.value * 60.0
     }
     #endif
-    public static var userSeenHereBeDragons: Bool {
-        get {
-            return UserDefaults.standard.bool(forKey: AppConstants.hereBeDragonsKey)
-        }
-
-        set {
-            UserDefaults.standard.set(newValue, forKey: AppConstants.hereBeDragonsKey)
-        }
-    }
 
     public static var cacheEvents: Bool {
         return RemoteConfigKeys.cacheEvents.value == 1
     }
+
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
     public static let ONE_DAY: TimeInterval = (60 * 60) * 24
 
