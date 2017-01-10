@@ -407,6 +407,7 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
     }
 
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation) {
+        guard AppConstants.areNotificationsEnabled else { return }
         let eventNotificationsManager = EventNotificationsManager(withLocationProvider: locationMonitor)
         eventNotificationsManager.checkForEventsToNotify(forLocation: location)
     }
