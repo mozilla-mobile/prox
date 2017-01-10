@@ -36,7 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupFirebase()
         setupRemoteConfig()
         BuddyBuildSDK.setup()
-        application.setMinimumBackgroundFetchInterval(AppConstants.backgroundFetchInterval)
+        if AppConstants.areNotificationsEnabled {
+            application.setMinimumBackgroundFetchInterval(AppConstants.backgroundFetchInterval)
+        }
 
         // create Window
         window = UIWindow(frame: UIScreen.main.bounds)

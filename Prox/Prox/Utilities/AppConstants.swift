@@ -110,4 +110,12 @@ public struct AppConstants {
             return ""
         #endif
     }()
+
+    public static let areNotificationsEnabled: Bool = {
+        #if MOZ_CHANNEL_DEBUG
+            return true
+        #else
+            return false
+        #endif
+    }()
 }
