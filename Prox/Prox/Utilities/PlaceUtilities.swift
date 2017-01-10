@@ -168,8 +168,8 @@ struct PlaceUtilities {
 
             if let walkingTimeSeconds = travelTimes.walkingTime {
                 let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
-                if walkingTimeMinutes <= MIN_WALKING_TIME {
-                    if walkingTimeMinutes < YOU_ARE_HERE_WALKING_TIME {
+                if walkingTimeMinutes <= AppConstants.maxWalkingTime {
+                    if walkingTimeMinutes < AppConstants.youAreHereWalkingTime {
                         view.updateTravelTimesUIForResult(.userHere, durationInMinutes: nil)
                     } else {
                         view.updateTravelTimesUIForResult(.walkingDist, durationInMinutes: walkingTimeMinutes)

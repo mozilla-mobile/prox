@@ -94,7 +94,7 @@ struct MKDirectionsTravelTimesProvider: TravelTimesProvider {
                 let drivingTime = travelTimes.drivingTime else {
                     return completion(false)
             }
-            completion((drivingTime + travelTimePadding)  <= timeInterval)
+            completion((drivingTime + AppConstants.travelTimePadding)  <= timeInterval)
         })
     }
 }

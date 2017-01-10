@@ -6,20 +6,6 @@ import Foundation
 import CoreLocation
 import Deferred
 
-var travelTimePadding: Double = {
-    return RemoteConfigKeys.travelTimePaddingMins.value * 60
-}()
-
-var MIN_WALKING_TIME: Int = {
-    // Note that this is semantically maximum walking time,
-    // rather than minimum walking time (as used throughout the codebase).
-    return RemoteConfigKeys.maxWalkingTimeInMins.value
-}()
-
-var YOU_ARE_HERE_WALKING_TIME: Int = {
-    return RemoteConfigKeys.youAreHereWalkingTimeMins.value
-}()
-
 protocol TravelTimesProvider {
     static func travelTimes(fromLocation: CLLocationCoordinate2D, toLocations: [PlaceKey: CLLocationCoordinate2D], byTransitType transitType: MKDirectionsTransportType) -> Deferred<DatabaseResult<[TravelTimes]>>
     static func travelTime(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType, withCompletion completion: @escaping ((TravelTimes?) -> ()))
@@ -38,7 +24,7 @@ struct TravelTimes {
     let publicTransportTime: TimeInterval?
 
     func getShortestTravelTime() -> TimeInterval {
-        let driveTimePadding: Double = travelTimePadding
+        let driveTimePadding: Double = AppConstants.travelTimePadding
         let driveTime = drivingTime ?? (Double.greatestFiniteMagnitude - driveTimePadding)
         return min(walkingTime ?? Double.greatestFiniteMagnitude, driveTime + driveTimePadding )
     }

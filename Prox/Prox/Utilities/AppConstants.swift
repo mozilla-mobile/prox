@@ -42,6 +42,19 @@ public struct AppConstants {
     public static var cacheEvents: Bool {
         return RemoteConfigKeys.cacheEvents.value == 1
     }
+
+    public static var travelTimePadding: Double = {
+        return RemoteConfigKeys.travelTimePaddingMins.value * 60
+    }()
+
+    public static var maxWalkingTime: Int = {
+        return RemoteConfigKeys.maxWalkingTimeInMins.value
+    }()
+
+    public static var youAreHereWalkingTime: Int = {
+        return RemoteConfigKeys.youAreHereWalkingTimeMins.value
+    }()
+
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
     public static let ONE_MINUTE: TimeInterval = 60
     public static let ONE_HOUR: TimeInterval = ONE_MINUTE * 60
