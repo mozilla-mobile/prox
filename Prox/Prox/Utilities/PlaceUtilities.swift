@@ -45,6 +45,7 @@ struct PlaceUtilities {
             }
             let sortedByTravelTime: [Place] = sortedTravelTimes.flatMap { time in
                 let placeIndex = sortedByDistance.index { place in
+                    // if the TravelTime does not have a place id, then we have to match TravelTimes to Places via it's coordinates instead
                     return time.destinationPlaceKey == place.id
                         || (time.destination?.latitude == place.latLong.latitude && time.destination?.longitude == place.latLong.longitude)
                 }

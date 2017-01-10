@@ -120,7 +120,7 @@ class GoogleDirectionsMatrixTravelTimesProvider: TravelTimesProvider {
         let dataTask = sessionManager.dataTask(with: request) { response, object, error in
             if error != nil {
                 NSLog("Error fetching Google Distance Matrix request \(error)")
-                completion(nil)
+                return completion(nil)
             }
 
             guard let responseObject = object as? [String: Any],
