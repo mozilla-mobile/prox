@@ -135,8 +135,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 while let presentedViewController = topController.presentedViewController {
                     topController = presentedViewController
                 }
-                let alert = UIAlertController(title: "Thanks for all your feedback.", message: "Prox will still be available after tomorrow. We’ll keep monitoring feedback and bug reports as well. But your mileage may vary once you leave the Big Island.", preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "Mahalo!", style: .default) { action in
+                let alert = UIAlertController(title: "Here Be Dragons", message: "Abandon Hope All Ye Who Enter Here!", preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "OK", style: .default) { action in
                     AppConstants.userSeenHereBeDragons = true
                 }
                 alert.addAction(okAction)
