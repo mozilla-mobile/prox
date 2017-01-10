@@ -24,8 +24,8 @@ struct TravelTimes {
     let publicTransportTime: TimeInterval?
 
     func getShortestTravelTime() -> TimeInterval {
-        let driveTimePadding: Double = AppConstants.travelTimePadding
-        let driveTime = drivingTime ?? (Double.greatestFiniteMagnitude - driveTimePadding)
-        return min(walkingTime ?? Double.greatestFiniteMagnitude, driveTime + driveTimePadding )
+        let timeToDriveToLocation = (drivingTime ?? (Double.greatestFiniteMagnitude - AppConstants.travelTimePadding)) + AppConstants.travelTimePadding
+        let timeToWalkToLocation = walkingTime ?? Double.greatestFiniteMagnitude
+        return min(timeToWalkToLocation, timeToDriveToLocation)
     }
 }
