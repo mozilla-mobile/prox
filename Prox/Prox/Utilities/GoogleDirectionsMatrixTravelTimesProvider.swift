@@ -8,6 +8,8 @@ import Deferred
 
 class GoogleDirectionsMatrixTravelTimesProvider: TravelTimesProvider {
 
+    fileprivate static let maxDestinationsPerRequest = 25
+
     fileprivate static var directionsURL: String? = {
         guard let apiPlistPath = Bundle.main.path(forResource: AppConstants.APIKEYS_PATH, ofType: "plist"),
         let keysDict = NSDictionary(contentsOfFile: apiPlistPath) as? [String: String]else {
@@ -49,13 +51,17 @@ class GoogleDirectionsMatrixTravelTimesProvider: TravelTimesProvider {
     static func travelTimes(fromLocation: CLLocationCoordinate2D, toLocations: [PlaceKey : CLLocationCoordinate2D], byTransitType transitType: MKDirectionsTransportType) -> Deferred<DatabaseResult<[TravelTimes]>> {
         NSLog("Calculating travel times for \(toLocations)")
         let locations = Array(toLocations.values)
-        var index = 0
-        var fetchSize = min(locations.endIndex, 25) - 1
-        var expectedResponseCount = 0
-        var allTravelTimes = [TravelTimes]()
         let deferred = Deferred<DatabaseResult<[TravelTimes]>>()
-        while index < locations.endIndex {
-            let subarray = Array(locations[index...fetchSize])
+        guard !locations.isEmpty else {
+            deferred.fill(with: DatabaseResult.succeed(value: []))
+            return deferred
+        }
+        var index = 0
+        var fetchEndIndex = min(locations.count, maxDestinationsPerRequest) - 1
+        var expectedResponseCount = ceil(Double(locations.count) / Double(maxDestinationsPerRequest))
+        var allTravelTimes = [TravelTimes]()
+        while index < locations.count {
+            let subarray = Array(locations[index...fetchEndIndex])
 
             if let url = distanceMatrixURL(fromLocation: fromLocation, toLocations: subarray, byTransportType: mapTransportTypeToMode(transportType: transitType)) {
                 let request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.returnCacheDataElseLoad, timeoutInterval: 2 * AppConstants.ONE_MINUTE)
@@ -101,9 +107,8 @@ class GoogleDirectionsMatrixTravelTimesProvider: TravelTimesProvider {
                 
                 dataTask.resume()
             }
-            index += fetchSize + 1
-            fetchSize = min(locations.endIndex, index + 25) - 1
-            expectedResponseCount += 1
+            index = fetchEndIndex + 1
+            fetchEndIndex = min(locations.count, index + maxDestinationsPerRequest) - 1
         }
 
         return deferred
