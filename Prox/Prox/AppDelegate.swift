@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return RemoteConfigKeys.remoteConfigCacheExpiration.value
     }()
 
-    private var eventsNotificationsManager: EventNotificationsManager!
+    private var eventsNotificationsManager: EventNotificationsManager?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
@@ -36,9 +36,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupFirebase()
         setupRemoteConfig()
         BuddyBuildSDK.setup()
-        if AppConstants.areNotificationsEnabled {
-            application.setMinimumBackgroundFetchInterval(AppConstants.backgroundFetchInterval)
-        }
 
         // create Window
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -53,8 +50,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.setupUserNotificationCenter()
         }
 
-        if let locationProvider = placeCarouselViewController?.locationMonitor {
-            self.eventsNotificationsManager = EventNotificationsManager(withLocationProvider: locationProvider)
+        if AppConstants.areNotificationsEnabled {
+            application.setMinimumBackgroundFetchInterval(AppConstants.backgroundFetchInterval)
+
+            if let locationProvider = placeCarouselViewController?.locationMonitor {
+                self.eventsNotificationsManager = EventNotificationsManager(withLocationProvider: locationProvider)
+            }
         }
 
         // display
@@ -120,7 +121,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // if there is a timer running, cancel it. We'll wait until background app refresh fires instead
         placeCarouselViewController?.locationMonitor.cancelTimeAtLocationTimer()
-        eventsNotificationsManager.persistNotificationCache()
+        eventsNotificationsManager?.persistNotificationCache()
         AppState.enterBackground()
     }
 
@@ -138,7 +139,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         placeCarouselViewController?.locationMonitor.cancelTimeAtLocationTimer()
-        eventsNotificationsManager.persistNotificationCache()
+        eventsNotificationsManager?.persistNotificationCache()
         AppState.exiting()
     }
 
@@ -146,7 +147,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard let currentLocation =  placeCarouselViewController?.locationMonitor.getCurrentLocation() else {
             return completionHandler(.noData)
         }
-        eventsNotificationsManager.checkForEventsToNotify(forLocation: currentLocation, isBackground: AppConstants.cacheEvents) { (events, error) in
+        eventsNotificationsManager?.checkForEventsToNotify(forLocation: currentLocation, isBackground: AppConstants.cacheEvents) { (events, error) in
             if let _ = error {
                 return completionHandler(.failed)
             }
