@@ -9,6 +9,7 @@ public enum AppBuildChannel {
     case Developer
     case Enterprise
     case EnterpriseKona
+    case MockedLocation
     case Release
 }
 
@@ -43,6 +44,8 @@ public struct AppConstants {
             return AppBuildChannel.EnterpriseKona
         #elseif MOZ_CHANNEL_RELEASE
             return AppBuildChannel.Release
+        #elseif MOZ_CHANNEL_MOCK_LOCATION
+            return AppBuildChannel.MockedLocation
         #else
             return AppBuildChannel.Developer
         #endif
@@ -76,7 +79,7 @@ public struct AppConstants {
 
     // Enables/disables location faking for Hawaii
     public static let MOZ_LOCATION_FAKING: Bool = {
-        #if MOZ_CHANNEL_ENTERPRISE_KONA
+        #if MOZ_CHANNEL_ENTERPRISE_KONA || MOZ_CHANNEL_MOCK_LOCATION
             return true
         #else
             return false
@@ -90,6 +93,8 @@ public struct AppConstants {
         #elseif MOZ_CHANNEL_ENTERPRISE
             return URL(string: "https://prox.moo.mx")!
         #elseif MOZ_CHANNEL_RELEASE
+            return URL(string: "https://prox.moo.mx")!
+        #elseif MOZ_CHANNEL_MOCK_LOCATION
             return URL(string: "https://prox.moo.mx")!
         #else
             return URL(string: "https://prox-dev.moo.mx")!
@@ -105,6 +110,8 @@ public struct AppConstants {
         #elseif MOZ_CHANNEL_ENTERPRISE
             return "production/"
         #elseif MOZ_CHANNEL_RELEASE
+            return "production/"
+        #elseif MOZ_CHANNEL_MOCK_LOCATION
             return "production/"
         #else
             return ""
