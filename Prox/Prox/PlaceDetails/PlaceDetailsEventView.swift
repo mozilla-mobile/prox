@@ -16,7 +16,7 @@ class PlaceDetailsEventView: UIView {
         let view = UILabel()
         view.font = Fonts.detailsViewEventText
         view.textColor = Colors.detailsViewEventText
-        view.numberOfLines = 0 // line count limited by constraints
+        view.numberOfLines = 0 
         return view
     }()
 
@@ -29,7 +29,8 @@ class PlaceDetailsEventView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setText(_ text: String, underlined underlinedText: String) {
+    func setText(_ text: String, underlined underlinedText: String?) {
+        guard let underlinedText = underlinedText else { return }
         let underlineAttr = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
         let outStr = NSMutableAttributedString(string: underlinedText, attributes: underlineAttr)
         outStr.insert(NSAttributedString(string: text + " "), at: 0)
@@ -40,17 +41,20 @@ class PlaceDetailsEventView: UIView {
         backgroundColor = Colors.detailsViewEventBackground
 
         addSubview(iconView)
-        var constraints = [iconView.topAnchor.constraint(equalTo: topAnchor, constant: 26),
+        let heightConstraint = iconView.heightAnchor.constraint(equalToConstant: 28)
+        heightConstraint.priority = 999
+        var constraints = [iconView.centerYAnchor.constraint(equalTo: centerYAnchor),
                            iconView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-                           iconView.heightAnchor.constraint(equalToConstant: 28),
-                           iconView.widthAnchor.constraint(equalToConstant: 28),
-                           iconView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -26)]
+                           heightConstraint,
+                           iconView.widthAnchor.constraint(equalToConstant: 28)]
 
         addSubview(textView)
+        let bottomConstraint = textView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
+        bottomConstraint.priority = 999
         constraints += [textView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
                         textView.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 16),
                         textView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-                        textView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)]
+                        bottomConstraint]
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }

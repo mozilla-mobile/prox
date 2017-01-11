@@ -2,13 +2,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import FirebaseRemoteConfig
 import Foundation
 import MapKit
 
 struct TravelTimesProvider {
 
-    static let MIN_WALKING_TIME = 30
-    static let YOU_ARE_HERE_WALKING_TIME = 1
+    static var MIN_WALKING_TIME: Int = {
+        // Note that this is semantically maximum walking time, 
+        // rather than minimum walking time (as used throughout the codebase).
+        return RemoteConfigKeys.maxWalkingTimeInMins.value
+    }()
+
+    static var YOU_ARE_HERE_WALKING_TIME: Int = {
+        return RemoteConfigKeys.youAreHereWalkingTimeMins.value
+    }()
+
+    static var travelTimePadding: Double = {
+        return RemoteConfigKeys.travelTimePaddingMins.value * 60
+    }()
 
     private static func directions(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, byTransitType transitType: MKDirectionsTransportType) -> MKDirections {
 
@@ -69,10 +81,28 @@ struct TravelTimesProvider {
             }
         }
     }
+
+    static func canTravelFrom(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, before: Date, withCompletion completion: @escaping (Bool) -> ()) {
+        let timeInterval = before.timeIntervalSince(Date())
+        TravelTimesProvider.travelTime(fromLocation: fromLocation, toLocation: toLocation, byTransitType: [.automobile], withCompletion: { (times) in
+            guard let travelTimes = times,
+                let drivingTime = travelTimes.drivingTime else {
+                    return completion(false)
+            }
+            let travelTimePadding = TravelTimesProvider.travelTimePadding
+            completion((drivingTime + travelTimePadding)  <= timeInterval)
+        })
+    }
 }
 
 struct TravelTimes {
     let walkingTime: TimeInterval?
     let drivingTime: TimeInterval?
     let publicTransportTime: TimeInterval?
+
+    func getShortestTravelTime() -> TimeInterval {
+        let driveTimePadding: Double = TravelTimesProvider.travelTimePadding
+        let driveTime = drivingTime ?? (Double.greatestFiniteMagnitude - driveTimePadding)
+        return min(walkingTime ?? Double.greatestFiniteMagnitude, driveTime + driveTimePadding )
+    }
 }

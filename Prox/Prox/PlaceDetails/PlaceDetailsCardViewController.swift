@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import FXPageControl
 import UIKit
 
 private let  PlaceDetailsCardCellReuseIdentifier = "ImageCarouselCell"
@@ -39,7 +40,7 @@ class PlaceDetailsCardViewController: UIViewController {
     }()
 
     fileprivate lazy var imageCarouselCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.imageCarouselLayout)
+        let collectionView = TouchableCollectionView(frame: .zero, collectionViewLayout: self.imageCarouselLayout)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(ImageCarouselCollectionViewCell.self, forCellWithReuseIdentifier: PlaceDetailsCardCellReuseIdentifier)
@@ -47,14 +48,27 @@ class PlaceDetailsCardViewController: UIViewController {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
         collectionView.isPagingEnabled = true
+        collectionView.delaysContentTouches = false
+        collectionView.touchDetected = { self.stopAutoMovingOfCarousel() }
         return collectionView
     }()
 
+    lazy var pageControl: FXPageControl = {
+        let pageControl = FXPageControl()
+        pageControl.backgroundColor = .clear
+        pageControl.dotColor = Colors.pageIndicatorTintColor
+        pageControl.selectedDotColor = Colors.currentPageIndicatorTintColor
 
-    lazy var pageControl: UIPageControl = {
-        let pageControl = UIPageControl()
-        pageControl.pageIndicatorTintColor = Colors.pageIndicatorTintColor
-        pageControl.currentPageIndicatorTintColor = Colors.currentPageIndicatorTintColor
+        let shadowBlur: CGFloat = 3
+        let shadowOffset = CGSize(width: 0.5, height: 0.75)
+        let shadowColor = Colors.detailsViewImageCarouselPageControlShadow
+        pageControl.dotShadowBlur = shadowBlur
+        pageControl.selectedDotShadowBlur = shadowBlur
+        pageControl.dotShadowColor = shadowColor
+        pageControl.selectedDotShadowColor = shadowColor
+        pageControl.dotShadowOffset = shadowOffset
+        pageControl.selectedDotShadowOffset = shadowOffset
+
         pageControl.addTarget(self, action: #selector(self.pageControlDidPage(sender:)), for: UIControlEvents.valueChanged)
         return pageControl
     }()
@@ -80,6 +94,8 @@ class PlaceDetailsCardViewController: UIViewController {
         return imageCarousel
     }()
 
+    fileprivate var carouselTimer: Timer?
+
     init(place: Place) {
         self.place = place
         super.init(nibName: nil, bundle: nil)
@@ -96,6 +112,10 @@ class PlaceDetailsCardViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    func showEvent() {
+        self.cardView.showEvent(atPlace: place)
+    }
+
     // TODO: set the view values in cardView to values in place
     fileprivate func setPlace(place: Place?) {
         guard let place = place else {
@@ -103,6 +123,7 @@ class PlaceDetailsCardViewController: UIViewController {
         }
         imageCarouselCollectionView.reloadData()
         cardView.updateUI(forPlace: place)
+
         setLocation(location: locationProvider?.getCurrentLocation())
         setupCardInteractions()
 
@@ -110,17 +131,17 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     private func setLocation(location: CLLocation?) {
-        if let lastTravelTimes = place.lastTravelTime {
-            self.cardView.updateTravelTimesUI(travelTimes: lastTravelTimes)
-        } else {
-            self.cardView.travelTimeView.loadingSpinner.startAnimating()
-        }
+        PlaceUtilities.updateTravelTimeUI(fromPlace: place, toLocation: location, forView: cardView.travelTimeView)
         if let location = location {
-            place.travelTimes(fromLocation: location, withCallback: { travelTimes in
-                self.cardView.travelTimeView.loadingSpinner.stopAnimating()
-                guard let travelTimes = travelTimes else { return }
-                self.cardView.updateTravelTimesUI(travelTimes: travelTimes)
-            })
+            if let event = self.place.events.first {
+                // check that travel times are within current location limits before deciding whether to send notification
+                TravelTimesProvider.canTravelFrom(fromLocation: location.coordinate, toLocation: place.latLong, before: event.arrivalByTime()) { canTravel in
+                    guard canTravel else { return }
+                    DispatchQueue.main.async {
+                        self.cardView.showEvent(atPlace: self.place)
+                    }
+                }
+            }
         }
     }
 
@@ -129,6 +150,10 @@ class PlaceDetailsCardViewController: UIViewController {
         cardView.yelpReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openYelpReview(gestureRecgonizer:))))
         cardView.tripAdvisorReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTripAdvisorReview(gestureRecgonizer:))))
         cardView.travelTimeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openDirections(gestureRecgonizer:))))
+        cardView.eventView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openEventURL(gestureRecognizer:))))
+        cardView.wikiDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openWikipediaURL(gestureRecognizer:))))
+        cardView.tripAdvisorDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openReadMoreTripAdvisorLink(gestureRecgonizer:))))
+        cardView.yelpDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openReadMoreYelpLink(gestureRecgonizer:))))
     }
 
     @objc private func openPlaceURL(gestureRecgonizer: UITapGestureRecognizer) {
@@ -136,6 +161,8 @@ class PlaceDetailsCardViewController: UIViewController {
            let url = URL(string: urlString) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open web address")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.WEBSITE, params: [:])
         }
     }
 
@@ -143,6 +170,17 @@ class PlaceDetailsCardViewController: UIViewController {
         guard let url = URL(string: place.yelpProvider.url) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open yelp review")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.YELP, params: [:])
+        }
+    }
+
+    @objc private func openReadMoreYelpLink(gestureRecgonizer: UITapGestureRecognizer) {
+        guard let url = URL(string: place.yelpProvider.url) else { return }
+        if !OpenInHelper.open(url: url) {
+            print("lol unable to open yelp review")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.YELP_READ, params: [:])
         }
     }
 
@@ -151,6 +189,18 @@ class PlaceDetailsCardViewController: UIViewController {
             let url = URL(string: tripAdvisorProvider.url) else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open trip advisor review")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.TRIPADVISOR, params: [:])
+        }
+    }
+
+    @objc private func openReadMoreTripAdvisorLink(gestureRecgonizer: UITapGestureRecognizer) {
+        guard let tripAdvisorProvider = place.tripAdvisorProvider,
+            let url = URL(string: tripAdvisorProvider.url) else { return }
+        if !OpenInHelper.open(url: url) {
+            print("lol unable to open trip advisor review")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.TRIPADVISOR_READ, params: [:])
         }
     }
 
@@ -161,18 +211,63 @@ class PlaceDetailsCardViewController: UIViewController {
 
         if !OpenInHelper.openRoute(fromLocation: location.coordinate, toPlace: place, by: transportType) {
             print("lol unable to open travel directions")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.DIRECTIONS, params: [AnalyticsEvent.PARAM_ACTION: transportString])
         }
     }
 
+    @objc private func openEventURL(gestureRecognizer: UITapGestureRecognizer) {
+        guard let event = place.events.first,
+            let urlString = event.url,
+            let url = URL(httpStringMaybeWithScheme: urlString) else { return }
+        if !OpenInHelper.open(url: url) {
+            print("lol unable to open web address")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.EVENT_BANNER_LINK, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.CLICKED])
+        }
+    }
+
+    @objc private func openWikipediaURL(gestureRecognizer: UITapGestureRecognizer) {
+        guard let wikipediaProvider = place.wikipediaProvider,
+            let url = URL(string: wikipediaProvider.url) else { return }
+        if !OpenInHelper.open(url: url) {
+            print("lol unable to open wikipedia review")
+        } else {
+            Analytics.logEvent(event: AnalyticsEvent.WIKIPEDIA_READ, params: [:])
+        }
+    }
+
+    private func getNextCarouselPageIndex() -> Int {
+        var nextIndex = pageControl.currentPage + 1
+        if nextIndex >= place.photoURLs.count {
+            nextIndex = 0
+        }
+        return nextIndex
+    }
+
+    @objc private func autoMoveToNextCarouselImage() {
+        self.imageCarouselCollectionView.scrollToItem(at: IndexPath(item: getNextCarouselPageIndex(), section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
+    }
+
     func pageControlDidPage(sender: AnyObject) {
-        let pageSize = imageCarousel.bounds.size
-        let xOffset = pageSize.width * CGFloat(pageControl.currentPage)
-        imageCarouselCollectionView.setContentOffset(CGPoint(x: xOffset, y: 0), animated: true)
-        notifyDelegateOfChangeOfImageToURL(atIndex: pageControl.currentPage)
+        stopAutoMovingOfCarousel()
+        self.imageCarouselCollectionView.scrollToItem(at: IndexPath(item: getNextCarouselPageIndex(), section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
+    }
+
+    func beginAutoMovingOfCarousel() {
+        carouselTimer = Timer.scheduledTimer(timeInterval: 6, target: self,
+                                             selector: #selector(autoMoveToNextCarouselImage), userInfo: nil,
+                                             repeats: true)
+    }
+
+    func stopAutoMovingOfCarousel() {
+        carouselTimer?.invalidate()
+        carouselTimer = nil
     }
 
     fileprivate func notifyDelegateOfChangeOfImageToURL(atIndex index: Int) {
-        if let imageURL = URL(string: place.photoURLs[index]) {
+        if index < place.photoURLs.count,
+            let imageURL = URL(string: place.photoURLs[index]) {
             placeImageDelegate?.imageCarousel(imageCarousel: imageCarousel, placeImageDidChange: imageURL)
         }
     }
@@ -189,11 +284,12 @@ extension PlaceDetailsCardViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PlaceDetailsCardCellReuseIdentifier, for: indexPath) as! ImageCarouselCollectionViewCell
-        if let photoURL = URL(string: place.photoURLs[indexPath.item]) {
-            cell.imageView.setImageWith(photoURL)
 
+        let placeholder = UIImage(named: "cardview_image_loading")
+        if let photoURL = URL(string: place.photoURLs[indexPath.item]) {
+            cell.imageView.setImageWith(photoURL, placeholderImage: placeholder)
         } else {
-            cell.imageView.image = UIImage(named: "place-placeholder")
+            cell.imageView.image = placeholder
         }
         return cell
     }
@@ -211,11 +307,34 @@ extension PlaceDetailsCardViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension PlaceDetailsCardViewController: UIScrollViewDelegate {
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        didChangePage(scrollView: scrollView)
+    }
+    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        didChangePage(scrollView: scrollView)
+    }
+
+    fileprivate func didChangePage(scrollView: UIScrollView) {
         let pageSize = imageCarouselCollectionView.bounds.size
+
+        // There isn't anything to page if the image carousel is empty
+        guard pageSize != CGSize.zero && pageSize.width != 0 else {
+            return
+        }
+        
         let selectedPageIndex = Int(floor((scrollView.contentOffset.x-pageSize.width/2)/pageSize.width))+1
-        pageControl.currentPage = Int(selectedPageIndex)
+        pageControl.currentPage = selectedPageIndex
 
         notifyDelegateOfChangeOfImageToURL(atIndex: selectedPageIndex)
+    }
+}
+
+fileprivate class TouchableCollectionView: UICollectionView {
+    var touchDetected: (() -> Void)?
+
+    fileprivate override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        touchDetected?()
     }
 }

@@ -8,72 +8,29 @@ import QuartzCore
 import EDSunriseSet
 import Deferred
 
-private let MAP_SPAN_DELTA = 0.05
-private let MAP_LATITUDE_OFFSET = 0.015
-
-
 protocol PlaceDataSource: class {
     func nextPlace(forPlace place: Place) -> Place?
     func previousPlace(forPlace place: Place) -> Place?
     func numberOfPlaces() -> Int
     func place(forIndex: Int) throws -> Place
-}
-
-protocol LocationProvider: class {
-    func getCurrentLocation() -> CLLocation?
+    func index(forPlace: Place) -> Int?
+    func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ())
+    func sortPlaces(byLocation location: CLLocation)
 }
 
 struct PlaceDataSourceError: Error {
     let message: String
 }
 
+fileprivate let placesFetchMonitorIdentifier = "PlaceFetchRadiusMonitor"
+
 class PlaceCarouselViewController: UIViewController {
 
-    fileprivate let currentLocationIdentifier = "CURRENT_LOCATION"
-    fileprivate let MIN_SECS_BETWEEN_LOCATION_UPDATES: TimeInterval = 1
-
-    fileprivate var timeOfLastLocationUpdate: Date? {
-        get {
-            return UserDefaults.standard.value(forKey: AppConstants.timeOfLastLocationUpdateKey) as? Date
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: AppConstants.timeOfLastLocationUpdateKey)
-        }
-    }
-
-    lazy var eventNotificationsManager: EventNotificationsManager = EventNotificationsManager()
-
-    lazy var locationManager: CLLocationManager = {
-        let manager = CLLocationManager()
-        manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyBest
-        // TODO: update to a more sane distance value when testing is over.
-        // This is probably going to be around 100m
-        manager.distanceFilter = kCLDistanceFilterNone
-        manager.pausesLocationUpdatesAutomatically = true
-        return manager
-    }()
-
-    lazy var placesController: PlacesController = {
-        let controller = PlacesController()
+    lazy var placesProvider: PlacesProvider = {
+        let controller = PlacesProvider()
         controller.delegate = self
         return controller
     }()
-
-    var places: [Place] = [Place]() {
-        didSet {
-            if oldValue == places {
-                return
-            }
-            // TODO: how do we make sure the user wasn't interacting?
-            headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
-            placeCarousel.refresh()
-
-            if oldValue.count == 0 {
-                openClosestPlace()
-            }
-        }
-    }
 
     // the top part of the background. Contains Number of Places, horizontal line & (soon to be) Current Location button
     lazy var headerView: PlaceCarouselHeaderView = {
@@ -95,6 +52,8 @@ class PlaceCarouselViewController: UIViewController {
         return view
     }()
 
+    lazy var loadingOverlay = LoadingOverlayView(frame: CGRect.zero)
+
     // label displaying sunrise and sunset times
     lazy var sunriseSetTimesLabel: UILabel = {
         let label = UILabel()
@@ -103,13 +62,27 @@ class PlaceCarouselViewController: UIViewController {
         return label
     }()
 
+    var locationMonitor: LocationMonitor { return (UIApplication.shared.delegate! as! AppDelegate).locationMonitor }
+    fileprivate var isNoLocationAlertPresented = false
+
     lazy var placeCarousel: PlaceCarousel = {
         let carousel = PlaceCarousel()
         carousel.delegate = self
-        carousel.dataSource = self
-        carousel.locationProvider = self
+        carousel.dataSource = self.placesProvider
+        carousel.locationProvider = self.locationMonitor
         return carousel
     }()
+
+    fileprivate var shouldFetchPlaces: Bool = true
+
+    fileprivate var isLoading: Bool = false {
+        didSet {
+            headerView.alpha = isLoading ? 0 : 1
+            sunView.alpha = isLoading ? 0 : 1
+            placeCarousel.carousel.alpha = isLoading ? 0 : 1
+            loadingOverlay.alpha = isLoading ? 1 : 0
+        }
+    }
 
     var sunriseSet: EDSunriseSet? {
         didSet {
@@ -117,11 +90,7 @@ class PlaceCarouselViewController: UIViewController {
         }
     }
 
-    // fake the location to Hilton Waikaloa Village, Kona, Hawaii
-    fileprivate var fakeLocation: CLLocation = CLLocation(latitude: 19.924043, longitude: -155.887652)
-
-    fileprivate var monitoredRegions: [String: GeofenceRegion] = [String: GeofenceRegion]()
-    fileprivate var timeAtLocationTimer: Timer?
+    fileprivate var notificationToastProvider: InAppNotificationToastProvider?
 
     private func setSunriseSetTimes() {
         let today = Date()
@@ -180,18 +149,13 @@ class PlaceCarouselViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+
         if let backgroundImage = UIImage(named: "map_background") {
             self.view.layer.contents = backgroundImage.cgImage
         }
 
-        // add the views to the stack view
-        view.addSubview(headerView)
-
-        // setting up the layout constraints
-        var constraints = [headerView.topAnchor.constraint(equalTo: view.topAnchor),
-                           headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                           headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                           headerView.heightAnchor.constraint(equalToConstant: 150)]
+        var constraints = [NSLayoutConstraint]()
 
         view.addSubview(sunView)
         constraints.append(contentsOf: [sunView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
@@ -199,6 +163,14 @@ class PlaceCarouselViewController: UIViewController {
                                         sunView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                                         sunView.heightAnchor.constraint(equalToConstant: 90)])
 
+        // add the views to the stack view
+        view.addSubview(headerView)
+
+        // setting up the layout constraints
+        constraints.append(contentsOf: [headerView.topAnchor.constraint(equalTo: topLayoutGuide.topAnchor),
+                                        headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                                        headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                                        headerView.heightAnchor.constraint(equalToConstant: 150)])
 
         // set up the subviews for the sunrise/set view
         sunView.addSubview(sunriseSetTimesLabel)
@@ -211,30 +183,19 @@ class PlaceCarouselViewController: UIViewController {
         constraints.append(contentsOf: [placeCarousel.carousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                         placeCarousel.carousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                                         placeCarousel.carousel.topAnchor.constraint(equalTo: sunView.bottomAnchor, constant: -35),
-                                        placeCarousel.carousel.heightAnchor.constraint(equalToConstant: 275)])
+                                        placeCarousel.carousel.heightAnchor.constraint(equalToConstant: 300)])
+
+        loadingOverlay.delegate = self
+        view.addSubview(loadingOverlay)
+        constraints.append(contentsOf: [loadingOverlay.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor),
+                                        loadingOverlay.bottomAnchor.constraint(equalTo: self.bottomLayoutGuide.topAnchor),
+                                        loadingOverlay.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+                                        loadingOverlay.rightAnchor.constraint(equalTo: self.view.rightAnchor)])
 
         // apply the constraints
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
-    }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        guard let location = getCurrentLocation() else {
-            return
-        }
-
-        // this will update places when we first load, and whenever we show the place carousel
-        // but not update places while we are showing details, until we close the place details
-        // this ensures consistency between the place details and the carousel underneath
-        // and makes sure we don't end up providing weird data to users while they are scrolling
-        // through places details
-        // if sunrise set is not present, then we haven't processed our first location yet, so setup the app for the current location
-        // otherwise just update the places
-        guard let _ = sunriseSet else {
-            return self.updateLocation(location: location)
-        }
-        updatePlaces(forLocation: location)
+        isLoading = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -242,67 +203,71 @@ class PlaceCarouselViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    func openClosestPlace() {
-        guard places.count > 0 else {
-            return
+    func openFirstPlace() {
+        do {
+            let place = try placesProvider.place(forIndex: 0)
+            if self.presentedViewController == nil {
+                openDetail(forPlace: place)
+            }
+        } catch {
+            NSLog("Unable to open first place as there are no places")
         }
-        openDetail(forPlace: places[0])
     }
 
-    func openDetail(forPlace place: Place) {
+    func openDetail(forPlace place: Place, withCompletion completion: (() -> ())? = nil) {
         // if we are already displaying a place detail, don't try and display another one
         // places should be able to update beneath without affecting what the user currently sees
         if let _ = self.presentedViewController {
             return
         }
-        let placeDetailViewController = PlaceDetailViewController(place: place)
-        placeDetailViewController.dataSource = self
-        placeDetailViewController.locationProvider = self
 
-        self.present(placeDetailViewController, animated: true, completion: nil)
+        let placeDetailViewController = PlaceDetailViewController(place: place)
+        placeDetailViewController.dataSource = placesProvider
+        placeDetailViewController.locationProvider = self.locationMonitor
+        placeDetailViewController.transitioningDelegate = self
+
+        self.present(placeDetailViewController, animated: true, completion: completion)
+    }
+
+    @objc fileprivate func willEnterForeground() {
+        self.shouldFetchPlaces = true
     }
 
     // MARK: Location Handling
-
-    func refreshLocation() {
-        if (CLLocationManager.hasLocationPermissionAndEnabled()) {
-            locationManager.startMonitoringSignificantLocationChanges()
-        } else {
-            // requestLocation expected to be called on authorization status change.
-            locationManager.maybeRequestLocationPermission(viewController: self)
-        }
-    }
-
-    func cancelTimeAtLocationTimer() {
-        timeAtLocationTimer?.invalidate()
-        timeAtLocationTimer = nil
-    }
-
-    func startTimeAtLocationTimer() {
-        if timeAtLocationTimer == nil {
-            timeAtLocationTimer = Timer.scheduledTimer(timeInterval: AppConstants.minimumIntervalAtLocationBeforeFetchingEvents, target: self, selector: #selector(timerFired(timer:)), userInfo: nil, repeats: true)
-        }
-    }
-
-    @objc fileprivate func timerFired(timer: Timer) {
-        guard let currentLocation = getCurrentLocation() else { return }
-        eventNotificationsManager.fetchEvents(forLocation: currentLocation) { (events, error) in
-            print("events have been fetched \(events), \(error)")
-        }
-    }
-
     fileprivate func updateLocation(location: CLLocation) {
-        startTimeAtLocationTimer()
-        startMonitoring(location: location, withIdentifier: currentLocationIdentifier, withRadius: AppConstants.currentLocationMonitoringRadius, forEntry: nil, forExit: {
-            self.cancelTimeAtLocationTimer()
-            self.stopMonitoringRegion(withIdentifier: self.currentLocationIdentifier)
-        })
+        if let timeOfLastLocationUpdate = locationMonitor.timeOfLastLocationUpdate,
+            timeOfLastLocationUpdate < location.timestamp {
+            locationMonitor.startMonitoringForVisitAtCurrentLocation()
+        }
+
+        if sunriseSet == nil {
+            updateSunRiseSetTimes(forLocation: location)
+        }
+
         updatePlaces(forLocation: location)
-        updateSunRiseSetTimes(forLocation: location)
     }
 
     fileprivate func updatePlaces(forLocation location: CLLocation) {
-        self.placesController.updatePlaces(forLocation: location)
+        // don't bother fetching new places when in the background.
+        if UIApplication.shared.applicationState != .background {
+            if shouldFetchPlaces {
+                fetchPlaces(forLocation: location)
+            } else {
+                // re-sort places based on new location
+                placesProvider.sortPlaces(byLocation: location)
+                placeCarousel.refresh()
+            }
+        }
+    }
+
+    fileprivate func fetchPlaces(forLocation location: CLLocation) {
+        self.placesProvider.updatePlaces(forLocation: location)
+        let placeMonitoringRadius = RemoteConfigKeys.searchRadiusInKm.value / 4
+        locationMonitor.startMonitoring(location: location, withIdentifier: placesFetchMonitorIdentifier, withRadius: placeMonitoringRadius, forEntry: nil, forExit: { region in
+            self.locationMonitor.stopMonitoringRegion(withIdentifier: placesFetchMonitorIdentifier)
+            self.shouldFetchPlaces = true
+        })
+        self.shouldFetchPlaces = false
     }
 
     fileprivate func updateSunRiseSetTimes(forLocation location: CLLocation) {
@@ -324,150 +289,229 @@ class PlaceCarouselViewController: UIViewController {
 
     }
 
-    fileprivate func startMonitoring(location: CLLocation, withIdentifier identifier: String, withRadius radius: CLLocationDistance, forEntry: (()->())?, forExit: (()->())?) {
-        let region = GeofenceRegion(location: location.coordinate, identifier: identifier, radius: radius, onEntry: forEntry, onExit: forExit)
-        monitoredRegions[identifier] = region
+    fileprivate func presentSettingsOrQuitPrompt() {
+        let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
+        let alertController = UIAlertController(title: "\(appName) requires location access",
+            message: "This prototype is not supported without location access.", preferredStyle: .alert)
 
-        self.locationManager.startMonitoring(for: region.region)
+        let settingsAction = UIAlertAction(title: "Settings", style: .default, handler: {(action: UIAlertAction) -> Void in
+            UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
+        })
+        let quitAction = UIAlertAction(title: "Quit", style: .destructive, handler: {(action: UIAlertAction) -> Void in
+            UIControl().sendAction(#selector(URLSessionTask.suspend), to: UIApplication.shared, for: nil)
+        })
+        alertController.addAction(settingsAction)
+        alertController.addAction(quitAction)
+
+        self.present(alertController, animated: true)
     }
 
-    fileprivate func stopMonitoringRegion(withIdentifier identifier: String) {
-        guard let monitoredRegion = monitoredRegions[identifier]?.region else {
-            return
-        }
-        self.locationManager.stopMonitoring(for: monitoredRegion)
-        monitoredRegions.removeValue(forKey: identifier)
+    fileprivate func presentNoLocationAlert() {
+        // The message says to close and restart Prox, however, at time of writing, this is not
+        // always necessary: if we receive a location event while or after the dialog is displayed,
+        // we'll show the places. It's used as a catch all because we don't know for sure what
+        // causes the loading screen stall (#392).
+        let alert = UIAlertController(title: "Where did you go?",
+                                      message: "We can't find your current location. Please close and restart Prox.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK, got it.", style: .default) { _ in
+            self.dismiss(animated: true) { self.isNoLocationAlertPresented = false }
+        })
+
+        self.present(alert, animated: true) { self.isNoLocationAlertPresented = true }
     }
 
-
-    // MARK: Events
-}
-
-extension PlaceCarouselViewController: CLLocationManagerDelegate {
-
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        refreshLocation()
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        // Use last coord: we want to display where the user is now.
-        if var location = locations.last {
-            // In iOS9, didUpdateLocations can be unexpectedly called multiple
-            // times for a single `requestLocation`: we guard against that here.
-            if timeOfLastLocationUpdate == nil ||
-                (location.timestamp - MIN_SECS_BETWEEN_LOCATION_UPDATES) > timeOfLastLocationUpdate! {
-
-                if AppConstants.MOZ_LOCATION_FAKING {
-                    // fake the location to Hilton Waikaloa Village, Kona, Hawaii
-                    location = fakeLocation
+    func openPlace(placeKey: String, forEventWithKey eventKey: String) {
+        placesProvider.place(withKey: placeKey, forEventWithKey: eventKey) { place in
+            guard let place = place else { return }
+            DispatchQueue.main.async {
+                guard let presentedVC = self.presentedViewController else {
+                    // open the details screen for the place
+                    return self.openDetail(forPlace: place)
                 }
 
-                // only update places if this is our first location update
-                if timeOfLastLocationUpdate == nil {
-                    updateLocation(location: location)
-                }
-                timeOfLastLocationUpdate = location.timestamp
+                // handle when the user is already looking at the app
+                (presentedVC as? PlaceDetailViewController)?.openCard(forPlaceWithEvent: place)
             }
         }
     }
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        // TODO: handle
-        print("lol-location \(error.localizedDescription)")
+
+    fileprivate func openPlace(_ place: Place) {
+        guard let presentedVC = self.presentedViewController as? PlaceDetailViewController else {
+        // open the details screen for the place
+            return self.openDetail(forPlace: place)
+        }
+
+        // handle when the user is already looking at the app
+        presentedVC.openCard(forPlaceWithEvent: place)
     }
 
-    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        monitoredRegions[region.identifier]?.onEntry?()
+    func presentInAppEventNotification(forEventWithKey eventKey: String, atPlaceWithKey placeKey: String, withDescription description: String) {
+        DispatchQueue.main.async {
+            guard let presentedVC = self.presentedViewController as? PlaceDetailViewController else {
+                // open the details screen for the place
+                return self.presentToast(withText: description, forEventWithId: eventKey, atPlaceWithId: placeKey)
+            }
+
+            // handle when the user is already looking at the app
+            presentedVC.presentToast(withText: description, forEvent: eventKey, atPlace: placeKey)
+        }
     }
 
-    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
-        monitoredRegions[region.identifier]?.onExit?()
-    }
-
-    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
-        print("lol-location region monitoring failed \(error.localizedDescription)")
+    private func presentToast(withText text: String, forEventWithId eventId: String, atPlaceWithId placeId: String) {
+        if notificationToastProvider == nil {
+            notificationToastProvider = InAppNotificationToastProvider(placeId: placeId, eventId: eventId, text: text)
+            notificationToastProvider?.delegate = self
+            notificationToastProvider?.presentOnView(self.view)
+        }
     }
 }
 
-extension PlaceCarouselViewController: PlaceDataSource {
-
-    func nextPlace(forPlace place: Place) -> Place? {
-        guard let currentPlaceIndex = places.index(where: {$0 == place}),
-            currentPlaceIndex + 1 < places.endIndex else {
-                return nil
+extension PlaceCarouselViewController: InAppNotificationToastDelegate {
+    internal func inAppNotificationToastProvider(_ toast: InAppNotificationToastProvider, userDidRespondToNotificationForEventWithId eventId: String, atPlaceWithId placeId: String) {
+        placesProvider.fetchPlace(placeKey: placeId, withEvent: eventId) { place in
+            guard let place = place else {
+                NSLog("Unable to find place with id \(placeId) and event with id \(eventId)")
+                return
+            }
+            DispatchQueue.main.async {
+                self.openDetail(forPlace: place)
+            }
         }
-
-        return places[places.index(after: currentPlaceIndex)]
     }
 
-    func previousPlace(forPlace place: Place) -> Place? {
-        guard let currentPlaceIndex = places.index(where: {$0 == place}),
-            currentPlaceIndex > places.startIndex else {
-                return nil
-        }
-
-        return places[places.index(before: currentPlaceIndex)]
-    }
-
-    func numberOfPlaces() -> Int {
-        return places.count
-    }
-
-    func place(forIndex index: Int) throws -> Place {
-        guard index < places.endIndex,
-            index >= places.startIndex else {
-            throw PlaceDataSourceError(message: "There is no place at index: \(index)")
-        }
-
-        return places[index]
+    func inAppNotificationToastProviderDidDismiss(_ toast: InAppNotificationToastProvider) {
+        self.notificationToastProvider = nil
     }
 }
 
 extension PlaceCarouselViewController: PlaceCarouselDelegate {
     func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int) {
-        openDetail(forPlace: places[index])
+        openDetail(forPlace: try! placesProvider.place(forIndex: index))
     }
 }
 
-extension PlaceCarouselViewController: LocationProvider {
-    func getCurrentLocation() -> CLLocation? {
-        guard AppConstants.MOZ_LOCATION_FAKING else {
-            return self.locationManager.location
+extension PlaceCarouselViewController: LocationMonitorDelegate {
+    func locationMonitor(_ locationMonitor: LocationMonitor, didUpdateLocation location: CLLocation) {
+        if !isNoLocationAlertPresented {
+            updateLocation(location: location)
+            return
         }
-        // fake the location to Hilton Waikaloa Village, Kona, Hawaii
-        return fakeLocation
+
+        // If we don't dismiss the location alert, the detail view controller (called from
+        // updateLocation) does not get presented.
+        dismiss(animated: true) {
+            self.isNoLocationAlertPresented = false
+            self.updateLocation(location: location)
+        }
+    }
+
+    func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation) {
+        let eventNotificationsManager = EventNotificationsManager(withLocationProvider: locationMonitor)
+        eventNotificationsManager.checkForEventsToNotify(forLocation: location)
+    }
+    
+    func locationMonitorNeedsUserPermissionsPrompt(_ locationMonitor: LocationMonitor) {
+        presentSettingsOrQuitPrompt()
+    }
+
+    func locationMonitor(_ locationMonitor: LocationMonitor, userDidExitCurrentLocation location: CLLocation) {
+        locationMonitor.refreshLocation()
+    }
+
+    func locationMonitor(_ locationMonitor: LocationMonitor, didFailInitialUpdateWithError error: Error) {
+        // Note: actually, at this point, if the location comes, `didUpdateLocation` will be called.
+        presentNoLocationAlert()
     }
 }
 
-extension PlaceCarouselViewController: EventsControllerDelegate {
-    func eventController(_ eventController: EventsController, didError error: Error) {
+extension PlaceCarouselViewController: PlacesProviderDelegate {
+    fileprivate func showErrorMessageIfNoPlaces() {
+        if placesProvider.numberOfPlaces() == 0 {
+            // We don't want to show two error pop-ups: checking for any VC is a superset, but simple.
+            let isOtherViewControllerShown = presentedViewController != nil
+            let hasLocation = locationMonitor.getCurrentLocation() != nil
+            guard hasLocation,
+                    !isOtherViewControllerShown else {
+                presentNoLocationAlert()
+                return // Don't show "Try again" button - it could be misleading.
+            }
 
+            loadingOverlay.fadeInMessaging()
+            headerView.numberOfPlacesLabel.text = "No Places Found"
+        }
     }
 
-    func eventController(_ eventController: EventsController, didUpdateEvents: [Event]) {
+    func placesProviderWillStartFetchingPlaces(_ controller: PlacesProvider) {
+    }
+
+    func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider) {
+        showErrorMessageIfNoPlaces()
+    }
+
+    func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
+
+        // TODO: how do we make sure the user wasn't interacting?
+        headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
+        placeCarousel.refresh()
+        // calling async to prevent deadlock inside placesUpdated
+        DispatchQueue.main.async {
+            (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
+        }
+    }
+
+    func placesProviderDidTimeout(_ controller: PlacesProvider) {
+        showErrorMessageIfNoPlaces()
+    }
+
+    func placesProviderDidFetchFirstPlace() {
+        // Wrap the openClosedPlace in an async block to make sure its queued after the
+        // carousel's refresh so the cells load before we invoke the transition
+        DispatchQueue.main.async {
+            self.openFirstPlace()
+        }
     }
 }
 
-extension PlaceCarouselViewController: PlacesControllerDelegate {
-    func placeControllerWillStartFetchingPlaces(_ controller: PlacesController) {
-        // TODO placeholder for the waiting state.
-        if self.places.count == 0 {
-            headerView.numberOfPlacesLabel.text = "Waiting"
+extension PlaceCarouselViewController: LoadingOverlayDelegate {
+    func loadingOverlayDidTapSearchAgain() {
+        guard let location = locationMonitor.getCurrentLocation() else {
+            return
         }
+        self.placesProvider.updatePlaces(forLocation: location)
     }
+}
 
-    func placeControllerDidFinishFetchingPlaces(_ controller: PlacesController) {
-        // no op
-    }
+extension PlaceCarouselViewController: UIViewControllerTransitioningDelegate {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController,
+                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        if let detailVC = presented as? PlaceDetailViewController,
+            let _ = placesProvider.index(forPlace: detailVC.currentPlace) {
+            if isLoading {
+                let fadeTransition = CrossFadeTransition()
 
-    func placesController(_ controller: PlacesController, didReceivePlaces places: [Place]) {
-        self.places = places
-    }
-
-    func placesController(_ controller: PlacesController, didError error: Error) {
-        if self.places.count == 0 {
-            // placeholder for the error state.
-            headerView.numberOfPlacesLabel.text = "Error"
+                // Hide the loading state after we've transitioned away from this view controller
+                fadeTransition.completionCallback = {
+                    self.isLoading = false
+                }
+                return fadeTransition
+            } else {
+                let transition = MapPlacesTransition()
+                transition.presenting = true
+                return transition
+            }
         }
+        return nil
+    }
+
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        if let detailVC = dismissed as? PlaceDetailViewController,
+            let _ = placesProvider.index(forPlace: detailVC.currentPlace) {
+            let transition = MapPlacesTransition()
+            transition.presenting = false
+            return transition
+        }
+        return nil
     }
 }
 

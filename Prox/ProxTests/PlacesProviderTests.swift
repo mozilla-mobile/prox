@@ -8,13 +8,10 @@ import MapKit
 
 @testable import Prox
 
-class PlaceCarouselViewControllerTests: XCTestCase {
-
-    var placeCarouselVC: PlaceCarouselViewController!
+class PlacesProviderTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        placeCarouselVC = PlaceCarouselViewController()
     }
     
     override func tearDown() {
@@ -28,7 +25,7 @@ class PlaceCarouselViewControllerTests: XCTestCase {
         for index in 0..<number {
             let placeID = index + 1
 
-            places.append(Place(id: "\(index)", name: "Place \(placeID)", latLong: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0), yelpProvider: yelpProvider))
+            places.append(Place(id: "\(index)", name: "Place \(placeID)", latLong: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0), categories: ([""], ids: [""]), yelpProvider: yelpProvider))
         }
 
         return places
@@ -37,22 +34,23 @@ class PlaceCarouselViewControllerTests: XCTestCase {
 }
 
 // PlaceDataSource implementation tests
-extension PlaceCarouselViewControllerTests {
+extension PlacesProviderTests {
 
     func testPlaceDataSourceReturnsCorrectNumberOfPlaces() {
         let places = placesList(number: 4)
-        placeCarouselVC.places = places
 
-        XCTAssertEqual(placeCarouselVC.numberOfPlaces(), places.count)
+        let placeDataSource = PlacesProvider(places: places)
+
+        XCTAssertEqual(placeDataSource.numberOfPlaces(), places.count)
     }
 
     func testPlaceDataSourceReturnsCorrectPlaceForIndex() {
         let places = placesList(number: 4)
-        placeCarouselVC.places = places
+        let placeDataSource = PlacesProvider(places: places)
 
         let requestedIndex = 2
 
-        let thirdPlace = try? placeCarouselVC.place(forIndex: requestedIndex)
+        let thirdPlace = try? placeDataSource.place(forIndex: requestedIndex)
         XCTAssertNotNil(thirdPlace)
 
         XCTAssertEqual(thirdPlace!.id, "\(requestedIndex)")
@@ -60,22 +58,22 @@ extension PlaceCarouselViewControllerTests {
 
     func testPlaceDataSourceThrowsErrorOnOutOfBoundsIndex() {
         let places = placesList(number: 4)
-        placeCarouselVC.places = places
+        let placeDataSource = PlacesProvider(places: places)
 
-        XCTAssertThrowsError(try placeCarouselVC.place(forIndex: 4))
-        XCTAssertThrowsError(try placeCarouselVC.place(forIndex: -1))
+        XCTAssertThrowsError(try placeDataSource.place(forIndex: 4))
+        XCTAssertThrowsError(try placeDataSource.place(forIndex: -1))
     }
 
     func testPlaceDataSourceReturnsCorrectNextPlace() {
         let places = placesList(number: 4)
-        placeCarouselVC.places = places
+        let placeDataSource = PlacesProvider(places: places)
 
         // test with known next place
         var requestedIndex = 0
         var currentPlace = places[requestedIndex]
         // should be 1
         XCTAssertEqual(currentPlace.id, "\(requestedIndex)")
-        var nextPlace = placeCarouselVC.nextPlace(forPlace: currentPlace)
+        var nextPlace = placeDataSource.nextPlace(forPlace: currentPlace)
         // should be 2
         XCTAssertNotNil(nextPlace)
         XCTAssertEqual(nextPlace!.id, "\(requestedIndex + 1)")
@@ -83,20 +81,20 @@ extension PlaceCarouselViewControllerTests {
         // test with known no next place
         requestedIndex = places.endIndex - 1
         currentPlace = places[requestedIndex]
-        nextPlace = placeCarouselVC.nextPlace(forPlace: currentPlace)
+        nextPlace = placeDataSource.nextPlace(forPlace: currentPlace)
         XCTAssertNil(nextPlace)
     }
 
     func testPlaceDataSourceReturnsCorrectPreviousPlace() {
         let places = placesList(number: 4)
-        placeCarouselVC.places = places
+        let placeDataSource = PlacesProvider(places: places)
 
         // test with known next place
         var requestedIndex = 3
         var currentPlace = places[requestedIndex]
         // should be 4
         XCTAssertEqual(currentPlace.id, "\(requestedIndex)")
-        var previousPlace = placeCarouselVC.previousPlace(forPlace: currentPlace)
+        var previousPlace = placeDataSource.previousPlace(forPlace: currentPlace)
         XCTAssertNotNil(previousPlace)
         // should be 3
         XCTAssertEqual(previousPlace!.id, "\(requestedIndex - 1)")
@@ -104,7 +102,7 @@ extension PlaceCarouselViewControllerTests {
         // test with known no next place
         requestedIndex = places.startIndex
         currentPlace = places[requestedIndex]
-        previousPlace = placeCarouselVC.previousPlace(forPlace: currentPlace)
+        previousPlace = placeDataSource.previousPlace(forPlace: currentPlace)
         XCTAssertNil(previousPlace)
     }
 

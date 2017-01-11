@@ -9,9 +9,12 @@ target 'Prox' do
 	pod 'Firebase/Core'
 	pod 'Firebase/Database'
 	pod 'Firebase/Auth'
+	pod 'Firebase/RemoteConfig'
+    pod 'Flurry-iOS-SDK/FlurrySDK'
 	pod 'EDSunriseSet'
 	pod 'BuddyBuildSDK'
 	pod 'BadgeSwift', '~> 3.0'
+	pod 'FXPageControl', '1.4'
 end
 
 target 'ProxTests' do
@@ -22,6 +25,7 @@ target 'ProxTests' do
 	pod 'Firebase/Auth'
 	pod 'EDSunriseSet'
 	pod 'BadgeSwift', '~> 3.0'
+	pod 'FXPageControl', '1.4'
 end
 
 target 'ProxUITests' do
@@ -30,6 +34,8 @@ target 'ProxUITests' do
 	pod 'Firebase/Core'
 	pod 'Firebase/Database'
 	pod 'Firebase/Auth'
+	pod 'Firebase/RemoteConfig'
 	pod 'EDSunriseSet'
 	pod 'BadgeSwift', '~> 3.0'
+	pod 'FXPageControl', '1.4'
 end

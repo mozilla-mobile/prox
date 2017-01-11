@@ -5,12 +5,27 @@
 import UIKit
 import QuartzCore
 
+struct PlaceCarouselCVCAnimatableProperties {
+    var placeImage: UIImageView
+    var labelContainer: UIView
+}
+
+fileprivate struct CellShadowAttributes {
+    let radius: CGFloat
+    let offset: CGSize
+}
+
+fileprivate let shadowRadius: CGFloat = 5
+
+fileprivate let selectedShadowAttributes = CellShadowAttributes(radius: 5, offset: CGSize(width: 0, height: 2))
+fileprivate let unselectedShadowAttributes = CellShadowAttributes(radius: 2, offset: CGSize(width: 0, height: 0.5))
+
 class PlaceCarouselCollectionViewCell: UICollectionViewCell {
 
     lazy var roundedBackgroundView: UIView = {
         let view = UIView()
         view.backgroundColor = Colors.carouselViewPlaceCardBackground
-        view.layer.cornerRadius = 5
+        view.layer.cornerRadius = shadowRadius
         view.clipsToBounds = true
         view.accessibilityIdentifier = "Background"
         return view
@@ -19,12 +34,12 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
     lazy var shadowView: UIView = {
         let view = UIView()
         view.backgroundColor = Colors.carouselViewPlaceCardBackground
-        view.layer.cornerRadius = 5
-
+        view.layer.shadowOpacity = 0.6
+        view.layer.cornerRadius = shadowRadius
+        view.layer.shadowOffset = CGSize(width: 0, height: 0.5)
         view.layer.shadowColor = UIColor.darkGray.cgColor
         view.layer.shouldRasterize = true
         view.accessibilityIdentifier = "Shadow"
-
         return view
     }()
 
@@ -45,20 +60,20 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         opacityView.trailingAnchor.constraint(equalTo: imageView.trailingAnchor).isActive = true
         opacityView.accessibilityIdentifier = "ImageOpacityLayer"
 
-
         return imageView
     }()
 
     lazy var yelpReview: ReviewContainerView = {
         let view = ReviewContainerView(color: Colors.yelp, mode: .carouselView)
         view.accessibilityIdentifier = "YelpReview"
-
+        view.reviewSiteLogo.image = UIImage(named: "logo_yelp")
         return view
     }()
 
     lazy var tripAdvisorReview: ReviewContainerView = {
         let view = ReviewContainerView(color: Colors.tripAdvisor, mode: .carouselView)
         view.accessibilityIdentifier = "TripAdvisorReview"
+        view.reviewSiteLogo.image = UIImage(named: "logo_ta")
         return view
     }()
 
@@ -95,9 +110,13 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         return label
     }()
 
+    fileprivate lazy var labelContainer = UIView()
+
     private var locationLabelLeadingConstraint: NSLayoutConstraint?
     private var locationImageHeightConstraint: NSLayoutConstraint?
     private var locationImageWidthConstraint: NSLayoutConstraint?
+
+    fileprivate var idForTravelTimesView: String? // For extension.
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -108,22 +127,16 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-
-
-    override var isSelected: Bool {
-        didSet {
-            if isSelected {
-                shadowView.layer.shadowOffset = CGSize(width: 2, height: 2)
-                shadowView.layer.shadowOpacity = 0.5
-                shadowView.layer.shadowRadius = 2
-            } else {
-                shadowView.layer.shadowOffset = CGSize(width: 1, height: 1)
-                shadowView.layer.shadowOpacity = 0.25
-                shadowView.layer.shadowRadius = 1
-            }
-        }
+    func toggleShadow(on: Bool) {
+        setShadow(attributes: on ? selectedShadowAttributes : unselectedShadowAttributes)
     }
-    
+
+    fileprivate func setShadow(attributes: CellShadowAttributes) {
+        shadowView.layer.shadowOffset = attributes.offset
+        shadowView.layer.shadowRadius = attributes.radius
+        shadowView.setNeedsDisplay()
+    }
+
     private func setupViews() {
         contentView.addSubview(roundedBackgroundView)
 
@@ -145,33 +158,38 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
                                         placeImage.trailingAnchor.constraint(equalTo: roundedBackgroundView.trailingAnchor),
                                         placeImage.heightAnchor.constraint(equalToConstant: 201)])
 
+        contentView.addSubview(labelContainer)
+        constraints.append(contentsOf: [labelContainer.topAnchor.constraint(equalTo: placeImage.topAnchor),
+                                        labelContainer.bottomAnchor.constraint(equalTo: placeImage.bottomAnchor),
+                                        labelContainer.trailingAnchor.constraint(equalTo: placeImage.trailingAnchor, constant: -12),
+                                        labelContainer.leadingAnchor.constraint(equalTo: placeImage.leadingAnchor)])
+        
 
-        placeImage.addSubview(category)
+        labelContainer.addSubview(category)
         constraints.append(contentsOf: [category.leadingAnchor.constraint(equalTo: name.leadingAnchor),
                                         category.trailingAnchor.constraint(equalTo: name.trailingAnchor),
                                         category.bottomAnchor.constraint(equalTo: name.topAnchor, constant: -9)])
 
         let lineView = HorizontalLineView()
-        lineView.backgroundColor = .clear
         lineView.color = Colors.carouselViewPlaceCardImageText
         lineView.startX = 0.0
-        placeImage.addSubview(lineView)
+        labelContainer.addSubview(lineView)
         constraints.append(contentsOf: [lineView.leadingAnchor.constraint(equalTo: category.leadingAnchor, constant: 9),
                                         lineView.topAnchor.constraint(equalTo: category.bottomAnchor, constant: 2),
                                         lineView.widthAnchor.constraint(equalToConstant: 12.0),
                                         lineView.heightAnchor.constraint(equalToConstant: 2.0)])
 
-        placeImage.addSubview(name)
-        constraints.append(contentsOf: [name.leadingAnchor.constraint(equalTo: placeImage.leadingAnchor, constant: 12.0),
+        labelContainer.addSubview(name)
+        constraints.append(contentsOf: [name.leadingAnchor.constraint(equalTo: labelContainer.leadingAnchor, constant: 12.0),
                                          name.bottomAnchor.constraint(equalTo: location.topAnchor),
-                                         name.trailingAnchor.constraint(equalTo: placeImage.trailingAnchor)])
+                                         name.trailingAnchor.constraint(equalTo: labelContainer.trailingAnchor)])
 
-        placeImage.addSubview(locationImage)
-        constraints.append(contentsOf: [locationImage.leadingAnchor.constraint(equalTo: placeImage.leadingAnchor, constant: 13.0),
-                                        locationImage.bottomAnchor.constraint(equalTo: placeImage.bottomAnchor, constant: -16)])
-        placeImage.addSubview(location)
-        constraints.append(contentsOf: [location.bottomAnchor.constraint(equalTo: placeImage.bottomAnchor, constant: -12),
-                                        location.trailingAnchor.constraint(equalTo: placeImage.trailingAnchor, constant: -12)])
+        labelContainer.addSubview(locationImage)
+        constraints.append(contentsOf: [locationImage.leadingAnchor.constraint(equalTo: labelContainer.leadingAnchor, constant: 13.0),
+                                        locationImage.bottomAnchor.constraint(equalTo: labelContainer.bottomAnchor, constant: -16)])
+        labelContainer.addSubview(location)
+        constraints.append(contentsOf: [location.bottomAnchor.constraint(equalTo: labelContainer.bottomAnchor, constant: -12),
+                                        location.trailingAnchor.constraint(equalTo: labelContainer.trailingAnchor, constant: -12)])
 
         roundedBackgroundView.addSubview(yelpReview)
         constraints.append(contentsOf: [yelpReview.topAnchor.constraint(equalTo: placeImage.bottomAnchor, constant: 13),
@@ -226,5 +244,59 @@ class PlaceCarouselCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.deactivate(deactivateConstraints)
         NSLayoutConstraint.activate(updatedConstraints)
     }
-    
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        toggleShadow(on: false)
+    }
+}
+
+extension PlaceCarouselCollectionViewCell: TravelTimesView {
+    private static let travelTimesLoadingText = "Locating..."
+
+    func getIDForTravelTimesView() -> String? { return idForTravelTimesView }
+    func setIDForTravelTimesView(_ id: String) { idForTravelTimesView = id }
+
+    func prepareTravelTimesUIForReuse() {
+        locationImage.image = nil
+        isSelected = false
+        location.text = " " // We expect the text to be changed before the view is seen but just in case.
+    }
+
+    func setTravelTimesUIIsLoading(_ isLoading: Bool) {
+        if isLoading {
+            // This will be overwritten when the result is updated.
+            location.text = PlaceCarouselCollectionViewCell.travelTimesLoadingText
+        }
+    }
+
+    func updateTravelTimesUIForResult(_ result: TravelTimesViewResult, durationInMinutes: Int?) {
+        switch result {
+        case .userHere:
+            locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+            location.text = "You're here"
+            isSelected = true
+
+        case .walkingDist:
+            location.text = "\(durationInMinutes!) min walk away"
+
+        case .drivingDist:
+            location.text = "\(durationInMinutes!) min drive away"
+
+        case .noData:
+            // Note: I don't know this is necessary. But it'd waste time to research so I set it in any case.
+            //
+            // UX wants to continue to display the loading text if we were unable to get data
+            // because we will retry to get the travel times the next time they're expected to
+            // be shown so in some sense, it's as if they continued to load.
+            location.text = PlaceCarouselCollectionViewCell.travelTimesLoadingText
+        }
+    }
+}
+
+extension PlaceCarouselCollectionViewCell: Animatable {
+    func animatableProperties() -> PlaceCarouselCVCAnimatableProperties {
+        return PlaceCarouselCVCAnimatableProperties(placeImage: self.placeImage,
+                                                    labelContainer: self.labelContainer)
+    }
 }

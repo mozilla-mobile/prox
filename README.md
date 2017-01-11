@@ -21,10 +21,11 @@ compilation failures:
 
     open Prox.xcworkspace
 
-### GoogleServices-Info.plist
-For a successful build, you need the `Prox/Prox/GoogleService-Info.plist` file
-which contains secure information to connect to Firebase and our backend
-services. *Please do not add this file to version control.*
+### Services and API keys
+For a successful build, you need the `Prox/Prox/GoogleService-Info.plist` and
+`Prox/Prox/APIKeys.plist` files, which contain secure information to connect
+to Firebase, our backend services, and APIs. *Please do not add this file to
+version control.*
 
 If you are a team member, this file is available in the Engineering gdrive. If
 you are not, please contact a team member directly to discuss receiving this

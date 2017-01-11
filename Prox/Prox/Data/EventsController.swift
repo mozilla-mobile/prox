@@ -4,20 +4,38 @@
 
 import Foundation
 
-protocol EventsControllerDelegate: class {
-    func eventController(_ eventController: EventsController, didUpdateEvents: [Event])
-    func eventController(_ eventController: EventsController, didError error: Error)
-}
+import FirebaseRemoteConfig
 
-class EventsController {
-    lazy var eventsDatabase: EventsDatabase = FakeEventsDatabase()
+class EventsProvider {
+    lazy var eventsDatabase: EventsDatabase = FirebaseEventsDatabase()
 
-    func getEvents(forLocation location: CLLocation, completion: @escaping (([Event]?, Error?) -> Void)) {
-        return eventsDatabase.getEvents(forLocation: location).upon { results in
-            let events = results.flatMap { $0.successResult() }
+    private lazy var radius: Double = {
+        return RemoteConfigKeys.eventSearchRadiusInKm.value
+    }()
+    func event(forKey key: String, completion: @escaping (Event?) -> ()) {
+        eventsDatabase.getEvent(withKey: key).upon { completion($0.successResult() )}
+    }
+
+    func getEventsForNotifications(forLocation location: CLLocation, isBackground: Bool, completion: @escaping (([Event]?, Error?) -> Void)) {
+        return eventsDatabase.getEvents(forLocation: location, withRadius: radius, isBackground: isBackground).upon { results in
+            let events = results.flatMap { $0.successResult() }.filter { self.isValidEvent(event: $0) }
+            NSLog("found \(events.count) events")
             DispatchQueue.main.async {
                 completion(events, nil)
             }
         }
+    }
+
+    func getEventsWithPlaces(forLocation location: CLLocation, usingPlacesDatabase placesDatabase: PlacesDatabase, completion: @escaping ([Place]) -> ()) {
+        eventsDatabase.getPlacesWithEvents(forLocation: location, withRadius: radius, withPlacesDatabase: placesDatabase, filterEventsUsing: self.isValidEvent).upon { results in
+            let places = results.flatMap { $0.successResult() }
+            completion(places)
+        }
+    }
+
+    internal func isValidEvent(event: Event) -> Bool {
+        let valid = event.isValidEvent()
+        NSLog("event \(event.description) is a \(valid ? "valid" : "invalid") event")
+        return valid
     }
 }

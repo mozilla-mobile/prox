@@ -29,6 +29,7 @@ class PlaceDetailsCardView: UIView {
                                                  self.iconInfoViewContainer,
                                                  self.reviewViewContainer,
                                                  self.wikiDescriptionView,
+                                                 self.tripAdvisorDescriptionView,
                                                  self.yelpDescriptionView
             ])
         view.axis = .vertical
@@ -110,10 +111,7 @@ class PlaceDetailsCardView: UIView {
         return view
     }()
 
-    lazy var travelTimeView: PlaceDetailsIconInfoView = {
-        let view = PlaceDetailsIconInfoView(enableForwardArrow: true)
-        return view
-    }()
+    lazy var travelTimeView = PlaceDetailsTravelTimesView()
 
     lazy var hoursView: PlaceDetailsIconInfoView = {
         let view = PlaceDetailsIconInfoView(enableForwardArrow: false)
@@ -135,13 +133,40 @@ class PlaceDetailsCardView: UIView {
         return view
     }()
 
-    lazy var wikiDescriptionView = PlaceDetailsDescriptionView(labelText: "Wikipedia summary",
-                                                               icon: UIImage(named: "logo_wikipedia"),
-                                                               horizontalMargin: 16)
+    lazy var tripAdvisorDescriptionView: PlaceDetailsDescriptionView = {
+        let view = PlaceDetailsDescriptionView(labelText: "Highlights from TripAdvisor",
+                                               icon: UIImage(named: "logo_TA_small"),
+                                               type: DetailType.tripadvisor,
+                                               expanded: false)
 
-    lazy var yelpDescriptionView = PlaceDetailsDescriptionView(labelText: "Yelp top review",
+        let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
+        let underlineAttributedString = NSAttributedString(string: "Read more on TripAdvisor", attributes: underlineAttribute)
+        view.readMoreLink.attributedText = underlineAttributedString
+        return view
+    }()
+
+    lazy var wikiDescriptionView: PlaceDetailsDescriptionView = {
+        let view = PlaceDetailsDescriptionView(labelText: "The top line from Wikipedia",
+                                        icon: UIImage(named: "logo_wikipedia"),
+                                        type: DetailType.wikipedia,
+                                        expanded: false)
+
+        let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
+        let underlineAttributedString = NSAttributedString(string: "Read more on Wikipedia", attributes: underlineAttribute)
+        view.readMoreLink.attributedText = underlineAttributedString
+        return view
+    }()
+
+    lazy var yelpDescriptionView: PlaceDetailsDescriptionView = {
+        let view = PlaceDetailsDescriptionView(labelText: "The latest from Yelp",
                                                                icon: UIImage(named: "logo_yelp_small"),
-                                                               horizontalMargin: 16)
+                                                               type: DetailType.yelp,
+                                                               expanded: false)
+        let underlineAttribute = [NSUnderlineStyleAttributeName : NSUnderlineStyle.styleSingle.rawValue]
+        let underlineAttributedString = NSAttributedString(string: "Read more on Yelp", attributes: underlineAttribute)
+        view.readMoreLink.attributedText = underlineAttributedString
+        return view
+    } ()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -190,6 +215,7 @@ class PlaceDetailsCardView: UIView {
 
 
     private func setupGestureRecognizers() {
+        tripAdvisorDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
         wikiDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
         yelpDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
     }
@@ -216,17 +242,17 @@ class PlaceDetailsCardView: UIView {
     }
 
     func updateUI(forPlace place: Place) {
-        updateEventUI(forPlace: place)
-
+        showEventView(isHidden: true)
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
-        categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories)
+        categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories.names)
         updateURLText(place.url)
 
         updateHoursUI(place.hours)
 
-        updateDescriptionViewUI(forText: place.wikiDescription, onView: wikiDescriptionView)
-        updateDescriptionViewUI(forText: place.yelpDescription, onView: yelpDescriptionView)
+        updateDescriptionViewUI(forText: place.wikiDescription, onView: wikiDescriptionView, expanded: place.wikiDescription != nil)
+        updateDescriptionViewUI(forText: place.tripAdvisorDescription, onView: tripAdvisorDescriptionView, expanded: place.wikiDescription == nil && place.tripAdvisorDescription != nil)
+        updateDescriptionViewUI(forText: place.yelpDescription, onView: yelpDescriptionView, expanded: place.tripAdvisorDescription == nil && place.wikiDescription == nil && place.yelpDescription != nil)
 
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)
@@ -244,75 +270,66 @@ class PlaceDetailsCardView: UIView {
     }
 
     private func updateHoursUI(_ hours: OpenHours?) {
-        let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date())
+        guard let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date()) else {
+            hoursView.iconView.isHidden = true
+            hoursView.isPrimaryTextLabelHidden = true
+            hoursView.secondaryTextLabel.text = "Check listing\nfor hours"
+            hoursView.secondaryTextLabel.numberOfLines = 2
+            return
+        }
+
+        hoursView.iconView.isHidden = false
+        hoursView.isPrimaryTextLabelHidden = false
         hoursView.primaryTextLabel.text = primaryText
         hoursView.secondaryTextLabel.text = secondaryText
+        hoursView.secondaryTextLabel.numberOfLines = 1
     }
 
-    private func updateDescriptionViewUI(forText text: String?, onView view: PlaceDetailsDescriptionView) {
-        if let text = text {
-            view.isHidden = false
-            view.expandableLabel.text = text
+    private func updateDescriptionViewUI(forText text: String?, onView view: PlaceDetailsDescriptionView, expanded: Bool) {
+        view.isHidden = text == nil ? true : false
+        view.descriptionLabel.text = text
+        view.setExpandableView(isExpanded: expanded)
+    }
+
+    fileprivate func showEventView(isHidden: Bool) {
+        setContainingStackViewMargins(isTopMarginPresent: isHidden)
+        eventView.isHidden = isHidden
+    }
+
+     func updateEventUI(forPlace place: Place) {
+        if let event = place.events.first,
+            let message = event.placeDisplayString {
+            eventView.setText(message, underlined: event.url == nil ? nil : "More info.")
+            showEventView(isHidden: false)
         } else {
-            view.isHidden = true
-            view.expandableLabel.text = nil
+            eventView.setText("", underlined: nil)
+            showEventView(isHidden: true)
         }
     }
 
-    private func updateEventUI(forPlace place: Place) {
-        // TEMP: Show event on one item so we can test it.
-        // TODO: bind real events
-        if place.id == "tropics-ale-house-waikoloa-beach" {
-            setContainingStackViewMargins(isTopMarginPresent: false)
-            eventView.isHidden = false
-            eventView.setText("Free Jazz Concert at The Bar in 1 hour!", underlined: "More info.")
-        } else {
-            setContainingStackViewMargins(isTopMarginPresent: true)
-            eventView.isHidden = true
-        }
+
+    func showEvent(atPlace place: Place) {
+        updateEventUI(forPlace: place)
+        // this is here as we want to animate the appearance of the card later
+        // TODO: Animate the appearance of the event card
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
     }
 
-    func updateTravelTimesUI(travelTimes: TravelTimes) {
-        if let walkingTimeSeconds = travelTimes.walkingTime {
-            let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
-            if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
-                if walkingTimeMinutes < TravelTimesProvider.YOU_ARE_HERE_WALKING_TIME {
-                    self.travelTimeView.isPrimaryTextLabelHidden = true
-                    self.travelTimeView.secondaryTextLabel.text = "You're here!"
-                    self.travelTimeView.iconView.image = UIImage(named: "icon_here")
-                } else {
-                    self.travelTimeView.isPrimaryTextLabelHidden = false
-                    self.travelTimeView.primaryTextLabel.text = "\(walkingTimeMinutes) min"
-                    self.travelTimeView.secondaryTextLabel.text = "Walking"
-                    self.travelTimeView.iconView.image = UIImage(named: "icon_walkingdist")
-                }
-                return
-            }
-        }
-
-        if let drivingTimeSeconds = travelTimes.drivingTime {
-            let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
-            self.travelTimeView.isPrimaryTextLabelHidden = false
-            self.travelTimeView.primaryTextLabel.text = "\(drivingTimeMinutes) min"
-            self.travelTimeView.secondaryTextLabel.text = "Driving"
-            self.travelTimeView.iconView.image = UIImage(named: "icon_drivingdist")
-        }
-    }
-
-    private func getStringsForOpenHours(_ openHours: OpenHours?, forDate date: Date) -> (primary: String, secondary: String) {
+    private func getStringsForOpenHours(_ openHours: OpenHours?, forDate date: Date) -> (primary: String, secondary: String)? {
         guard let openHours = openHours else {
             // if hours is nil, we assume this place has no listed hours (e.g. beach).
-            return ("Not sure", "Closing time")
+            return nil
         }
 
         let now = Date()
         if openHours.isOpen(atTime: now),
             let closingTime = openHours.closingTime(forTime: now) {
-            return ("Open", "Closes at \(closingTime)")
+            return ("Open", "Until \(closingTime)")
         } else if let openingTime = openHours.nextOpeningTime(forTime: now) {
-            return ("Closed", "Opens at \(openingTime)")
+            return ("Closed", "Until \(openingTime)")
         }
 
-        return ("Not sure", "Closing time")
+        return nil
     }
 }

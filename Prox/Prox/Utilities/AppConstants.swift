@@ -3,26 +3,44 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import UIKit
+import FirebaseRemoteConfig
 
 public enum AppBuildChannel {
     case Developer
     case Enterprise
+    case EnterpriseKona
     case Release
 }
 
 public struct AppConstants {
 
     public static let isRunningTest = NSClassFromString("XCTestCase") != nil
-    public static let backgroundFetchInterval: TimeInterval = 5 * 60
-    public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 15 * 60
+    
+    #if MOZ_CHANNEL_DEBUG
+    public static let backgroundFetchInterval: TimeInterval = 1 * 60
+    public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 1 * 60
+    #else
+    public static var backgroundFetchInterval: TimeInterval {
+        return RemoteConfigKeys.backgroundFetchIntervalMins.value * 60.0
+    }
+    public static var minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval {
+        return RemoteConfigKeys.notificationVisitIntervalMins.value * 60.0
+    }
+    #endif
+
+    public static var cacheEvents: Bool {
+        return RemoteConfigKeys.cacheEvents.value == 1
+    }
+
     public static let timeOfLastLocationUpdateKey = "timeOfLastLocationUpdate"
-    public static let currentLocationMonitoringRadius: CLLocationDistance = 50.0
     public static let ONE_DAY: TimeInterval = (60 * 60) * 24
 
     /// Build Channel.
     public static let BuildChannel: AppBuildChannel = {
         #if MOZ_CHANNEL_ENTERPRISE
             return AppBuildChannel.Enterprise
+        #elseif MOZ_CHANNEL_ENTERPRISE_KONA
+            return AppBuildChannel.EnterpriseKona
         #elseif MOZ_CHANNEL_RELEASE
             return AppBuildChannel.Release
         #else
@@ -58,12 +76,8 @@ public struct AppConstants {
 
     // Enables/disables location faking for Hawaii
     public static let MOZ_LOCATION_FAKING: Bool = {
-        #if MOZ_CHANNEL_DEBUG
-            return false
-        #elseif MOZ_CHANNEL_ENTERPRISE
+        #if MOZ_CHANNEL_ENTERPRISE_KONA
             return true
-        #elseif MOZ_CHANNEL_RELEASE
-            return false
         #else
             return false
         #endif
@@ -73,13 +87,27 @@ public struct AppConstants {
     public static let serverURL: URL = {
         #if MOZ_CHANNEL_DEBUG
             return URL(string: "https://prox-dev.moo.mx")!
-            //return URL(string: "http://192.168.1.86:5000")!
         #elseif MOZ_CHANNEL_ENTERPRISE
-            return URL(string: "https://prox-dev.moo.mx")!
+            return URL(string: "https://prox.moo.mx")!
         #elseif MOZ_CHANNEL_RELEASE
-            return URL(string: "https://prox-dev.moo.mx")!
+            return URL(string: "https://prox.moo.mx")!
         #else
             return URL(string: "https://prox-dev.moo.mx")!
+        #endif
+    }()
+
+    public static let APIKEYS_PATH = "APIKeys"
+
+    // The root child in the Realtime Firebase database.
+    public static let firebaseRoot: String = {
+        #if MOZ_CHANNEL_DEBUG
+            return ""
+        #elseif MOZ_CHANNEL_ENTERPRISE
+            return "production/"
+        #elseif MOZ_CHANNEL_RELEASE
+            return "production/"
+        #else
+            return ""
         #endif
     }()
 }

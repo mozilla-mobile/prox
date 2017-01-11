@@ -14,17 +14,6 @@ protocol PlaceCarouselDelegate: class {
 
 class PlaceCarousel: NSObject {
 
-    lazy var imageDownloader: AFImageDownloader = {
-        // TODO: Maybe we want more control over the configuration.
-        let sessionManager = AFHTTPSessionManager(sessionConfiguration: .default)
-        sessionManager.responseSerializer = AFImageResponseSerializer() // sets correct mime-type.
-
-        let activeDownloadCount = 4 // TODO: value?
-        let cache = AFAutoPurgingImageCache() // defaults 100 MB max -> 60 MB after purge
-        return AFImageDownloader(sessionManager: sessionManager, downloadPrioritization: .FIFO,
-                                 maximumActiveDownloads: activeDownloadCount, imageCache: cache)
-    }()
-
     let defaultPadding: CGFloat = 15.0
 
     weak var delegate: PlaceCarouselDelegate?
@@ -32,10 +21,11 @@ class PlaceCarousel: NSObject {
     weak var locationProvider: LocationProvider?
 
     private lazy var carouselLayout: UICollectionViewFlowLayout = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = CarouselFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = self.defaultPadding
         layout.sectionInset = UIEdgeInsets(top: 0.0, left: self.defaultPadding, bottom: 0.0, right: self.defaultPadding)
+        layout.pageDelegate = self
         return layout
     }()
 
@@ -52,8 +42,46 @@ class PlaceCarousel: NSObject {
 
     func refresh() {
         carousel.reloadData()
+        carousel.collectionViewLayout.invalidateLayout()
     }
 
+    func visibleCellFor(place: Place) -> PlaceCarouselCollectionViewCell? {
+        guard let indexPath = indexPathFor(place: place) else {
+           return nil
+        }
+        return carousel.cellForItem(at: indexPath) as? PlaceCarouselCollectionViewCell
+    }
+
+    func scrollTo(place: Place) {
+        guard let indexPath = indexPathFor(place: place) else {
+           return
+        }
+        AppState.trackCardVisit(cardPos: indexPath[1])
+        carousel.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+    }
+
+    func clearSelections() {
+        carousel.visibleCells.forEach { ($0 as? PlaceCarouselCollectionViewCell)?.toggleShadow(on: false) }
+    }
+
+    func select(index: Int) {
+        (carousel.cellForItem(at: IndexPath(item: index, section: 0)) as?
+            PlaceCarouselCollectionViewCell)?.toggleShadow(on: true)
+    }
+
+    fileprivate func indexPathFor(place: Place) -> IndexPath? {
+        guard let index = dataSource?.index(forPlace: place) else {
+            return nil
+        }
+        return IndexPath(item: index, section: 0)
+    }
+}
+
+extension PlaceCarousel: CarouselPageDelegate {
+    func didPage(toIndex: Int) {
+        clearSelections()
+        select(index: toIndex)
+    }
 }
 
 extension PlaceCarousel: UICollectionViewDataSource {
@@ -69,18 +97,13 @@ extension PlaceCarousel: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdentifier, for: indexPath) as! PlaceCarouselCollectionViewCell
 
-        if !isCellReused(cell) {
-            cell.yelpReview.reviewSiteLogo.image = UIImage(named: "logo_yelp")
-            cell.tripAdvisorReview.reviewSiteLogo.image = UIImage(named: "logo_ta")
-        }
-
         // TODO: this view is only partially filled in
         guard let dataSource = dataSource,
             let place = try? dataSource.place(forIndex: indexPath.item) else {
             return cell
         }
 
-        cell.category.text = PlaceUtilities.getString(forCategories: place.categories)
+        cell.category.text = PlaceUtilities.getString(forCategories: place.categories.names)
         cell.name.text = place.name
 
         downloadAndSetImage(for: place, into: cell)
@@ -88,56 +111,23 @@ extension PlaceCarousel: UICollectionViewDataSource {
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: cell.yelpReview, isTextShortened: true)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: cell.tripAdvisorReview, isTextShortened: true)
 
-        if let location = locationProvider?.getCurrentLocation() {
-            place.travelTimes(fromLocation: location, withCallback: { travelTimes in
-                self.setTravelTimes(travelTimes: travelTimes, forCell: cell)
-            })
-        }
+        PlaceUtilities.updateTravelTimeUI(fromPlace: place, toLocation: locationProvider?.getCurrentLocation(), forView: cell)
 
         return cell
     }
 
-    private func isCellReused(_ cell: PlaceCarouselCollectionViewCell) -> Bool {
-        return cell.yelpReview.reviewSiteLogo.image != nil
-    }
-
     private func downloadAndSetImage(for place: Place, into cell: PlaceCarouselCollectionViewCell) {
+        // Prepare for re-use.
+        cell.placeImage.cancelImageDownloadTask()
+        cell.placeImage.image = UIImage(named: "carousel_image_loading")
+
         guard let urlStr = place.photoURLs.first, let url = URL(string: urlStr) else {
             print("lol unable to create URL from photo url")
-            cell.placeImage.image = UIImage(named: "place-placeholder")
             return
         }
 
         cell.placeImage.setImageWith(url)
     }
-
-    private func setTravelTimes(travelTimes: TravelTimes?, forCell cell: PlaceCarouselCollectionViewCell) {
-        guard let travelTimes = travelTimes else {
-            return
-        }
-
-        if let walkingTimeSeconds = travelTimes.walkingTime {
-            let walkingTimeMinutes = Int(round(walkingTimeSeconds / 60.0))
-            if walkingTimeMinutes <= TravelTimesProvider.MIN_WALKING_TIME {
-                if walkingTimeMinutes < TravelTimesProvider.YOU_ARE_HERE_WALKING_TIME {
-                    cell.locationImage.image = UIImage(named: "icon_location")?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
-                    cell.location.text = "You're here"
-                    cell.isSelected = true
-                } else {
-                    cell.location.text = "\(walkingTimeMinutes) min walk away"
-                    cell.isSelected = false
-                }
-                return
-            }
-        }
-
-        if let drivingTimeSeconds = travelTimes.drivingTime {
-            let drivingTimeMinutes = Int(round(drivingTimeSeconds / 60.0))
-            cell.location.text = "\(drivingTimeMinutes) min drive away"
-            cell.isSelected = false
-        }
-    }
-
 }
 
 extension PlaceCarousel: UICollectionViewDelegateFlowLayout {
@@ -147,7 +137,58 @@ extension PlaceCarousel: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        clearSelections()
+        select(index: indexPath.item)
         delegate?.placeCarousel(placeCarousel: self, didSelectPlaceAtIndex: indexPath.item)
     }
+}
 
+fileprivate protocol CarouselPageDelegate: class {
+    func didPage(toIndex: Int)
+}
+
+fileprivate class CarouselFlowLayout: UICollectionViewFlowLayout {
+    weak var pageDelegate: CarouselPageDelegate?
+
+    var pageWidth: CGFloat {
+        return 200 + minimumLineSpacing
+    }
+
+    var flickVelocity: CGFloat {
+        return 0.3
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override init() {
+        super.init()
+    }
+
+    fileprivate override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
+        guard let collectionView = collectionView else {
+            return CGPoint.zero
+        }
+        
+        let rawPageValue = collectionView.contentOffset.x / pageWidth
+        let currentPage = velocity.x > 0 ? floor(rawPageValue) : ceil(rawPageValue)
+        let nextPage = velocity.x > 0 ? ceil(rawPageValue) : floor(rawPageValue)
+
+        if (currentPage >= 0 && nextPage >= 0) {
+            AppState.trackCardVisit(cardPos: Int(currentPage))
+            AppState.trackCardVisit(cardPos: Int(nextPage))
+        }
+        let pannedLessThanAPage = fabs(1 + currentPage - rawPageValue) > 0.5
+        let flicked = fabs(velocity.x) > flickVelocity
+        let actualNextPage = pannedLessThanAPage && flicked ? nextPage : round(rawPageValue)
+
+        pageDelegate?.didPage(toIndex: Int(max(0, actualNextPage)))
+        if actualNextPage == 0 {
+            return CGPoint(x: 0, y: proposedContentOffset.y)
+        } else {
+            // Peek the previous place card a bit so it's still visible
+            return CGPoint(x: actualNextPage * pageWidth - 16, y: proposedContentOffset.y)
+        }
+    }
 }

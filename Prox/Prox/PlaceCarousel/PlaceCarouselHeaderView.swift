@@ -4,7 +4,7 @@
 
 import UIKit
 
-class PlaceCarouselHeaderView: HorizontalLineView {
+class PlaceCarouselHeaderView: UIView {
 
     // label to display number of places
     lazy var numberOfPlacesLabel: UILabel = {
@@ -13,27 +13,29 @@ class PlaceCarouselHeaderView: HorizontalLineView {
         return label
     }()
 
+    fileprivate lazy var line: HorizontalLineView = HorizontalLineView()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .white
-        self.startX = 20.0
-        
-        self.setupViews()
-    }
 
-    // setting up the constraints for the views
-    func setupViews() {
-        color = Colors.carouselViewHeaderHorizontalLine
+        line.startX = 20.0
+        line.color = Colors.carouselViewHeaderHorizontalLine
+        
         addSubview(numberOfPlacesLabel)
+        addSubview(line)
 
         let constraints = [ numberOfPlacesLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-                            numberOfPlacesLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10)]
+                            numberOfPlacesLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10),
+                            line.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+                            line.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+                            line.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+                            line.heightAnchor.constraint(equalToConstant: 1.5)]
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 }

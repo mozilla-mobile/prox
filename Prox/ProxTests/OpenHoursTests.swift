@@ -22,8 +22,8 @@ class OpenHoursTests: XCTestCase {
         XCTAssertEqual(Set(actual.hours.keys), Set(expected.hours.keys))
 
         for dayOfWeek in expected.hours.keys {
-            let (actualOpen, actualClose) = actual.hours[dayOfWeek]!
-            let (expectedOpen, expectedClose) = expected.hours[dayOfWeek]!
+            let (actualOpen, actualClose) = actual.hours[dayOfWeek]!.last!
+            let (expectedOpen, expectedClose) = expected.hours[dayOfWeek]!.last!
             XCTAssertEqual(actualOpen.hour, expectedOpen.hour)
             XCTAssertEqual(actualOpen.minute, expectedOpen.minute)
             XCTAssertEqual(actualClose.hour, expectedClose.hour)
@@ -54,18 +54,18 @@ class OpenHoursTests: XCTestCase {
 
         // mondays opening time = 7:00
         // mondays closing time = 14: 30
-        let monExpected = (openTime: dateComponents(withHour: 7, minute: 0),
-                           closeTime: dateComponents(withHour: 14, minute: 30))
+        let monExpected = [(openTime: dateComponents(withHour: 7, minute: 0),
+                           closeTime: dateComponents(withHour: 14, minute: 30))]
 
         // Tuesdays opening time = 21:00
         // tuesdays closing time = 22:00
-        let tuesExpected = (openTime: dateComponents(withHour: 21, minute: 0),
-                            closeTime: dateComponents(withHour: 22, minute: 0))
+        let tuesExpected = [(openTime: dateComponents(withHour: 21, minute: 0),
+                            closeTime: dateComponents(withHour: 22, minute: 0))]
 
         // wednesdays opening time = 21:00
         // wednesdays closing time = 2:00
-        let wedExpected = (openTime: dateComponents(withHour: 21, minute: 0),
-                            closeTime: dateComponents(withHour: 2, minute: 0))
+        let wedExpected = [(openTime: dateComponents(withHour: 21, minute: 0),
+                            closeTime: dateComponents(withHour: 2, minute: 0))]
         let expected = OpenHours(hours: [DayOfWeek.monday : monExpected,
                                          DayOfWeek.tuesday : tuesExpected,
                                          DayOfWeek.wednesday : wedExpected])
@@ -88,77 +88,137 @@ class OpenHoursTests: XCTestCase {
     }
 
     func testIsClosedWhenCurrentTimeAfterYesterdaysClosingTimeButBeforeTodaysOpeningTime() {
-        let hours = OpenHours(hours: [.sunday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0)),
-                                      .monday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))])
+        let hours = OpenHours(hours: [.sunday : [(openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))],
+                                      .monday : [(openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))]])
         let date = monday(atHour: 6, minute: 59)
 
         assertIsClosed(openHours: hours, time: date)
     }
 
     func testIfOpenWhenCurrentTimeIsTodaysOpeningTime() {
-        let hours = OpenHours(hours: [.sunday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0)),
-                                      .monday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))])
+        let hours = OpenHours(hours: [.sunday : [(openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))],
+                                      .monday : [(openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))]])
         let date = monday(atHour: 7, minute: 00)
         assertIsOpen(openHours: hours, time: date)
     }
 
     func testIfOpenWhenCurrentTimeBetweenOpeningTimeAndClosingTime() {
-        let hours = OpenHours(hours: [.sunday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0)),
-                                      .monday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))])
+        let hours = OpenHours(hours: [.sunday : [(openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))],
+                                      .monday : [(openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))]])
         let date = monday(atHour: 12, minute: 00)
         assertIsOpen(openHours: hours, time: date)
     }
 
     func testIsClosedWhenCurrentTimeIsTodaysClosingTime() {
-        let hours = OpenHours(hours: [.sunday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0)),
-                                      .monday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0)),
-                                      .tuesday : (openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))])
+        let hours = OpenHours(hours: [.sunday : [(openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))],
+                                      .monday : [(openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))],
+                                      .tuesday : [(openTime: dateComponents(withHour: 7, minute: 0), closeTime: dateComponents(withHour: 21, minute: 0))]])
         let date = monday(atHour: 21, minute: 00)
         assertIsClosed(openHours: hours, time: date)
     }
 
     func testIsOpenWhenCurrentTimeIsBeforeMidnightAndClosingTimeIsAfterMidnight() {
         let opening = dateComponents(withHour: 7, minute: 0)
-        let hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: dateComponents(withHour: 0, minute: 0)),
-                                  .tuesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0)),
-                                  .wednesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))])
+        let hours = OpenHours(hours: [.monday : [(openTime: opening, closeTime: dateComponents(withHour: 0, minute: 0))],
+                                  .tuesday : [(openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))],
+                                  .wednesday : [(openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))]])
         let date = monday(atHour: 23, minute: 59)
         assertIsOpen(openHours: hours, time: date)
     }
 
     func testIsClosedWhenCurrentTimeIsAfterMidnightAndClosingTimeIsBeforeMidnight() {
         let opening = dateComponents(withHour: 7, minute: 0)
-        let hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: dateComponents(withHour: 23, minute: 30)),
-                                      .tuesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0)),
-                                      .wednesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))])
+        let hours = OpenHours(hours: [.monday : [(openTime: opening, closeTime: dateComponents(withHour: 23, minute: 30))],
+                                      .tuesday : [(openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))],
+                                      .wednesday : [(openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))]])
         let date = tuesday(atHour: 0, minute: 0)
         assertIsClosed(openHours: hours, time: date)
     }
 
     func testIsOpenWhenCurrentTimeIsAfterMidnightAndBeforeClosingTimeAfterMidnight() {
         let opening = dateComponents(withHour: 7, minute: 0)
-        let hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: dateComponents(withHour: 0, minute: 0)),
-                                      .tuesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0)),
-                                      .wednesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))])
+        let hours = OpenHours(hours: [.monday : [(openTime: opening, closeTime: dateComponents(withHour: 0, minute: 0))],
+                                      .tuesday : [(openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))],
+                                      .wednesday : [(openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))]])
         let date = wednesday(atHour: 0, minute: 0)
         assertIsOpen(openHours: hours, time: date)
     }
 
     func testIsClosedWhenCurrentTimeIsAfterMidnightAndAfterClosingTimeAfterMidnight() {
         let opening = dateComponents(withHour: 7, minute: 0)
-        let hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: dateComponents(withHour: 0, minute: 0)),
-                                      .tuesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0)),
-                                      .wednesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))])
+        let hours = OpenHours(hours: [.monday : [(openTime: opening, closeTime: dateComponents(withHour: 0, minute: 0))],
+                                      .tuesday : [(openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))],
+                                      .wednesday : [(openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))]])
         let date = wednesday(atHour: 3, minute: 0)
         assertIsClosed(openHours: hours, time: date)
     }
 
     func testIsClosedWhenCurrentTimeMatchesClosingTimeAfterMidnight() {
         let opening = dateComponents(withHour: 7, minute: 0)
-        let hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: dateComponents(withHour: 0, minute: 0)),
-                                      .tuesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0)),
-                                      .wednesday : (openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))])
+        let hours = OpenHours(hours: [.monday : [(openTime: opening, closeTime: dateComponents(withHour: 0, minute: 0))],
+                                      .tuesday : [(openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))],
+                                      .wednesday : [(openTime: opening, closeTime: dateComponents(withHour: 2, minute: 0))]])
         let date = wednesday(atHour: 2, minute: 0)
+        assertIsClosed(openHours: hours, time: date)
+    }
+
+    func testIsClosedWhenBeforeFirstOpeningPeriod() {
+        let firstOpenPeriod = (openTime: dateComponents(withHour: 12, minute: 0), closeTime: dateComponents(withHour: 15, minute: 0))
+        let secondOpenPeriod = (openTime: dateComponents(withHour: 18, minute: 0), closeTime: dateComponents(withHour: 1, minute: 30))
+        let hours = OpenHours(hours: [.monday : [firstOpenPeriod, secondOpenPeriod],
+                                      .tuesday : [firstOpenPeriod, secondOpenPeriod],
+                                      .wednesday : [firstOpenPeriod, secondOpenPeriod]])
+        let date = tuesday(atHour: 11, minute: 54)
+        assertIsClosed(openHours: hours, time: date)
+    }
+
+    func testIsOpenWhenDuringFirstOpeningPeriod() {
+        let firstOpenPeriod = (openTime: dateComponents(withHour: 12, minute: 0), closeTime: dateComponents(withHour: 15, minute: 0))
+        let secondOpenPeriod = (openTime: dateComponents(withHour: 18, minute: 0), closeTime: dateComponents(withHour: 1, minute: 30))
+        let hours = OpenHours(hours: [.monday : [firstOpenPeriod, secondOpenPeriod],
+                                      .tuesday : [firstOpenPeriod, secondOpenPeriod],
+                                      .wednesday : [firstOpenPeriod, secondOpenPeriod]])
+        let date = tuesday(atHour: 13, minute: 18)
+        assertIsOpen(openHours: hours, time: date)
+    }
+
+    func testIsClosedWhenBetweenOpeningPeriods() {
+        let firstOpenPeriod = (openTime: dateComponents(withHour: 12, minute: 0), closeTime: dateComponents(withHour: 15, minute: 0))
+        let secondOpenPeriod = (openTime: dateComponents(withHour: 18, minute: 0), closeTime: dateComponents(withHour: 1, minute: 30))
+        let hours = OpenHours(hours: [.monday : [firstOpenPeriod, secondOpenPeriod],
+                                      .tuesday : [firstOpenPeriod, secondOpenPeriod],
+                                      .wednesday : [firstOpenPeriod, secondOpenPeriod]])
+        let date = tuesday(atHour: 16, minute: 26)
+        assertIsClosed(openHours: hours, time: date)
+    }
+
+    func testIsOpenWhenDuringSecondOpeningPeriod() {
+        let firstOpenPeriod = (openTime: dateComponents(withHour: 12, minute: 0), closeTime: dateComponents(withHour: 15, minute: 0))
+        let secondOpenPeriod = (openTime: dateComponents(withHour: 18, minute: 0), closeTime: dateComponents(withHour: 1, minute: 30))
+        let hours = OpenHours(hours: [.monday : [firstOpenPeriod, secondOpenPeriod],
+                                      .tuesday : [firstOpenPeriod, secondOpenPeriod],
+                                      .wednesday : [firstOpenPeriod, secondOpenPeriod]])
+        let date = tuesday(atHour: 20, minute: 12)
+        assertIsOpen(openHours: hours, time: date)
+    }
+
+    func testIsOpenDuringSecondOpeningPeriodAfterMidnight() {
+        let firstOpenPeriod = (openTime: dateComponents(withHour: 12, minute: 0), closeTime: dateComponents(withHour: 15, minute: 0))
+        let secondOpenPeriod = (openTime: dateComponents(withHour: 18, minute: 0), closeTime: dateComponents(withHour: 1, minute: 30))
+        let hours = OpenHours(hours: [.monday : [firstOpenPeriod, secondOpenPeriod],
+                                      .tuesday : [firstOpenPeriod, secondOpenPeriod],
+                                      .wednesday : [firstOpenPeriod, secondOpenPeriod]])
+        let date = wednesday(atHour: 0, minute: 47)
+        assertIsOpen(openHours: hours, time: date)
+    }
+
+    func testIsClosedAfterSecondOpeningPeriodAfterMidnight() {
+        let firstOpenPeriod = (openTime: dateComponents(withHour: 12, minute: 0), closeTime: dateComponents(withHour: 15, minute: 0))
+        let secondOpenPeriod = (openTime: dateComponents(withHour: 18, minute: 0), closeTime: dateComponents(withHour: 1, minute: 30))
+        let hours = OpenHours(hours: [.monday : [firstOpenPeriod, secondOpenPeriod],
+                                      .tuesday : [firstOpenPeriod, secondOpenPeriod],
+                                      .wednesday : [firstOpenPeriod, secondOpenPeriod]])
+        let date = wednesday(atHour: 1, minute: 38)
         assertIsClosed(openHours: hours, time: date)
     }
 
@@ -174,19 +234,17 @@ class OpenHoursTests: XCTestCase {
         let opening = dateComponents(withHour: 7, minute: 0)
         let closing = dateComponents(withHour: 14, minute: 30)
         let tuesdayOpening = dateComponents(withHour: 10, minute: 0)
-        let hours = OpenHours(hours: [.monday : (openTime: opening, closeTime: closing),
-                                      .tuesday : (openTime: tuesdayOpening, closeTime: closing)])
+        let hours = OpenHours(hours: [.monday : [(openTime: opening, closeTime: closing)],
+                                      .tuesday : [(openTime: tuesdayOpening, closeTime: closing)]])
 
-        var testDateComponents = dateComponents(withYear: 2016, month: 11, day: 7, hour: 6, minute: 59) // Mon Nov. 7th 2016 06:59
-        var testDate = testDateComponents.date!
+        var testDate = monday(atHour: 6, minute: 59)
 
         // we are before the opening time for today, so we are expecting todays opening time to be returned from nextOpeningTime
         XCTAssertEqual(hours.nextOpeningTime(forTime: testDate), "7:00 AM")
         XCTAssertEqual(hours.closingTime(forTime: testDate), "2:30 PM")
 
         // we are now past the opening time for today, so we are expecting tomorrows opening time to be returned from nextOpeningTime
-        testDateComponents = dateComponents(withYear: 2016, month: 11, day: 7, hour: 14, minute: 01) // Mon Nov. 7th 2016 14:01
-        testDate = testDateComponents.date!
+        testDate = monday(atHour: 14, minute: 01)
         XCTAssertEqual(hours.nextOpeningTime(forTime: testDate), "10:00 AM")
     }
 }

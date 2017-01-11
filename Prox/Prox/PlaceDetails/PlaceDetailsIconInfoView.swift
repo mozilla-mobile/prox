@@ -34,11 +34,23 @@ class PlaceDetailsIconInfoView: UIView {
 
     lazy var forwardArrowView = UIImageView(image: UIImage(named: "icon_forward"))
 
-    lazy var loadingSpinner: UIActivityIndicatorView = {
+    private lazy var loadingSpinner: UIActivityIndicatorView = {
         let indicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
         indicatorView.hidesWhenStopped = true
         return indicatorView
     }()
+
+    var isLoading = false {
+        didSet {
+            if isLoading {
+                loadingSpinner.startAnimating()
+                forwardArrowView.isHidden = true
+            } else {
+                loadingSpinner.stopAnimating()
+                forwardArrowView.isHidden = false
+            }
+        }
+    }
 
     let enableForwardArrow: Bool
 
@@ -71,7 +83,7 @@ class PlaceDetailsIconInfoView: UIView {
 
         addSubview(iconView)
         constraints += [iconView.centerYAnchor.constraint(equalTo: labelContainer.centerYAnchor),
-                        iconView.trailingAnchor.constraint(equalTo: labelContainer.leadingAnchor, constant: -9)]
+                        iconView.trailingAnchor.constraint(equalTo: labelContainer.leadingAnchor, constant: -6)]
 
         if enableForwardArrow {
             addSubview(forwardArrowView)
@@ -109,16 +121,10 @@ class PlaceDetailsIconInfoView: UIView {
 
     private func setPrimaryTextLabelHidden(_ isHidden: Bool) {
         if isHidden {
-            // If the forward button is disabled, it is not added to view hierarchy and this has no effect.
-            // Also, ideally we don't link the forward arrow to the primary text but this is easiest.
-            forwardArrowView.isHidden = true
-
             primaryTextLabel.isHidden = true
             secondaryTextLabelHalfHeightConstraint.isActive = false
             secondaryTextLabelFullHeightConstraint.isActive = true
         } else {
-            forwardArrowView.isHidden = false
-
             primaryTextLabel.isHidden = false
             secondaryTextLabelHalfHeightConstraint.isActive = true
             secondaryTextLabelFullHeightConstraint.isActive = false
