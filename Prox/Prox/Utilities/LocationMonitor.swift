@@ -54,7 +54,7 @@ class LocationMonitor: NSObject {
     }()
 
     // fake the location to Hilton Waikaloa Village, Kona, Hawaii
-    fileprivate var fakeLocation: CLLocation = CLLocation(latitude: 19.924043, longitude: -155.887652)
+    var fakeLocation: CLLocation = CLLocation(latitude: 19.924043, longitude: -155.887652)
 
     fileprivate var monitoredRegions: [String: GeofenceRegion] = [String: GeofenceRegion]()
     fileprivate var timeAtLocationTimer: Timer?

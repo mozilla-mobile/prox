@@ -92,6 +92,7 @@
 		E68BD90D1DCA9E8E007B51A3 /* DayOfWeekTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68BD90C1DCA9E8E007B51A3 /* DayOfWeekTests.swift */; };
 		E68BD90F1DCAAD6B007B51A3 /* OpenHoursTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68BD90E1DCAAD6B007B51A3 /* OpenHoursTests.swift */; };
 		E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */; };
+		E6F151471E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */; };
 		EC42FE32127D2BD0FE36402D /* Pods_ProxUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +115,7 @@
 
 /* Begin PBXFileReference section */
 		032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProxTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B1AEE149C15EBFD638A2EFC /* Pods-Prox.mock location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.mock location.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.mock location.xcconfig"; sourceTree = "<group>"; };
 		0B7888AD8C6E7538A1FCCDD3 /* Pods-ProxTests.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		0EA57261799D082127AF0A24 /* Pods-ProxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.release.xcconfig"; sourceTree = "<group>"; };
 		18F1C6CC1D18EC45A9072FF1 /* Pods-ProxUITests.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise.xcconfig"; sourceTree = "<group>"; };
@@ -199,6 +201,7 @@
 		7BD5CC7C1DAFF07E00BCF50D /* GFQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFQuery.m; sourceTree = "<group>"; };
 		7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A62868128BA3BDA4EF8E22F1 /* Pods-ProxTests.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.enterprise.xcconfig"; sourceTree = "<group>"; };
+		B4BB960AEC6AA0772A2E4665 /* Pods-ProxUITests.mock location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.mock location.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.mock location.xcconfig"; sourceTree = "<group>"; };
 		BD2188137E599F03500C7FBD /* Pods-ProxUITests.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		CBFE1FD0629546576538F51D /* Pods-ProxTests.chicago.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.chicago.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.chicago.xcconfig"; sourceTree = "<group>"; };
 		D3DA777E1DC2776C009C114E /* BuddyBuildSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BuddyBuildSDK.framework; path = ../Pods/BuddyBuildSDK/BuddyBuildSDK.framework; sourceTree = "<group>"; };
@@ -225,6 +228,8 @@
 		E68BD90C1DCA9E8E007B51A3 /* DayOfWeekTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayOfWeekTests.swift; sourceTree = "<group>"; };
 		E68BD90E1DCAAD6B007B51A3 /* OpenHoursTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenHoursTests.swift; sourceTree = "<group>"; };
 		E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossFadeTransition.swift; sourceTree = "<group>"; };
+		E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockLocationSelectionTableViewController.swift; sourceTree = "<group>"; };
+		EF6099637798B2B2023BBF66 /* Pods-ProxTests.mock location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.mock location.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.mock location.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -310,6 +315,7 @@
 				7BD5CC601DAFF02100BCF50D /* ThirdParty */,
 				7B50956F1DB5352E007C54F0 /* Utilities */,
 				7B5095681DB53382007C54F0 /* Widgets */,
+				E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */,
 			);
 			path = Prox;
 			sourceTree = "<group>";
@@ -488,6 +494,9 @@
 				36CBC82AAA922ABFFFACE3FE /* Pods-Prox.chicago.xcconfig */,
 				CBFE1FD0629546576538F51D /* Pods-ProxTests.chicago.xcconfig */,
 				5CC567CFCFA28F4EC7ACFB4B /* Pods-ProxUITests.chicago.xcconfig */,
+				0B1AEE149C15EBFD638A2EFC /* Pods-Prox.mock location.xcconfig */,
+				EF6099637798B2B2023BBF66 /* Pods-ProxTests.mock location.xcconfig */,
+				B4BB960AEC6AA0772A2E4665 /* Pods-ProxUITests.mock location.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -856,6 +865,7 @@
 				7B8651921DBFAF19002A666A /* PlaceUtilities.swift in Sources */,
 				39C4EC9D1DDB464200B53B77 /* RemoteConfigKeys.swift in Sources */,
 				E65857DE1DB69F4200CD18F8 /* ReviewProvider.swift in Sources */,
+				E6F151471E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift in Sources */,
 				7BD5CC7F1DAFF07E00BCF50D /* GFGeoHash.m in Sources */,
 				E67D49FD1DDE42F0005E17F9 /* LoadingOverlayView.swift in Sources */,
 				7B50956E1DB53429007C54F0 /* HorizontalLineView.swift in Sources */,
@@ -1351,7 +1361,7 @@
 		};
 		E68D1F871E25998A0052F52A /* Mock Location */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 36CBC82AAA922ABFFFACE3FE /* Pods-Prox.chicago.xcconfig */;
+			baseConfigurationReference = 0B1AEE149C15EBFD638A2EFC /* Pods-Prox.mock location.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1369,7 +1379,7 @@
 		};
 		E68D1F881E25998A0052F52A /* Mock Location */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CBFE1FD0629546576538F51D /* Pods-ProxTests.chicago.xcconfig */;
+			baseConfigurationReference = EF6099637798B2B2023BBF66 /* Pods-ProxTests.mock location.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1385,7 +1395,7 @@
 		};
 		E68D1F891E25998A0052F52A /* Mock Location */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5CC567CFCFA28F4EC7ACFB4B /* Pods-ProxUITests.chicago.xcconfig */;
+			baseConfigurationReference = B4BB960AEC6AA0772A2E4665 /* Pods-ProxUITests.mock location.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;

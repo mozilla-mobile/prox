@@ -40,7 +40,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // create root view
         placeCarouselViewController = PlaceCarouselViewController()
         locationMonitor.delegate = placeCarouselViewController
-        window?.rootViewController = placeCarouselViewController
+
+        if AppConstants.BuildChannel != .MockLocation {
+            window?.rootViewController = placeCarouselViewController
+        } else {
+            let mockLocationSelectionController = MockLocationSelectionTableViewController()
+            mockLocationSelectionController.nextViewController = placeCarouselViewController
+            mockLocationSelectionController.locationMonitor = locationMonitor
+            window?.rootViewController = mockLocationSelectionController
+        }
 
         if #available(iOS 10.0, *) {
             self.setupUserNotificationCenter()
@@ -133,7 +141,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if (AppState.getState() == AppState.State.initial || AppState.getState() == AppState.State.permissions) {
             AppState.enterLoading()
         }
-        placeCarouselViewController?.locationMonitor.refreshLocation()
+
+        // Since we don't gracefully handle location updates, we defer a location
+        // refresh until a mock location has been selected.
+        if AppConstants.BuildChannel != .MockLocation {
+            placeCarouselViewController?.locationMonitor.refreshLocation()
+        }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

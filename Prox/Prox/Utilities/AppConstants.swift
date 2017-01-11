@@ -9,7 +9,7 @@ public enum AppBuildChannel {
     case Developer
     case Enterprise
     case EnterpriseKona
-    case MockedLocation
+    case MockLocation
     case Release
 }
 
@@ -45,7 +45,7 @@ public struct AppConstants {
         #elseif MOZ_CHANNEL_RELEASE
             return AppBuildChannel.Release
         #elseif MOZ_CHANNEL_MOCK_LOCATION
-            return AppBuildChannel.MockedLocation
+            return AppBuildChannel.MockLocation
         #else
             return AppBuildChannel.Developer
         #endif
