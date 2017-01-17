@@ -23,20 +23,6 @@ class AppState {
         updateSessionState(newState: State.loading)
     }
 
-    static func requestPermissions() {
-        if (state == State.loading) {
-            // Stop loading session if handling permissions
-            let params: [String: Any] = [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.PERMISSIONS]
-            Analytics.endSession(sessionName: State.loading.rawValue + AnalyticsEvent.SESSION_SUFFIX, params: params)
-            state = State.permissions
-            print("[debug] endsession because permissions. New state: \(state)")
-        } else {
-            let params : [String: Any] = [AnalyticsEvent.SESSION_STATE: state.rawValue]
-            Analytics.logEvent(event: AnalyticsEvent.PERMISSIONS, params: params)
-            print("[debug] permissions event. Current state \(state)")
-        }
-    }
-
     static func enterBackground() {
         print("[debug] entering background from: " + state.rawValue)
         preBackgroundState = state

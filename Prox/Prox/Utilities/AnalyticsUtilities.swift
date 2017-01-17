@@ -18,12 +18,12 @@ class Analytics {
             return
         }
 
-        // Deprecated, but no Swift alternative right now
-        Flurry.setSessionContinueSeconds(30)
-        Flurry.startSession(flurryKey)
+        let builder = FlurrySessionBuilder().withSessionContinueSeconds(30)
+        Flurry.startSession(flurryKey, with: builder)
     }
 
     static func logEvent(event: String, params: [String: Any]) {
+        print("[debug] Analytics event: \(event)")
         Flurry.logEvent(event, withParameters: params)
     }
 
@@ -65,8 +65,9 @@ public struct AnalyticsEvent {
     // Events
     static let EVENT_BANNER_LINK  = "event_banner_link"
     static let EVENT_NOTIFICATION = "event_notification"
-    static let PERMISSIONS        = "permissions"
     static let BACKGROUND         = "notified_background" // Event was notified while app was in the background
     static let FOREGROUND         = "notified_foreground" // Event was notified while the app is open
     static let CLICKED            = "notification_clicked" // Clicked on the notification
+    static let NO_PLACES_DIALOG   = "no_places_dialog" // No places nearby dialog
+    static let LOCATION_REPROMPT  = "location_reprompt" // Dialog re-prompt for users who have denied the location permission
 }

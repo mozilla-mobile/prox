@@ -302,7 +302,7 @@ class PlaceCarouselViewController: UIViewController {
         alertController.addAction(settingsAction)
         alertController.addAction(quitAction)
 
-        AppState.requestPermissions()
+        Analytics.logEvent(event: AnalyticsEvent.LOCATION_REPROMPT, params: [:])
         self.present(alertController, animated: true)
     }
 
