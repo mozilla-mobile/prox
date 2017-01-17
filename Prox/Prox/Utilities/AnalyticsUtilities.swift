@@ -13,7 +13,7 @@ class Analytics {
         }
 
         let keysDict = NSDictionary(contentsOfFile: apiPlistPath) as! [String: String]
-        guard let flurryKey = keysDict["FLURRY"] else {
+        guard let flurryKey = keysDict["FLURRY_CHICAGO"] else {
             print("No Flurry key! Not collecting analytics.")
             return
         }
