@@ -105,6 +105,8 @@ class LoadingOverlayView: UIView {
             self.searchAgainButton.alpha = 1
             self.layoutIfNeeded()
         }, completion: { _ in })
+
+        Analytics.logEvent(event: AnalyticsEvent.NO_PLACES_DIALOG, params: [:])
     }
 
     func fadeOutMessaging() {

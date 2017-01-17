@@ -148,7 +148,6 @@ class PlaceCarouselViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
 
         if let backgroundImage = UIImage(named: "map_background") {
@@ -303,6 +302,7 @@ class PlaceCarouselViewController: UIViewController {
         alertController.addAction(settingsAction)
         alertController.addAction(quitAction)
 
+        Analytics.logEvent(event: AnalyticsEvent.LOCATION_REPROMPT, params: [:])
         self.present(alertController, animated: true)
     }
 

@@ -29,10 +29,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
-        Analytics.startAppSession()
-        // Start session measuring Loading duration
-        Analytics.startSession(sessionName: AppState.State.loading.rawValue + AnalyticsEvent.SESSION_SUFFIX, params: [:])
-
         setupFirebase()
         setupRemoteConfig()
         BuddyBuildSDK.setup()
@@ -133,6 +129,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        Analytics.startAppSession()
+        if (AppState.getState() == AppState.State.initial || AppState.getState() == AppState.State.permissions) {
+            AppState.enterLoading()
+        }
         placeCarouselViewController?.locationMonitor.refreshLocation()
     }
 
@@ -140,7 +140,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         placeCarouselViewController?.locationMonitor.cancelTimeAtLocationTimer()
         eventsNotificationsManager?.persistNotificationCache()
-        AppState.exiting()
     }
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {

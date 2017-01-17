@@ -6,17 +6,21 @@ import Foundation
 
 class AppState {
     enum State: String {
-        case loading, details, carousel, background, exiting, unknown
+        case initial, loading, permissions, details, carousel, background, unknown
     }
 
     private static var cardVisits = Set<Int>()
 
     // Initial app state
-    private static var state = State.loading
+    private static var state = State.initial
     private static var preBackgroundState: State?
 
     static func getState() -> State {
         return state
+    }
+
+    static func enterLoading() {
+        updateSessionState(newState: State.loading)
     }
 
     static func enterBackground() {
@@ -40,12 +44,7 @@ class AppState {
         updateSessionState(newState: State.details)
     }
 
-    static func exiting() {
-        updateSessionState(newState: State.exiting)
-    }
-
     private static func updateSessionState(newState: State) {
-        print("[debug] Previous state: " + state.rawValue)
         var params: [String: Any] = [:]
         if (cardVisits.count > 0) {
             params[AnalyticsEvent.NUM_CARDS] = cardVisits.count
@@ -55,14 +54,16 @@ class AppState {
             // Try to close a Detail card session, it's okay if it doesn't exist
             Analytics.endSession(sessionName: AnalyticsEvent.DETAILS_CARD_SESSION_DURATION, params: [:])
         }
-        Analytics.endSession(sessionName: state.rawValue + AnalyticsEvent.SESSION_SUFFIX, params: params)
+
+        if (state != State.initial) {
+            print("[debug] Previous state: " + state.rawValue)
+            Analytics.endSession(sessionName: state.rawValue + AnalyticsEvent.SESSION_SUFFIX, params: params)
+        }
 
         print("[debug] New state: " + newState.rawValue)
         state = newState
 
-        if (state != State.exiting) {
-            Analytics.startSession(sessionName: state.rawValue + AnalyticsEvent.SESSION_SUFFIX, params: [:])
-        }
+        Analytics.startSession(sessionName: state.rawValue + AnalyticsEvent.SESSION_SUFFIX, params: [:])
     }
 
     static func trackCardVisit(cardPos: Int) {

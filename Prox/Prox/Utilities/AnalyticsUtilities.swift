@@ -17,11 +17,13 @@ class Analytics {
             print("No Flurry key! Not collecting analytics.")
             return
         }
-        Flurry.startSession(flurryKey)
-        Flurry.logEvent(AnalyticsEvent.APP_INIT)
+
+        let builder = FlurrySessionBuilder().withSessionContinueSeconds(30)
+        Flurry.startSession(flurryKey, with: builder)
     }
 
     static func logEvent(event: String, params: [String: Any]) {
+        print("[debug] Analytics event: \(event)")
         Flurry.logEvent(event, withParameters: params)
     }
 
@@ -35,11 +37,8 @@ class Analytics {
 }
 
 public struct AnalyticsEvent {
-    static let APP_INIT = "app_init";
-
     static let SESSION_SUFFIX = "_session_duration"
     static let DETAILS_CARD_SESSION_DURATION   = "details_card" + SESSION_SUFFIX
-
 
     // Place Details
     static let YELP               = "yelp_link"
@@ -61,6 +60,7 @@ public struct AnalyticsEvent {
     static let PARAM_ACTION       = "action"
     static let NUM_CARDS          = "num_cards"
     static let CARD_INDEX         = "card_index"
+    static let SESSION_STATE      = "session_state"
 
     // Events
     static let EVENT_BANNER_LINK  = "event_banner_link"
@@ -68,4 +68,6 @@ public struct AnalyticsEvent {
     static let BACKGROUND         = "notified_background" // Event was notified while app was in the background
     static let FOREGROUND         = "notified_foreground" // Event was notified while the app is open
     static let CLICKED            = "notification_clicked" // Clicked on the notification
+    static let NO_PLACES_DIALOG   = "no_places_dialog" // No places nearby dialog
+    static let LOCATION_REPROMPT  = "location_reprompt" // Dialog re-prompt for users who have denied the location permission
 }
