@@ -1,12 +1,12 @@
 # prox
 
 ## Installation
-Install Cocoapods. If you already have Cocoapods installed, run the same
+Install CocoaPods. If you already have CocoaPods installed, run the same
 command to update:
 
     sudo gem install cocoapods
 
-If it has been a while since you last updated Cocoapods, you may want to update
+If it has been a while since you last updated CocoaPods, you may want to update
 your pods spec repo (this can take some time):
 
     pod repo update
