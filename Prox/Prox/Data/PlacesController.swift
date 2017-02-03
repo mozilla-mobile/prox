@@ -12,16 +12,10 @@ import Foundation
  * All methods on the delegate will be called on the main thread.
  */
 protocol PlacesProviderDelegate: class {
-    func placesProviderWillStartFetchingPlaces(_ controller: PlacesProvider)
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place])
     func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider)
-    func placesProviderDidTimeout(_ controller: PlacesProvider)
     func placesProviderDidFetchFirstPlace()
 }
-
-private let apiSuffix = "/api/v1.0/at/%f/%f"
-private let numberOfRetries = RemoteConfigKeys.numberOfPlaceFetchRetries.value
-private let timeBetweenRetries = 1
 
 class PlacesProvider {
     weak var delegate: PlacesProviderDelegate?
@@ -117,40 +111,6 @@ class PlacesProvider {
         }
     }
 
-    func updatePlaces(forLocation location: CLLocation) {
-        assert(Thread.isMainThread)
-        // We would like to prevent running more than one update at the same time.
-        if isUpdating {
-            return
-        }
-        isUpdating = true
-
-        self.delegate?.placesProviderWillStartFetchingPlaces(self)
-
-        // Tell the server that we're here. We don't need to do anything with the return
-        // value: we're just instructing the server to go crawl the venues/events the area 
-        // we're in now.
-        let coord = location.coordinate
-        let path  = String(format:apiSuffix, coord.latitude, coord.longitude)
-        let url   = AppConstants.serverURL.appendingPathComponent(path)
-
-        sessionManager.put(url.absoluteString, parameters: nil,
-            success: { (task, data) in
-                // TODO is there anything useful we can get from the server to help the UI here?
-                // e.g. some JSON to give queue size (how busy is it).
-                NSLog("Server responded ok.")
-            },
-            failure: { (task, err) in
-                NSLog("Error from server: \(err)")
-            }
-        )
-
-        // Immediately after we've told the server, we should start querying the firebase datastore,
-        // because we may have already got something cached.
-        retryQueryPlaces(location: location, withRadius: radius, retriesLeft: numberOfRetries, lastCount: 0)
-    }
-
-
     /*
      * Queries GeoFire to get the place keys around the given location and then queries Firebase to
      * get the place details for the place keys.
@@ -177,46 +137,18 @@ class PlacesProvider {
         return places
     }
 
-    private func retryQueryPlaces(location: CLLocation, withRadius radius: Double, retriesLeft: Int, lastCount: Int) {
+    func updatePlaces(forLocation location: CLLocation) {
         // Fetch a stable list of places from firebase.
-        // In the event of the server crawling (from a cold start, for example)
-        // the server will be adding places to firebase.
-        // We want to wait for the number of firebase results to stop changing.
         getPlaces(forLocation: location, withRadius: radius).upon { results in
             let places = results.flatMap { $0.successResult() }
-            let placeCount = places.count
-
-            guard retriesLeft > 0 else {
-                self.isUpdating = false
-                DispatchQueue.main.async {
-                    self.delegate?.placesProviderDidTimeout(self)
-                }
-                return
-            }
-            
-            // Check if we have a stable number of places.
-            if placeCount > 0 && lastCount == placeCount {
-                self.didFinishFetchingPlaces(places: places, forLocation: location)
-            } else {
-                // We either have zero places, or the server is adding stuff to firebase,
-                // and we should wait. 
-                if placeCount > 0 && lastCount != placeCount {
-                    self.displayPlaces(places: places, forLocation: location)
-                }
-                DispatchQueue.main.asyncAfter(wallDeadline: .now() + .seconds(timeBetweenRetries)) {
-                    self.retryQueryPlaces(location: location,
-                                          withRadius: radius,
-                                          retriesLeft: retriesLeft - 1,
-                                          lastCount: placeCount)
-                }
-            }
+            self.didFinishFetchingPlaces(places: places, forLocation: location)
         }
     }
 
     /**
-    * Display places merges found places with events with places we have found nearby, giving us a combined list of
-    * all the places that we need to show to the user.
-    **/
+     * displayPlaces merges found places with events with places we have found nearby, giving us a combined list of
+     * all the places that we need to show to the user.
+     **/
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
         let filteredPlaces = PlaceUtilities.filterPlacesForCarousel(places)
         return PlaceUtilities.sort(places: filteredPlaces, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in

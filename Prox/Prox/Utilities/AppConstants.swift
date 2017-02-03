@@ -71,17 +71,6 @@ public struct AppConstants {
         return BuildChannel == .MockLocation
     }()
 
-    // URL of the server that updates our Firebase instance
-    public static let serverURL: URL = {
-        switch (BuildChannel) {
-        case .CurrentLocation, .MockLocation, .Release:
-            return URL(string: "https://prox.moo.mx")!
-
-        case .Debug:
-            return URL(string: "https://prox-dev.moo.mx")!
-        }
-    }()
-
     public static let APIKEYS_PATH = "APIKeys"
 
     // The root child in the Realtime Firebase database.

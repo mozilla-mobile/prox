@@ -443,9 +443,6 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
         }
     }
 
-    func placesProviderWillStartFetchingPlaces(_ controller: PlacesProvider) {
-    }
-
     func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider) {
         showErrorMessageIfNoPlaces()
     }
@@ -459,10 +456,6 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
         DispatchQueue.main.async {
             (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
         }
-    }
-
-    func placesProviderDidTimeout(_ controller: PlacesProvider) {
-        showErrorMessageIfNoPlaces()
     }
 
     func placesProviderDidFetchFirstPlace() {
