@@ -8,7 +8,6 @@ import FirebaseRemoteConfig
 public enum AppBuildChannel {
     case Debug
     case Enterprise
-    case EnterpriseKona
     case MockLocation
     case Release
 }
@@ -40,8 +39,6 @@ public struct AppConstants {
     public static let BuildChannel: AppBuildChannel = {
         #if MOZ_CHANNEL_ENTERPRISE
             return AppBuildChannel.Enterprise
-        #elseif MOZ_CHANNEL_ENTERPRISE_KONA
-            return AppBuildChannel.EnterpriseKona
         #elseif MOZ_CHANNEL_RELEASE
             return AppBuildChannel.Release
         #elseif MOZ_CHANNEL_MOCK_LOCATION
@@ -79,7 +76,7 @@ public struct AppConstants {
 
     // Enables/disables location faking for Hawaii
     public static let MOZ_LOCATION_FAKING: Bool = {
-        #if MOZ_CHANNEL_ENTERPRISE_KONA || MOZ_CHANNEL_MOCK_LOCATION
+        #if MOZ_CHANNEL_MOCK_LOCATION
             return true
         #else
             return false

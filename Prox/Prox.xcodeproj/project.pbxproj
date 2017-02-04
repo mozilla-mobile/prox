@@ -940,99 +940,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		7B0ECE491DDB3AA900ABBD72 /* Enterprise Kona */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = "Enterprise Kona";
-		};
-		7B0ECE4A1DDB3AA900ABBD72 /* Enterprise Kona */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1E318DF6890B9E7221222152 /* Pods-Prox.enterprise kona.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 9G8J6YA743;
-				INFOPLIST_FILE = Prox/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_ENTERPRISE_KONA";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.Kona;
-				PRODUCT_NAME = "$(TARGET_NAME) Kona";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 3.0;
-			};
-			name = "Enterprise Kona";
-		};
-		7B0ECE4B1DDB3AA900ABBD72 /* Enterprise Kona */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0B7888AD8C6E7538A1FCCDD3 /* Pods-ProxTests.enterprise kona.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 9G8J6YA743;
-				INFOPLIST_FILE = ProxTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
-			};
-			name = "Enterprise Kona";
-		};
-		7B0ECE4C1DDB3AA900ABBD72 /* Enterprise Kona */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BD2188137E599F03500C7FBD /* Pods-ProxUITests.enterprise kona.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
-				DEVELOPMENT_TEAM = 9G8J6YA743;
-				INFOPLIST_FILE = ProxUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(FRAMEWORK_SEARCH_PATHS)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = Prox;
-			};
-			name = "Enterprise Kona";
-		};
 		7B29E7E51DA3EC360099AF38 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1418,7 +1325,6 @@
 				7B29E7E61DA3EC360099AF38 /* Release */,
 				E68D1F861E25998A0052F52A /* Mock Location */,
 				7B4678A81DB5013800AC5B5D /* Enterprise */,
-				7B0ECE491DDB3AA900ABBD72 /* Enterprise Kona */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1430,7 +1336,6 @@
 				7B29E7E91DA3EC360099AF38 /* Release */,
 				E68D1F871E25998A0052F52A /* Mock Location */,
 				7B4678A91DB5013800AC5B5D /* Enterprise */,
-				7B0ECE4A1DDB3AA900ABBD72 /* Enterprise Kona */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1442,7 +1347,6 @@
 				7B29E7EC1DA3EC360099AF38 /* Release */,
 				E68D1F881E25998A0052F52A /* Mock Location */,
 				7B4678AA1DB5013800AC5B5D /* Enterprise */,
-				7B0ECE4B1DDB3AA900ABBD72 /* Enterprise Kona */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1454,7 +1358,6 @@
 				7B29E7EF1DA3EC360099AF38 /* Release */,
 				E68D1F891E25998A0052F52A /* Mock Location */,
 				7B4678AB1DB5013800AC5B5D /* Enterprise */,
-				7B0ECE4C1DDB3AA900ABBD72 /* Enterprise Kona */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
