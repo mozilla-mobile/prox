@@ -7,7 +7,7 @@ import FirebaseRemoteConfig
 
 public enum AppBuildChannel {
     case Debug
-    case Enterprise
+    case CurrentLocation
     case MockLocation
     case Release
 }
@@ -37,8 +37,8 @@ public struct AppConstants {
 
     /// Build Channel.
     public static let BuildChannel: AppBuildChannel = {
-        #if MOZ_CHANNEL_ENTERPRISE
-            return AppBuildChannel.Enterprise
+        #if MOZ_CHANNEL_CURRENT_LOCATION
+            return AppBuildChannel.CurrentLocation
         #elseif MOZ_CHANNEL_RELEASE
             return AppBuildChannel.Release
         #elseif MOZ_CHANNEL_MOCK_LOCATION
@@ -59,7 +59,7 @@ public struct AppConstants {
 
     /// Flag indiciating if we are running in Enterprise mode or not.
     public static let isEnterprise: Bool = {
-        #if MOZ_CHANNEL_ENTERPRISE
+        #if MOZ_CHANNEL_CURRENT_LOCATION
             return true
         #else
             return false
@@ -87,7 +87,7 @@ public struct AppConstants {
     public static let serverURL: URL = {
         #if MOZ_CHANNEL_DEBUG
             return URL(string: "https://prox-dev.moo.mx")!
-        #elseif MOZ_CHANNEL_ENTERPRISE
+        #elseif MOZ_CHANNEL_CURRENT_LOCATION
             return URL(string: "https://prox.moo.mx")!
         #elseif MOZ_CHANNEL_RELEASE
             return URL(string: "https://prox.moo.mx")!
@@ -104,7 +104,7 @@ public struct AppConstants {
     public static let firebaseRoot: String = {
         #if MOZ_CHANNEL_DEBUG
             return ""
-        #elseif MOZ_CHANNEL_ENTERPRISE
+        #elseif MOZ_CHANNEL_CURRENT_LOCATION
             return "production/"
         #elseif MOZ_CHANNEL_RELEASE
             return "production/"
