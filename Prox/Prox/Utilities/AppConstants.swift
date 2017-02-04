@@ -50,20 +50,12 @@ public struct AppConstants {
 
     /// Flag indiciating if we are running in Debug mode or not.
     public static let isDebug: Bool = {
-        #if MOZ_CHANNEL_DEBUG
-            return true
-        #else
-            return false
-        #endif
+        return BuildChannel == .Debug
     }()
 
     /// Flag indiciating if we are running in Enterprise mode or not.
     public static let isEnterprise: Bool = {
-        #if MOZ_CHANNEL_CURRENT_LOCATION
-            return true
-        #else
-            return false
-        #endif
+        return BuildChannel == .CurrentLocation
     }()
 
     public static let isSimulator: Bool = {
@@ -76,50 +68,34 @@ public struct AppConstants {
 
     // Enables/disables location faking for Hawaii
     public static let MOZ_LOCATION_FAKING: Bool = {
-        #if MOZ_CHANNEL_MOCK_LOCATION
-            return true
-        #else
-            return false
-        #endif
+        return BuildChannel == .MockLocation
     }()
 
     // URL of the server that updates our Firebase instance
     public static let serverURL: URL = {
-        #if MOZ_CHANNEL_DEBUG
+        switch (BuildChannel) {
+        case .CurrentLocation, .MockLocation, .Release:
+            return URL(string: "https://prox.moo.mx")!
+
+        case .Debug:
             return URL(string: "https://prox-dev.moo.mx")!
-        #elseif MOZ_CHANNEL_CURRENT_LOCATION
-            return URL(string: "https://prox.moo.mx")!
-        #elseif MOZ_CHANNEL_RELEASE
-            return URL(string: "https://prox.moo.mx")!
-        #elseif MOZ_CHANNEL_MOCK_LOCATION
-            return URL(string: "https://prox.moo.mx")!
-        #else
-            return URL(string: "https://prox-dev.moo.mx")!
-        #endif
+        }
     }()
 
     public static let APIKEYS_PATH = "APIKeys"
 
     // The root child in the Realtime Firebase database.
     public static let firebaseRoot: String = {
-        #if MOZ_CHANNEL_DEBUG
+        switch (BuildChannel) {
+        case .CurrentLocation, .MockLocation, .Release:
+            return "production/"
+
+        case .Debug:
             return ""
-        #elseif MOZ_CHANNEL_CURRENT_LOCATION
-            return "production/"
-        #elseif MOZ_CHANNEL_RELEASE
-            return "production/"
-        #elseif MOZ_CHANNEL_MOCK_LOCATION
-            return "production/"
-        #else
-            return ""
-        #endif
+        }
     }()
 
     public static let areNotificationsEnabled: Bool = {
-        #if MOZ_CHANNEL_DEBUG
-            return true
-        #else
-            return false
-        #endif
+        return BuildChannel == .Debug
     }()
 }
