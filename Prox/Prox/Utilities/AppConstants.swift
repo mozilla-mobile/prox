@@ -6,7 +6,7 @@ import UIKit
 import FirebaseRemoteConfig
 
 public enum AppBuildChannel {
-    case Developer
+    case Debug
     case Enterprise
     case EnterpriseKona
     case MockLocation
@@ -47,7 +47,7 @@ public struct AppConstants {
         #elseif MOZ_CHANNEL_MOCK_LOCATION
             return AppBuildChannel.MockLocation
         #else
-            return AppBuildChannel.Developer
+            return AppBuildChannel.Debug
         #endif
     }()
 
