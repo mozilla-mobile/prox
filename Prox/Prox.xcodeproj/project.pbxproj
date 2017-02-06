@@ -1191,7 +1191,7 @@
 				INFOPLIST_FILE = Prox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_CURRENT_LOCATION";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.CurrentLocation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
@@ -1284,7 +1284,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_MOCK_LOCATION";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.MockLocation;
-				PRODUCT_NAME = "$(TARGET_NAME) Mocked Location";
+				PRODUCT_NAME = "$(TARGET_NAME) Mock Location";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
