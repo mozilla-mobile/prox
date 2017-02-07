@@ -122,7 +122,7 @@ extension PlaceCarousel: UICollectionViewDataSource {
         cell.placeImage.image = UIImage(named: "carousel_image_loading")
 
         guard let url = place.photoURLs.first else {
-            print("lol unable to create URL from photo url")
+            log.error("place has no photo URLs: \(place.id)")
             return
         }
 

@@ -70,6 +70,7 @@
 		7BD5CC8A1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7BD5CC8B1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7C79B23D6CD1B1AC5A860E9E /* Pods_ProxTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */; };
+		D3656D981E4A7D0F00040448 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3656D971E4A7D0F00040448 /* Logger.swift */; };
 		D3C815681E4542E30066A97B /* PlaceProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C815671E4542E30066A97B /* PlaceProviders.swift */; };
 		E60A42711DF28E01008BE74D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42701DF28E01008BE74D /* URL.swift */; };
 		E60A42771DF29127008BE74D /* URLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42761DF29127008BE74D /* URLTests.swift */; };
@@ -205,6 +206,7 @@
 		BD2188137E599F03500C7FBD /* Pods-ProxUITests.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		CBFE1FD0629546576538F51D /* Pods-ProxTests.chicago.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.chicago.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.chicago.xcconfig"; sourceTree = "<group>"; };
 		CE887CEB1CF45A1D782FC885 /* Pods-Prox.current location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.current location.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.current location.xcconfig"; sourceTree = "<group>"; };
+		D3656D971E4A7D0F00040448 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		D3C815671E4542E30066A97B /* PlaceProviders.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceProviders.swift; sourceTree = "<group>"; };
 		D3DA777E1DC2776C009C114E /* BuddyBuildSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BuddyBuildSDK.framework; path = ../Pods/BuddyBuildSDK/BuddyBuildSDK.framework; sourceTree = "<group>"; };
 		D3DA77821DC289A4009C114E /* Prox-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Prox-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -388,6 +390,7 @@
 				7BA05BEA1DD4D602009AC121 /* EventNotificationsManager.swift */,
 				7B5095711DB5352E007C54F0 /* Fonts.swift */,
 				7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */,
+				D3656D971E4A7D0F00040448 /* Logger.swift */,
 				7B9D15C51DC0D2E70051B760 /* OpenInHelper.swift */,
 				7B8651911DBFAF19002A666A /* PlaceUtilities.swift */,
 				7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */,
@@ -860,6 +863,7 @@
 				7BA05BE51DD4CCB1009AC121 /* Event.swift in Sources */,
 				7BD5CC801DAFF07E00BCF50D /* GFGeoHashQuery.m in Sources */,
 				E618319B1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift in Sources */,
+				D3656D981E4A7D0F00040448 /* Logger.swift in Sources */,
 				7B1C657B1DDCA9A90047559C /* FirebaseEventsDatabase.swift in Sources */,
 				E681E7581DE3562200902CDA /* Animatable.swift in Sources */,
 				7B9DA1571DBE6EE300A68C82 /* PlaceCarouselViewController.swift in Sources */,

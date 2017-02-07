@@ -40,7 +40,7 @@ struct CategoriesUtil {
         var hiddenCategories = Set<String>()
         for category in categories {
             guard let descendants = categoryToDescendantsMap[category] else {
-                print("lol unknown category, \(category) (from Firebase?). Ignoring")
+                log.warn("unknown category, \(category) (from Firebase?). Ignoring")
                 continue
             }
 

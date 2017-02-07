@@ -152,7 +152,7 @@ extension SinglePlaceProvider {
         var ids = [String]()
         for category in value {
             guard let name = category["text"], let id = category["id"] else {
-                print("lol unable to retrieve category from firebase data for place")
+                log.warn("unable to retrieve category from firebase data for place")
                 continue
             }
 

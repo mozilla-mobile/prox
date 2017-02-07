@@ -114,7 +114,7 @@ class FirebaseEventsDatabase: EventsDatabase {
 
         // Handle query completion.
         circleQuery.observeReady {
-            print("lol geofire query has completed")
+            log.debug("geofire events query complete: found \(eventKeyToLoc.count) events")
             circleQuery.removeAllObservers()
             deferred.fill(with: eventKeyToLoc)
         }
