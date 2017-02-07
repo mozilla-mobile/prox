@@ -250,16 +250,16 @@ class PlaceDetailsCardView: UIView {
 
         updateHoursUI(place.hours)
 
-        updateDescriptionViewUI(forText: place.wikiDescription, onView: wikiDescriptionView, expanded: place.wikiDescription != nil)
-        updateDescriptionViewUI(forText: place.tripAdvisorDescription, onView: tripAdvisorDescriptionView, expanded: place.wikiDescription == nil && place.tripAdvisorDescription != nil)
-        updateDescriptionViewUI(forText: place.yelpDescription, onView: yelpDescriptionView, expanded: place.tripAdvisorDescription == nil && place.wikiDescription == nil && place.yelpDescription != nil)
+        updateDescriptionViewUI(forText: place.wikipediaProvider?.description, onView: wikiDescriptionView, expanded: place.wikipediaProvider?.description != nil)
+        updateDescriptionViewUI(forText: place.tripAdvisorProvider?.description, onView: tripAdvisorDescriptionView, expanded: place.wikipediaProvider?.description == nil && place.tripAdvisorProvider?.description != nil)
+        updateDescriptionViewUI(forText: place.yelpProvider.description, onView: yelpDescriptionView, expanded: place.tripAdvisorProvider?.description == nil && place.wikipediaProvider?.description == nil && place.yelpProvider.description != nil)
 
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)
     }
 
-    private func updateURLText(_ url: String?) {
-        guard let url = url else {
+    private func updateURLText(_ url: URL?) {
+        guard let url = url?.absoluteString else {
             urlLabel.text = nil
             return
         }

@@ -146,19 +146,18 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     private func setupCardInteractions() {
-        cardView.urlLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openPlaceURL(gestureRecgonizer:))))
-        cardView.yelpReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openYelpReview(gestureRecgonizer:))))
-        cardView.tripAdvisorReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTripAdvisorReview(gestureRecgonizer:))))
+        cardView.urlLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openPlaceURL(gestureRecognizer:))))
+        cardView.yelpReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openYelpReview(gestureRecognizer:))))
+        cardView.tripAdvisorReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTripAdvisorReview(gestureRecognizer:))))
         cardView.travelTimeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openDirections(gestureRecgonizer:))))
         cardView.eventView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openEventURL(gestureRecognizer:))))
         cardView.wikiDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openWikipediaURL(gestureRecognizer:))))
         cardView.tripAdvisorDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openReadMoreTripAdvisorLink(gestureRecgonizer:))))
-        cardView.yelpDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openReadMoreYelpLink(gestureRecgonizer:))))
+        cardView.yelpDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openReadMoreYelpLink(gestureRecognizer:))))
     }
 
-    @objc private func openPlaceURL(gestureRecgonizer: UITapGestureRecognizer) {
-        guard let urlString = place.url,
-           let url = URL(string: urlString) else { return }
+    @objc private func openPlaceURL(gestureRecognizer: UITapGestureRecognizer) {
+        guard let url = place.url else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open web address")
         } else {
@@ -166,8 +165,8 @@ class PlaceDetailsCardViewController: UIViewController {
         }
     }
 
-    @objc private func openYelpReview(gestureRecgonizer: UITapGestureRecognizer) {
-        guard let url = URL(string: place.yelpProvider.url) else { return }
+    @objc private func openYelpReview(gestureRecognizer: UITapGestureRecognizer) {
+        guard let url = place.yelpProvider.url else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open yelp review")
         } else {
@@ -175,8 +174,8 @@ class PlaceDetailsCardViewController: UIViewController {
         }
     }
 
-    @objc private func openReadMoreYelpLink(gestureRecgonizer: UITapGestureRecognizer) {
-        guard let url = URL(string: place.yelpProvider.url) else { return }
+    @objc private func openReadMoreYelpLink(gestureRecognizer: UITapGestureRecognizer) {
+        guard let url = place.yelpProvider.url else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open yelp review")
         } else {
@@ -184,9 +183,8 @@ class PlaceDetailsCardViewController: UIViewController {
         }
     }
 
-    @objc private func openTripAdvisorReview(gestureRecgonizer: UITapGestureRecognizer) {
-        guard let tripAdvisorProvider = place.tripAdvisorProvider,
-            let url = URL(string: tripAdvisorProvider.url) else { return }
+    @objc private func openTripAdvisorReview(gestureRecognizer: UITapGestureRecognizer) {
+        guard let url = place.tripAdvisorProvider?.url else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open trip advisor review")
         } else {
@@ -195,8 +193,7 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     @objc private func openReadMoreTripAdvisorLink(gestureRecgonizer: UITapGestureRecognizer) {
-        guard let tripAdvisorProvider = place.tripAdvisorProvider,
-            let url = URL(string: tripAdvisorProvider.url) else { return }
+        guard let url = place.tripAdvisorProvider?.url else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open trip advisor review")
         } else {
@@ -228,8 +225,7 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     @objc private func openWikipediaURL(gestureRecognizer: UITapGestureRecognizer) {
-        guard let wikipediaProvider = place.wikipediaProvider,
-            let url = URL(string: wikipediaProvider.url) else { return }
+        guard let url = place.wikipediaProvider?.url else { return }
         if !OpenInHelper.open(url: url) {
             print("lol unable to open wikipedia review")
         } else {
@@ -246,7 +242,10 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     @objc private func autoMoveToNextCarouselImage() {
-        self.imageCarouselCollectionView.scrollToItem(at: IndexPath(item: getNextCarouselPageIndex(), section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
+        return
+
+        // TODO: Re-enable after we have photos from Yelp v3 and other sources (issue #514).
+//        self.imageCarouselCollectionView.scrollToItem(at: IndexPath(item: getNextCarouselPageIndex(), section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
     }
 
     func pageControlDidPage(sender: AnyObject) {
@@ -266,8 +265,8 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     fileprivate func notifyDelegateOfChangeOfImageToURL(atIndex index: Int) {
-        if index < place.photoURLs.count,
-            let imageURL = URL(string: place.photoURLs[index]) {
+        if index < place.photoURLs.count {
+            let imageURL = place.photoURLs[index]
             placeImageDelegate?.imageCarousel(imageCarousel: imageCarousel, placeImageDidChange: imageURL)
         }
     }
@@ -286,11 +285,8 @@ extension PlaceDetailsCardViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PlaceDetailsCardCellReuseIdentifier, for: indexPath) as! ImageCarouselCollectionViewCell
 
         let placeholder = UIImage(named: "cardview_image_loading")
-        if let photoURL = URL(string: place.photoURLs[indexPath.item]) {
-            cell.imageView.setImageWith(photoURL, placeholderImage: placeholder)
-        } else {
-            cell.imageView.image = placeholder
-        }
+        let photoURL = place.photoURLs[indexPath.item]
+        cell.imageView.setImageWith(photoURL, placeholderImage: placeholder)
         return cell
     }
 }

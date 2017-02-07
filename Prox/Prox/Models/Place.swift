@@ -16,175 +16,100 @@ typealias CachedTravelTime = (deferred: Deferred<DatabaseResult<TravelTimes>>, f
 
 class Place: Hashable {
 
-    fileprivate static var travelTimeExpirationDistance: CLLocationDistance = {
+    fileprivate static let travelTimeExpirationDistance: CLLocationDistance = {
         return RemoteConfigKeys.travelTimeExpirationDistance.value
     }()
 
     // HACK: probably shouldn't be a static member.
-    static var travelTimesCache = TravelTimesCache()
+    static let travelTimesCache = TravelTimesCache()
 
-    var hashValue : Int {
-        get {
-            return id.hashValue
-        }
+    var hashValue: Int {
+        return id.hashValue
     }
 
     private let transitTypes: [MKDirectionsTransportType] = [.automobile, .walking]
 
     let id: String
-
     let name: String
     let categories: (names: [String], ids: [String]) // Indices correlate.
     let latLong: CLLocationCoordinate2D
-
-    let photoURLs: [String]
-
-    // Optional values.
-    let url: String?
-
+    let photoURLs: [URL]
+    let url: URL?
     let address: String?
-
-    let yelpProvider: ReviewProvider
-    let tripAdvisorProvider: ReviewProvider?
-    let wikipediaProvider: ReviewProvider?
-
-    let hours: OpenHours? // if nil, there are no listed hours for this place
-
-    let wikiDescription: String?
-    let yelpDescription: String?
-    let tripAdvisorDescription: String?
+    let hours: OpenHours?
+    let yelpProvider: PlaceProvider
+    let tripAdvisorProvider: PlaceProvider?
+    let wikipediaProvider: PlaceProvider?
 
     var events = [Event]()
 
-    init(id: String, name: String, descriptions: (wiki: String?, yelp: String?, ta: String?)? = nil,
-         latLong: CLLocationCoordinate2D, categories: (names: [String], ids: [String]), url: String? = nil,
-         address: String? = nil, yelpProvider: ReviewProvider,
-         tripAdvisorProvider: ReviewProvider? = nil, wikipediaProvider: ReviewProvider? = nil, photoURLs: [String] = [], hours: OpenHours? = nil) {
-        self.id = id
-        self.name = name
-        self.wikiDescription = descriptions?.wiki
-        self.yelpDescription = descriptions?.yelp
-        self.tripAdvisorDescription = descriptions?.ta
-        self.latLong = latLong
-        self.categories = categories
-        self.url = url
-        self.address = address
-        self.yelpProvider = yelpProvider
-        self.tripAdvisorProvider = tripAdvisorProvider
-        self.wikipediaProvider = wikipediaProvider
-        self.photoURLs = photoURLs
-        self.hours = hours
+    init(id: String,
+         name: String,
+         latLong: CLLocationCoordinate2D,
+         categories: (names: [String], ids: [String]),
+         photoURLs: [URL] = [],
+         url: URL? = nil,
+         address: String? = nil,
+         hours: OpenHours? = nil,
+         yelpProvider: PlaceProvider,
+         tripAdvisorProvider: PlaceProvider? = nil,
+         wikipediaProvider: PlaceProvider? = nil) {
+            self.id = id
+            self.name = name
+            self.categories = categories
+            self.latLong = latLong
+            self.url = url
+            self.address = address
+            self.photoURLs = photoURLs
+            self.hours = hours
+            self.yelpProvider = yelpProvider
+            self.tripAdvisorProvider = tripAdvisorProvider
+            self.wikipediaProvider = wikipediaProvider
     }
 
-    convenience init?(fromFirebaseSnapshot data: FIRDataSnapshot) {
-        guard data.exists(), data.hasChildren(),
-                let value = data.value as? NSDictionary,
-                let id = value["id"] as? String,
-                let name = value["name"] as? String,
-                let categoriesFromFirebase = value["categories"] as? [[String:String]],
-                let categories = Place.getCategories(fromFirebaseValue: categoriesFromFirebase),
-                let coords = value["coordinates"] as? [String:Double],
-                let lat = coords["lat"], let lng = coords["lng"] else {
+    convenience init?(fromFirebaseSnapshot details: FIRDataSnapshot) {
+        guard let yelpDict = details.childSnapshot(forPath: YELP_PATH).value as? [String: Any] else {
+            print("lol place has no Yelp content: \(details.key)")
+            return nil
+        }
+
+        let yelpProvider = SinglePlaceProvider(fromDictionary: yelpDict)
+
+        var tripAdvisorProvider: SinglePlaceProvider?
+        if let tripAdvisorDict = details.childSnapshot(forPath: TRIP_ADVISOR_PATH).value as? [String: Any] {
+            tripAdvisorProvider = SinglePlaceProvider(fromDictionary: tripAdvisorDict)
+        }
+
+        var wikipediaProvider: SinglePlaceProvider?
+        if let wikipediaDict = details.childSnapshot(forPath: WIKIPEDIA_PATH).value as? [String: Any] {
+            wikipediaProvider = SinglePlaceProvider(fromDictionary: wikipediaDict)
+        }
+
+        let providers = [yelpProvider, tripAdvisorProvider, wikipediaProvider].flatMap { $0 }
+        let compositeProvider = CompositePlaceProvider(fromProviders: providers)
+
+        guard let id = compositeProvider.id,
+              let name = compositeProvider.name,
+              let latLong = compositeProvider.latLong else {
             print("lol dropping place: missing data, id, name, or coords")
             return nil
         }
 
-        // TODO: #38: we need to decide whether to handle having a rating OR a review. If so, don't
-        // forget to update the UI.
-        guard let yelpProvider = ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: YELP_PATH)),
-                (yelpProvider.rating != nil && yelpProvider.totalReviewCount != nil) else {
-            print("lol unable to init yelp provider for place: \(id)")
-            return nil
-        }
-
-        // TODO:
-        // * validate incoming data
-        // * b/c ^, tests
-        let descriptions = Place.getDescriptions(fromFirebaseValue: value)
-        let photoURLs = (value["images"] as? [[String:String]])?.flatMap { $0["src"] } ?? []
-
-        guard photoURLs.count > 0 else {
-            // Photo json format may also be incorrect (we default to []) but only log this to keep it simple.
-            print("lol dropped place \"\(id)\": no photos")
-            return nil
-        }
-
-        let hours: OpenHours?
-        if value["hours"] == nil {
-            hours = nil // no listed hours
-        } else {
-            if let hoursDictFromServer = value["hours"] as? [String : [[String]]],
-                    let hoursFromServer = OpenHours.fromFirebaseValue(hoursDictFromServer) {
-                hours = hoursFromServer
-            } else {
-                return nil // malformed hours object: fail to make the Place
-            }
-        }
-
         self.init(id: id,
                   name: name,
-                  descriptions: descriptions,
-                  latLong: CLLocationCoordinate2D(latitude: lat, longitude: lng),
-                  categories: categories,
-                  url: value["url"] as? String,
-                  address: (value["address"] as? [String])?.joined(separator: " "),
+                  latLong: latLong,
+                  categories: compositeProvider.categories,
+                  photoURLs: compositeProvider.photoURLs,
+                  url: compositeProvider.url,
+                  address: compositeProvider.address,
+                  hours: compositeProvider.hours,
                   yelpProvider: yelpProvider,
-                  tripAdvisorProvider: ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: TRIP_ADVISOR_PATH)),
-                  wikipediaProvider: ReviewProvider(fromFirebaseSnapshot: data.childSnapshot(forPath: WIKIPEDIA_PATH)),
-                  photoURLs: photoURLs,
-                  hours: hours)
+                  tripAdvisorProvider: tripAdvisorProvider,
+                  wikipediaProvider: wikipediaProvider)
     }
 
     static func ==(lhs: Place, rhs: Place) -> Bool {
         return lhs.id == rhs.id
-    }
-
-    private static func getCategories(fromFirebaseValue value: [[String:String]]) -> (names: [String], ids: [String])? {
-        var names = [String]()
-        var ids = [String]()
-        for category in value {
-            guard let name = category["text"],
-                    let id = category["id"] else {
-                print("lol unable to retrieve category from firebase data for place")
-                return nil
-            }
-
-            names.append(name)
-            ids.append(id)
-        }
-
-        return (names, ids)
-    }
-
-    private static func getDescriptions(fromFirebaseValue value: NSDictionary) -> (wiki: String?, yelp: String?, ta: String?) {
-        var wikiDescription: String?
-        var yelpDescription: String?
-        var taDescription: String?
-        if let descArr = value["description"] as? [[String:String]] {
-            for providerDict in descArr {
-                if let provider = providerDict["provider"],
-                        let text = providerDict["text"] {
-                    switch provider {
-                    case "yelp":
-                        yelpDescription = Place.description(fromText: text)
-                    case "wikipedia":
-                        wikiDescription = Place.description(fromText: text)
-                    case "tripadvisor":
-                        taDescription = Place.description(fromText: text)
-                    default:
-                        break
-                    }
-                }
-            }
-        }
-
-        return (wiki: wikiDescription, yelp: yelpDescription, ta: taDescription)
-    }
-
-    private static func description(fromText text: String?) -> String? {
-        guard let descriptionText = text,
-            !descriptionText.isEmpty else { return nil }
-        return descriptionText
     }
 
     func travelTimes(fromLocation location: CLLocation, withTransitTypes transitTypes: [MKDirectionsTransportType] = [.automobile, .walking]) -> Deferred<DatabaseResult<TravelTimes>> {

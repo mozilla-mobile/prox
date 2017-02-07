@@ -21,7 +21,7 @@ class PlacesProviderTests: XCTestCase {
     fileprivate func placesList(number: Int) -> [Place] {
         var places = [Place]()
 
-        let yelpProvider = ReviewProvider(url: "https://mozilla.org")
+        let yelpProvider = SourcePlaceProvider(fromDictionary: [:])
         for index in 0..<number {
             let placeID = index + 1
 

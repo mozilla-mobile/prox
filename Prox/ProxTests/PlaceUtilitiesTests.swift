@@ -26,7 +26,7 @@ class PlaceUtilitiesTests: XCTestCase {
         // Mozilla London Office
         let currentLocation = CLLocation(latitude: 51.5046323, longitude: -0.0992547)
 
-        let yelpProvider = ReviewProvider(url: "https://mozilla.org")
+        let yelpProvider = SourcePlaceProvider(fromDictionary: [:])
         // London Bridge Station
 
         let emptyCategories = (names: [""], ids: [""])
@@ -63,7 +63,7 @@ class PlaceUtilitiesTests: XCTestCase {
     }
 
     private func getPlace(forRating rating: Float, reviewCount: Int) -> Place {
-        let yelpProvider = ReviewProvider(url: "url", rating: rating, reviews: nil, totalReviewCount: reviewCount)
+        let yelpProvider = SourcePlaceProvider(fromDictionary: ["rating": rating, "totalReviewCount": reviewCount])
         return Place(id: "id", name: "name", latLong: CLLocationCoordinate2D(latitude: 0, longitude: 0),
                      categories: ([], []), yelpProvider: yelpProvider)
     }

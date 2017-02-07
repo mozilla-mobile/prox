@@ -67,7 +67,7 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
         if presenting {
             guard let selectedCell = mapVC.placeCarousel.visibleCellFor(place: currentPlace),
-                  let imageURL = URL(string: placesVC.currentPlace.photoURLs.first ?? "") else {
+                  let imageURL = placesVC.currentPlace.photoURLs.first else {
                 return
             }
 
@@ -144,7 +144,7 @@ class MapPlacesTransition: NSObject, UIViewControllerAnimatedTransitioning {
             fadeDelay(placesViews: placesViews, show: true, delay: duration * 1/6, duration: duration  * 1/4)
         } else {
             guard let toPlacesCell = mapVC.placeCarousel.visibleCellFor(place: currentPlace),
-                  let imageURL = URL(string: placesVC.currentPlace.photoURLs.first ?? "") else {
+                  let imageURL = placesVC.currentPlace.photoURLs.first else {
                 return
             }
 
