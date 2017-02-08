@@ -191,11 +191,9 @@ class PlaceDetailViewController: UIViewController {
         view.setNeedsLayout()
     }
 
-    fileprivate func setBackgroundImage(toPhotoAtURL photoURLString: String?) {
+    fileprivate func setBackgroundImage(toPhotoAtURL photoURL: URL?) {
         let placeholder = UIImage(named: "place-placeholder")
-        if let imageURLString = photoURLString,
-            let imageURL = URL(string: imageURLString) {
-
+        if let imageURL = photoURL {
             let imageRequest = URLRequest(url: imageURL)
             let cachedImage = UIImageView.sharedImageDownloader().imageCache?.imageforRequest(imageRequest, withAdditionalIdentifier: nil)
 
@@ -715,7 +713,7 @@ class PlaceDetailViewController: UIViewController {
 extension PlaceDetailViewController: PlaceDetailsImageDelegate {
     func imageCarousel(imageCarousel: UIView, placeImageDidChange newImageURL: URL) {
         if imageCarousel == self.imageCarousel {
-            setBackgroundImage(toPhotoAtURL: newImageURL.absoluteString)
+            setBackgroundImage(toPhotoAtURL: newImageURL)
         }
     }
 

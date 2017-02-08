@@ -46,7 +46,7 @@ class FirebasePlacesDatabase: PlacesDatabase {
 
         // Handle query completion.
         circleQuery.observeReady {
-            print("lol geofire query has completed")
+            print("lol geofire query has completed: found \(placeKeyToLoc.count) places")
             circleQuery.removeAllObservers()
             deferred.fill(with: placeKeyToLoc)
         }

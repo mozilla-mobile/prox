@@ -121,7 +121,7 @@ extension PlaceCarousel: UICollectionViewDataSource {
         cell.placeImage.cancelImageDownloadTask()
         cell.placeImage.image = UIImage(named: "carousel_image_loading")
 
-        guard let urlStr = place.photoURLs.first, let url = URL(string: urlStr) else {
+        guard let url = place.photoURLs.first else {
             print("lol unable to create URL from photo url")
             return
         }

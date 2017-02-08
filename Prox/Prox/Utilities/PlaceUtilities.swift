@@ -57,10 +57,13 @@ struct PlaceUtilities {
     }
 
     static func filterPlacesForCarousel(_ places: [Place]) -> [Place] {
+        return places
+
+        // TODO: Re-enable category filtering once we have Yelp v3 and other data (issue #514).
         return places.filter { place in
             // always show places if they have events
             guard place.events.isEmpty else { return true }
-            
+
             let shouldShowByCategory = CategoriesUtil.shouldShowPlace(byCategories: place.categories.ids)
             guard shouldShowByCategory else {
                 print("lol filtering out place, \(place.id), by category")
@@ -97,7 +100,7 @@ struct PlaceUtilities {
         return categories?.prefix(MaxDisplayedCategories).joined(separator: " • ")
     }
 
-    static func updateReviewUI(fromProvider provider: ReviewProvider?, onView view: ReviewContainerView, isTextShortened: Bool = false) {
+    static func updateReviewUI(fromProvider provider: PlaceProvider?, onView view: ReviewContainerView, isTextShortened: Bool = false) {
         guard let provider = provider,
                 !(provider.totalReviewCount == nil && provider.rating == nil) else { // intentional: if both null, short-circuit
             setSubviewAlpha(0.4, forParent: view)
