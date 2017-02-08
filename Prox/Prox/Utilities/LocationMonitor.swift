@@ -191,7 +191,7 @@ extension LocationMonitor: CLLocationManagerDelegate {
             return
         }
 
-        NSLog("lol-location \(error.localizedDescription)")
+        log.error("location \(error.localizedDescription)")
         self.delegate?.locationMonitor(self, didFailInitialUpdateWithError: error)
     }
 
@@ -206,6 +206,6 @@ extension LocationMonitor: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
-        print("lol-location region monitoring failed \(error.localizedDescription)")
+        log.error("location region monitoring failed \(error.localizedDescription)")
     }
 }

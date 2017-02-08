@@ -69,7 +69,7 @@ class Place: Hashable {
 
     convenience init?(fromFirebaseSnapshot details: FIRDataSnapshot) {
         guard let yelpDict = details.childSnapshot(forPath: YELP_PATH).value as? [String: Any] else {
-            print("lol place has no Yelp content: \(details.key)")
+            log.warn("place has no Yelp content: \(details.key)")
             return nil
         }
 
@@ -91,7 +91,7 @@ class Place: Hashable {
         guard let id = compositeProvider.id,
               let name = compositeProvider.name,
               let latLong = compositeProvider.latLong else {
-            print("lol dropping place: missing data, id, name, or coords")
+            log.warn("dropping place: missing data, id, name, or coords")
             return nil
         }
 
@@ -287,20 +287,20 @@ struct OpenHours {
         // it's closed for the day and we're supposed to omit it anyway.
         for dayFromServer in hoursDict.keys {
             guard let day = DayOfWeek(rawValue: dayFromServer) else {
-                print("lol unknown day of week from server: \(dayFromServer)")
+                log.error("unknown day of week from server: \(dayFromServer)")
                 return nil
             }
 
             let hoursArr = hoursDict[dayFromServer]! // force unwrap: we're iterating over the keys.
             let hoursForDay: [OpenPeriodDateComponents] = hoursArr.flatMap { interval in
                 guard interval.count == 2 else {
-                    print("lol last opening interval unexpectedly has \(interval.count) entries")
+                    log.error("last opening interval unexpectedly has \(interval.count) entries")
                     return nil
                 }
 
                 guard let openTime = getTimeComponents(fromServerStr: interval[0]),
                         let closeTime = getTimeComponents(fromServerStr: interval[1]) else {
-                    print("lol unable to convert date str, \(interval[0]) & \(interval[1]), to Date")
+                    log.error("unable to convert date str, \(interval[0]) & \(interval[1]), to Date")
                     return nil
                 }
                 return(openTime: openTime, closeTime: closeTime)
@@ -321,14 +321,14 @@ struct OpenHours {
 
     private func getOpeningTimes(forDate date: Date) -> [OpenPeriodDates]? {
         guard let openTimesForDay = hours[DayOfWeek.forDate(date)] else {
-            NSLog("There are no open time for \(DayOfWeek.forDate(date)) in \(hours)")
+            log.debug("There are no open time for \(DayOfWeek.forDate(date)) in \(hours)")
             return nil
         }
 
         let allOpeningTimes: [OpenPeriodDates] = openTimesForDay.flatMap { times in
             guard let openingTime = getDate(forTime: times.openTime, onDate: date),
                 var closingTime = getDate(forTime: times.closeTime, onDate: date) else {
-                    NSLog("No opening times opening: \(getDate(forTime: times.openTime, onDate: date)), closing: \(getDate(forTime: times.closeTime, onDate: date))")
+                    log.debug("No opening times opening: \(getDate(forTime: times.openTime, onDate: date)), closing: \(getDate(forTime: times.closeTime, onDate: date))")
                     return nil
             }
 

@@ -111,7 +111,7 @@ class Event {
             let lngStr = coords["lng"], let lng = Double(lngStr),
             let description = value["description"] as? String,
             let localStartTimeString = value["localStartTime"] as? String else {
-                print("lol dropping event: missing data, id, placeId, description, start time \(value)")
+                log.debug("dropping event: missing data, id, placeId, description, start time \(value)")
                 return nil
         }
 

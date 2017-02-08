@@ -66,13 +66,13 @@ struct PlaceUtilities {
 
             let shouldShowByCategory = CategoriesUtil.shouldShowPlace(byCategories: place.categories.ids)
             guard shouldShowByCategory else {
-                print("lol filtering out place, \(place.id), by category")
+                log.debug("filtering out place, \(place.id), by category")
                 return shouldShowByCategory
             }
 
             let shouldShowByRating = shouldShowPlaceByRatingAndReviewCount(place)
             guard shouldShowByRating  else {
-                print("lol filtering out place, \(place.id), by rating")
+                log.debug("filtering out place, \(place.id), by rating")
                 return shouldShowByRating
             }
 
@@ -83,7 +83,7 @@ struct PlaceUtilities {
     static func shouldShowPlaceByRatingAndReviewCount(_ place: Place) -> Bool {
         guard let rating = place.yelpProvider.rating,
                 let reviewCount = place.yelpProvider.totalReviewCount else {
-            print("lol missing rating or review count for place \(place.id)")
+            log.warn("missing rating or review count for place \(place.id)")
             return false
         }
 
