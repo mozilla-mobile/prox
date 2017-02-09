@@ -75,13 +75,10 @@ public struct AppConstants {
 
     // The root child in the Realtime Firebase database.
     public static let firebaseRoot: String = {
-        switch (BuildChannel) {
-        case .CurrentLocation, .MockLocation, .Release:
-            return "production/"
-
-        case .Debug:
-            return ""
-        }
+        let root = FirebaseBranches.N02_CHICAGO
+        //let root = FirebaseBranches.getBranch(forUser: "jane") // for debugging.
+        assert(root.hasSuffix("/"))
+        return root
     }()
 
     public static let areNotificationsEnabled: Bool = {
