@@ -73,6 +73,7 @@
 		7BD5CC8B1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7C79B23D6CD1B1AC5A860E9E /* Pods_ProxTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */; };
 		D32F73EE1E4D07AE00D504A7 /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32F73ED1E4D07AE00D504A7 /* UIColorExtensions.swift */; };
+		D32F73F01E4D08C600D504A7 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32F73EF1E4D08C600D504A7 /* InsetButton.swift */; };
 		D3656D981E4A7D0F00040448 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3656D971E4A7D0F00040448 /* Logger.swift */; };
 		D3C815681E4542E30066A97B /* PlaceProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C815671E4542E30066A97B /* PlaceProviders.swift */; };
 		E60A42711DF28E01008BE74D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42701DF28E01008BE74D /* URL.swift */; };
@@ -212,6 +213,7 @@
 		CBFE1FD0629546576538F51D /* Pods-ProxTests.chicago.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.chicago.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.chicago.xcconfig"; sourceTree = "<group>"; };
 		CE887CEB1CF45A1D782FC885 /* Pods-Prox.current location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.current location.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.current location.xcconfig"; sourceTree = "<group>"; };
 		D32F73ED1E4D07AE00D504A7 /* UIColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIColorExtensions.swift; path = Extensions/UIColorExtensions.swift; sourceTree = "<group>"; };
+		D32F73EF1E4D08C600D504A7 /* InsetButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InsetButton.swift; sourceTree = "<group>"; };
 		D3656D971E4A7D0F00040448 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		D3C815671E4542E30066A97B /* PlaceProviders.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceProviders.swift; sourceTree = "<group>"; };
 		D3DA777E1DC2776C009C114E /* BuddyBuildSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BuddyBuildSDK.framework; path = ../Pods/BuddyBuildSDK/BuddyBuildSDK.framework; sourceTree = "<group>"; };
@@ -384,12 +386,13 @@
 			children = (
 				7B23BD1E1DE862F500A23604 /* ChevronView.swift */,
 				7B50956D1DB53429007C54F0 /* HorizontalLineView.swift */,
+				7B699A9D1DEDD635004A671B /* InAppNotificationToast.swift */,
+				D32F73EF1E4D08C600D504A7 /* InsetButton.swift */,
+				E67D49FC1DDE42F0005E17F9 /* LoadingOverlayView.swift */,
+				E63C346E1DDCDFBB005B6B15 /* LocationLoadingView.swift */,
 				7B5095691DB53382007C54F0 /* ReviewContainerView.swift */,
 				7B50956A1DB53382007C54F0 /* ReviewScoreView.swift */,
 				E61831981DE0BDBA00D1810F /* TravelTimesView.swift */,
-				E63C346E1DDCDFBB005B6B15 /* LocationLoadingView.swift */,
-				E67D49FC1DDE42F0005E17F9 /* LoadingOverlayView.swift */,
-				7B699A9D1DEDD635004A671B /* InAppNotificationToast.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -908,6 +911,7 @@
 				7BD5CC811DAFF07E00BCF50D /* GFQuery.m in Sources */,
 				7B9DA1551DBE6ED300A68C82 /* PlacesDatabase.swift in Sources */,
 				7B5095651DB531CA007C54F0 /* Place.swift in Sources */,
+				D32F73F01E4D08C600D504A7 /* InsetButton.swift in Sources */,
 				7B0ECE481DD6145500ABBD72 /* LocationMonitor.swift in Sources */,
 				E61972141DD28B7A00C9D093 /* PlaceDetailsEventView.swift in Sources */,
 				738285279A22EAD0F67AEEEC /* FirebaseBranches.swift in Sources */,
