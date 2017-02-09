@@ -72,6 +72,7 @@
 		7BD5CC8A1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7BD5CC8B1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7C79B23D6CD1B1AC5A860E9E /* Pods_ProxTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */; };
+		D32F73EE1E4D07AE00D504A7 /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32F73ED1E4D07AE00D504A7 /* UIColorExtensions.swift */; };
 		D3656D981E4A7D0F00040448 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3656D971E4A7D0F00040448 /* Logger.swift */; };
 		D3C815681E4542E30066A97B /* PlaceProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C815671E4542E30066A97B /* PlaceProviders.swift */; };
 		E60A42711DF28E01008BE74D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42701DF28E01008BE74D /* URL.swift */; };
@@ -210,6 +211,7 @@
 		BD2188137E599F03500C7FBD /* Pods-ProxUITests.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		CBFE1FD0629546576538F51D /* Pods-ProxTests.chicago.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.chicago.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.chicago.xcconfig"; sourceTree = "<group>"; };
 		CE887CEB1CF45A1D782FC885 /* Pods-Prox.current location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.current location.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.current location.xcconfig"; sourceTree = "<group>"; };
+		D32F73ED1E4D07AE00D504A7 /* UIColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIColorExtensions.swift; path = Extensions/UIColorExtensions.swift; sourceTree = "<group>"; };
 		D3656D971E4A7D0F00040448 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		D3C815671E4542E30066A97B /* PlaceProviders.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceProviders.swift; sourceTree = "<group>"; };
 		D3DA777E1DC2776C009C114E /* BuddyBuildSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BuddyBuildSDK.framework; path = ../Pods/BuddyBuildSDK/BuddyBuildSDK.framework; sourceTree = "<group>"; };
@@ -541,9 +543,10 @@
 		E67146341DB5488D007A99E4 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */,
 				E67146351DB54896007A99E4 /* CLLocationManager.swift */,
+				7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */,
 				7B1C657C1DDF28F00047559C /* TimeInterval.swift */,
+				D32F73ED1E4D07AE00D504A7 /* UIColorExtensions.swift */,
 				E60A42701DF28E01008BE74D /* URL.swift */,
 			);
 			name = Extensions;
@@ -849,6 +852,7 @@
 				7B9D15C61DC0D2E70051B760 /* OpenInHelper.swift in Sources */,
 				E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */,
 				7B1C657D1DDF28F00047559C /* TimeInterval.swift in Sources */,
+				D32F73EE1E4D07AE00D504A7 /* UIColorExtensions.swift in Sources */,
 				7B5095731DB5352E007C54F0 /* Fonts.swift in Sources */,
 				7BB1CA471DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift in Sources */,
 				7BA05BE91DD4D149009AC121 /* EventsController.swift in Sources */,
