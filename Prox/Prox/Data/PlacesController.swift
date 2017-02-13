@@ -21,8 +21,6 @@ class PlacesProvider {
 
     private let database = FirebasePlacesDatabase()
 
-    private var isUpdating = false
-
     private lazy var sessionManager: AFHTTPSessionManager = {
         let manager = AFHTTPSessionManager(sessionConfiguration: .default)
         manager.responseSerializer = AFHTTPResponseSerializer()
@@ -174,13 +172,10 @@ class PlacesProvider {
             let eventPlacesSet = Set<Place>(placesWithEvents)
             let union = eventPlacesSet.union(placesSet)
 
+            // TODO refactor for a more incremental load, and therefore
+            // insertion sort approach to ranking. We shouldn't do too much of this until
+            // we have the waiting states implemented.
             self.displayPlaces(places: Array(union), forLocation: location)
-            DispatchQueue.main.async {
-                // TODO refactor for a more incremental load, and therefore
-                // insertion sort approach to ranking. We shouldn't do too much of this until
-                // we have the waiting states implemented.
-                self.isUpdating = false
-            }
         }
     }
 
