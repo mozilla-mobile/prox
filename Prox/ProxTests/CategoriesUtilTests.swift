@@ -25,8 +25,8 @@ class CategoriesUtilTests: XCTestCase {
     // Root and its children
     private let RootCategory = "financialservices"
     // explicit types or SourceKitService eats your CPU: http://stackoverflow.com/a/28183589
-    private let CategoryHierarchy: [String : Set<String>] =
-        ["banks" : Set<String>(),
+    private let CategoryHierarchy: [String : Set<String>] = [
+         "banks" : Set<String>(),
          "businessfinancing" : Set<String>(),
          "paydayloans" : Set<String>(),
          "currencyexchange" : Set<String>(),
@@ -38,7 +38,14 @@ class CategoriesUtilTests: XCTestCase {
                                            "lifeinsurance"]),
          "investing" : Set<String>(),
          "taxservices" : Set<String>(),
-         "titleloans" : Set<String>()]
+         "titleloans" : Set<String>(),
+    ]
+
+    private let CategoryNames = [
+        "auto": "Automotive",
+        "restaurants": "Restaurants",
+        "publicservicesgovt": "Public Services & Government",
+    ]
 
     private let AnotherLeafCategory = "winetastingroom" // food -> wineries -> winetastingroom
 
@@ -99,5 +106,11 @@ class CategoriesUtilTests: XCTestCase {
         let input = LeafCategory + ",,,  ,,"
         let actual = CategoriesUtil.getHiddenCategories(forCSV: input)
         XCTAssertEqual(actual, Set([LeafCategory]))
+    }
+
+    func testCategoryNames() {
+        for (id, name) in CategoryNames {
+            XCTAssertEqual(name, CategoriesUtil.categoryToName[id])
+        }
     }
 }
