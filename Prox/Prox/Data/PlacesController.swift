@@ -13,7 +13,6 @@ import Foundation
  */
 protocol PlacesProviderDelegate: class {
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place])
-    func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider)
     func placesProviderDidFetchFirstPlace()
 }
 
@@ -181,7 +180,6 @@ class PlacesProvider {
                 // insertion sort approach to ranking. We shouldn't do too much of this until
                 // we have the waiting states implemented.
                 self.isUpdating = false
-                self.delegate?.placesProviderDidFinishFetchingPlaces(self)
             }
         }
     }
