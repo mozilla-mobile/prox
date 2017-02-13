@@ -68,7 +68,6 @@ class PlaceDetailViewController: UIViewController {
     
     lazy var mapButton: MapButton = {
         let button = MapButton()
-        button.addTarget(self, action: #selector(self.close), for: .touchUpInside)
         button.clipsToBounds = false
         return button
     }()
@@ -698,14 +697,6 @@ class PlaceDetailViewController: UIViewController {
                                      nextCardImageCarousel.heightAnchor.constraint(equalToConstant: imageCarouselHeightConstant)], translatesAutoresizingMaskIntoConstraints: false)
 
         return nextCardImageCarousel
-    }
-
-    func close() {
-        self.dismiss(animated: true) {
-            Analytics.logEvent(event: AnalyticsEvent.MAP_BUTTON, params: [:])
-            AppState.enterCarousel()
-        }
-
     }
 
 }
