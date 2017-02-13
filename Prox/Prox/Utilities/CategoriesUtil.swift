@@ -51,9 +51,7 @@ struct CategoriesUtil {
         return hiddenCategories
     }
 
-    static let categoryToDescendantsMap = getCategoryToDescendantsMap()
-
-    private static func getCategoryToDescendantsMap() -> [String:Set<String>] {
+    static let categoryToDescendantsMap: [String: Set<String>] = {
         let allCats = loadAllCategoriesFile()
 
         var parentToDescendantsMap = [String:Set<String>]()
@@ -84,7 +82,7 @@ struct CategoriesUtil {
         }
 
         return parentToDescendantsMap
-    }
+    }()
 
     private static func loadAllCategoriesFile() -> NSArray {
         // We choose not to handle errors: with an unchanging file, we should never hit an error case.
@@ -100,6 +98,38 @@ struct CategoriesUtil {
         defer { inputStream.close() }
 
         return try! JSONSerialization.jsonObject(with: inputStream) as! NSArray
+    }
+
+    private static let categoryToParentsMap: [String: [String]] = {
+        let json = loadAllCategoriesFile()
+        var categoryToParents = [String: [String]]()
+        for categoryObject in json {
+            let obj = categoryObject as! NSDictionary
+            let title = obj["alias"] as! String
+            let parents = obj["parents"] as! [String]
+            categoryToParents[title] = parents
+        }
+        return categoryToParents
+    }()
+
+    static let categoryToRootsMap: [String: [String]] = {
+        var categoryToRoots = [String: [String]]()
+        for category in categoryToParentsMap.keys {
+            categoryToRoots[category] = Array(getRootCategories(forCategory: category))
+        }
+        return categoryToRoots
+    }()
+
+    private static func getRootCategories(forCategory category: String) -> Set<String> {
+        let parents = categoryToParentsMap[category]!
+
+        if parents.isEmpty {
+            return Set([category])
+        }
+
+        return parents.reduce(Set()) { res, parent in
+            res.union(getRootCategories(forCategory: parent))
+        }
     }
 
     static let categoryToName: [String: String] = {
