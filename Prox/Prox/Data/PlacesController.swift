@@ -13,7 +13,6 @@ import Foundation
  */
 protocol PlacesProviderDelegate: class {
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place])
-    func placesProviderDidFetchFirstPlace()
 }
 
 class PlacesProvider {
@@ -41,8 +40,6 @@ class PlacesProvider {
         }
     }
     fileprivate var placeKeyMap = [String: Int]()
-
-    fileprivate var firstFetch = true
 
     fileprivate let placesLock = NSLock()
 
@@ -155,10 +152,6 @@ class PlacesProvider {
             DispatchQueue.main.async {
                 self.placesLock.withReadLock {
                     self.delegate?.placesProvider(self, didReceivePlaces: self.displayedPlaces)
-                }
-                if self.firstFetch {
-                    self.delegate?.placesProviderDidFetchFirstPlace()
-                    self.firstFetch = false
                 }
             }
 
