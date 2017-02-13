@@ -8,7 +8,8 @@ import CoreLocation
 import Deferred
 
 private let PROVIDERS_PATH = "providers/"
-private let YELP_PATH = PROVIDERS_PATH + "yelp"
+private let YELP2_PATH = PROVIDERS_PATH + "yelp"
+private let YELP3_PATH = PROVIDERS_PATH + "yelp3"
 private let TRIP_ADVISOR_PATH = PROVIDERS_PATH + "tripAdvisor"
 private let WIKIPEDIA_PATH = PROVIDERS_PATH + "wikipedia"
 
@@ -68,12 +69,15 @@ class Place: Hashable {
     }
 
     convenience init?(fromFirebaseSnapshot details: FIRDataSnapshot) {
-        guard let yelpDict = details.childSnapshot(forPath: YELP_PATH).value as? [String: Any] else {
+        guard let yelp2Dict = details.childSnapshot(forPath: YELP2_PATH).value as? [String: Any] else {
             log.warn("place has no Yelp content: \(details.key)")
             return nil
         }
 
-        let yelpProvider = SinglePlaceProvider(fromDictionary: yelpDict)
+        let yelp3Dict = details.childSnapshot(forPath: YELP3_PATH).value as? [String: Any] ?? [:]
+        let yelp2Provider = SinglePlaceProvider(fromDictionary: yelp2Dict)
+        let yelp3Provider = SinglePlaceProvider(fromDictionary: yelp3Dict)
+        let yelpProvider = CompositePlaceProvider(fromProviders: [yelp2Provider, yelp3Provider])
 
         var tripAdvisorProvider: SinglePlaceProvider?
         if let tripAdvisorDict = details.childSnapshot(forPath: TRIP_ADVISOR_PATH).value as? [String: Any] {
@@ -85,13 +89,14 @@ class Place: Hashable {
             wikipediaProvider = SinglePlaceProvider(fromDictionary: wikipediaDict)
         }
 
-        let providers = [yelpProvider, tripAdvisorProvider, wikipediaProvider].flatMap { $0 }
-        let compositeProvider = CompositePlaceProvider(fromProviders: providers)
+        let providers: [PlaceProvider?] = [yelpProvider, tripAdvisorProvider, wikipediaProvider]
+        let compositeProvider = CompositePlaceProvider(fromProviders: providers.flatMap { $0 })
 
         guard let id = compositeProvider.id,
               let name = compositeProvider.name,
-              let latLong = compositeProvider.latLong else {
-            log.warn("dropping place: missing data, id, name, or coords")
+              let latLong = compositeProvider.latLong,
+              !compositeProvider.photoURLs.isEmpty else {
+            log.warn("dropping place: missing id, name, photos, or coords")
             return nil
         }
 

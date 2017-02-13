@@ -57,9 +57,6 @@ struct PlaceUtilities {
     }
 
     static func filterPlacesForCarousel(_ places: [Place]) -> [Place] {
-        return places
-
-        // TODO: Re-enable category filtering once we have Yelp v3 and other data (issue #514).
         return places.filter { place in
             // always show places if they have events
             guard place.events.isEmpty else { return true }
