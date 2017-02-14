@@ -68,6 +68,7 @@ class PlaceDetailViewController: UIViewController {
     
     lazy var mapButton: MapButton = {
         let button = MapButton()
+        button.addTarget(self, action: #selector(self.openMapView), for: .touchUpInside)
         button.clipsToBounds = false
         return button
     }()
@@ -699,6 +700,10 @@ class PlaceDetailViewController: UIViewController {
         return nextCardImageCarousel
     }
 
+    @objc fileprivate func openMapView() {
+        let controller = MapViewController()
+        self.present(controller, animated: true)
+    }
 }
 
 extension PlaceDetailViewController: PlaceDetailsImageDelegate {

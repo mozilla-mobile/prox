@@ -16,6 +16,7 @@
 		39C4EC9E1DDCA75400B53B77 /* RemoteConfigKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */; };
 		39C4EC9F1DDCA75500B53B77 /* RemoteConfigKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */; };
 		4F00E2C2201E3A088D934AE0 /* Pods_Prox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29190FCA903C1D1AF4C77316 /* Pods_Prox.framework */; };
+		738282518946B44B6A28766A /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73828CC8A84055028C4CA03E /* MapViewController.swift */; };
 		738285279A22EAD0F67AEEEC /* FirebaseBranches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738289665759F7DA1EC836B9 /* FirebaseBranches.swift */; };
 		7B0ECE481DD6145500ABBD72 /* LocationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */; };
 		7B1C657B1DDCA9A90047559C /* FirebaseEventsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */; };
@@ -136,6 +137,7 @@
 		5CC567CFCFA28F4EC7ACFB4B /* Pods-ProxUITests.chicago.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.chicago.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.chicago.xcconfig"; sourceTree = "<group>"; };
 		64E189E4D93A85A43CF269E2 /* Pods-ProxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		738289665759F7DA1EC836B9 /* FirebaseBranches.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseBranches.swift; sourceTree = "<group>"; };
+		73828CC8A84055028C4CA03E /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		75091F0A7DE7F3D6E008D07B /* Pods-Prox.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.debug.xcconfig"; sourceTree = "<group>"; };
 		7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationMonitor.swift; sourceTree = "<group>"; };
 		7B1C657A1DDCA9A90047559C /* FirebaseEventsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FirebaseEventsDatabase.swift; path = Data/FirebaseEventsDatabase.swift; sourceTree = "<group>"; };
@@ -278,6 +280,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		7382815B4FB35145B998FD38 /* Map View */ = {
+			isa = PBXGroup;
+			children = (
+				73828CC8A84055028C4CA03E /* MapViewController.swift */,
+			);
+			path = "Map View";
+			sourceTree = "<group>";
+		};
 		7B29E7B61DA3EC360099AF38 = {
 			isa = PBXGroup;
 			children = (
@@ -323,6 +333,7 @@
 				7B50956F1DB5352E007C54F0 /* Utilities */,
 				7B5095681DB53382007C54F0 /* Widgets */,
 				E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */,
+				7382815B4FB35145B998FD38 /* Map View */,
 			);
 			path = Prox;
 			sourceTree = "<group>";
@@ -896,6 +907,7 @@
 				7B0ECE481DD6145500ABBD72 /* LocationMonitor.swift in Sources */,
 				E61972141DD28B7A00C9D093 /* PlaceDetailsEventView.swift in Sources */,
 				738285279A22EAD0F67AEEEC /* FirebaseBranches.swift in Sources */,
+				738282518946B44B6A28766A /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
