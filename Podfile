@@ -10,7 +10,7 @@ target 'Prox' do
 	pod 'Firebase/Database'
 	pod 'Firebase/Auth'
 	pod 'Firebase/RemoteConfig'
-    pod 'Flurry-iOS-SDK/FlurrySDK'
+	pod 'Flurry-iOS-SDK/FlurrySDK'
 	pod 'EDSunriseSet'
 	pod 'BuddyBuildSDK'
 	pod 'BadgeSwift', '~> 3.0'
