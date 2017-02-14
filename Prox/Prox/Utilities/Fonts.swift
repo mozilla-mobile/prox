@@ -44,3 +44,7 @@ extension Fonts {
 extension Fonts {
     public static let notificationText = Fonts.detailsViewDescriptionText
 }
+
+extension Fonts {
+    public static let mapViewTitleText = UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight)
+}
