@@ -31,6 +31,8 @@
 	<true/>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Location is used to find points of interest and events near your current location</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location is used to display your location on a map, next to points of interest</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
