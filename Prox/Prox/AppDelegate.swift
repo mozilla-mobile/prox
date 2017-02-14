@@ -5,6 +5,7 @@
 import UIKit
 import Firebase
 import FirebaseRemoteConfig
+import GoogleMaps
 import UserNotifications
 
 @UIApplicationMain
@@ -31,6 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         setupFirebase()
         setupRemoteConfig()
+        setupGoogleMaps()
         BuddyBuildSDK.setup()
 
         // create Window
@@ -83,6 +85,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         FIRDatabase.database().persistenceEnabled = false
+    }
+
+    private func setupGoogleMaps() {
+        guard let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+              let googleServiceInfo = NSDictionary(contentsOfFile: path),
+              let apiKey = googleServiceInfo["API_KEY"] as? String else {
+            fatalError("Unable to initialize gmaps - did you include GoogleService-Info?")
+            return
+        }
+
+        GMSServices.provideAPIKey(apiKey)
     }
 
     private func setupRemoteConfig() {

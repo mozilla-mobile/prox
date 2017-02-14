@@ -56,6 +56,11 @@ PODS:
   - FXPageControl (1.4)
   - GoogleInterchangeUtilities (1.2.2):
     - GoogleSymbolUtilities (~> 1.1)
+  - GoogleMaps (2.1.1):
+    - GoogleMaps/Maps (= 2.1.1)
+  - GoogleMaps/Base (2.1.1)
+  - GoogleMaps/Maps (2.1.1):
+    - GoogleMaps/Base
   - GoogleSymbolUtilities (1.1.2)
   - GoogleToolboxForMac/DebugUtils (2.1.0):
     - GoogleToolboxForMac/Defines (= 2.1.0)
@@ -81,6 +86,7 @@ DEPENDENCIES:
   - Firebase/RemoteConfig
   - Flurry-iOS-SDK/FlurrySDK
   - FXPageControl (= 1.4)
+  - GoogleMaps
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
@@ -98,10 +104,11 @@ SPEC CHECKSUMS:
   Flurry-iOS-SDK: 3d1daff95d43b8fead3bb43590d54c6e8244d410
   FXPageControl: 5057bf21537579b40ff30e119cd425d16d8ef90a
   GoogleInterchangeUtilities: d5bc4d88d5b661ab72f9d70c58d02ca8c27ad1f7
+  GoogleMaps: a5b5bbe47734e2443bde781a6aa64e69fdb6d785
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
 
-PODFILE CHECKSUM: bc14f242ef24f4392a58f0205f4a9778542dd932
+PODFILE CHECKSUM: 2cb421307700de84481f01292ffefa4923b21900
 
 COCOAPODS: 1.2.0

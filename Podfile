@@ -15,6 +15,7 @@ target 'Prox' do
 	pod 'BuddyBuildSDK'
 	pod 'BadgeSwift', '~> 3.0'
 	pod 'FXPageControl', '1.4'
+	pod 'GoogleMaps'
 end
 
 target 'ProxTests' do

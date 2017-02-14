@@ -20,6 +20,7 @@
 	<string>1</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>googlechromes</string>
 		<string>wikipedia</string>
 		<string>tripadvisor</string>
 		<string>yelp</string>
