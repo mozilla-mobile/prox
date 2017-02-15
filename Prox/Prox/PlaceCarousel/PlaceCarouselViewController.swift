@@ -30,7 +30,7 @@ class PlaceCarouselViewController: UIViewController {
         didSet { loadingOverlay.alpha = isLoading ? 1 : 0 }
     }
 
-    var locationMonitor: LocationMonitor { return (UIApplication.shared.delegate! as! AppDelegate).locationMonitor }
+    fileprivate var locationMonitor: LocationMonitor { return (UIApplication.shared.delegate! as! AppDelegate).locationMonitor }
 
     fileprivate var shouldFetchPlaces: Bool = true
 
