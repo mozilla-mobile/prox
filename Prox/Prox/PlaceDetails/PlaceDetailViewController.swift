@@ -38,7 +38,7 @@ fileprivate let scaleOutTransformRight = CGAffineTransform.identity.translatedBy
  **/
 class PlaceDetailViewController: UIViewController {
 
-    weak var dataSource: PlaceDataSource? {
+    weak var dataSource: PlacesProvider? {
         didSet {
             mapButtonBadge.text = "\(dataSource?.numberOfPlaces() ?? 0)"
         }

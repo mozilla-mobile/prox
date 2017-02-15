@@ -222,9 +222,7 @@ class PlacesProvider {
         }
         return unionOfPlaces
     }
-}
 
-extension PlacesProvider: PlaceDataSource {
     func nextPlace(forPlace place: Place) -> Place? {
         return self.placesLock.withReadLock {
             // if the place isn't in the list, make the first item in the list the next item

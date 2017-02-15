@@ -7,26 +7,6 @@ import MapKit
 import QuartzCore
 import Deferred
 
-protocol PlaceDataSource: class {
-    func nextPlace(forPlace place: Place) -> Place?
-    func previousPlace(forPlace place: Place) -> Place?
-    func numberOfPlaces() -> Int
-    func place(forIndex: Int) throws -> Place
-    func index(forPlace: Place) -> Int?
-    func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ())
-    func sortPlaces(byLocation location: CLLocation)
-
-    /// Returns all nearby places filtered by the given set of filters.
-    /// This function does not modify the data source.
-    func filterPlaces(filters: [PlaceFilter]) -> [Place]
-
-    /// Refreshes the data source by filtering with the enabled filters.
-    func refresh()
-
-    /// You must call refresh() after changing the enabled state of any filter!
-    var filters: [PlaceFilter] { get }
-}
-
 struct PlaceDataSourceError: Error {
     let message: String
 }
