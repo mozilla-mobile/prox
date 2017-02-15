@@ -13,7 +13,7 @@ enum PanDirection {
 struct PlaceDetailAnimatableViews {
     var nextCard: PlaceDetailsCardView?
     var previousCard: PlaceDetailsCardView?
-    var mapButton: MapButton
+    var mapButton: UIButton
     var currentCard: PlaceDetailsCardView
     var mapButtonBadge: BadgeSwift
     var backgroundImage: UIImageView
@@ -66,10 +66,10 @@ class PlaceDetailViewController: UIViewController {
         return panGesture
     }()
     
-    lazy var mapButton: MapButton = {
-        let button = MapButton()
+    lazy var mapButton: UIButton = {
+        let button = UIButton()
+        button.setImage(#imageLiteral(resourceName: "button_map"), for: .normal)
         button.addTarget(self, action: #selector(self.openMapView), for: .touchUpInside)
-        button.clipsToBounds = false
         return button
     }()
 
