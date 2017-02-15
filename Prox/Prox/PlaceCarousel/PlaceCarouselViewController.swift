@@ -92,16 +92,6 @@ class PlaceCarouselViewController: UIViewController {
         self.shouldFetchPlaces = true
     }
 
-    // MARK: Location Handling
-    fileprivate func updateLocation(location: CLLocation) {
-        if let timeOfLastLocationUpdate = locationMonitor.timeOfLastLocationUpdate,
-            timeOfLastLocationUpdate < location.timestamp {
-            locationMonitor.startMonitoringForVisitAtCurrentLocation()
-        }
-
-        updatePlaces(forLocation: location)
-    }
-
     fileprivate func updatePlaces(forLocation location: CLLocation) {
         // don't bother fetching new places when in the background.
         if UIApplication.shared.applicationState != .background {
@@ -153,6 +143,15 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
             Prompts.isNoLocationAlertPresented = false
             self.updateLocation(location: location)
         }
+    }
+
+    private func updateLocation(location: CLLocation) {
+        if let timeOfLastLocationUpdate = locationMonitor.timeOfLastLocationUpdate,
+            timeOfLastLocationUpdate < location.timestamp {
+            locationMonitor.startMonitoringForVisitAtCurrentLocation()
+        }
+
+        updatePlaces(forLocation: location)
     }
 
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation) {
