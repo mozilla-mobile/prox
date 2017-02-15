@@ -41,39 +41,29 @@ class PlaceCarouselViewController: UIViewController {
         return controller
     }()
 
-    lazy var loadingOverlay = LoadingOverlayView(frame: CGRect.zero)
+    fileprivate lazy var loadingOverlay: LoadingOverlayView = {
+        let view = LoadingOverlayView(frame: .zero)
+        view.delegate = self
+        return view
+    }()
+    fileprivate var isLoading: Bool = false {
+        didSet { loadingOverlay.alpha = isLoading ? 1 : 0 }
+    }
 
     var locationMonitor: LocationMonitor { return (UIApplication.shared.delegate! as! AppDelegate).locationMonitor }
 
     fileprivate var shouldFetchPlaces: Bool = true
-
-    fileprivate var isLoading: Bool = false {
-        didSet {
-            loadingOverlay.alpha = isLoading ? 1 : 0
-        }
-    }
 
     fileprivate var notificationToastProvider: InAppNotificationToastProvider?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        initLoadingOverlay()
+    }
 
-        if let backgroundImage = UIImage(named: "map_background") {
-            self.view.layer.contents = backgroundImage.cgImage
-        }
-
-        var constraints = [NSLayoutConstraint]()
-        loadingOverlay.delegate = self
-        view.addSubview(loadingOverlay)
-        constraints.append(contentsOf: [loadingOverlay.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor),
-                                        loadingOverlay.bottomAnchor.constraint(equalTo: self.bottomLayoutGuide.topAnchor),
-                                        loadingOverlay.leftAnchor.constraint(equalTo: self.view.leftAnchor),
-                                        loadingOverlay.rightAnchor.constraint(equalTo: self.view.rightAnchor)])
-
-        // apply the constraints
-        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
-
+    private func initLoadingOverlay() {
+        loadingOverlay.addAsSubview(on: view)
         isLoading = true
     }
 
@@ -262,9 +252,7 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
 
 extension PlaceCarouselViewController: LoadingOverlayDelegate {
     func loadingOverlayDidTapSearchAgain() {
-        guard let location = locationMonitor.getCurrentLocation() else {
-            return
-        }
+        guard let location = locationMonitor.getCurrentLocation() else { return }
         self.placesProvider.updatePlaces(forLocation: location)
     }
 }

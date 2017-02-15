@@ -45,6 +45,11 @@ class LoadingOverlayView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+
+        if let backgroundImage = UIImage(named: "map_background") {
+            layer.contents = backgroundImage.cgImage
+        }
+
         var constraintsToAdd = [NSLayoutConstraint]()
 
         addSubview(loadingAnimation)
@@ -83,6 +88,15 @@ class LoadingOverlayView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func addAsSubview(on view: UIView) {
+        view.addSubview(self)
+        let constraints = [topAnchor.constraint(equalTo: view.topAnchor),
+                           bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                           leftAnchor.constraint(equalTo: view.leftAnchor),
+                           rightAnchor.constraint(equalTo: view.rightAnchor)]
+        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
 
     @objc fileprivate func didTapSearchAgainButton() {
