@@ -190,8 +190,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 placeCarouselViewController?.openPlace(placeKey: placeKey, forEventWithKey: eventKey)
                 Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.BACKGROUND])
             } else if let body = notification.alertBody {
-                placeCarouselViewController?.presentInAppEventNotification(forEventWithKey: eventKey, atPlaceWithKey: placeKey, withDescription: body)
-                Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.FOREGROUND])
+//                placeCarouselViewController?.presentInAppEventNotification(forEventWithKey: eventKey, atPlaceWithKey: placeKey, withDescription: body)
+//                Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.FOREGROUND])
             }
         }
     }
@@ -212,8 +212,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // show a badge.
         if let eventKey = notification.request.content.userInfo[notificationEventIDKey] as? String,
             let placeKey = notification.request.content.userInfo[notificationEventPlaceIDKey] as? String {
-            Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.BACKGROUND])
-            placeCarouselViewController?.presentInAppEventNotification(forEventWithKey: eventKey, atPlaceWithKey: placeKey, withDescription: notification.request.content.body)
+//            Analytics.logEvent(event: AnalyticsEvent.EVENT_NOTIFICATION, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.BACKGROUND])
+//            placeCarouselViewController?.presentInAppEventNotification(forEventWithKey: eventKey, atPlaceWithKey: placeKey, withDescription: notification.request.content.body)
         }
         completionHandler(UNNotificationPresentationOptions.badge)
     }

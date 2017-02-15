@@ -54,8 +54,6 @@ class PlaceCarouselViewController: UIViewController {
 
     fileprivate var shouldFetchPlaces: Bool = true
 
-    fileprivate var notificationToastProvider: InAppNotificationToastProvider?
-
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
@@ -155,44 +153,6 @@ class PlaceCarouselViewController: UIViewController {
         // handle when the user is already looking at the app
         presentedVC.openCard(forPlaceWithEvent: place)
     }
-
-    func presentInAppEventNotification(forEventWithKey eventKey: String, atPlaceWithKey placeKey: String, withDescription description: String) {
-        DispatchQueue.main.async {
-            guard let presentedVC = self.presentedViewController as? PlaceDetailViewController else {
-                // open the details screen for the place
-                return self.presentToast(withText: description, forEventWithId: eventKey, atPlaceWithId: placeKey)
-            }
-
-            // handle when the user is already looking at the app
-            presentedVC.presentToast(withText: description, forEvent: eventKey, atPlace: placeKey)
-        }
-    }
-
-    private func presentToast(withText text: String, forEventWithId eventId: String, atPlaceWithId placeId: String) {
-        if notificationToastProvider == nil {
-            notificationToastProvider = InAppNotificationToastProvider(placeId: placeId, eventId: eventId, text: text)
-            notificationToastProvider?.delegate = self
-            notificationToastProvider?.presentOnView(self.view)
-        }
-    }
-}
-
-extension PlaceCarouselViewController: InAppNotificationToastDelegate {
-    internal func inAppNotificationToastProvider(_ toast: InAppNotificationToastProvider, userDidRespondToNotificationForEventWithId eventId: String, atPlaceWithId placeId: String) {
-        placesProvider.fetchPlace(placeKey: placeId, withEvent: eventId) { place in
-            guard let place = place else {
-                NSLog("Unable to find place with id \(placeId) and event with id \(eventId)")
-                return
-            }
-            DispatchQueue.main.async {
-                self.openDetail(forPlace: place)
-            }
-        }
-    }
-
-    func inAppNotificationToastProviderDidDismiss(_ toast: InAppNotificationToastProvider) {
-        self.notificationToastProvider = nil
-    }
 }
 
 extension PlaceCarouselViewController: LocationMonitorDelegate {
@@ -211,9 +171,6 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
     }
 
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation) {
-        guard AppConstants.areNotificationsEnabled else { return }
-        let eventNotificationsManager = EventNotificationsManager(withLocationProvider: locationMonitor)
-        eventNotificationsManager.checkForEventsToNotify(forLocation: location)
     }
     
     func locationMonitorNeedsUserPermissionsPrompt(_ locationMonitor: LocationMonitor) {
