@@ -65,11 +65,6 @@ class PlaceCarouselViewController: UIViewController {
         isLoading = true
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     func openFirstPlace() {
         do {
             let place = try placesProvider.place(forIndex: 0)
@@ -142,16 +137,6 @@ class PlaceCarouselViewController: UIViewController {
                 (presentedVC as? PlaceDetailViewController)?.openCard(forPlaceWithEvent: place)
             }
         }
-    }
-
-    fileprivate func openPlace(_ place: Place) {
-        guard let presentedVC = self.presentedViewController as? PlaceDetailViewController else {
-        // open the details screen for the place
-            return self.openDetail(forPlace: place)
-        }
-
-        // handle when the user is already looking at the app
-        presentedVC.openCard(forPlaceWithEvent: place)
     }
 }
 
