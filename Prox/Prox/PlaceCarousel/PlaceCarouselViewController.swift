@@ -5,7 +5,6 @@
 import UIKit
 import MapKit
 import QuartzCore
-import EDSunriseSet
 import Deferred
 
 protocol PlaceDataSource: class {
@@ -42,119 +41,20 @@ class PlaceCarouselViewController: UIViewController {
         return controller
     }()
 
-    // the top part of the background. Contains Number of Places, horizontal line & (soon to be) Current Location button
-    lazy var headerView: PlaceCarouselHeaderView = {
-        let view = PlaceCarouselHeaderView()
-        view.backgroundColor = Colors.carouselViewHeaderBackground
-        return view
-    }()
-
-    // View that will display the sunset and sunrise times
-    lazy var sunView: UIView = {
-        let view = UIView()
-        view.backgroundColor = Colors.carouselViewHeaderBackground
-
-        view.layer.shadowColor = UIColor.darkGray.cgColor
-        view.layer.shadowOpacity = 0.25
-        view.layer.shadowOffset = CGSize(width: 0, height: 2)
-        view.layer.shadowRadius = 2
-
-        return view
-    }()
-
     lazy var loadingOverlay = LoadingOverlayView(frame: CGRect.zero)
-
-    // label displaying sunrise and sunset times
-    lazy var sunriseSetTimesLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = Colors.carouselViewSunriseSetTimesLabelText
-        label.font = Fonts.carouselViewSunriseSetTimes
-        return label
-    }()
 
     var locationMonitor: LocationMonitor { return (UIApplication.shared.delegate! as! AppDelegate).locationMonitor }
     fileprivate var isNoLocationAlertPresented = false
-
-    lazy var placeCarousel: PlaceCarousel = {
-        let carousel = PlaceCarousel()
-        carousel.delegate = self
-        carousel.dataSource = self.placesProvider
-        carousel.locationProvider = self.locationMonitor
-        return carousel
-    }()
 
     fileprivate var shouldFetchPlaces: Bool = true
 
     fileprivate var isLoading: Bool = false {
         didSet {
-            headerView.alpha = isLoading ? 0 : 1
-            sunView.alpha = isLoading ? 0 : 1
-            placeCarousel.carousel.alpha = isLoading ? 0 : 1
             loadingOverlay.alpha = isLoading ? 1 : 0
         }
     }
 
-    var sunriseSet: EDSunriseSet? {
-        didSet {
-            setSunriseSetTimes()
-        }
-    }
-
     fileprivate var notificationToastProvider: InAppNotificationToastProvider?
-
-    private func setSunriseSetTimes() {
-        let today = Date()
-
-        guard let sunriseSet = self.sunriseSet else {
-            return self.sunriseSetTimesLabel.text = nil
-        }
-
-        sunriseSet.calculateSunriseSunset(today)
-
-        guard let sunrise = sunriseSet.localSunrise(),
-            let sunset = sunriseSet.localSunset(),
-            let calendar = NSCalendar(identifier: NSCalendar.Identifier.gregorian) else {
-                return self.sunriseSetTimesLabel.text = nil
-        }
-
-        let sunriseToday = updateDateComponents(dateComponents: sunrise, toDate: today, withCalendar: calendar)
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "h:mm a"
-
-        if let sunriseTime = calendar.date(from: sunriseToday),
-            sunriseTime > today {
-            let timeAsString = dateFormatter.string(from: sunriseTime)
-            return self.sunriseSetTimesLabel.text = "Sunrise is at \(timeAsString) today"
-        }
-
-        let sunsetToday = updateDateComponents(dateComponents: sunset, toDate: today, withCalendar: calendar)
-
-        if let sunsetTime = calendar.date(from: sunsetToday),
-            sunsetTime > today {
-            let timeAsString = dateFormatter.string(from: sunsetTime)
-            return self.sunriseSetTimesLabel.text = "Sunset is at \(timeAsString) today"
-        }
-
-        let tomorrow = today.addingTimeInterval(AppConstants.ONE_DAY)
-        sunriseSet.calculateSunriseSunset(tomorrow)
-        if let tomorrowSunrise = sunriseSet.localSunrise(),
-            let tomorrowSunriseTime = calendar.date(from: tomorrowSunrise) {
-            let timeAsString = dateFormatter.string(from: tomorrowSunriseTime)
-            self.sunriseSetTimesLabel.text = "Sunrise is at \(timeAsString) tomorrow"
-        } else {
-            self.sunriseSetTimesLabel.text = nil
-        }
-    }
-
-    private func updateDateComponents(dateComponents: DateComponents, toDate date: Date, withCalendar calendar: NSCalendar) -> DateComponents {
-        var newDateComponents = dateComponents
-        newDateComponents.day = calendar.component(NSCalendar.Unit.day, from: date)
-        newDateComponents.month = calendar.component(NSCalendar.Unit.month, from: date)
-        newDateComponents.year = calendar.component(NSCalendar.Unit.year, from: date)
-
-        return newDateComponents
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -165,35 +65,6 @@ class PlaceCarouselViewController: UIViewController {
         }
 
         var constraints = [NSLayoutConstraint]()
-
-        view.addSubview(sunView)
-        constraints.append(contentsOf: [sunView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
-                                        sunView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                                        sunView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                                        sunView.heightAnchor.constraint(equalToConstant: 90)])
-
-        // add the views to the stack view
-        view.addSubview(headerView)
-
-        // setting up the layout constraints
-        constraints.append(contentsOf: [headerView.topAnchor.constraint(equalTo: topLayoutGuide.topAnchor),
-                                        headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                                        headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                                        headerView.heightAnchor.constraint(equalToConstant: 150)])
-
-        // set up the subviews for the sunrise/set view
-        sunView.addSubview(sunriseSetTimesLabel)
-        constraints.append(sunriseSetTimesLabel.leadingAnchor.constraint(equalTo: sunView.leadingAnchor, constant: 20))
-        constraints.append(sunriseSetTimesLabel.topAnchor.constraint(equalTo: sunView.topAnchor, constant: 14))
-
-        headerView.numberOfPlacesLabel.text = "" // placeholder
-
-        view.addSubview(placeCarousel.carousel)
-        constraints.append(contentsOf: [placeCarousel.carousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                                        placeCarousel.carousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                                        placeCarousel.carousel.topAnchor.constraint(equalTo: sunView.bottomAnchor, constant: -35),
-                                        placeCarousel.carousel.heightAnchor.constraint(equalToConstant: 300)])
-
         loadingOverlay.delegate = self
         view.addSubview(loadingOverlay)
         constraints.append(contentsOf: [loadingOverlay.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor),
@@ -246,10 +117,6 @@ class PlaceCarouselViewController: UIViewController {
             locationMonitor.startMonitoringForVisitAtCurrentLocation()
         }
 
-        if sunriseSet == nil {
-            updateSunRiseSetTimes(forLocation: location)
-        }
-
         updatePlaces(forLocation: location)
     }
 
@@ -261,7 +128,6 @@ class PlaceCarouselViewController: UIViewController {
             } else {
                 // re-sort places based on new location
                 placesProvider.sortPlaces(byLocation: location)
-                placeCarousel.refresh()
             }
         }
     }
@@ -274,25 +140,6 @@ class PlaceCarouselViewController: UIViewController {
             self.shouldFetchPlaces = true
         })
         self.shouldFetchPlaces = false
-    }
-
-    fileprivate func updateSunRiseSetTimes(forLocation location: CLLocation) {
-        let coord = location.coordinate
-        // if we're running in the simulator, find the timezone of the current coordinates and calculate the sunrise/set times for then
-        // this is so that, if we're simulating our location, we still get sunset/sunrise times
-        #if (arch(i386) || arch(x86_64))
-            let geocoder = CLGeocoder()
-            geocoder.reverseGeocodeLocation(location) { placemarks, error in
-                if let placemark = placemarks?.first {
-                    DispatchQueue.main.async() {
-                        self.sunriseSet = EDSunriseSet(timezone: placemark.timeZone, latitude: coord.latitude, longitude: coord.longitude)
-                    }
-                }
-            }
-        #else
-            sunriseSet = EDSunriseSet(timezone: NSTimeZone.local, latitude: coord.latitude, longitude: coord.longitude)
-        #endif
-
     }
 
     fileprivate func presentSettingsOrQuitPrompt() {
@@ -392,12 +239,6 @@ extension PlaceCarouselViewController: InAppNotificationToastDelegate {
     }
 }
 
-extension PlaceCarouselViewController: PlaceCarouselDelegate {
-    func placeCarousel(placeCarousel: PlaceCarousel, didSelectPlaceAtIndex index: Int) {
-        openDetail(forPlace: try! placesProvider.place(forIndex: index))
-    }
-}
-
 extension PlaceCarouselViewController: LocationMonitorDelegate {
     func locationMonitor(_ locationMonitor: LocationMonitor, didUpdateLocation location: CLLocation) {
         if !isNoLocationAlertPresented {
@@ -445,10 +286,8 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
             }
 
             loadingOverlay.fadeInMessaging()
-            headerView.numberOfPlacesLabel.text = "No Places Found"
         } else {
             loadingOverlay.fadeOutMessaging()
-            headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
         }
 
         self.openFirstPlace()
@@ -477,21 +316,7 @@ extension PlaceCarouselViewController: UIViewControllerTransitioningDelegate {
                     self.isLoading = false
                 }
                 return fadeTransition
-            } else {
-                let transition = MapPlacesTransition()
-                transition.presenting = true
-                return transition
             }
-        }
-        return nil
-    }
-
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        if let detailVC = dismissed as? PlaceDetailViewController,
-            let _ = placesProvider.index(forPlace: detailVC.currentPlace) {
-            let transition = MapPlacesTransition()
-            transition.presenting = false
-            return transition
         }
         return nil
     }

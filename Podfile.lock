@@ -17,7 +17,6 @@ PODS:
   - BadgeSwift (3.0.0)
   - BNRDeferred (3.0.0-beta.3)
   - BuddyBuildSDK (1.0.12)
-  - EDSunriseSet (1.0)
   - Firebase/Auth (3.8.0):
     - Firebase/Core
     - FirebaseAuth (= 3.0.6)
@@ -79,7 +78,6 @@ DEPENDENCIES:
   - BadgeSwift (~> 3.0)
   - BNRDeferred (~> 3.0-beta)
   - BuddyBuildSDK
-  - EDSunriseSet
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Database
@@ -93,7 +91,6 @@ SPEC CHECKSUMS:
   BadgeSwift: 30310290b4073da62879813c2071bab535509ff4
   BNRDeferred: 17042a76318cc1f23af85f1ee4fad4cc3172f272
   BuddyBuildSDK: f4682598772ae66c9ef5554d2d78d0a19fb413a0
-  EDSunriseSet: bdc4760f496c8e6f9b9a727ffa645b6048aa2a09
   Firebase: fdbecadb7b5cbef2774852d4fa659b9daf11f2af
   FirebaseAnalytics: 6e58fc9b397664369ac7617fb0ba93fab6ba7b5b
   FirebaseAuth: 96e9674ff31d6e1f826d53e26aa003a57cab0295
@@ -109,6 +106,6 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
 
-PODFILE CHECKSUM: 2cb421307700de84481f01292ffefa4923b21900
+PODFILE CHECKSUM: 1fb53da2a19330afec784420fba49ef14a7a712e
 
 COCOAPODS: 1.2.0
