@@ -427,40 +427,26 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
 }
 
 extension PlaceCarouselViewController: PlacesProviderDelegate {
-    fileprivate func showErrorMessageIfNoPlaces() {
-        if placesProvider.numberOfPlaces() == 0 {
+    func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
+        if places.count == 0 {
             // We don't want to show two error pop-ups: checking for any VC is a superset, but simple.
             let isOtherViewControllerShown = presentedViewController != nil
             let hasLocation = locationMonitor.getCurrentLocation() != nil
-            guard hasLocation,
-                    !isOtherViewControllerShown else {
+            guard hasLocation, !isOtherViewControllerShown else {
                 presentNoLocationAlert()
                 return // Don't show "Try again" button - it could be misleading.
             }
 
             loadingOverlay.fadeInMessaging()
             headerView.numberOfPlacesLabel.text = "No Places Found"
+        } else {
+            loadingOverlay.fadeOutMessaging()
+            headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
         }
-    }
 
-    func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider) {
-        showErrorMessageIfNoPlaces()
-    }
-
-    func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
-
-        // TODO: how do we make sure the user wasn't interacting?
-        headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
-        placeCarousel.refresh()
-        // calling async to prevent deadlock inside placesUpdated
-        DispatchQueue.main.async {
-            (self.presentedViewController as? PlaceDetailViewController)?.placesUpdated()
-        }
-    }
-
-    func placesProviderDidFetchFirstPlace() {
         // Wrap the openClosedPlace in an async block to make sure its queued after the
-        // carousel's refresh so the cells load before we invoke the transition
+        // carousel's refresh so the cells load before we invoke the transition.
+        // TODO: This is a mess: we deadlock without the async wrapper. Fix this.
         DispatchQueue.main.async {
             self.openFirstPlace()
         }

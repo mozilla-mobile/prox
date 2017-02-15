@@ -13,16 +13,12 @@ import Foundation
  */
 protocol PlacesProviderDelegate: class {
     func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place])
-    func placesProviderDidFinishFetchingPlaces(_ controller: PlacesProvider)
-    func placesProviderDidFetchFirstPlace()
 }
 
 class PlacesProvider {
     weak var delegate: PlacesProviderDelegate?
 
     private let database = FirebasePlacesDatabase()
-
-    private var isUpdating = false
 
     private lazy var sessionManager: AFHTTPSessionManager = {
         let manager = AFHTTPSessionManager(sessionConfiguration: .default)
@@ -44,8 +40,6 @@ class PlacesProvider {
         }
     }
     fileprivate var placeKeyMap = [String: Int]()
-
-    fileprivate var firstFetch = true
 
     fileprivate let placesLock = NSLock()
 
@@ -159,10 +153,6 @@ class PlacesProvider {
                 self.placesLock.withReadLock {
                     self.delegate?.placesProvider(self, didReceivePlaces: self.displayedPlaces)
                 }
-                if self.firstFetch {
-                    self.delegate?.placesProviderDidFetchFirstPlace()
-                    self.firstFetch = false
-                }
             }
 
         })
@@ -175,14 +165,10 @@ class PlacesProvider {
             let eventPlacesSet = Set<Place>(placesWithEvents)
             let union = eventPlacesSet.union(placesSet)
 
+            // TODO refactor for a more incremental load, and therefore
+            // insertion sort approach to ranking. We shouldn't do too much of this until
+            // we have the waiting states implemented.
             self.displayPlaces(places: Array(union), forLocation: location)
-            DispatchQueue.main.async {
-                // TODO refactor for a more incremental load, and therefore
-                // insertion sort approach to ranking. We shouldn't do too much of this until
-                // we have the waiting states implemented.
-                self.isUpdating = false
-                self.delegate?.placesProviderDidFinishFetchingPlaces(self)
-            }
         }
     }
 
