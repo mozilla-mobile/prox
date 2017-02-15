@@ -16,6 +16,16 @@ protocol PlaceDataSource: class {
     func index(forPlace: Place) -> Int?
     func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ())
     func sortPlaces(byLocation location: CLLocation)
+
+    /// Returns all nearby places filtered by the given set of filters.
+    /// This function does not modify the data source.
+    func filterPlaces(filters: [PlaceFilter]) -> [Place]
+
+    /// Refreshes the data source by filtering with the enabled filters.
+    func refresh()
+
+    /// You must call refresh() after changing the enabled state of any filter!
+    var filters: [PlaceFilter] { get }
 }
 
 struct PlaceDataSourceError: Error {
@@ -427,7 +437,7 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
 }
 
 extension PlaceCarouselViewController: PlacesProviderDelegate {
-    func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
+    func placesProvider(_ controller: PlacesProvider, didUpdatePlaces places: [Place]) {
         if places.count == 0 {
             // We don't want to show two error pop-ups: checking for any VC is a superset, but simple.
             let isOtherViewControllerShown = presentedViewController != nil

@@ -12,7 +12,7 @@ import Foundation
  * All methods on the delegate will be called on the main thread.
  */
 protocol PlacesProviderDelegate: class {
-    func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place])
+    func placesProvider(_ controller: PlacesProvider, didUpdatePlaces places: [Place])
 }
 
 class PlacesProvider {
@@ -30,32 +30,22 @@ class PlacesProvider {
         return RemoteConfigKeys.searchRadiusInKm.value
     }()
 
-    fileprivate var displayedPlaces = [Place]() {
-        didSet {
-            var placesMap = [String: Int]()
-            for (index, place) in displayedPlaces.enumerated() {
-                placesMap[place.id] = index
-            }
-            self.placeKeyMap = placesMap
-        }
-    }
-    fileprivate var placeKeyMap = [String: Int]()
+    private var allPlaces = [Place]()
 
+    fileprivate var displayedPlaces = [Place]()
+    fileprivate var placeKeyMap = [String: Int]()
     fileprivate let placesLock = NSLock()
 
-    init() {
-
-    }
-
-    convenience init(places: [Place]) {
-        self.init()
-        self.displayedPlaces = places
-        var placesMap = [String: Int]()
-        for (index, place) in displayedPlaces.enumerated() {
-            placesMap[place.id] = index
-        }
-        self.placeKeyMap = placesMap
-    }
+    let filters = [
+        PlaceFilter(label: Strings.filterView.discover, enabled: true,
+                    categories: ["active", "arts", "localflavor", "hotelstravel"]),
+        PlaceFilter(label: Strings.filterView.eatAndDrink, enabled: true,
+                    categories: ["food", "nightlife", "restaurants"]),
+        PlaceFilter(label: Strings.filterView.shop, enabled: true,
+                    categories: ["shopping"]),
+        PlaceFilter(label: Strings.filterView.services, enabled: true,
+                    categories: ["auto", "beautysvc", "bicycles", "education", "eventplanning", "financialservices", "health", "homeservices", "localservices", "professional", "massmedia", "pets", "publicservicesgovt", "realestate", "religiousorgs"]),
+    ]
 
     func place(forKey key: String, callback: @escaping (Place?) -> ()) {
         database.getPlace(forKey: key).upon { callback($0.successResult() )}
@@ -119,7 +109,7 @@ class PlacesProvider {
             self.placesLock.withReadLock {
                 for placeKey in Array(placeKeyToLoc.keys) {
                     if let index = self.placeKeyMap[placeKey] {
-                        let place = self.displayedPlaces[index]
+                        let place = self.allPlaces[index]
                         fetchedPlaces.append(Deferred(filledWith: DatabaseResult.succeed(value: place)))
                     } else {
                         unfetchedPlaces.append(placeKey)
@@ -139,6 +129,28 @@ class PlacesProvider {
         }
     }
 
+    func filterPlaces(filters: [PlaceFilter]) -> [Place] {
+        let enabledCategories = Set(filters.filter { $0.enabled }.map { $0.categories }.reduce([], +))
+        let toRoots = CategoriesUtil.categoryToRootsMap
+
+        return allPlaces.filter { place in
+            let categories = Set(place.categories.ids.flatMap { toRoots[$0] }.reduce([], +))
+            return !enabledCategories.isDisjoint(with: categories)
+        }
+    }
+
+    /// Applies the current set of filters to all places, setting `displayedPlaces` to the result.
+    /// Callers must acquire a write lock before calling this method!
+    fileprivate func updateDisplayedPlaces() {
+        displayedPlaces = filterPlaces(filters: filters)
+
+        var placesMap = [String: Int]()
+        for (index, place) in displayedPlaces.enumerated() {
+            placesMap[place.id] = index
+        }
+        placeKeyMap = placesMap
+    }
+
     /**
      * displayPlaces merges found places with events with places we have found nearby, giving us a combined list of
      * all the places that we need to show to the user.
@@ -147,11 +159,12 @@ class PlacesProvider {
         let filteredPlaces = PlaceUtilities.filterPlacesForCarousel(places)
         return PlaceUtilities.sort(places: filteredPlaces, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
             self.placesLock.withWriteLock {
-                self.displayedPlaces = sortedPlaces
+                self.allPlaces = sortedPlaces
+                self.updateDisplayedPlaces()
             }
             DispatchQueue.main.async {
                 self.placesLock.withReadLock {
-                    self.delegate?.placesProvider(self, didReceivePlaces: self.displayedPlaces)
+                    self.delegate?.placesProvider(self, didUpdatePlaces: self.displayedPlaces)
                 }
             }
 
@@ -257,14 +270,20 @@ extension PlacesProvider: PlaceDataSource {
         }
     }
 
-    func allPlaces() -> [Place] {
-        return displayedPlaces
-    }
-
     func sortPlaces(byLocation location: CLLocation) {
         self.placesLock.withWriteLock {
             let sortedPlaces = PlaceUtilities.sort(places: displayedPlaces, byDistanceFromLocation: location)
             self.displayedPlaces = sortedPlaces
         }
+    }
+
+    func refresh() {
+        assert(Thread.isMainThread)
+
+        placesLock.withWriteLock {
+            updateDisplayedPlaces()
+        }
+
+        delegate?.placesProvider(self, didUpdatePlaces: displayedPlaces)
     }
 }
