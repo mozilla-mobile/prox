@@ -148,49 +148,6 @@ class PlaceDetailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-
-    func placesUpdated() {
-        mapButtonBadge.text = "\(dataSource?.numberOfPlaces() ?? 0)"
-
-        if let nextPlace = dataSource?.nextPlace(forPlace: currentCardViewController.place) {
-            if let nextCardViewController = nextCardViewController {
-                nextCardViewController.place = nextPlace
-            } else {
-                nextCardViewController = dequeuePlaceCardViewController(forPlace: nextPlace)
-                nextCardViewController?.cardView.transform = scaleOutTransformRight
-                scrollView.addSubview(nextCardViewController!.cardView)
-                nextCardViewLeadingConstraint = nextCardViewController!.cardView.leadingAnchor.constraint(equalTo: currentCardViewController.cardView.trailingAnchor, constant: cardViewSpacingConstant)
-                NSLayoutConstraint.activate( [nextCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
-                                nextCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
-                                nextCardViewLeadingConstraint!], translatesAutoresizingMaskIntoConstraints: false)
-            }
-        } else {
-            nextCardViewController?.cardView.removeFromSuperview()
-            nextCardViewController?.removeFromParentViewController()
-            nextCardViewController = nil
-        }
-
-        if let previousPlace = dataSource?.previousPlace(forPlace: currentCardViewController.place) {
-            if let previousCardViewController = previousCardViewController {
-                previousCardViewController.place = previousPlace
-            } else  {
-                previousCardViewController = dequeuePlaceCardViewController(forPlace: previousPlace)
-                previousCardViewController?.cardView.transform = scaleOutTransformLeft
-                scrollView.addSubview(previousCardViewController!.cardView)
-                previousCardViewTrailingConstraint = previousCardViewController!.cardView.trailingAnchor.constraint(equalTo: currentCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
-                NSLayoutConstraint.activate( [previousCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
-                                previousCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
-                                previousCardViewTrailingConstraint!], translatesAutoresizingMaskIntoConstraints: false)
-            }
-        } else {
-            previousCardViewController?.cardView.removeFromSuperview()
-            previousCardViewController?.removeFromParentViewController()
-            previousCardViewController = nil
-        }
-
-        view.setNeedsLayout()
-    }
-
     fileprivate func setBackgroundImage(toPhotoAtURL photoURL: URL?) {
         let placeholder = UIImage(named: "place-placeholder")
         if let imageURL = photoURL {
