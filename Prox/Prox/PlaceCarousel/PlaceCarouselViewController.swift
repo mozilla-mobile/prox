@@ -44,7 +44,6 @@ class PlaceCarouselViewController: UIViewController {
     lazy var loadingOverlay = LoadingOverlayView(frame: CGRect.zero)
 
     var locationMonitor: LocationMonitor { return (UIApplication.shared.delegate! as! AppDelegate).locationMonitor }
-    fileprivate var isNoLocationAlertPresented = false
 
     fileprivate var shouldFetchPlaces: Bool = true
 
@@ -142,39 +141,6 @@ class PlaceCarouselViewController: UIViewController {
         self.shouldFetchPlaces = false
     }
 
-    fileprivate func presentSettingsOrQuitPrompt() {
-        let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
-        let alertController = UIAlertController(title: "\(appName) requires location access",
-            message: "This prototype is not supported without location access.", preferredStyle: .alert)
-
-        let settingsAction = UIAlertAction(title: "Settings", style: .default, handler: {(action: UIAlertAction) -> Void in
-            UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
-        })
-        let quitAction = UIAlertAction(title: "Quit", style: .destructive, handler: {(action: UIAlertAction) -> Void in
-            UIControl().sendAction(#selector(URLSessionTask.suspend), to: UIApplication.shared, for: nil)
-        })
-        alertController.addAction(settingsAction)
-        alertController.addAction(quitAction)
-
-        Analytics.logEvent(event: AnalyticsEvent.LOCATION_REPROMPT, params: [:])
-        self.present(alertController, animated: true)
-    }
-
-    fileprivate func presentNoLocationAlert() {
-        // The message says to close and restart Prox, however, at time of writing, this is not
-        // always necessary: if we receive a location event while or after the dialog is displayed,
-        // we'll show the places. It's used as a catch all because we don't know for sure what
-        // causes the loading screen stall (#392).
-        let alert = UIAlertController(title: "Where did you go?",
-                                      message: "We can't find your current location. Please close and restart Prox.",
-                                      preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK, got it.", style: .default) { _ in
-            self.dismiss(animated: true) { self.isNoLocationAlertPresented = false }
-        })
-
-        self.present(alert, animated: true) { self.isNoLocationAlertPresented = true }
-    }
-
     func openPlace(placeKey: String, forEventWithKey eventKey: String) {
         placesProvider.place(withKey: placeKey, forEventWithKey: eventKey) { place in
             guard let place = place else { return }
@@ -241,7 +207,7 @@ extension PlaceCarouselViewController: InAppNotificationToastDelegate {
 
 extension PlaceCarouselViewController: LocationMonitorDelegate {
     func locationMonitor(_ locationMonitor: LocationMonitor, didUpdateLocation location: CLLocation) {
-        if !isNoLocationAlertPresented {
+        if !Prompts.isNoLocationAlertPresented {
             updateLocation(location: location)
             return
         }
@@ -249,7 +215,7 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
         // If we don't dismiss the location alert, the detail view controller (called from
         // updateLocation) does not get presented.
         dismiss(animated: true) {
-            self.isNoLocationAlertPresented = false
+            Prompts.isNoLocationAlertPresented = false
             self.updateLocation(location: location)
         }
     }
@@ -261,7 +227,7 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
     }
     
     func locationMonitorNeedsUserPermissionsPrompt(_ locationMonitor: LocationMonitor) {
-        presentSettingsOrQuitPrompt()
+        Prompts.presentSettingsOrQuitPrompt(for: self)
     }
 
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidExitCurrentLocation location: CLLocation) {
@@ -270,7 +236,7 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
 
     func locationMonitor(_ locationMonitor: LocationMonitor, didFailInitialUpdateWithError error: Error) {
         // Note: actually, at this point, if the location comes, `didUpdateLocation` will be called.
-        presentNoLocationAlert()
+        Prompts.presentNoLocationAlert(for: self)
     }
 }
 
@@ -281,7 +247,7 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
             let isOtherViewControllerShown = presentedViewController != nil
             let hasLocation = locationMonitor.getCurrentLocation() != nil
             guard hasLocation, !isOtherViewControllerShown else {
-                presentNoLocationAlert()
+                Prompts.presentNoLocationAlert(for: self)
                 return // Don't show "Try again" button - it could be misleading.
             }
 

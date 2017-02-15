@@ -85,6 +85,7 @@
 		E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61831981DE0BDBA00D1810F /* TravelTimesView.swift */; };
 		E618319B1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */; };
 		E61972141DD28B7A00C9D093 /* PlaceDetailsEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */; };
+		E62CE0C11E5786BE0083FA7B /* Prompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62CE0C01E5786BE0083FA7B /* Prompts.swift */; };
 		E63C346F1DDCDFBB005B6B15 /* LocationLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63C346E1DDCDFBB005B6B15 /* LocationLoadingView.swift */; };
 		E662FF4A1DC022940042C4A9 /* PlaceDetailsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662FF491DC022940042C4A9 /* PlaceDetailsCardView.swift */; };
 		E662FF4C1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */; };
@@ -226,6 +227,7 @@
 		E61831981DE0BDBA00D1810F /* TravelTimesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TravelTimesView.swift; sourceTree = "<group>"; };
 		E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsTravelTimesView.swift; sourceTree = "<group>"; };
 		E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsEventView.swift; sourceTree = "<group>"; };
+		E62CE0C01E5786BE0083FA7B /* Prompts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Prompts.swift; sourceTree = "<group>"; };
 		E63C346E1DDCDFBB005B6B15 /* LocationLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationLoadingView.swift; sourceTree = "<group>"; };
 		E662FF491DC022940042C4A9 /* PlaceDetailsCardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsCardView.swift; sourceTree = "<group>"; };
 		E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsIconInfoView.swift; sourceTree = "<group>"; };
@@ -381,6 +383,7 @@
 		7B5095681DB53382007C54F0 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				E62CE0C01E5786BE0083FA7B /* Prompts.swift */,
 				7B23BD1E1DE862F500A23604 /* ChevronView.swift */,
 				7B50956D1DB53429007C54F0 /* HorizontalLineView.swift */,
 				7B699A9D1DEDD635004A671B /* InAppNotificationToast.swift */,
@@ -856,6 +859,7 @@
 				D39825CB1E4E943100BFF941 /* PlaceFilter.swift in Sources */,
 				D3C815681E4542E30066A97B /* PlaceProviders.swift in Sources */,
 				7B9D15C81DC0D51C0051B760 /* OpenInFirefoxControllerSwift.swift in Sources */,
+				E62CE0C11E5786BE0083FA7B /* Prompts.swift in Sources */,
 				E63C346F1DDCDFBB005B6B15 /* LocationLoadingView.swift in Sources */,
 				7B5095721DB5352E007C54F0 /* Colors.swift in Sources */,
 				7B48EBDA1DD1F679005C36CB /* GeofenceRegion.swift in Sources */,
