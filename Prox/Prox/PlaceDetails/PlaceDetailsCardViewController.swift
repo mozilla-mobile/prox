@@ -242,10 +242,7 @@ class PlaceDetailsCardViewController: UIViewController {
     }
 
     @objc private func autoMoveToNextCarouselImage() {
-        return
-
-        // TODO: Re-enable after we have photos from Yelp v3 and other sources (issue #514).
-//        self.imageCarouselCollectionView.scrollToItem(at: IndexPath(item: getNextCarouselPageIndex(), section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
+        self.imageCarouselCollectionView.scrollToItem(at: IndexPath(item: getNextCarouselPageIndex(), section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
     }
 
     func pageControlDidPage(sender: AnyObject) {

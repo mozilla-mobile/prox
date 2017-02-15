@@ -42,11 +42,14 @@ class SinglePlaceProvider: PlaceProvider {
             self.description = nil
         }
 
-        if let categoriesFromFirebase = dict["categories"] as? [[String:String]] {
-            categories = SinglePlaceProvider.getCategories(fromFirebaseValue: categoriesFromFirebase)
-        } else {
-            categories = ([], [])
+        let categoryIds = dict["categories"] as? [String] ?? []
+        var categories = (names: [String], ids: [String])([], [])
+        for id in categoryIds {
+            guard let name = CategoriesUtil.categoryToName[id] else { continue }
+            categories.ids.append(id)
+            categories.names.append(name)
         }
+        self.categories = categories
 
         if let coords = dict["coordinates"] as? [String: Double],
             let lat = coords["lat"],
@@ -143,23 +146,5 @@ class CompositePlaceProvider: PlaceProvider {
                 totalReviewCount = provider.totalReviewCount
             }
         }
-    }
-}
-
-extension SinglePlaceProvider {
-    fileprivate static func getCategories(fromFirebaseValue value: [[String:String]]) -> (names: [String], ids: [String]) {
-        var names = [String]()
-        var ids = [String]()
-        for category in value {
-            guard let name = category["text"], let id = category["id"] else {
-                log.warn("unable to retrieve category from firebase data for place")
-                continue
-            }
-
-            names.append(name)
-            ids.append(id)
-        }
-
-        return (names: names, ids: ids)
     }
 }

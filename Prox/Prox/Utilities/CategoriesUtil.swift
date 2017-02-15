@@ -102,6 +102,17 @@ struct CategoriesUtil {
         return try! JSONSerialization.jsonObject(with: inputStream) as! NSArray
     }
 
+    static let categoryToName: [String: String] = {
+        let json = loadAllCategoriesFile()
+        var categoryToName = [String: String]()
+        for obj in json as! [[String: Any]] {
+            let id = obj["alias"] as! String
+            let title = obj["title"] as! String
+            assert(categoryToName[id] == nil)
+            categoryToName[id] = title
+        }
+        return categoryToName
+    }()
 }
 
 enum CategoryError: Error {
