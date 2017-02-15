@@ -215,18 +215,15 @@ class PlaceCarouselViewController: UIViewController {
     func openFirstPlace() {
         do {
             let place = try placesProvider.place(forIndex: 0)
-            if self.presentedViewController == nil {
-                openDetail(forPlace: place)
-            }
+            openDetail(forPlace: place)
         } catch {
             NSLog("Unable to open first place as there are no places")
         }
     }
 
     func openDetail(forPlace place: Place, withCompletion completion: (() -> ())? = nil) {
-        // if we are already displaying a place detail, don't try and display another one
-        // places should be able to update beneath without affecting what the user currently sees
-        if let _ = self.presentedViewController {
+        if let presented = self.presentedViewController as? PlaceDetailViewController {
+            presented.openCard(forPlaceWithEvent: place)
             return
         }
 

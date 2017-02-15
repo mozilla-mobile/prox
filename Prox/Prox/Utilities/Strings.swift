@@ -10,5 +10,6 @@ struct Strings {
         static let eatAndDrink = "Eat & Drink"
         static let shop = "Shop"
         static let services = "Services"
+        static let placeCount = "%d places"
     }
 }
