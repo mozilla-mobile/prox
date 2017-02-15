@@ -7,7 +7,7 @@ import GoogleMaps
 
 class MapViewController: UIViewController {
 
-    lazy var rootContainer: UIStackView = {
+    private lazy var rootContainer: UIStackView = {
         let container = UIStackView(arrangedSubviews: [self.titleHeader, self.mapView, self.placeFooter])
         container.axis = .vertical
         container.distribution = .fill
@@ -15,7 +15,7 @@ class MapViewController: UIViewController {
         return container
     }()
 
-    lazy var titleHeader: UILabel = {
+    private lazy var titleHeader: UILabel = {
         let titleView = UILabel()
         titleView.text = "Map view (tap me to dismiss)"
         titleView.textAlignment = .center
@@ -28,14 +28,14 @@ class MapViewController: UIViewController {
         return titleView
     }()
 
-    lazy var mapView: GMSMapView = {
+    private lazy var mapView: GMSMapView = {
         let camera = GMSCameraPosition.camera(withLatitude: 41.88, longitude: -87.62, zoom: 14.0)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.isMyLocationEnabled = true
         return mapView
     }()
 
-    lazy var placeFooter: UIView = {
+    private lazy var placeFooter: UIView = {
         let placeholderView = UILabel()
         placeholderView.text = "Placeholder footer"
         placeholderView.textAlignment = .center
@@ -61,7 +61,6 @@ class MapViewController: UIViewController {
     }
 
     @objc private func close() {
-        print("called")
         dismiss(animated: true)
     }
 }

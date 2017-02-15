@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
-        setupFirebase()
+        setUpFirebase()
         setupRemoteConfig()
         setupGoogleMaps()
         BuddyBuildSDK.setup()
@@ -70,7 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    private func setupFirebase() {
+    private func setUpFirebase() {
         FIRApp.configure()
 
         if let user = FIRAuth.auth()?.currentUser {

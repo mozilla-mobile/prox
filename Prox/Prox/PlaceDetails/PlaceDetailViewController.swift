@@ -700,7 +700,7 @@ class PlaceDetailViewController: UIViewController {
         return nextCardImageCarousel
     }
 
-    @objc fileprivate func openMapView() {
+    @objc private func openMapView() {
         let controller = MapViewController()
         self.present(controller, animated: true)
     }
