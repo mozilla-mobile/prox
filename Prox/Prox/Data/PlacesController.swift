@@ -49,6 +49,18 @@ class PlacesProvider {
                     categories: ["auto", "beautysvc", "bicycles", "education", "eventplanning", "financialservices", "health", "homeservices", "localservices", "professional", "massmedia", "pets", "publicservicesgovt", "realestate", "religiousorgs"]),
     ]
 
+    init() {}
+
+    convenience init(places: [Place]) {
+        self.init()
+        self.displayedPlaces = places
+        var placesMap = [String: Int]()
+        for (index, place) in displayedPlaces.enumerated() {
+            placesMap[place.id] = index
+        }
+        self.placeKeyMap = placesMap
+    }
+
     func place(forKey key: String, callback: @escaping (Place?) -> ()) {
         database.getPlace(forKey: key).upon { callback($0.successResult() )}
     }
