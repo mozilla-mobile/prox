@@ -451,12 +451,7 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
             headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
         }
 
-        // Wrap the openClosedPlace in an async block to make sure its queued after the
-        // carousel's refresh so the cells load before we invoke the transition.
-        // TODO: This is a mess: we deadlock without the async wrapper. Fix this.
-        DispatchQueue.main.async {
-            self.openFirstPlace()
-        }
+        self.openFirstPlace()
     }
 }
 

@@ -52,7 +52,7 @@ class FilterViewController: UIViewController {
         container.backgroundColor = .white
         view.addSubview(container)
 
-        placeCountLabel.font = UIFont.systemFont(ofSize: 20)
+        placeCountLabel.font = Fonts.filterPlaceCountLabel
         container.addSubview(placeCountLabel)
 
         let closeButton = UIButton()
@@ -157,10 +157,13 @@ extension FilterViewController: UIViewControllerAnimatedTransitioning, UIViewCon
 }
 
 fileprivate class FilterButton: InsetButton {
+    private static let checkedImage = #imageLiteral(resourceName: "icon_selected")
+    private static let uncheckedImage = #imageLiteral(resourceName: "icon_add")
+
     override init() {
         super.init()
 
-        titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        titleLabel?.font = Fonts.filterButtonLabel
         contentEdgeInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 16)
         titleEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
         layer.borderWidth = 1
@@ -176,11 +179,11 @@ fileprivate class FilterButton: InsetButton {
             super.isSelected = isSelected
             if isSelected {
                 setTitleColor(Colors.filterButtonCheckedForeground, for: .normal)
-                setImage(#imageLiteral(resourceName: "icon_selected"), for: .normal)
+                setImage(FilterButton.checkedImage, for: .normal)
                 backgroundColor = Colors.filterButtonCheckedBackground
             } else {
                 setTitleColor(Colors.filterButtonUncheckedForeground, for: .normal)
-                setImage(#imageLiteral(resourceName: "icon_add"), for: .normal)
+                setImage(FilterButton.uncheckedImage, for: .normal)
                 backgroundColor = Colors.filterButtonUncheckedBackground
             }
         }

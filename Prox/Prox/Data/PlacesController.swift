@@ -34,6 +34,8 @@ class PlacesProvider {
 
     fileprivate var displayedPlaces = [Place]()
     fileprivate var placeKeyMap = [String: Int]()
+
+    /// Protects allPlaces, displayedPlaces, and placeKeyMap.
     fileprivate let placesLock = NSLock()
 
     let filters = [
@@ -130,6 +132,14 @@ class PlacesProvider {
     }
 
     func filterPlaces(filters: [PlaceFilter]) -> [Place] {
+        return placesLock.withReadLock {
+            return filterPlacesLocked(filters: filters)
+        }
+    }
+
+    /// Callers must acquire a read lock before calling this method!
+    /// TODO: Terrible name, terrible pattern. Fix this with #529.
+    private func filterPlacesLocked(filters: [PlaceFilter]) -> [Place] {
         let enabledCategories = Set(filters.filter { $0.enabled }.map { $0.categories }.reduce([], +))
         let toRoots = CategoriesUtil.categoryToRootsMap
 
@@ -142,7 +152,7 @@ class PlacesProvider {
     /// Applies the current set of filters to all places, setting `displayedPlaces` to the result.
     /// Callers must acquire a write lock before calling this method!
     fileprivate func updateDisplayedPlaces() {
-        displayedPlaces = filterPlaces(filters: filters)
+        displayedPlaces = filterPlacesLocked(filters: filters)
 
         var placesMap = [String: Int]()
         for (index, place) in displayedPlaces.enumerated() {
@@ -163,9 +173,11 @@ class PlacesProvider {
                 self.updateDisplayedPlaces()
             }
             DispatchQueue.main.async {
+                var displayedPlaces: [Place]!
                 self.placesLock.withReadLock {
-                    self.delegate?.placesProvider(self, didUpdatePlaces: self.displayedPlaces)
+                    displayedPlaces = self.displayedPlaces
                 }
+                self.delegate?.placesProvider(self, didUpdatePlaces: displayedPlaces)
             }
 
         })
@@ -280,8 +292,10 @@ extension PlacesProvider: PlaceDataSource {
     func refresh() {
         assert(Thread.isMainThread)
 
+        var displayedPlaces: [Place]!
         placesLock.withWriteLock {
             updateDisplayedPlaces()
+            displayedPlaces = self.displayedPlaces
         }
 
         delegate?.placesProvider(self, didUpdatePlaces: displayedPlaces)
