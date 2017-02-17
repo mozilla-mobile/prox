@@ -32,7 +32,7 @@ class PlacesProvider {
 
     private var allPlaces = [Place]()
 
-    fileprivate var displayedPlaces = [Place]()
+    private var displayedPlaces = [Place]()
     fileprivate var placeKeyMap = [String: Int]()
 
     /// Protects allPlaces, displayedPlaces, and placeKeyMap.
@@ -317,5 +317,13 @@ class PlacesProvider {
         }
 
         delegate?.placesProvider(self, didUpdatePlaces: displayedPlaces)
+    }
+
+    func getDisplayedPlacesCopy() -> [Place] {
+        var placesCopy: [Place] = []
+        placesLock.withReadLock {
+            placesCopy = Array(self.displayedPlaces)
+        }
+        return placesCopy
     }
 }

@@ -657,6 +657,7 @@ class PlaceDetailViewController: UIViewController {
 
     @objc private func openMapView() {
         let controller = MapViewController()
+        controller.placesProvider = dataSource
         controller.locationProvider = locationProvider
         self.present(controller, animated: true)
     }

@@ -9,6 +9,7 @@ class MapViewController: UIViewController {
 
     fileprivate let searchRadiusInMeters: Double = RemoteConfigKeys.searchRadiusInKm.value * 1000
 
+    weak var placesProvider: PlacesProvider?
     weak var locationProvider: LocationProvider?
 
     private lazy var rootContainer: UIStackView = {
@@ -70,6 +71,11 @@ class MapViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         resetMapToUserLocation()
+
+        // Keep the old places on the map if we don't have them (should never happen).
+        guard let places = placesProvider?.getDisplayedPlacesCopy() else { return }
+        mapView.clear()
+        addToMap(places: places)
     }
 
     private func resetMapToUserLocation() {
@@ -93,5 +99,13 @@ class MapViewController: UIViewController {
         let desiredZoom = GMSCameraPosition.zoom(at: userCoordinate, forMeters: mapWidthMeters, perPoints: mapWidthPoints)
         let cameraUpdate = GMSCameraUpdate.setTarget(userCoordinate, zoom: desiredZoom)
         mapView.moveCamera(cameraUpdate)
+    }
+
+    private func addToMap(places: [Place]) {
+        // Consider limiting the place count if we hit performance issues.
+        for place in places {
+            let marker = GMSMarker(for: place)
+            marker.map = mapView
+        }
     }
 }
