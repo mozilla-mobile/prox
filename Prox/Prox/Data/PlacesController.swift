@@ -45,7 +45,7 @@ class PlacesProvider {
                     categories: ["food", "nightlife", "restaurants"]),
         PlaceFilter(label: Strings.filterView.shop, enabled: true,
                     categories: ["shopping"]),
-        PlaceFilter(label: Strings.filterView.services, enabled: true,
+        PlaceFilter(label: Strings.filterView.services, enabled: false,
                     categories: ["auto", "beautysvc", "bicycles", "education", "eventplanning", "financialservices", "health", "homeservices", "localservices", "professional", "massmedia", "pets", "publicservicesgovt", "realestate", "religiousorgs"]),
     ]
 
