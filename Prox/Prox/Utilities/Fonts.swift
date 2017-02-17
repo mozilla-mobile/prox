@@ -48,3 +48,8 @@ extension Fonts {
 extension Fonts {
     public static let mapViewTitleText = UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight)
 }
+
+extension Fonts {
+    public static let filterButtonLabel = UIFont.systemFont(ofSize: 16)
+    public static let filterPlaceCountLabel = UIFont.systemFont(ofSize: 20)
+}

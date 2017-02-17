@@ -13,7 +13,7 @@ enum PanDirection {
 struct PlaceDetailAnimatableViews {
     var nextCard: PlaceDetailsCardView?
     var previousCard: PlaceDetailsCardView?
-    var mapButton: MapButton
+    var mapButton: UIButton
     var currentCard: PlaceDetailsCardView
     var mapButtonBadge: BadgeSwift
     var backgroundImage: UIImageView
@@ -66,10 +66,17 @@ class PlaceDetailViewController: UIViewController {
         return panGesture
     }()
     
-    lazy var mapButton: MapButton = {
-        let button = MapButton()
+    lazy var mapButton: UIButton = {
+        let button = UIButton()
+        button.setImage(#imageLiteral(resourceName: "button_map"), for: .normal)
         button.addTarget(self, action: #selector(self.openMapView), for: .touchUpInside)
-        button.clipsToBounds = false
+        return button
+    }()
+
+    lazy var filterButton: UIButton = {
+        let button = UIButton()
+        button.setImage(#imageLiteral(resourceName: "button_filter"), for: .normal)
+        button.addTarget(self, action: #selector(didPressFilter), for: .touchUpInside)
         return button
     }()
 
@@ -146,49 +153,6 @@ class PlaceDetailViewController: UIViewController {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-
-    func placesUpdated() {
-        mapButtonBadge.text = "\(dataSource?.numberOfPlaces() ?? 0)"
-
-        if let nextPlace = dataSource?.nextPlace(forPlace: currentCardViewController.place) {
-            if let nextCardViewController = nextCardViewController {
-                nextCardViewController.place = nextPlace
-            } else {
-                nextCardViewController = dequeuePlaceCardViewController(forPlace: nextPlace)
-                nextCardViewController?.cardView.transform = scaleOutTransformRight
-                scrollView.addSubview(nextCardViewController!.cardView)
-                nextCardViewLeadingConstraint = nextCardViewController!.cardView.leadingAnchor.constraint(equalTo: currentCardViewController.cardView.trailingAnchor, constant: cardViewSpacingConstant)
-                NSLayoutConstraint.activate( [nextCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
-                                nextCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
-                                nextCardViewLeadingConstraint!], translatesAutoresizingMaskIntoConstraints: false)
-            }
-        } else {
-            nextCardViewController?.cardView.removeFromSuperview()
-            nextCardViewController?.removeFromParentViewController()
-            nextCardViewController = nil
-        }
-
-        if let previousPlace = dataSource?.previousPlace(forPlace: currentCardViewController.place) {
-            if let previousCardViewController = previousCardViewController {
-                previousCardViewController.place = previousPlace
-            } else  {
-                previousCardViewController = dequeuePlaceCardViewController(forPlace: previousPlace)
-                previousCardViewController?.cardView.transform = scaleOutTransformLeft
-                scrollView.addSubview(previousCardViewController!.cardView)
-                previousCardViewTrailingConstraint = previousCardViewController!.cardView.trailingAnchor.constraint(equalTo: currentCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
-                NSLayoutConstraint.activate( [previousCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
-                                previousCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
-                                previousCardViewTrailingConstraint!], translatesAutoresizingMaskIntoConstraints: false)
-            }
-        } else {
-            previousCardViewController?.cardView.removeFromSuperview()
-            previousCardViewController?.removeFromParentViewController()
-            previousCardViewController = nil
-        }
-
-        view.setNeedsLayout()
     }
 
     fileprivate func setBackgroundImage(toPhotoAtURL photoURL: URL?) {
@@ -299,6 +263,12 @@ class PlaceDetailViewController: UIViewController {
                         mapButtonBadge.topAnchor.constraint(equalTo: mapButton.topAnchor),
                         mapButtonBadge.heightAnchor.constraint(equalToConstant: 20.0),
                         mapButtonBadge.widthAnchor.constraint(greaterThanOrEqualToConstant: 20.0)]
+
+        view.addSubview(filterButton)
+        constraints += [filterButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 36),
+                        filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                        filterButton.heightAnchor.constraint(equalToConstant: 48),
+                        filterButton.widthAnchor.constraint(equalToConstant: 48)]
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
@@ -704,6 +674,17 @@ class PlaceDetailViewController: UIViewController {
         let controller = MapViewController()
         self.present(controller, animated: true)
     }
+
+    @objc private func didPressFilter() {
+        guard let filters = dataSource?.filters else { return }
+
+        // Clone the filters so FilterViewController doesn't modify them directly.
+        let filterCopy = filters.map { PlaceFilter(placeFilter: $0) }
+        let filterVC = FilterViewController(filters: filterCopy)
+        filterVC.delegate = self
+        filterVC.placeCount = dataSource?.numberOfPlaces() ?? 0
+        present(filterVC, animated: true, completion: nil)
+    }
 }
 
 extension PlaceDetailViewController: PlaceDetailsImageDelegate {
@@ -766,5 +747,18 @@ extension PlaceDetailViewController: InAppNotificationToastDelegate {
 
     func inAppNotificationToastProviderDidDismiss(_ toast: InAppNotificationToastProvider) {
         self.notificationToastProvider = nil
+    }
+}
+
+extension PlaceDetailViewController: FilterViewControllerDelegate {
+    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters filters: [PlaceFilter]) {
+        guard let count = dataSource?.filterPlaces(filters: filters).count else { return }
+        filterViewController.placeCount = count
+    }
+
+    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters viewFilters: [PlaceFilter]) {
+        guard let dataSource = dataSource else { return }
+        dataSource.filters.enumerated().forEach { $1.enabled = viewFilters[$0].enabled }
+        dataSource.refresh()
     }
 }

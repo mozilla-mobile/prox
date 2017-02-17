@@ -16,6 +16,16 @@ protocol PlaceDataSource: class {
     func index(forPlace: Place) -> Int?
     func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ())
     func sortPlaces(byLocation location: CLLocation)
+
+    /// Returns all nearby places filtered by the given set of filters.
+    /// This function does not modify the data source.
+    func filterPlaces(filters: [PlaceFilter]) -> [Place]
+
+    /// Refreshes the data source by filtering with the enabled filters.
+    func refresh()
+
+    /// You must call refresh() after changing the enabled state of any filter!
+    var filters: [PlaceFilter] { get }
 }
 
 struct PlaceDataSourceError: Error {
@@ -205,18 +215,15 @@ class PlaceCarouselViewController: UIViewController {
     func openFirstPlace() {
         do {
             let place = try placesProvider.place(forIndex: 0)
-            if self.presentedViewController == nil {
-                openDetail(forPlace: place)
-            }
+            openDetail(forPlace: place)
         } catch {
             NSLog("Unable to open first place as there are no places")
         }
     }
 
     func openDetail(forPlace place: Place, withCompletion completion: (() -> ())? = nil) {
-        // if we are already displaying a place detail, don't try and display another one
-        // places should be able to update beneath without affecting what the user currently sees
-        if let _ = self.presentedViewController {
+        if let presented = self.presentedViewController as? PlaceDetailViewController {
+            presented.openCard(forPlaceWithEvent: place)
             return
         }
 
@@ -427,7 +434,7 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
 }
 
 extension PlaceCarouselViewController: PlacesProviderDelegate {
-    func placesProvider(_ controller: PlacesProvider, didReceivePlaces places: [Place]) {
+    func placesProvider(_ controller: PlacesProvider, didUpdatePlaces places: [Place]) {
         if places.count == 0 {
             // We don't want to show two error pop-ups: checking for any VC is a superset, but simple.
             let isOtherViewControllerShown = presentedViewController != nil
@@ -444,12 +451,7 @@ extension PlaceCarouselViewController: PlacesProviderDelegate {
             headerView.numberOfPlacesLabel.text = "\(places.count) place" + (places.count != 1 ? "s" : "")
         }
 
-        // Wrap the openClosedPlace in an async block to make sure its queued after the
-        // carousel's refresh so the cells load before we invoke the transition.
-        // TODO: This is a mess: we deadlock without the async wrapper. Fix this.
-        DispatchQueue.main.async {
-            self.openFirstPlace()
-        }
+        self.openFirstPlace()
     }
 }
 

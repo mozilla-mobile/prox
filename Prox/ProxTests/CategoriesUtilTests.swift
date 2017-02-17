@@ -47,6 +47,14 @@ class CategoriesUtilTests: XCTestCase {
         "publicservicesgovt": "Public Services & Government",
     ]
 
+    private let CategoryRoots = [
+        "registrationservices": ["auto"], // auto -> registrationservices
+        "roadsideassist": ["auto"], // auto -> roadsideassist
+        "izakaya": ["restaurants"], // restaurants -> japanese -> izakaya
+        "kiosk": ["food", "shopping"], // food -> kiosk, shopping -> kiosk
+        "restaurants": ["restaurants"], // root category
+    ]
+
     private let AnotherLeafCategory = "winetastingroom" // food -> wineries -> winetastingroom
 
     private let NotACategory = "not-a-category"
@@ -111,6 +119,12 @@ class CategoriesUtilTests: XCTestCase {
     func testCategoryNames() {
         for (id, name) in CategoryNames {
             XCTAssertEqual(name, CategoriesUtil.categoryToName[id])
+        }
+    }
+
+    func testCategoryRoots() {
+        for (id, roots) in CategoryRoots {
+            XCTAssertEqual(roots, CategoriesUtil.categoryToRootsMap[id]!)
         }
     }
 }

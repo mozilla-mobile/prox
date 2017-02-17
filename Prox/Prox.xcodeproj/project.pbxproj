@@ -62,7 +62,6 @@
 		7BA05BEB1DD4D602009AC121 /* EventNotificationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA05BEA1DD4D602009AC121 /* EventNotificationsManager.swift */; };
 		7BB1CA451DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */; };
 		7BB1CA471DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */; };
-		7BB1CA491DC8C6C5004AEE56 /* MapButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB1CA481DC8C6C5004AEE56 /* MapButton.swift */; };
 		7BD5CC7D1DAFF07E00BCF50D /* GeoFire.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC741DAFF07E00BCF50D /* GeoFire.m */; };
 		7BD5CC7E1DAFF07E00BCF50D /* GFBase32Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC761DAFF07E00BCF50D /* GFBase32Utils.m */; };
 		7BD5CC7F1DAFF07E00BCF50D /* GFGeoHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5CC781DAFF07E00BCF50D /* GFGeoHash.m */; };
@@ -72,7 +71,12 @@
 		7BD5CC8A1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7BD5CC8B1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7C79B23D6CD1B1AC5A860E9E /* Pods_ProxTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */; };
+		D32F73EC1E4CF31400D504A7 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32F73EB1E4CF31400D504A7 /* FilterViewController.swift */; };
+		D32F73EE1E4D07AE00D504A7 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32F73ED1E4D07AE00D504A7 /* UIColor.swift */; };
+		D32F73F01E4D08C600D504A7 /* InsetButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32F73EF1E4D08C600D504A7 /* InsetButton.swift */; };
+		D32F73F41E4D44B000D504A7 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32F73F31E4D44B000D504A7 /* Strings.swift */; };
 		D3656D981E4A7D0F00040448 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3656D971E4A7D0F00040448 /* Logger.swift */; };
+		D39825CB1E4E943100BFF941 /* PlaceFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39825CA1E4E943100BFF941 /* PlaceFilter.swift */; };
 		D3C815681E4542E30066A97B /* PlaceProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C815671E4542E30066A97B /* PlaceProviders.swift */; };
 		E60A42711DF28E01008BE74D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42701DF28E01008BE74D /* URL.swift */; };
 		E60A42771DF29127008BE74D /* URLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42761DF29127008BE74D /* URLTests.swift */; };
@@ -188,7 +192,6 @@
 		7BA05BEA1DD4D602009AC121 /* EventNotificationsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventNotificationsManager.swift; sourceTree = "<group>"; };
 		7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCarouselCollectionViewCell.swift; sourceTree = "<group>"; };
 		7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsCardViewController.swift; sourceTree = "<group>"; };
-		7BB1CA481DC8C6C5004AEE56 /* MapButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapButton.swift; sourceTree = "<group>"; };
 		7BD5CC6D1DAFF07E00BCF50D /* GeoFire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoFire.h; sourceTree = "<group>"; };
 		7BD5CC6E1DAFF07E00BCF50D /* GFCircleQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFCircleQuery.h; sourceTree = "<group>"; };
 		7BD5CC6F1DAFF07E00BCF50D /* GFQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFQuery.h; sourceTree = "<group>"; };
@@ -210,7 +213,12 @@
 		BD2188137E599F03500C7FBD /* Pods-ProxUITests.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		CBFE1FD0629546576538F51D /* Pods-ProxTests.chicago.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.chicago.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.chicago.xcconfig"; sourceTree = "<group>"; };
 		CE887CEB1CF45A1D782FC885 /* Pods-Prox.current location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.current location.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.current location.xcconfig"; sourceTree = "<group>"; };
+		D32F73EB1E4CF31400D504A7 /* FilterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
+		D32F73ED1E4D07AE00D504A7 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIColor.swift; path = Extensions/UIColor.swift; sourceTree = "<group>"; };
+		D32F73EF1E4D08C600D504A7 /* InsetButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InsetButton.swift; sourceTree = "<group>"; };
+		D32F73F31E4D44B000D504A7 /* Strings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		D3656D971E4A7D0F00040448 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		D39825CA1E4E943100BFF941 /* PlaceFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceFilter.swift; sourceTree = "<group>"; };
 		D3C815671E4542E30066A97B /* PlaceProviders.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceProviders.swift; sourceTree = "<group>"; };
 		D3DA777E1DC2776C009C114E /* BuddyBuildSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BuddyBuildSDK.framework; path = ../Pods/BuddyBuildSDK/BuddyBuildSDK.framework; sourceTree = "<group>"; };
 		D3DA77821DC289A4009C114E /* Prox-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Prox-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -372,6 +380,7 @@
 				7BA05BE41DD4CCB1009AC121 /* Event.swift */,
 				7B48EBD91DD1F679005C36CB /* GeofenceRegion.swift */,
 				7B5095641DB531CA007C54F0 /* Place.swift */,
+				D39825CA1E4E943100BFF941 /* PlaceFilter.swift */,
 				D3C815671E4542E30066A97B /* PlaceProviders.swift */,
 			);
 			path = Models;
@@ -382,12 +391,13 @@
 			children = (
 				7B23BD1E1DE862F500A23604 /* ChevronView.swift */,
 				7B50956D1DB53429007C54F0 /* HorizontalLineView.swift */,
+				7B699A9D1DEDD635004A671B /* InAppNotificationToast.swift */,
+				D32F73EF1E4D08C600D504A7 /* InsetButton.swift */,
+				E67D49FC1DDE42F0005E17F9 /* LoadingOverlayView.swift */,
+				E63C346E1DDCDFBB005B6B15 /* LocationLoadingView.swift */,
 				7B5095691DB53382007C54F0 /* ReviewContainerView.swift */,
 				7B50956A1DB53382007C54F0 /* ReviewScoreView.swift */,
 				E61831981DE0BDBA00D1810F /* TravelTimesView.swift */,
-				E63C346E1DDCDFBB005B6B15 /* LocationLoadingView.swift */,
-				E67D49FC1DDE42F0005E17F9 /* LoadingOverlayView.swift */,
-				7B699A9D1DEDD635004A671B /* InAppNotificationToast.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -406,6 +416,7 @@
 				D3656D971E4A7D0F00040448 /* Logger.swift */,
 				7B9D15C51DC0D2E70051B760 /* OpenInHelper.swift */,
 				7B8651911DBFAF19002A666A /* PlaceUtilities.swift */,
+				D32F73F31E4D44B000D504A7 /* Strings.swift */,
 				7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */,
 				738289665759F7DA1EC836B9 /* FirebaseBranches.swift */,
 			);
@@ -415,12 +426,12 @@
 		7B561BB11DABD5730096D8BC /* Place Carousel */ = {
 			isa = PBXGroup;
 			children = (
-				7B9DA1561DBE6EE300A68C82 /* PlaceCarouselViewController.swift */,
-				7B5095661DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift */,
-				7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */,
-				7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */,
-				E61252F01DDF761C007E33B7 /* MapPlacesTransition.swift */,
 				E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */,
+				E61252F01DDF761C007E33B7 /* MapPlacesTransition.swift */,
+				7B5095611DB531C0007C54F0 /* PlaceCarousel.swift */,
+				7B5095661DB53378007C54F0 /* PlaceCarouselCollectionViewCell.swift */,
+				7B561BB21DABD5C90096D8BC /* PlaceCarouselHeaderView.swift */,
+				7B9DA1561DBE6EE300A68C82 /* PlaceCarouselViewController.swift */,
 			);
 			name = "Place Carousel";
 			sourceTree = "<group>";
@@ -436,15 +447,15 @@
 		7B9DA1581DBE6F0A00A68C82 /* PlaceDetails */ = {
 			isa = PBXGroup;
 			children = (
-				7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */,
-				E662FF491DC022940042C4A9 /* PlaceDetailsCardView.swift */,
-				E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */,
-				E662FF4D1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift */,
+				D32F73EB1E4CF31400D504A7 /* FilterViewController.swift */,
 				7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */,
-				7BB1CA481DC8C6C5004AEE56 /* MapButton.swift */,
+				E662FF491DC022940042C4A9 /* PlaceDetailsCardView.swift */,
 				7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */,
+				E662FF4D1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift */,
 				E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */,
+				E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */,
 				E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */,
+				7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */,
 			);
 			path = PlaceDetails;
 			sourceTree = "<group>";
@@ -541,9 +552,10 @@
 		E67146341DB5488D007A99E4 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */,
 				E67146351DB54896007A99E4 /* CLLocationManager.swift */,
+				7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */,
 				7B1C657C1DDF28F00047559C /* TimeInterval.swift */,
+				D32F73ED1E4D07AE00D504A7 /* UIColor.swift */,
 				E60A42701DF28E01008BE74D /* URL.swift */,
 			);
 			name = Extensions;
@@ -849,9 +861,11 @@
 				7B9D15C61DC0D2E70051B760 /* OpenInHelper.swift in Sources */,
 				E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */,
 				7B1C657D1DDF28F00047559C /* TimeInterval.swift in Sources */,
+				D32F73EE1E4D07AE00D504A7 /* UIColor.swift in Sources */,
 				7B5095731DB5352E007C54F0 /* Fonts.swift in Sources */,
 				7BB1CA471DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift in Sources */,
 				7BA05BE91DD4D149009AC121 /* EventsController.swift in Sources */,
+				D39825CB1E4E943100BFF941 /* PlaceFilter.swift in Sources */,
 				D3C815681E4542E30066A97B /* PlaceProviders.swift in Sources */,
 				7B9D15C81DC0D51C0051B760 /* OpenInFirefoxControllerSwift.swift in Sources */,
 				7B5095621DB531C0007C54F0 /* PlaceCarousel.swift in Sources */,
@@ -863,6 +877,7 @@
 				E6101A981DDA7B8500D05B74 /* CategoriesUtil.swift in Sources */,
 				7B561BB31DABD5C90096D8BC /* PlaceCarouselHeaderView.swift in Sources */,
 				7BA05BEB1DD4D602009AC121 /* EventNotificationsManager.swift in Sources */,
+				D32F73F41E4D44B000D504A7 /* Strings.swift in Sources */,
 				E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */,
 				7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */,
 				7B699A9E1DEDD635004A671B /* InAppNotificationToast.swift in Sources */,
@@ -899,11 +914,12 @@
 				7B5095781DB64E76007C54F0 /* TravelTimesProvider.swift in Sources */,
 				7BA05BE31DD4CC75009AC121 /* EventsDatabase.swift in Sources */,
 				7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */,
-				7BB1CA491DC8C6C5004AEE56 /* MapButton.swift in Sources */,
 				E662FF4C1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift in Sources */,
+				D32F73EC1E4CF31400D504A7 /* FilterViewController.swift in Sources */,
 				7BD5CC811DAFF07E00BCF50D /* GFQuery.m in Sources */,
 				7B9DA1551DBE6ED300A68C82 /* PlacesDatabase.swift in Sources */,
 				7B5095651DB531CA007C54F0 /* Place.swift in Sources */,
+				D32F73F01E4D08C600D504A7 /* InsetButton.swift in Sources */,
 				7B0ECE481DD6145500ABBD72 /* LocationMonitor.swift in Sources */,
 				E61972141DD28B7A00C9D093 /* PlaceDetailsEventView.swift in Sources */,
 				738285279A22EAD0F67AEEEC /* FirebaseBranches.swift in Sources */,
