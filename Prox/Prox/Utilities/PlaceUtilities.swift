@@ -56,43 +56,6 @@ struct PlaceUtilities {
         return result.successResult()
     }
 
-    static func filterPlacesForCarousel(_ places: [Place]) -> [Place] {
-        return places.filter { place in
-            // always show places if they have events
-            guard place.events.isEmpty else { return true }
-
-            let shouldShowByCategory = CategoriesUtil.shouldShowPlace(byCategories: place.categories.ids)
-            guard shouldShowByCategory else {
-                log.debug("filtering out place, \(place.id), by category")
-                return shouldShowByCategory
-            }
-
-            let shouldShowByRating = shouldShowPlaceByRatingAndReviewCount(place)
-            guard shouldShowByRating  else {
-                log.debug("filtering out place, \(place.id), by rating")
-                return shouldShowByRating
-            }
-
-            return true
-        }
-    }
-
-    static func shouldShowPlaceByRatingAndReviewCount(_ place: Place) -> Bool {
-        guard let rating = place.yelpProvider.rating,
-                let reviewCount = place.yelpProvider.totalReviewCount else {
-            log.warn("missing rating or review count for place \(place.id)")
-            return false
-        }
-
-
-        if (rating < 2.5) || // poorly-reviewed
-                reviewCount < 4 { // unpopular
-            return false
-        } else {
-            return true
-        }
-    }
-
     static func getString(forCategories categories: [String]?) -> String? {
         return categories?.prefix(MaxDisplayedCategories).joined(separator: " • ")
     }

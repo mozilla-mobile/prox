@@ -75,9 +75,6 @@ class RemoteConfigKeys {
 
     public static let backgroundFetchIntervalMins = RemoteConfigDouble(key: "background_fetch_interval_mins", defaultValue: 5.0)
 
-    // The actual default value is specified in associated defaults plist file.
-    public static let placeCategoriesToHideCSV = RemoteConfigStringArray(key: "place_categories_to_hide_csv", defaultValue: [])
-
     public static let significantLocationChangeDistanceMeters = RemoteConfigDouble(key: "significant_location_change_distance_meters", defaultValue: 100)
 
     // this is the distance a user has to move from their current location to trigger a "visit" to kick off notifications

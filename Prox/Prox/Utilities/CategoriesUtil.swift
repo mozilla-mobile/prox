@@ -9,25 +9,6 @@ struct CategoriesUtil {
     private static let AllCategoriesPath = "Data.bundle/yelp_categories_v3"
     private static let AllCategoriesExt = "json"
 
-    static func shouldShowPlace<S : Sequence>(byCategories categories: S) -> Bool where S.Iterator.Element == String {
-        // TODO: UX still needs to tell us whether they want to hide a place if its categories contains
-        // a single category they said to hide or only if *all* its categories are in the categories
-        // they said to hide. For now, we hide if they all match.
-        let categorySet = Set(categories)
-        let allMatched = categorySet.subtracting(HiddenCategories).isEmpty
-        return !allMatched
-    }
-
-    // UX gives us a CSV list of categories to hide and we hide them *and their children*.
-    // This is an exhaustive collection of these categories and their children.
-    // Caveat: we don't expect UX to include root categories, which are special-cased: we can reduce
-    // yelp resource use by whitelisting the categories we ask for meaning the other root categories
-    // are hidden implicitly.
-    static let HiddenCategories: Set<String> = {
-        let categories = RemoteConfigKeys.placeCategoriesToHideCSV.value
-        return getHiddenCategories(forCategories: categories)
-    }()
-
     // Separated for testing: I don't know how to do automated tests with the Firebase value.
     internal static func getHiddenCategories(forCSV csv: String) -> Set<String> {
         let categories = csv.components(separatedBy: ",")

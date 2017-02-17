@@ -166,8 +166,7 @@ class PlacesProvider {
      * all the places that we need to show to the user.
      **/
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
-        let filteredPlaces = PlaceUtilities.filterPlacesForCarousel(places)
-        return PlaceUtilities.sort(places: filteredPlaces, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
+        return PlaceUtilities.sort(places: places, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
             self.placesLock.withWriteLock {
                 self.allPlaces = sortedPlaces
                 self.updateDisplayedPlaces()
