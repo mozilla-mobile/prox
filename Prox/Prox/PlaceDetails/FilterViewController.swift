@@ -5,8 +5,8 @@
 import Foundation
 
 protocol FilterViewControllerDelegate: class {
-    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters filters: [PlaceFilter])
-    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters filters: [PlaceFilter])
+    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters filters: [PlaceFilter], topRatedOnly: Bool)
+    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters filters: [PlaceFilter], topRatedOnly: Bool)
 }
 
 /// A drop-down view from the top of the screen that displays a list of categories to filter.
@@ -20,22 +20,16 @@ class FilterViewController: UIViewController {
     private let stackView = UIStackView()
     private let filters: [PlaceFilter]
     private let placeCountLabel = UILabel()
+    private let topRatedSwitch = UISwitch()
 
-    init(filters: [PlaceFilter]) {
+    init(filters: [PlaceFilter], topRatedOnly: Bool) {
         self.filters = filters
         super.init(nibName: nil, bundle: nil)
 
         modalPresentationStyle = .overCurrentContext
         transitioningDelegate = self
 
-        for (i, filter) in filters.enumerated() {
-            let button = FilterButton()
-            button.setTitle(filter.label, for: .normal)
-            button.isSelected = filter.enabled
-            button.tag = i
-            button.addTarget(self, action: #selector(didToggleFilter(sender:)), for: .touchUpInside)
-            stackView.addArrangedSubview(button)
-        }
+        topRatedSwitch.isOn = topRatedOnly
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -60,11 +54,32 @@ class FilterViewController: UIViewController {
         closeButton.addTarget(self, action: #selector(didPressClose), for: .touchUpInside)
         view.addSubview(closeButton)
 
+        for (i, filter) in filters.enumerated() {
+            let button = FilterButton()
+            button.setTitle(filter.label, for: .normal)
+            button.isSelected = filter.enabled
+            button.tag = i
+            button.addTarget(self, action: #selector(didToggleFilter(sender:)), for: .touchUpInside)
+            stackView.addArrangedSubview(button)
+        }
+
+        let topRated = UIView()
+        topRated.backgroundColor = Colors.filterTopRatedBackground
+        topRatedSwitch.onTintColor = Colors.filterButtonCheckedBackground
+        topRatedSwitch.addTarget(self, action: #selector(didToggleRatings), for: .valueChanged)
+        topRated.addSubview(topRatedSwitch)
+        let ratingLabel = UILabel()
+        ratingLabel.text = Strings.filterView.topRatedLabel
+        ratingLabel.font = Fonts.filterTopRatedLabel
+        ratingLabel.textColor = Colors.filterTopRatedLabel
+        topRated.addSubview(ratingLabel)
+        stackView.addArrangedSubview(topRated)
+
         let spacing: CGFloat = 16
         stackView.axis = .vertical
         stackView.spacing = spacing
         stackView.alignment = .center
-        stackView.distribution = .fillEqually
+        stackView.distribution = .equalSpacing
         container.addSubview(stackView)
 
         showFilterConstraints += [
@@ -90,8 +105,19 @@ class FilterViewController: UIViewController {
             closeButton.centerYAnchor.constraint(equalTo: placeCountLabel.centerYAnchor),
             closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -spacing),
 
+            ratingLabel.leadingAnchor.constraint(equalTo: topRated.leadingAnchor, constant: spacing),
+            ratingLabel.topAnchor.constraint(equalTo: topRated.topAnchor, constant: spacing),
+            ratingLabel.bottomAnchor.constraint(equalTo: topRated.bottomAnchor, constant: -spacing),
+
+            topRatedSwitch.trailingAnchor.constraint(equalTo: topRated.trailingAnchor, constant: -spacing),
+            topRatedSwitch.topAnchor.constraint(equalTo: topRated.topAnchor, constant: spacing),
+            topRatedSwitch.bottomAnchor.constraint(equalTo: topRated.bottomAnchor, constant: -spacing),
+
+            topRated.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            topRated.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
             stackView.topAnchor.constraint(equalTo: placeCountLabel.bottomAnchor, constant: spacing),
-            stackView.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -spacing),
+            stackView.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ]
 
@@ -108,16 +134,20 @@ class FilterViewController: UIViewController {
         let filter = filters[sender.tag]
         filter.enabled = !filter.enabled
         sender.isSelected = filter.enabled
-        delegate?.filterViewController(self, didUpdateFilters: filters)
+        delegate?.filterViewController(self, didUpdateFilters: filters, topRatedOnly: topRatedSwitch.isOn)
     }
 
     @objc private func didPressClose() {
         dismiss(animated: true, completion: nil)
     }
 
+    @objc private func didToggleRatings() {
+        delegate?.filterViewController(self, didUpdateFilters: filters, topRatedOnly: topRatedSwitch.isOn)
+    }
+
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         super.dismiss(animated: flag, completion: completion)
-        delegate?.filterViewController(self, didDismissWithFilters: filters)
+        delegate?.filterViewController(self, didDismissWithFilters: filters, topRatedOnly: topRatedSwitch.isOn)
     }
 }
 

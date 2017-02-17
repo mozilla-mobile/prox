@@ -49,6 +49,8 @@ class PlacesProvider {
                     categories: ["auto", "beautysvc", "bicycles", "education", "eventplanning", "financialservices", "health", "homeservices", "localservices", "professional", "massmedia", "pets", "publicservicesgovt", "realestate", "religiousorgs"]),
     ]
 
+    var topRatedOnly = false
+
     init() {}
 
     convenience init(places: [Place]) {
@@ -143,19 +145,21 @@ class PlacesProvider {
         }
     }
 
-    func filterPlaces(filters: [PlaceFilter]) -> [Place] {
+    func filterPlaces(filters: [PlaceFilter], topRatedOnly: Bool) -> [Place] {
         return placesLock.withReadLock {
-            return filterPlacesLocked(filters: filters)
+            return filterPlacesLocked(filters: filters, topRatedOnly: topRatedOnly)
         }
     }
 
     /// Callers must acquire a read lock before calling this method!
     /// TODO: Terrible name, terrible pattern. Fix this with #529.
-    private func filterPlacesLocked(filters: [PlaceFilter]) -> [Place] {
+    private func filterPlacesLocked(filters: [PlaceFilter], topRatedOnly: Bool) -> [Place] {
         let enabledCategories = Set(filters.filter { $0.enabled }.map { $0.categories }.reduce([], +))
         let toRoots = CategoriesUtil.categoryToRootsMap
 
         return allPlaces.filter { place in
+            guard !topRatedOnly || PlaceUtilities.isTopRated(place: place) else { return false }
+
             let categories = Set(place.categories.ids.flatMap { toRoots[$0] }.reduce([], +))
             return !enabledCategories.isDisjoint(with: categories)
         }
@@ -164,7 +168,7 @@ class PlacesProvider {
     /// Applies the current set of filters to all places, setting `displayedPlaces` to the result.
     /// Callers must acquire a write lock before calling this method!
     fileprivate func updateDisplayedPlaces() {
-        displayedPlaces = filterPlacesLocked(filters: filters)
+        displayedPlaces = filterPlacesLocked(filters: filters, topRatedOnly: topRatedOnly)
 
         var placesMap = [String: Int]()
         for (index, place) in displayedPlaces.enumerated() {

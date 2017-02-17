@@ -59,6 +59,8 @@ extension Colors {
     public static let filterButtonUncheckedBackground = UIColor.white
     public static let filterButtonUncheckedForeground = UIColor(rgb: 0x0078ff)
     public static let filterOverlayDim = UIColor(white: 0, alpha: 0.6)
+    public static let filterTopRatedBackground = UIColor(rgb: 0xf6f6f6)
+    public static let filterTopRatedLabel = UIColor(rgb: 0x666666)
 }
 
 // notification colours
