@@ -14,26 +14,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var placeCarouselViewController: PlaceCarouselViewController?
 
-    private var authorizedUser: FIRUser?
-
     let locationMonitor = LocationMonitor()
-    
-    private lazy var remoteConfigCacheExpiration: TimeInterval = {
-        if AppConstants.isDebug {
-            // Refresh the config if it hasn't been refreshed in 60 seconds.
-            return 0.0
-        }
-        return RemoteConfigKeys.remoteConfigCacheExpiration.value
-    }()
 
     private var eventsNotificationsManager: EventNotificationsManager?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
-        setUpFirebase()
-        setupRemoteConfig()
-        setupGoogleMaps()
-        BuddyBuildSDK.setup()
+        SDKs.setUp()
 
         // create Window
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -65,66 +51,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
 
         return true
-    }
-
-    private func setUpFirebase() {
-        FIRApp.configure()
-
-        if let user = FIRAuth.auth()?.currentUser {
-            authorizedUser = user
-        } else {
-            FIRAuth.auth()?.signInAnonymously { (user, error) in
-                guard let user = user else {
-                    return print("sign in failed \(error)")
-                }
-                self.authorizedUser = user
-                dump(user)
-            }
-        }
-        FIRDatabase.database().persistenceEnabled = false
-    }
-
-    private func setupGoogleMaps() {
-        guard let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
-              let googleServiceInfo = NSDictionary(contentsOfFile: path),
-              let apiKey = googleServiceInfo["API_KEY"] as? String else {
-            fatalError("Unable to initialize gmaps - did you include GoogleService-Info?")
-            return
-        }
-
-        GMSServices.provideAPIKey(apiKey)
-    }
-
-    private func setupRemoteConfig() {
-        let remoteConfig = FIRRemoteConfig.remoteConfig()
-        let isDeveloperMode = AppConstants.isDebug || AppConstants.MOZ_LOCATION_FAKING
-        remoteConfig.configSettings = FIRRemoteConfigSettings(developerModeEnabled: isDeveloperMode)!
-        remoteConfig.setDefaultsFromPlistFileName("RemoteConfigDefaults")
-
-        let defaults = UserDefaults.standard
-        // Declare this here, because it's not needed anywhere else.
-        let pendingUpdateKey = "pendingUpdate"
-
-        remoteConfig.fetch(withExpirationDuration: remoteConfigCacheExpiration) { status, err in
-            if status == FIRRemoteConfigFetchStatus.success {
-                NSLog("RemoteConfig fetched")
-                // The config will be applied next time we load.
-                // We don't do it now, because we want the update to be atomic,
-                // at the beginning of a session with the app.
-                defaults.set(true, forKey: pendingUpdateKey)
-                defaults.synchronize()
-            } else {
-                // We'll revert back to the latest update, or the RemoteConfigDefaults plist.
-                NSLog("RemoteConfig fetch failed")
-            }
-        }
-
-        if defaults.bool(forKey: pendingUpdateKey) {
-            remoteConfig.activateFetched()
-            NSLog("RemoteConfig updated")
-            defaults.set(false, forKey: pendingUpdateKey)
-            defaults.synchronize()
-        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
