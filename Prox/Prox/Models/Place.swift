@@ -92,11 +92,15 @@ class Place: Hashable {
         let providers: [PlaceProvider?] = [yelpProvider, tripAdvisorProvider, wikipediaProvider]
         let compositeProvider = CompositePlaceProvider(fromProviders: providers.flatMap { $0 })
 
-        guard let id = compositeProvider.id,
-              let name = compositeProvider.name,
+        guard let id = compositeProvider.id else {
+            log.error("fetched place with no id!")
+            return nil
+        }
+
+        guard let name = compositeProvider.name,
               let latLong = compositeProvider.latLong,
               !compositeProvider.photoURLs.isEmpty else {
-            log.warn("dropping place: missing id, name, photos, or coords")
+            log.warn("dropping place \(id): missing name, photos, or coords")
             return nil
         }
 
