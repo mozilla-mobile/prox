@@ -20,12 +20,6 @@ class PlacesProvider {
 
     private let database = FirebasePlacesDatabase()
 
-    private lazy var sessionManager: AFHTTPSessionManager = {
-        let manager = AFHTTPSessionManager(sessionConfiguration: .default)
-        manager.responseSerializer = AFHTTPResponseSerializer()
-        return manager
-    }()
-
     private lazy var radius: Double = {
         return RemoteConfigKeys.searchRadiusInKm.value
     }()
@@ -189,21 +183,6 @@ class PlacesProvider {
         }
     }
 
-    // replaces any Place in nearbyPlaces with the equivalent Place from eventPlaces if it exists
-    // otherwise just adds the eventPlace to the result
-    // leaving a combination of places with events and places nearby
-    private func union(ofNearbyPlaces nearbyPlaces: [Place]?, andEventPlaces eventPlaces: [Place]?) -> [Place] {
-        var unionOfPlaces = nearbyPlaces ?? []
-        for eventPlace in (eventPlaces ?? []){
-            if let placeIndex = unionOfPlaces.index(of: eventPlace) {
-                unionOfPlaces[placeIndex] = eventPlace
-            } else {
-                unionOfPlaces.append(eventPlace)
-            }
-        }
-        return unionOfPlaces
-    }
-
     func nextPlace(forPlace place: Place) -> Place? {
         return self.placesLock.withReadLock {
             // if the place isn't in the list, make the first item in the list the next item
@@ -246,29 +225,6 @@ class PlacesProvider {
     func index(forPlace place: Place) -> Int? {
         return self.placesLock.withReadLock {
             return placeKeyMap[place.id]
-        }
-    }
-
-    func fetchPlace(placeKey: String, withEvent eventKey: String, callback: @escaping (Place?) -> ()) {
-        self.placesLock.withReadLock {
-            if let placeIndex = placeKeyMap[placeKey] {
-                let place = displayedPlaces[placeIndex]
-                if place.events.contains(where: { $0.id == eventKey }) {
-                    callback(place)
-                }
-                let eventProvider = EventsProvider()
-                eventProvider.event(forKey: eventKey) { event in
-                    guard let event = event else { return callback(nil) }
-                    self.placesLock.withWriteLock {
-                        place.events.append(event)
-                    }
-                    callback(place)
-                }
-            } else {
-                self.place(withKey: placeKey, forEventWithKey: eventKey) { place in
-                    callback(place)
-                }
-            }
         }
     }
 
