@@ -25,6 +25,17 @@ class FirebasePlacesDatabase: PlacesDatabase {
         geofire = GeoFire(firebaseRef: rootRef.child(GEOFIRE_PATH))
     }
 
+    /// Queries GeoFire to get the place keys around the given location and
+    /// then queries Firebase to get the place details for the place keys.
+    func getPlaces(forLocation location: CLLocation, withRadius radius: Double) -> Future<[DatabaseResult<Place>]> {
+        let queue = DispatchQueue.global(qos: .userInitiated)
+
+        let places = getPlaceKeys(aroundPoint: location, withRadius: radius).andThen(upon: queue) { (placeKeyToLoc) -> Future<[DatabaseResult<Place>]> in
+            return self.getPlaceDetails(fromKeys: Array(placeKeyToLoc.keys)).allFilled()
+        }
+        return places
+    }
+
     /*
      * Queries GeoFire to find keys that represent locations around the given point.
      */

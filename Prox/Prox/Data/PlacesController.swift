@@ -114,35 +114,9 @@ class PlacesProvider {
         }
     }
 
-    /*
-     * Queries GeoFire to get the place keys around the given location and then queries Firebase to
-     * get the place details for the place keys.
-     */
-    func getPlaces(forLocation location: CLLocation, withRadius radius: Double) -> Future<[DatabaseResult<Place>]> {
-        let queue = DispatchQueue.global(qos: .userInitiated)
-
-
-        let places = database.getPlaceKeys(aroundPoint: location, withRadius: radius).andThen(upon: queue) { (placeKeyToLoc) -> Future<[DatabaseResult<Place>]> in
-            var unfetchedPlaces = [String]()
-            var fetchedPlaces = [Deferred<DatabaseResult<Place>>]()
-            self.placesLock.withReadLock {
-                for placeKey in Array(placeKeyToLoc.keys) {
-                    if let index = self.placeKeyMap[placeKey] {
-                        let place = self.allPlaces[index]
-                        fetchedPlaces.append(Deferred(filledWith: DatabaseResult.succeed(value: place)))
-                    } else {
-                        unfetchedPlaces.append(placeKey)
-                    }
-                }
-            }
-            return (self.database.getPlaceDetails(fromKeys: unfetchedPlaces) + fetchedPlaces).allFilled()
-        }
-        return places
-    }
-
     func updatePlaces(forLocation location: CLLocation) {
         // Fetch a stable list of places from firebase.
-        getPlaces(forLocation: location, withRadius: radius).upon { results in
+        database.getPlaces(forLocation: location, withRadius: radius).upon { results in
             let places = results.flatMap { $0.successResult() }
             self.didFinishFetchingPlaces(places: places, forLocation: location)
         }
