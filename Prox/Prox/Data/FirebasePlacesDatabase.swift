@@ -36,10 +36,8 @@ class FirebasePlacesDatabase: PlacesDatabase {
         return places
     }
 
-    /*
-     * Queries GeoFire to find keys that represent locations around the given point.
-     */
-    func getPlaceKeys(aroundPoint location: CLLocation, withRadius radius: Double) -> Deferred<[String:CLLocation]> {
+    /// Queries GeoFire to find keys that represent locations around the given point.
+    private func getPlaceKeys(aroundPoint location: CLLocation, withRadius radius: Double) -> Deferred<[String:CLLocation]> {
         let deferred = Deferred<[String:CLLocation]>()
         var placeKeyToLoc = [String:CLLocation]()
 
@@ -65,10 +63,11 @@ class FirebasePlacesDatabase: PlacesDatabase {
         return deferred
     }
 
-    /*
-     * Queries Firebase to find the place details from the given keys.
-     */
-    func getPlaceDetails(fromKeys placeKeys: [String]) -> [Deferred<DatabaseResult<Place>>] {
+    /// Queries Firebase to find the place details from the given keys.
+    ///
+    /// If you're refactoring, I'd keep this method around - it's useful if we want to
+    /// optimize to load places on-demand, instead of getting all place details at once.
+    private func getPlaceDetails(fromKeys placeKeys: [String]) -> [Deferred<DatabaseResult<Place>>] {
         let placeDetails = placeKeys.map { placeKey -> Deferred<DatabaseResult<Place>> in
             queryChildPlaceDetails(by: placeKey)
         }
