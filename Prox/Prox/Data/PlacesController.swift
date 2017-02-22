@@ -39,17 +39,20 @@ class PlacesProvider {
     fileprivate let placesLock = NSLock()
 
     let filters = [
-        PlaceFilter(label: Strings.filterView.discover, enabled: true,
+        PlaceFilter(label: Strings.filterView.discover,
                     categories: ["active", "arts", "localflavor", "hotelstravel"]),
-        PlaceFilter(label: Strings.filterView.eatAndDrink, enabled: true,
+        PlaceFilter(label: Strings.filterView.eatAndDrink,
                     categories: ["food", "nightlife", "restaurants"]),
-        PlaceFilter(label: Strings.filterView.shop, enabled: true,
+        PlaceFilter(label: Strings.filterView.shop,
                     categories: ["shopping"]),
-        PlaceFilter(label: Strings.filterView.services, enabled: false,
+        PlaceFilter(label: Strings.filterView.services,
                     categories: ["auto", "beautysvc", "bicycles", "education", "eventplanning", "financialservices", "health", "homeservices", "localservices", "professional", "massmedia", "pets", "publicservicesgovt", "realestate", "religiousorgs"]),
     ]
 
-    var topRatedOnly = false
+    /// This array has the same cardinality as the filters array; indices correlate.
+    private(set) var enabledFilters = [true, true, true, false]
+
+    private(set) var topRatedOnly = false
 
     init() {}
 
@@ -145,16 +148,16 @@ class PlacesProvider {
         }
     }
 
-    func filterPlaces(filters: [PlaceFilter], topRatedOnly: Bool) -> [Place] {
+    func filterPlaces(enabledFilters: [Bool], topRatedOnly: Bool) -> [Place] {
         return placesLock.withReadLock {
-            return filterPlacesLocked(filters: filters, topRatedOnly: topRatedOnly)
+            return filterPlacesLocked(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
         }
     }
 
     /// Callers must acquire a read lock before calling this method!
     /// TODO: Terrible name, terrible pattern. Fix this with #529.
-    private func filterPlacesLocked(filters: [PlaceFilter], topRatedOnly: Bool) -> [Place] {
-        let enabledCategories = Set(filters.filter { $0.enabled }.map { $0.categories }.reduce([], +))
+    private func filterPlacesLocked(enabledFilters: [Bool], topRatedOnly: Bool) -> [Place] {
+        let enabledCategories = Set(filters.enumerated().filter { i, _ in enabledFilters[i] }.map { $1.categories }.reduce([], +))
         let toRoots = CategoriesUtil.categoryToRootsMap
 
         return allPlaces.filter { place in
@@ -168,7 +171,7 @@ class PlacesProvider {
     /// Applies the current set of filters to all places, setting `displayedPlaces` to the result.
     /// Callers must acquire a write lock before calling this method!
     fileprivate func updateDisplayedPlaces() {
-        displayedPlaces = filterPlacesLocked(filters: filters, topRatedOnly: topRatedOnly)
+        displayedPlaces = filterPlacesLocked(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
 
         var placesMap = [String: Int]()
         for (index, place) in displayedPlaces.enumerated() {
@@ -302,11 +305,13 @@ class PlacesProvider {
         }
     }
 
-    func refresh() {
+    func refresh(enabledFilters: [Bool], topRatedOnly: Bool) {
         assert(Thread.isMainThread)
 
         var displayedPlaces: [Place]!
         placesLock.withWriteLock {
+            self.enabledFilters = enabledFilters
+            self.topRatedOnly = topRatedOnly
             updateDisplayedPlaces()
             displayedPlaces = self.displayedPlaces
         }

@@ -5,8 +5,8 @@
 import Foundation
 
 protocol FilterViewControllerDelegate: class {
-    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters filters: [PlaceFilter], topRatedOnly: Bool)
-    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters filters: [PlaceFilter], topRatedOnly: Bool)
+    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters enabledFilters: [Bool], topRatedOnly: Bool)
+    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters enabledFilters: [Bool], topRatedOnly: Bool)
 }
 
 /// A drop-down view from the top of the screen that displays a list of categories to filter.
@@ -19,11 +19,13 @@ class FilterViewController: UIViewController {
     fileprivate let background = UIButton()
     private let stackView = UIStackView()
     private let filters: [PlaceFilter]
+    private(set) var enabledFilters: [Bool]
     private let placeCountLabel = UILabel()
     private let topRatedSwitch = UISwitch()
 
-    init(filters: [PlaceFilter], topRatedOnly: Bool) {
+    init(filters: [PlaceFilter], enabledFilters: [Bool], topRatedOnly: Bool) {
         self.filters = filters
+        self.enabledFilters = enabledFilters
         super.init(nibName: nil, bundle: nil)
 
         modalPresentationStyle = .overCurrentContext
@@ -57,7 +59,7 @@ class FilterViewController: UIViewController {
         for (i, filter) in filters.enumerated() {
             let button = FilterButton()
             button.setTitle(filter.label, for: .normal)
-            button.isSelected = filter.enabled
+            button.isSelected = enabledFilters[i]
             button.tag = i
             button.addTarget(self, action: #selector(didToggleFilter(sender:)), for: .touchUpInside)
             stackView.addArrangedSubview(button)
@@ -131,10 +133,10 @@ class FilterViewController: UIViewController {
     }
 
     @objc private func didToggleFilter(sender: FilterButton) {
-        let filter = filters[sender.tag]
-        filter.enabled = !filter.enabled
-        sender.isSelected = filter.enabled
-        delegate?.filterViewController(self, didUpdateFilters: filters, topRatedOnly: topRatedSwitch.isOn)
+        let enabled = !enabledFilters[sender.tag]
+        enabledFilters[sender.tag] = enabled
+        sender.isSelected = enabled
+        delegate?.filterViewController(self, didUpdateFilters: enabledFilters, topRatedOnly: topRatedSwitch.isOn)
     }
 
     @objc private func didPressClose() {
@@ -142,12 +144,12 @@ class FilterViewController: UIViewController {
     }
 
     @objc private func didToggleRatings() {
-        delegate?.filterViewController(self, didUpdateFilters: filters, topRatedOnly: topRatedSwitch.isOn)
+        delegate?.filterViewController(self, didUpdateFilters: enabledFilters, topRatedOnly: topRatedSwitch.isOn)
     }
 
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         super.dismiss(animated: flag, completion: completion)
-        delegate?.filterViewController(self, didDismissWithFilters: filters, topRatedOnly: topRatedSwitch.isOn)
+        delegate?.filterViewController(self, didDismissWithFilters: enabledFilters, topRatedOnly: topRatedSwitch.isOn)
     }
 }
 

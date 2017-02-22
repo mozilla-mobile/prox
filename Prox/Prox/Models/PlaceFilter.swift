@@ -4,18 +4,7 @@
 
 import Foundation
 
-class PlaceFilter {
+struct PlaceFilter {
     let label: String
     let categories: [String]
-    var enabled: Bool
-
-    init(label: String, enabled: Bool, categories: [String]) {
-        self.label = label
-        self.enabled = enabled
-        self.categories = categories
-    }
-
-    convenience init(placeFilter: PlaceFilter) {
-        self.init(label: placeFilter.label, enabled: placeFilter.enabled, categories: placeFilter.categories)
-    }
 }
