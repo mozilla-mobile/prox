@@ -11,5 +11,6 @@ struct Strings {
         static let shop = "Shop"
         static let services = "Services"
         static let placeCount = "%d places"
+        static let topRatedLabel = "Show top-rated places only"
     }
 }

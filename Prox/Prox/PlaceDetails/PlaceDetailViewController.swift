@@ -661,13 +661,11 @@ class PlaceDetailViewController: UIViewController {
     }
 
     @objc private func didPressFilter() {
-        guard let filters = dataSource?.filters else { return }
+        guard let dataSource = dataSource else { return }
 
-        // Clone the filters so FilterViewController doesn't modify them directly.
-        let filterCopy = filters.map { PlaceFilter(placeFilter: $0) }
-        let filterVC = FilterViewController(filters: filterCopy)
+        let filterVC = FilterViewController(filters: dataSource.filters, enabledFilters: dataSource.enabledFilters, topRatedOnly: dataSource.topRatedOnly)
         filterVC.delegate = self
-        filterVC.placeCount = dataSource?.numberOfPlaces() ?? 0
+        filterVC.placeCount = dataSource.numberOfPlaces()
         present(filterVC, animated: true, completion: nil)
     }
 }
@@ -718,14 +716,13 @@ extension PlaceDetailViewController: Animatable {
 }
 
 extension PlaceDetailViewController: FilterViewControllerDelegate {
-    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters filters: [PlaceFilter]) {
-        guard let count = dataSource?.filterPlaces(filters: filters).count else { return }
+    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters enabledFilters: [Bool], topRatedOnly: Bool) {
+        guard let count = dataSource?.filterPlaces(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly).count else { return }
         filterViewController.placeCount = count
     }
 
-    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters viewFilters: [PlaceFilter]) {
+    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters enabledFilters: [Bool], topRatedOnly: Bool) {
         guard let dataSource = dataSource else { return }
-        dataSource.filters.enumerated().forEach { $1.enabled = viewFilters[$0].enabled }
-        dataSource.refresh()
+        dataSource.refresh(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
     }
 }
