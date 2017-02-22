@@ -93,7 +93,7 @@ struct CategoriesUtil {
         return categoryToParents
     }()
 
-    static let categoryToRootsMap: [String: [String]] = {
+    static let categoryToRoots: [String: [String]] = {
         var categoryToRoots = [String: [String]]()
         for category in categoryToParentsMap.keys {
             categoryToRoots[category] = Array(getRootCategories(forCategory: category))
@@ -124,6 +124,33 @@ struct CategoriesUtil {
         }
         return categoryToName
     }()
+
+    static let categoryToFilter: [String: Filter] = {
+        var categoryToFilter = [String: Filter]()
+
+        // Build the initial map of categories -> filters that we set explicitly.
+        for (filter, categories) in Filter.categories {
+            for category in categories {
+                categoryToFilter[category] = filter
+            }
+        }
+
+        // Set the remaining categories based on the first ancestor with an explicitly-set filter.
+        for category in categoryToParentsMap.keys {
+            guard let firstCategorizedParent = getAncestors(forCategory: category).flatMap({ categoryToFilter[$0] }).first else { continue }
+            categoryToFilter[category] = firstCategorizedParent
+        }
+
+        return categoryToFilter
+    }()
+
+    /// Returns this category, its root categories, and all parents in between.
+    /// The result is DFS-ordered.
+    private static func getAncestors(forCategory category: String) -> [String] {
+        let ancestors = categoryToParentsMap[category] ?? []
+        let hierarchy = ancestors.map { getAncestors(forCategory: $0) }.reduce([category], +)
+        return Array(NSOrderedSet(array: hierarchy)) as! [String]
+    }
 }
 
 enum CategoryError: Error {

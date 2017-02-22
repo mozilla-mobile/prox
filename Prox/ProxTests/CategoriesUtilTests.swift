@@ -125,7 +125,7 @@ class CategoriesUtilTests: XCTestCase {
 
     func testCategoryRoots() {
         for (id, roots) in CategoryRoots {
-            XCTAssertEqual(roots, CategoriesUtil.categoryToRootsMap[id]!)
+            XCTAssertEqual(roots, CategoriesUtil.categoryToRoots[id]!)
         }
     }
 }

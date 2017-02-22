@@ -5,8 +5,8 @@
 import Foundation
 
 protocol FilterViewControllerDelegate: class {
-    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters enabledFilters: [Bool], topRatedOnly: Bool)
-    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters enabledFilters: [Bool], topRatedOnly: Bool)
+    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters enabledFilters: Set<Filter>, topRatedOnly: Bool)
+    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters enabledFilters: Set<Filter>, topRatedOnly: Bool)
 }
 
 /// A drop-down view from the top of the screen that displays a list of categories to filter.
@@ -18,14 +18,19 @@ class FilterViewController: UIViewController {
 
     fileprivate let background = UIButton()
     private let stackView = UIStackView()
-    private let filters: [PlaceFilter]
-    private(set) var enabledFilters: [Bool]
+    private(set) var enabledFilters: Set<Filter>
     private let placeCountLabel = UILabel()
     private let topRatedSwitch = UISwitch()
 
-    init(filters: [PlaceFilter], enabledFilters: [Bool], topRatedOnly: Bool) {
-        self.filters = filters
-        self.enabledFilters = enabledFilters
+    private let filterLabels: [Filter: String] = [
+        .discover: Strings.filterView.discover,
+        .eatAndDrink: Strings.filterView.eatAndDrink,
+        .shop: Strings.filterView.shop,
+        .services: Strings.filterView.services,
+    ]
+
+    init(enabledFilters: Set<Filter>, topRatedOnly: Bool) {
+        self.enabledFilters = Set(enabledFilters)
         super.init(nibName: nil, bundle: nil)
 
         modalPresentationStyle = .overCurrentContext
@@ -64,11 +69,11 @@ class FilterViewController: UIViewController {
         closeButton.addTarget(self, action: #selector(didPressClose), for: .touchUpInside)
         view.addSubview(closeButton)
 
-        for (i, filter) in filters.enumerated() {
+        for (filter, label) in filterLabels {
             let button = FilterButton()
-            button.setTitle(filter.label, for: .normal)
-            button.isSelected = enabledFilters[i]
-            button.tag = i
+            button.setTitle(label, for: .normal)
+            button.isSelected = enabledFilters.contains(filter)
+            button.tag = filter.rawValue
             button.addTarget(self, action: #selector(didToggleFilter(sender:)), for: .touchUpInside)
             button.heightAnchor.constraint(equalToConstant: 36).isActive = true
             stackView.addArrangedSubview(button)
@@ -142,9 +147,9 @@ class FilterViewController: UIViewController {
     }
 
     @objc private func didToggleFilter(sender: FilterButton) {
-        let enabled = !enabledFilters[sender.tag]
-        enabledFilters[sender.tag] = enabled
-        sender.isSelected = enabled
+        let filter = Filter(rawValue: sender.tag)!
+        enabledFilters.formSymmetricDifference([filter])
+        sender.isSelected = enabledFilters.contains(filter)
         delegate?.filterViewController(self, didUpdateFilters: enabledFilters, topRatedOnly: topRatedSwitch.isOn)
     }
 

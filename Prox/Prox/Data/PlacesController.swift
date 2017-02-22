@@ -32,20 +32,7 @@ class PlacesProvider {
     /// Protects allPlaces, displayedPlaces, and placeKeyMap.
     fileprivate let placesLock = NSLock()
 
-    let filters = [
-        PlaceFilter(label: Strings.filterView.discover,
-                    categories: ["active", "arts", "localflavor", "hotelstravel"]),
-        PlaceFilter(label: Strings.filterView.eatAndDrink,
-                    categories: ["food", "nightlife", "restaurants"]),
-        PlaceFilter(label: Strings.filterView.shop,
-                    categories: ["shopping"]),
-        PlaceFilter(label: Strings.filterView.services,
-                    categories: ["auto", "beautysvc", "bicycles", "education", "eventplanning", "financialservices", "health", "homeservices", "localservices", "professional", "massmedia", "pets", "publicservicesgovt", "realestate", "religiousorgs"]),
-    ]
-
-    /// This array has the same cardinality as the filters array; indices correlate.
-    private(set) var enabledFilters = [true, true, true, false]
-
+    private(set) var enabledFilters: Set<Filter> = Set([.discover, .eatAndDrink, .shop ])
     private(set) var topRatedOnly = false
 
     init() {}
@@ -116,7 +103,7 @@ class PlacesProvider {
         }
     }
 
-    func filterPlaces(enabledFilters: [Bool], topRatedOnly: Bool) -> [Place] {
+    func filterPlaces(enabledFilters: Set<Filter>, topRatedOnly: Bool) -> [Place] {
         return placesLock.withReadLock {
             return filterPlacesLocked(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
         }
@@ -124,15 +111,11 @@ class PlacesProvider {
 
     /// Callers must acquire a read lock before calling this method!
     /// TODO: Terrible name, terrible pattern. Fix this with #529.
-    private func filterPlacesLocked(enabledFilters: [Bool], topRatedOnly: Bool) -> [Place] {
-        let enabledCategories = Set(filters.enumerated().filter { i, _ in enabledFilters[i] }.map { $1.categories }.reduce([], +))
-        let toRoots = CategoriesUtil.categoryToRootsMap
-
+    private func filterPlacesLocked(enabledFilters: Set<Filter>, topRatedOnly: Bool) -> [Place] {
         return allPlaces.filter { place in
-            guard !topRatedOnly || PlaceUtilities.isTopRated(place: place) else { return false }
-
-            let categories = Set(place.categories.ids.flatMap { toRoots[$0] }.reduce([], +))
-            return !enabledCategories.isDisjoint(with: categories)
+            guard !topRatedOnly || PlaceUtilities.isTopRated(place: place),
+                  let firstFilter = place.categories.ids.reduce(nil, { $0 ?? CategoriesUtil.categoryToFilter[$1] }) else { return false }
+            return enabledFilters.contains(firstFilter)
         }
     }
 
@@ -235,7 +218,7 @@ class PlacesProvider {
         }
     }
 
-    func refresh(enabledFilters: [Bool], topRatedOnly: Bool) {
+    func refresh(enabledFilters: Set<Filter>, topRatedOnly: Bool) {
         assert(Thread.isMainThread)
 
         var displayedPlaces: [Place]!
