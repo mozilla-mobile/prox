@@ -9,6 +9,7 @@ fileprivate let LOCATION_NAME_TO_COORD: [(name: String, lat: Double, lng: Double
         ("Museum of Science and Industry", 41.790805, -87.583130), // https://www.yelp.com/biz/museum-of-science-and-industry-chicago-3
         ("Chicago Cultural Center", 41.883754, -87.624941), // https://www.yelp.com/biz/chicago-cultural-center-chicago
         ("Metropolis Coffee Company", 41.994339, -87.657278), // https://www.yelp.com/biz/metropolis-coffee-company-chicago-3
+        ("Wicker Park", 41.907862, -87.676641), // https://www.yelp.com/biz/wicker-park-chicago
         ]
 
 fileprivate let REUSE_ID = "I'M FAKING IT"
