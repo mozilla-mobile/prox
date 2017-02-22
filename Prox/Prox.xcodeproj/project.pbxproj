@@ -85,6 +85,7 @@
 		E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61831981DE0BDBA00D1810F /* TravelTimesView.swift */; };
 		E618319B1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */; };
 		E61972141DD28B7A00C9D093 /* PlaceDetailsEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */; };
+		E628DEB31E5E4FFE00404FE3 /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = E628DEB21E5E4FFE00404FE3 /* Style.swift */; };
 		E62CE0C11E5786BE0083FA7B /* Prompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62CE0C01E5786BE0083FA7B /* Prompts.swift */; };
 		E62CE0C31E579AC90083FA7B /* SDKs.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62CE0C21E579AC90083FA7B /* SDKs.swift */; };
 		E63C346F1DDCDFBB005B6B15 /* LocationLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63C346E1DDCDFBB005B6B15 /* LocationLoadingView.swift */; };
@@ -228,6 +229,7 @@
 		E61831981DE0BDBA00D1810F /* TravelTimesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TravelTimesView.swift; sourceTree = "<group>"; };
 		E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsTravelTimesView.swift; sourceTree = "<group>"; };
 		E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsEventView.swift; sourceTree = "<group>"; };
+		E628DEB21E5E4FFE00404FE3 /* Style.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		E62CE0C01E5786BE0083FA7B /* Prompts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Prompts.swift; sourceTree = "<group>"; };
 		E62CE0C21E579AC90083FA7B /* SDKs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SDKs.swift; sourceTree = "<group>"; };
 		E63C346E1DDCDFBB005B6B15 /* LocationLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationLoadingView.swift; sourceTree = "<group>"; };
@@ -416,6 +418,7 @@
 				D32F73F31E4D44B000D504A7 /* Strings.swift */,
 				7B5095771DB64E76007C54F0 /* TravelTimesProvider.swift */,
 				738289665759F7DA1EC836B9 /* FirebaseBranches.swift */,
+				E628DEB21E5E4FFE00404FE3 /* Style.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -887,6 +890,7 @@
 				7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */,
 				7B50956B1DB53382007C54F0 /* ReviewContainerView.swift in Sources */,
 				7BD5CC7E1DAFF07E00BCF50D /* GFBase32Utils.m in Sources */,
+				E628DEB31E5E4FFE00404FE3 /* Style.swift in Sources */,
 				7B50956C1DB53382007C54F0 /* ReviewScoreView.swift in Sources */,
 				7B9DA15A1DBE6F7500A68C82 /* PlaceDetailViewController.swift in Sources */,
 				7BA05BE51DD4CCB1009AC121 /* Event.swift in Sources */,
