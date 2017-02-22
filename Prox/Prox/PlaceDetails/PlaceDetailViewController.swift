@@ -251,8 +251,8 @@ class PlaceDetailViewController: UIViewController {
         }
 
         view.addSubview(mapButton)
-        constraints += [mapButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 36),
-                        mapButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+        constraints += [mapButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+                        mapButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                         mapButton.heightAnchor.constraint(equalToConstant: 48),
                         mapButton.widthAnchor.constraint(equalToConstant: 48)]
 
@@ -263,8 +263,8 @@ class PlaceDetailViewController: UIViewController {
                         mapButtonBadge.widthAnchor.constraint(greaterThanOrEqualToConstant: 20.0)]
 
         view.addSubview(filterButton)
-        constraints += [filterButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 36),
-                        filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+        constraints += [filterButton.centerYAnchor.constraint(equalTo: mapButton.centerYAnchor),
+                        filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
                         filterButton.heightAnchor.constraint(equalToConstant: 48),
                         filterButton.widthAnchor.constraint(equalToConstant: 48)]
 

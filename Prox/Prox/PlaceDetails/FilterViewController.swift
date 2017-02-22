@@ -38,6 +38,13 @@ class FilterViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    private func setupShadow(container: UIView) {
+        container.layer.masksToBounds = false
+        container.layer.shadowOffset = CGSize(width: 0, height: 2)
+        container.layer.shadowRadius = 5
+        container.layer.shadowOpacity = 0.4
+    }
+
     override func viewDidLoad() {
         background.backgroundColor = Colors.filterOverlayDim
         background.alpha = 0
@@ -45,6 +52,7 @@ class FilterViewController: UIViewController {
         view.addSubview(background)
 
         let container = UIView()
+        setupShadow(container: container)
         container.backgroundColor = .white
         view.addSubview(container)
 
@@ -62,6 +70,7 @@ class FilterViewController: UIViewController {
             button.isSelected = enabledFilters[i]
             button.tag = i
             button.addTarget(self, action: #selector(didToggleFilter(sender:)), for: .touchUpInside)
+            button.heightAnchor.constraint(equalToConstant: 36).isActive = true
             stackView.addArrangedSubview(button)
         }
 
@@ -77,7 +86,7 @@ class FilterViewController: UIViewController {
         topRated.addSubview(ratingLabel)
         stackView.addArrangedSubview(topRated)
 
-        let spacing: CGFloat = 16
+        let spacing: CGFloat = 20
         stackView.axis = .vertical
         stackView.spacing = spacing
         stackView.alignment = .center
@@ -86,7 +95,6 @@ class FilterViewController: UIViewController {
 
         showFilterConstraints += [
             container.topAnchor.constraint(equalTo: view.topAnchor),
-            placeCountLabel.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: spacing),
         ]
 
         hideFilterConstraints += [
@@ -103,20 +111,21 @@ class FilterViewController: UIViewController {
             container.leadingAnchor.constraint(equalTo: view.leadingAnchor),
 
             placeCountLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            placeCountLabel.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
 
-            closeButton.centerYAnchor.constraint(equalTo: placeCountLabel.centerYAnchor),
-            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -spacing),
+            closeButton.topAnchor.constraint(equalTo: container.topAnchor, constant: 45),
+            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -27),
 
             ratingLabel.leadingAnchor.constraint(equalTo: topRated.leadingAnchor, constant: spacing),
             ratingLabel.topAnchor.constraint(equalTo: topRated.topAnchor, constant: spacing),
             ratingLabel.bottomAnchor.constraint(equalTo: topRated.bottomAnchor, constant: -spacing),
 
             topRatedSwitch.trailingAnchor.constraint(equalTo: topRated.trailingAnchor, constant: -spacing),
-            topRatedSwitch.topAnchor.constraint(equalTo: topRated.topAnchor, constant: spacing),
-            topRatedSwitch.bottomAnchor.constraint(equalTo: topRated.bottomAnchor, constant: -spacing),
+            topRatedSwitch.centerYAnchor.constraint(equalTo: topRated.centerYAnchor),
 
             topRated.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topRated.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            topRated.heightAnchor.constraint(equalToConstant: 56),
 
             stackView.topAnchor.constraint(equalTo: placeCountLabel.bottomAnchor, constant: spacing),
             stackView.bottomAnchor.constraint(equalTo: container.bottomAnchor),

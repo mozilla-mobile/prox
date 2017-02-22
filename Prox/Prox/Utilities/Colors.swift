@@ -53,14 +53,14 @@ extension Colors {
 
     public static let detailsViewDescriptionExpandArrow = UIColor(red: 0.78, green: 0.78, blue: 0.78, alpha: 1.0)
 
-    public static let filterButtonBorder = UIColor(rgb: 0x0078ff)
-    public static let filterButtonCheckedBackground = UIColor(rgb: 0x0078ff)
+    public static let filterButtonBorder = UIColor(rgb: 0x007aff)
+    public static let filterButtonCheckedBackground = UIColor(rgb: 0x007aff)
     public static let filterButtonCheckedForeground = UIColor.white
     public static let filterButtonUncheckedBackground = UIColor.white
-    public static let filterButtonUncheckedForeground = UIColor(rgb: 0x0078ff)
+    public static let filterButtonUncheckedForeground = UIColor(rgb: 0x007aff)
     public static let filterOverlayDim = UIColor(white: 0, alpha: 0.6)
     public static let filterTopRatedBackground = UIColor(rgb: 0xf6f6f6)
-    public static let filterTopRatedLabel = UIColor(rgb: 0x666666)
+    public static let filterTopRatedLabel = UIColor.black.withAlphaComponent(0.5)
 }
 
 // notification colours
