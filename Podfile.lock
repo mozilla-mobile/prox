@@ -71,6 +71,7 @@ PODS:
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.0)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.0)
   - GTMSessionFetcher/Core (1.1.7)
+  - SnapKit (3.2.0)
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
@@ -83,6 +84,7 @@ DEPENDENCIES:
   - Flurry-iOS-SDK/FlurrySDK
   - FXPageControl (= 1.4)
   - GoogleMaps
+  - SnapKit (~> 3.2.0)
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
@@ -102,7 +104,8 @@ SPEC CHECKSUMS:
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
+  SnapKit: 1ca44df72cfa543218d177cb8aab029d10d86ea7
 
-PODFILE CHECKSUM: 19b3cc9231e64ac6fb5abc7d643c7829d464a0d1
+PODFILE CHECKSUM: 843ad2bca1fcc5b797befacdb8ac81af0dc54cd3
 
 COCOAPODS: 1.2.0
