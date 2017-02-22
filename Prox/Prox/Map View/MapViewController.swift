@@ -5,6 +5,9 @@
 import UIKit
 import GoogleMaps
 
+private let footerBottomOffset = Style.cardViewCornerRadius
+private let footerCardMargin = 10
+
 class MapViewController: UIViewController {
 
     fileprivate let searchRadiusInMeters: Double = RemoteConfigKeys.searchRadiusInKm.value * 1000
@@ -13,7 +16,11 @@ class MapViewController: UIViewController {
     weak var locationProvider: LocationProvider?
 
     private lazy var rootContainer: UIStackView = {
-        let container = UIStackView(arrangedSubviews: [self.titleHeader, self.mapView, self.placeFooter])
+        let container = UIStackView(arrangedSubviews: [
+            self.titleHeader,
+            self.mapView,
+            self.placeFooter
+        ])
         container.axis = .vertical
         container.distribution = .fill
         container.alignment = .fill
@@ -40,12 +47,7 @@ class MapViewController: UIViewController {
         return mapView
     }()
 
-    private lazy var placeFooter: UIView = {
-        let placeholderView = UILabel()
-        placeholderView.text = "Placeholder footer"
-        placeholderView.textAlignment = .center
-        return placeholderView
-    }()
+    private lazy var placeFooter: MapViewCardFooter = MapViewCardFooter(bottomInset: footerBottomOffset)
 
     init() { super.init(nibName: nil, bundle: nil) }
 
@@ -55,14 +57,16 @@ class MapViewController: UIViewController {
 
     override func viewDidLoad() {
         view.addSubview(rootContainer)
-        let constraints = [
-                rootContainer.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor),
-                rootContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                rootContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                rootContainer.bottomAnchor.constraint(equalTo: bottomLayoutGuide.topAnchor),
-        ]
+        rootContainer.snp.makeConstraints { make in
+            make.top.equalTo(topLayoutGuide.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(bottomLayoutGuide.snp.top)
+        }
 
-        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+        placeFooter.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(footerCardMargin)
+            make.bottom.equalTo(bottomLayoutGuide.snp.top).offset(footerBottomOffset)
+        }
     }
 
     @objc private func close() {
