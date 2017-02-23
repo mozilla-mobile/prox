@@ -25,19 +25,6 @@ class MapViewController: UIViewController {
     weak var placesProvider: PlacesProvider?
     weak var locationProvider: LocationProvider?
 
-    private lazy var titleHeader: UILabel = {
-        let titleView = UILabel()
-        titleView.text = "Map view (tap me to dismiss)"
-        titleView.textAlignment = .center
-        titleView.font = Fonts.mapViewTitleText
-
-        // TODO: temporary: need latest designs & focusing on hard stuff.
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.close))
-        titleView.addGestureRecognizer(tapRecognizer)
-        titleView.isUserInteractionEnabled = true
-        return titleView
-    }()
-
     private let mapViewMask = CAShapeLayer()
     private lazy var mapView: GMSMapView = {
         let camera = GMSCameraPosition.camera(withTarget: CLLocationCoordinate2D(latitude: 0, longitude: 0), zoom: 1.0) // initial position unused.
@@ -59,14 +46,17 @@ class MapViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = Colors.mapViewBackgroundColor
 
-        for subview in [self.titleHeader, self.mapView, self.placeFooter] as [UIView] {
+        let closeButton = UIButton()
+        closeButton.setImage(#imageLiteral(resourceName: "button_dismiss"), for: .normal)
+        closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
+
+        for subview in [self.mapView, self.placeFooter, closeButton] as [UIView] {
             view.addSubview(subview)
         }
 
-        titleHeader.snp.makeConstraints { make in
-            make.top.equalTo(topLayoutGuide.snp.bottom)
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(mapView.snp.top)
+        closeButton.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(45)
+            make.trailing.equalToSuperview().inset(27)
         }
 
         mapView.snp.makeConstraints { make in
