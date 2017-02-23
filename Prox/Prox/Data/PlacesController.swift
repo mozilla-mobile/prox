@@ -211,13 +211,6 @@ class PlacesProvider {
         }
     }
 
-    func sortPlaces(byLocation location: CLLocation) {
-        self.placesLock.withWriteLock {
-            let sortedPlaces = PlaceUtilities.sort(places: displayedPlaces, byDistanceFromLocation: location)
-            self.displayedPlaces = sortedPlaces
-        }
-    }
-
     func refresh(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) {
         assert(Thread.isMainThread)
 
