@@ -43,8 +43,8 @@ class MapViewCardFooter: ExpandingCardView {
         return view
     }()
 
-    private lazy var yelpProviderView: UIView = MapViewReviewProvider()
-    private lazy var tripAdvisorProviderView: UIView = MapViewReviewProvider()
+    private lazy var yelpProviderView: UIView = MapViewYelpReviewProviderView()
+    private lazy var tripAdvisorProviderView: UIView = MapViewTripAdvisorReviewProviderView()
 
     init(bottomInset: CGFloat) {
         super.init()
