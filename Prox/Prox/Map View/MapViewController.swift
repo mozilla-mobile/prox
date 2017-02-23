@@ -5,6 +5,16 @@
 import UIKit
 import GoogleMaps
 
+private let mapViewAnchorFromTop = mapViewMaskTopOffset - mapViewMaskMargin
+
+/// If we use the search radius as the map mask diameter, the places are within the circle but the
+/// markers overflow: this is padding to prevent the overflow.
+private let mapViewPaddingForPins: CGFloat = 50
+
+// Note: these are for inner circle. I haven't implemented see-through outer circle for time (yet?).
+private let mapViewMaskMargin: CGFloat = 20
+private let mapViewMaskTopOffset: CGFloat = 74
+
 private let footerBottomOffset = Style.cardViewCornerRadius
 private let footerCardMargin = 16
 
@@ -28,10 +38,13 @@ class MapViewController: UIViewController {
         return titleView
     }()
 
+    private let mapViewMask = CAShapeLayer()
     private lazy var mapView: GMSMapView = {
         let camera = GMSCameraPosition.camera(withTarget: CLLocationCoordinate2D(latitude: 0, longitude: 0), zoom: 1.0) // initial position unused.
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.isMyLocationEnabled = true
+
+        mapView.layer.mask = self.mapViewMask
         return mapView
     }()
 
@@ -57,6 +70,7 @@ class MapViewController: UIViewController {
         }
 
         mapView.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(mapViewAnchorFromTop)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(placeFooter.snp.top)
         }
@@ -65,6 +79,17 @@ class MapViewController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(footerCardMargin)
             make.bottom.equalTo(bottomLayoutGuide.snp.top).offset(footerBottomOffset)
         }
+    }
+
+    override func viewDidLayoutSubviews() {
+        updateMapViewMask()
+    }
+
+    private func updateMapViewMask() {
+        let diameter = mapView.bounds.width - mapViewMaskMargin * 2 // roughly duplicated in resetMapToUserLocation.
+        let rect = CGRect(x: mapViewMaskMargin, y: mapViewMaskMargin, width: diameter, height: diameter)
+        let ellipseInRect = CGPath(ellipseIn: rect, transform: nil)
+        mapViewMask.path = ellipseInRect
     }
 
     @objc private func close() {
@@ -96,9 +121,9 @@ class MapViewController: UIViewController {
         //
         // One alternative is to use GMSMapView.cameraForBounds with something like: http://stackoverflow.com/a/6635926/2219998
         // I could do that, but this already works. :)
-        let mapWidthPoints = view.frame.width
-        let mapWidthMeters = searchRadiusInMeters * 2 // convert radius to diameter.
-        let desiredZoom = GMSCameraPosition.zoom(at: userCoordinate, forMeters: mapWidthMeters, perPoints: mapWidthPoints)
+        let mapDiameterPoints = view.frame.width - mapViewMaskMargin * 2 - mapViewPaddingForPins // roughly duplicated in updateMapViewMask
+        let mapDiameterMeters = searchRadiusInMeters * 2 // convert radius to diameter.
+        let desiredZoom = GMSCameraPosition.zoom(at: userCoordinate, forMeters: mapDiameterMeters, perPoints: mapDiameterPoints)
         let cameraUpdate = GMSCameraUpdate.setTarget(userCoordinate, zoom: desiredZoom)
         mapView.moveCamera(cameraUpdate)
     }
