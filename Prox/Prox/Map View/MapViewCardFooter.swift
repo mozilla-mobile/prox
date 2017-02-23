@@ -5,8 +5,13 @@
 import UIKit
 import SnapKit
 
-private let cardPadding = 10
-private let cardSpacing: CGFloat = 10
+private let cardHorizontalPadding = 16
+private let cardBottomPadding: CGFloat = 24
+
+private let cardSpacing = 18
+private let cardProviderSpacing = 12
+
+private let cardCoverPhotoHeight = 72
 
 class MapViewCardFooter: ExpandingCardView {
 
@@ -15,6 +20,8 @@ class MapViewCardFooter: ExpandingCardView {
         for view in [
             self.coverPhotoView,
             self.titleLabel,
+            self.yelpProviderView,
+            self.tripAdvisorProviderView,
             ] as [UIView] {
             container.addSubview(view)
         }
@@ -29,7 +36,15 @@ class MapViewCardFooter: ExpandingCardView {
         return view
     }()
 
-    private lazy var titleLabel: UILabel = UILabel()
+    private lazy var titleLabel: UILabel = {
+        let view = UILabel()
+        view.text = "Placeholder place"
+        view.font = Fonts.mapViewFooterTitle
+        return view
+    }()
+
+    private lazy var yelpProviderView: UIView = MapViewReviewProvider()
+    private lazy var tripAdvisorProviderView: UIView = MapViewReviewProvider()
 
     init(bottomInset: CGFloat) {
         super.init()
@@ -37,17 +52,25 @@ class MapViewCardFooter: ExpandingCardView {
         contentView = containerView
 
         coverPhotoView.snp.makeConstraints { make in
-            make.height.equalTo(100)
+            make.height.equalTo(cardCoverPhotoHeight)
             make.top.leading.trailing.equalToSuperview()
             make.bottom.equalTo(titleLabel.snp.top).offset(-cardSpacing)
         }
 
         titleLabel.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(cardPadding)
-            make.bottom.equalToSuperview().offset(-cardSpacing - bottomInset)
+            make.leading.trailing.equalToSuperview().inset(cardHorizontalPadding)
+            make.bottom.equalTo(yelpProviderView.snp.top).offset(-cardSpacing)
         }
 
-        titleLabel.text = "Placeholder place"
+        yelpProviderView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(cardHorizontalPadding)
+            make.bottom.equalTo(tripAdvisorProviderView.snp.top).offset(-cardProviderSpacing)
+        }
+
+        tripAdvisorProviderView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(cardHorizontalPadding)
+            make.bottom.equalToSuperview().offset(-cardBottomPadding - bottomInset)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) { fatalError("coder not implemented") }

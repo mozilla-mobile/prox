@@ -6,7 +6,7 @@ import UIKit
 import GoogleMaps
 
 private let footerBottomOffset = Style.cardViewCornerRadius
-private let footerCardMargin = 10
+private let footerCardMargin = 16
 
 class MapViewController: UIViewController {
 
