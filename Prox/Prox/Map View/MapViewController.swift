@@ -15,18 +15,6 @@ class MapViewController: UIViewController {
     weak var placesProvider: PlacesProvider?
     weak var locationProvider: LocationProvider?
 
-    private lazy var rootContainer: UIStackView = {
-        let container = UIStackView(arrangedSubviews: [
-            self.titleHeader,
-            self.mapView,
-            self.placeFooter
-        ])
-        container.axis = .vertical
-        container.distribution = .fill
-        container.alignment = .fill
-        return container
-    }()
-
     private lazy var titleHeader: UILabel = {
         let titleView = UILabel()
         titleView.text = "Map view (tap me to dismiss)"
@@ -56,11 +44,21 @@ class MapViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        view.addSubview(rootContainer)
-        rootContainer.snp.makeConstraints { make in
+        view.backgroundColor = Colors.mapViewBackgroundColor
+
+        for subview in [self.titleHeader, self.mapView, self.placeFooter] as [UIView] {
+            view.addSubview(subview)
+        }
+
+        titleHeader.snp.makeConstraints { make in
             make.top.equalTo(topLayoutGuide.snp.bottom)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(bottomLayoutGuide.snp.top)
+            make.bottom.equalTo(mapView.snp.top)
+        }
+
+        mapView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(placeFooter.snp.top)
         }
 
         placeFooter.snp.makeConstraints { make in

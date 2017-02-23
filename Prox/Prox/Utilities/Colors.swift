@@ -69,5 +69,6 @@ extension Colors {
 
 // map view
 extension Colors {
+    static let mapViewBackgroundColor = UIColor(rgb: 0xfafafa, alpha: 1)
     static let mapViewFooterReviewCount = UIColor.black.withAlphaComponent(0.5)
 }
