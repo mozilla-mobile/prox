@@ -288,6 +288,14 @@ class PlaceDetailViewController: UIViewController {
         }
     }
 
+    /// Removes the given VC from the view hierarchy if it exists, else no-op.
+    private func removeCardViewController(_ controller: PlaceDetailsCardViewController?) {
+        guard let controller = controller else { return }
+        controller.cardView.removeFromSuperview()
+        controller.cardView.isHidden = false
+        controller.removeFromParentViewController()
+    }
+
     fileprivate func pageForwardToCard(forPlace place: Place) {
         guard let newCurrentViewController = insertNewCardViewController(forPlace: place) else { return }
 
@@ -333,19 +341,9 @@ class PlaceDetailViewController: UIViewController {
                 self.imageCarousel.removeFromSuperview()
                 self.imageCarousel = nextCardImageCarousel
                 self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
-                if let previousCardViewController = self.previousCardViewController {
-                    previousCardViewController.cardView.removeFromSuperview()
-                    previousCardViewController.cardView.isHidden = false
-                    previousCardViewController.removeFromParentViewController()
+                for controller in [self.previousCardViewController, self.currentCardViewController, self.nextCardViewController] {
+                    self.removeCardViewController(controller)
                 }
-                if let nextCardViewController = self.nextCardViewController {
-                    nextCardViewController.cardView.removeFromSuperview()
-                    nextCardViewController.cardView.isHidden = false
-                    nextCardViewController.removeFromParentViewController()
-                }
-                self.currentCardViewController.cardView.removeFromSuperview()
-                self.currentCardViewController.cardView.isHidden = false
-                self.currentCardViewController.removeFromParentViewController()
 
                 self.previousCardViewController = newPreviousCardViewController
                 self.currentCardViewController = newCurrentViewController
@@ -483,11 +481,7 @@ class PlaceDetailViewController: UIViewController {
                 self.imageCarousel.removeFromSuperview()
                 self.imageCarousel = nextCardImageCarousel
                 self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
-                if let previousCardViewController = self.previousCardViewController {
-                    previousCardViewController.cardView.removeFromSuperview()
-                    previousCardViewController.cardView.isHidden = false
-                    previousCardViewController.removeFromParentViewController()
-                }
+                self.removeCardViewController(self.previousCardViewController)
                 self.previousCardViewController = self.currentCardViewController
                 self.currentCardViewController = nextCardViewController
                 self.nextCardViewController = newNextCardViewController
@@ -552,11 +546,7 @@ class PlaceDetailViewController: UIViewController {
         }, completion: { finished in
             if finished {
                 self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
-                if let nextCardViewController = self.nextCardViewController {
-                    nextCardViewController.cardView.removeFromSuperview()
-                    nextCardViewController.cardView.isHidden = false
-                    nextCardViewController.removeFromParentViewController()
-                }
+                self.removeCardViewController(self.nextCardViewController)
                 self.imageCarousel.removeFromSuperview()
                 self.imageCarousel = previousCardImageCarousel
                 self.nextCardViewController = self.currentCardViewController
