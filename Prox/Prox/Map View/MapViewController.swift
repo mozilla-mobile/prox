@@ -73,6 +73,8 @@ class MapViewController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(footerCardMargin)
             make.bottom.equalTo(bottomLayoutGuide.snp.top).offset(footerBottomOffset)
         }
+
+        placeFooter.alpha = 0 // hide until the first place is selected.
     }
 
     override func viewDidLayoutSubviews() {
@@ -141,6 +143,11 @@ extension MapViewController: GMSMapViewDelegate {
         }
 
         placeFooter.update(for: place)
+        if placeFooter.alpha != 1 {
+            UIView.animate(withDuration: 0.4) {
+                self.placeFooter.alpha = 1
+            }
+        }
         return true
     }
 }
