@@ -16,6 +16,6 @@ struct Strings {
 
     struct mapView {
         static let noInfo = "No info"
-        static let numReviews = "%d review%@"
+        static let numReviews = "%d Review%@"
     }
 }
