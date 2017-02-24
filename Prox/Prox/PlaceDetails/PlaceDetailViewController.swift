@@ -277,6 +277,9 @@ class PlaceDetailViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    /// MAYBE DON'T USE THIS METHOD - may be the cause of #492. Opens the place card for the event
+    /// by inserting it into the linked list (which is a bit sketchy). You probably want
+    /// `openCard(forExistingPlace:)` instead.
     func openCard(forPlaceWithEvent placeWithEvent: Place) {
         if currentCardViewController.place == placeWithEvent {
             currentCardViewController.place.events = placeWithEvent.events
@@ -285,6 +288,43 @@ class PlaceDetailViewController: UIViewController {
         } else {
             // Page to new card.
             pageForwardToCard(forPlace: placeWithEvent)
+        }
+    }
+
+    /// Opens the existing place card without animation.
+    func openCard(forExistingPlace placeToOpen: Place) {
+        guard let dataSource = dataSource,
+                let index = dataSource.index(forPlace: placeToOpen) else {
+            log.error("Unable to find place \(placeToOpen.id) in data source. Cannot open card.")
+            return
+        }
+
+        // The VCs in this class handle like a linked list so we can just update the prev, middle,
+        // and next nodes, and the view will continue working as usual.
+        currentCardViewController.place = placeToOpen
+
+        let nextIndex = index + 1
+        if nextIndex >= dataSource.numberOfPlaces() {
+            removeCardViewController(nextCardViewController)
+            nextCardViewController = nil
+        } else if let nextPlace = try? dataSource.place(forIndex: nextIndex) {
+            if let nextVC = nextCardViewController {
+                nextVC.place = nextPlace
+            } else {
+                initCardViewController(forNext: nextPlace)
+            }
+        }
+
+        let previousIndex = index - 1
+        if previousIndex < 0 {
+            removeCardViewController(previousCardViewController)
+            previousCardViewController = nil
+        } else if let previousPlace = try? dataSource.place(forIndex: previousIndex) {
+            if let prevVC = previousCardViewController {
+                prevVC.place = previousPlace
+            } else {
+                initCardViewController(forPrevious: previousPlace)
+            }
         }
     }
 
@@ -630,6 +670,7 @@ class PlaceDetailViewController: UIViewController {
 
     @objc private func openMapView() {
         let controller = MapViewController()
+        controller.delegate = self
         controller.placesProvider = dataSource
         controller.locationProvider = locationProvider
         self.present(controller, animated: true)
@@ -686,5 +727,11 @@ extension PlaceDetailViewController: FilterViewControllerDelegate {
     func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters enabledFilters: [Bool], topRatedOnly: Bool) {
         guard let dataSource = dataSource else { return }
         dataSource.refresh(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
+    }
+}
+
+extension PlaceDetailViewController: MapViewControllerDelegate {
+    func mapViewController(didSelect selectedPlace: Place) {
+        openCard(forExistingPlace: selectedPlace)
     }
 }
