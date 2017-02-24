@@ -206,23 +206,11 @@ class PlaceDetailViewController: UIViewController {
 
 
         if let previousPlace = dataSource?.previousPlace(forPlace: currentCardViewController.place) {
-            previousCardViewController = dequeuePlaceCardViewController(forPlace: previousPlace)
-            previousCardViewController?.cardView.transform = scaleOutTransformLeft
-            scrollView.addSubview(previousCardViewController!.cardView)
-            previousCardViewTrailingConstraint = previousCardViewController!.cardView.trailingAnchor.constraint(equalTo: currentCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
-            constraints += [previousCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
-                            previousCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
-                            previousCardViewTrailingConstraint!]
+            initCardViewController(forPrevious: previousPlace)
         }
 
         if let nextPlace = dataSource?.nextPlace(forPlace: currentCardViewController.place) {
-            nextCardViewController = dequeuePlaceCardViewController(forPlace: nextPlace)
-            nextCardViewController?.cardView.transform = scaleOutTransformRight
-            scrollView.addSubview(nextCardViewController!.cardView)
-            nextCardViewLeadingConstraint = nextCardViewController!.cardView.leadingAnchor.constraint(equalTo: currentCardViewController.cardView.trailingAnchor, constant: cardViewSpacingConstant)
-            constraints += [nextCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
-                            nextCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
-                            nextCardViewLeadingConstraint!]
+            initCardViewController(forNext: nextPlace)
         }
 
         view.addSubview(mapButton)
@@ -237,6 +225,32 @@ class PlaceDetailViewController: UIViewController {
                         filterButton.heightAnchor.constraint(equalToConstant: 48),
                         filterButton.widthAnchor.constraint(equalToConstant: 48)]
 
+        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+    }
+
+    private func initCardViewController(forPrevious place: Place) {
+        previousCardViewController = dequeuePlaceCardViewController(forPlace: place)
+        previousCardViewController?.cardView.transform = scaleOutTransformLeft
+        scrollView.addSubview(previousCardViewController!.cardView)
+        previousCardViewTrailingConstraint = previousCardViewController!.cardView.trailingAnchor.constraint(equalTo: currentCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
+        let constraints = [
+            previousCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
+            previousCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
+            previousCardViewTrailingConstraint!
+        ]
+        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+    }
+
+    private func initCardViewController(forNext place: Place) {
+        nextCardViewController = dequeuePlaceCardViewController(forPlace: place)
+        nextCardViewController?.cardView.transform = scaleOutTransformRight
+        scrollView.addSubview(nextCardViewController!.cardView)
+        nextCardViewLeadingConstraint = nextCardViewController!.cardView.leadingAnchor.constraint(equalTo: currentCardViewController.cardView.trailingAnchor, constant: cardViewSpacingConstant)
+        let constraints = [
+            nextCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
+            nextCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
+            nextCardViewLeadingConstraint!
+        ]
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
     }
 
