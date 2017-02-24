@@ -12,10 +12,67 @@ enum Filter: Int {
 
     static let categories: [Filter: [String]] = [
         Filter.discover: [
-            "active",
             "arts",
             "localflavor",
-            "hotelstravel",
+
+            // Active Life
+            "amusementparks",
+            "aquariums",
+            "battingcages",
+            "beaches",
+            "boating",
+            "escapegames",
+            "experiences",
+            "flyboarding",
+            "gliding",
+            "golf",
+            "hanggliding",
+            "hiking",
+            "horsebackriding",
+            "hot_air_balloons",
+            "jetskis",
+            "lakes",
+            "lasertag",
+            "mini_golf",
+            "mountainbiking",
+            "paddleboarding",
+            "paintball",
+            "parasailing",
+            "parks",
+            "publicplazas",
+            "rafting",
+            "rock_climbing",
+            "sailing",
+            "scavengerhunts",
+            "skatingrinks",
+            "skiing",
+            "skydiving",
+            "sledding",
+            "snorkeling",
+            "surfing",
+            "trampoline",
+            "tubing",
+            "waterparks",
+            "wildlifehunting",
+            "zipline",
+            "zoos",
+            "zorbing",
+
+            // Hotels & Travel
+            "tours",
+
+            // Public Services & Gov't
+            "landmarks",
+            "courthouses",
+            "libraries",
+            "townhall",
+
+            // Nightlife
+            "musicvenues",
+
+            // Events & Services
+            "boatcharters",
+            "silentdisco",
         ],
 
         Filter.eatAndDrink: [
@@ -29,6 +86,7 @@ enum Filter: Int {
         ],
 
         Filter.services: [
+            "active",
             "auto",
             "beautysvc",
             "bicycles",
@@ -37,6 +95,7 @@ enum Filter: Int {
             "financialservices",
             "health",
             "homeservices",
+            "hotelstravel",
             "localservices",
             "professional",
             "massmedia",
@@ -44,6 +103,9 @@ enum Filter: Int {
             "publicservicesgovt",
             "realestate",
             "religiousorgs",
+
+            // Food
+            "convenience",
         ],
     ]
 }
