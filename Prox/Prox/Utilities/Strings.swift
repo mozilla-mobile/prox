@@ -13,4 +13,9 @@ struct Strings {
         static let placeCount = "%d places"
         static let topRatedLabel = "Show top-rated places only"
     }
+
+    struct mapView {
+        static let noInfo = "No info"
+        static let numReviews = "%d review%@"
+    }
 }

@@ -11,7 +11,8 @@ private let mapViewAnchorFromTop = mapViewMaskTopOffset - mapViewMaskMargin
 /// markers overflow: this is padding to prevent the overflow.
 private let mapViewPaddingForPins: CGFloat = 50
 
-// Note: these are for inner circle. I haven't implemented see-through outer circle for time (yet?).
+// Note: the constants are for inner circle. I haven't implemented see-through outer circle for time (yet?).
+// The outer numbers are expanded by 30 in every direction (i.e. outside the view). 80% white
 private let mapViewMaskMargin: CGFloat = 20
 private let mapViewMaskTopOffset: CGFloat = 74
 
@@ -25,17 +26,20 @@ class MapViewController: UIViewController {
     weak var placesProvider: PlacesProvider?
     weak var locationProvider: LocationProvider?
 
+    fileprivate var displayedPlaces: [Place]!
+
     private let mapViewMask = CAShapeLayer()
     private lazy var mapView: GMSMapView = {
         let camera = GMSCameraPosition.camera(withTarget: CLLocationCoordinate2D(latitude: 0, longitude: 0), zoom: 1.0) // initial position unused.
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.isMyLocationEnabled = true
+        mapView.delegate = self
 
         mapView.layer.mask = self.mapViewMask
         return mapView
     }()
 
-    private lazy var placeFooter: MapViewCardFooter = MapViewCardFooter(bottomInset: footerBottomOffset)
+    fileprivate lazy var placeFooter: MapViewCardFooter = MapViewCardFooter(bottomInset: footerBottomOffset)
 
     init() { super.init(nibName: nil, bundle: nil) }
 
@@ -91,8 +95,9 @@ class MapViewController: UIViewController {
 
         // Keep the old places on the map if we don't have them (should never happen).
         guard let places = placesProvider?.getDisplayedPlacesCopy() else { return }
+        displayedPlaces = places
         mapView.clear()
-        addToMap(places: places)
+        addToMap(places: displayedPlaces)
     }
 
     private func resetMapToUserLocation() {
@@ -124,5 +129,18 @@ class MapViewController: UIViewController {
             let marker = GMSMarker(for: place)
             marker.map = mapView
         }
+    }
+}
+
+extension MapViewController: GMSMapViewDelegate {
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        guard let placeID = marker.userData as? String,
+                let place = displayedPlaces.first(where: { $0.id == placeID }) else {
+            log.error("Unable to get place for marker data: \(marker.userData)")
+            return true // if we return false, the map will do move & display an overlay, which we don't want.
+        }
+
+        placeFooter.update(for: place)
+        return true
     }
 }

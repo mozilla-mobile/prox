@@ -43,8 +43,8 @@ class MapViewCardFooter: ExpandingCardView {
         return view
     }()
 
-    private lazy var yelpProviderView: UIView = MapViewYelpReviewProviderView()
-    private lazy var tripAdvisorProviderView: UIView = MapViewTripAdvisorReviewProviderView()
+    fileprivate lazy var yelpProviderView = MapViewYelpReviewProviderView()
+    fileprivate lazy var tripAdvisorProviderView = MapViewTripAdvisorReviewProviderView()
 
     init(bottomInset: CGFloat) {
         super.init()
@@ -81,5 +81,17 @@ class MapViewCardFooter: ExpandingCardView {
         shadowOffset = Style.cardViewShadowOffset
         shadowRadius = Style.cardViewShadowRadius
         shadowOpacity = Style.cardViewShadowOpacity
+    }
+
+    func update(for place: Place) {
+        if let url = place.photoURLs.first { // should never fail - we filter out places w/o photos.
+            coverPhotoView.setImageWith(url)
+        } else {
+            coverPhotoView.image = #imageLiteral(resourceName: "cardview_image_loading")
+        }
+        titleLabel.text = place.name
+        for provider in [yelpProviderView, tripAdvisorProviderView] as [MapViewReviewProviderView] {
+            provider.update(for: place)
+        }
     }
 }

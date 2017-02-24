@@ -26,7 +26,7 @@ protocol MapViewReviewProviderView {
 
 extension MapViewReviewProviderView {
     func initViews(withParent parent: UIView) {
-        scoreView.image = image(forScore: 5) // TODO: placeholders
+        scoreView.image = image(forScore: 5)
         scoreView.clipsToBounds = true
         scoreView.contentMode = .scaleAspectFit
 
@@ -58,12 +58,17 @@ extension MapViewReviewProviderView {
     }
 
     func update(for place: Place) {
-        guard let provider = provider(from: place) else {
-            // TODO: no provider
+        guard let provider = provider(from: place),
+                let rating = provider.rating,
+                let reviewCount = provider.totalReviewCount else {
+            scoreView.alpha = 0.4
+            scoreView.image = image(forScore: 0)
+            reviewCountView.text = Strings.mapView.noInfo
             return
         }
 
-        scoreView.image = image(forScore: provider.rating ?? 0) // todo: err vals
-        reviewCountView.text = "\(provider.totalReviewCount ?? 0) reviews"
+        scoreView.alpha = 1
+        scoreView.image = image(forScore: rating)
+        reviewCountView.text = String(format: Strings.mapView.numReviews, reviewCount, (reviewCount == 1) ? "" : "s")
     }
 }
