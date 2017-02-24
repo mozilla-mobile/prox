@@ -37,6 +37,7 @@ class CategoriesUtilTests: XCTestCase {
                                            LeafCategorySibling,
                                            "lifeinsurance"]),
          "investing" : Set<String>(),
+         "mortgagelenders" : Set<String>(),
          "taxservices" : Set<String>(),
          "titleloans" : Set<String>(),
     ]
@@ -51,7 +52,7 @@ class CategoriesUtilTests: XCTestCase {
         "registrationservices": ["auto"], // auto -> registrationservices
         "roadsideassist": ["auto"], // auto -> roadsideassist
         "izakaya": ["restaurants"], // restaurants -> japanese -> izakaya
-        "kiosk": ["food", "shopping"], // food -> kiosk, shopping -> kiosk
+        "kiosk": ["shopping", "food"], // shopping -> kiosk, food -> kiosk
         "restaurants": ["restaurants"], // root category
     ]
 
