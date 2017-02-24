@@ -21,6 +21,7 @@ struct PlaceDetailAnimatableViews {
 
 // MARK: Animation Constants
 fileprivate let cardFadeOutAlpha: CGFloat = 0.6
+private let spacing: CGFloat = 10
 
 // Transforms for card swipe animation
 fileprivate let scaleOutTransformLeft = CGAffineTransform.identity.translatedBy(x: 3, y: 10).scaledBy(x: 0.96, y: 0.96)
@@ -252,19 +253,19 @@ class PlaceDetailViewController: UIViewController {
 
         view.addSubview(mapButton)
         constraints += [mapButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
-                        mapButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                        mapButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: spacing),
                         mapButton.heightAnchor.constraint(equalToConstant: 48),
                         mapButton.widthAnchor.constraint(equalToConstant: 48)]
 
         view.addSubview(mapButtonBadge)
-        constraints += [mapButtonBadge.leadingAnchor.constraint(equalTo: mapButton.trailingAnchor, constant: -10),
+        constraints += [mapButtonBadge.leadingAnchor.constraint(equalTo: mapButton.trailingAnchor, constant: -spacing),
                         mapButtonBadge.topAnchor.constraint(equalTo: mapButton.topAnchor),
                         mapButtonBadge.heightAnchor.constraint(equalToConstant: 20.0),
                         mapButtonBadge.widthAnchor.constraint(greaterThanOrEqualToConstant: 20.0)]
 
         view.addSubview(filterButton)
         constraints += [filterButton.centerYAnchor.constraint(equalTo: mapButton.centerYAnchor),
-                        filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+                        filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -spacing),
                         filterButton.heightAnchor.constraint(equalToConstant: 48),
                         filterButton.widthAnchor.constraint(equalToConstant: 48)]
 
