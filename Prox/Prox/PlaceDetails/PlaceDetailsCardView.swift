@@ -180,17 +180,17 @@ class PlaceDetailsCardView: UIView {
 
     private func setupShadow() {
         layer.masksToBounds = false
-        layer.shadowOffset = CGSize(width: 0, height: 2)
-        layer.shadowRadius = 5
-        layer.shadowOpacity = 0.4
+        layer.shadowOffset = Style.cardViewShadowOffset
+        layer.shadowRadius = Style.cardViewShadowRadius
+        layer.shadowOpacity = Style.cardViewShadowOpacity
     }
 
     private func setupViews() {
         backgroundColor = Colors.detailsViewCardBackground // cannot be transparent to display shadow
         contentView.backgroundColor = Colors.detailsViewCardBackground
 
-        layer.cornerRadius = 10
-        contentView.layer.cornerRadius = 10
+        layer.cornerRadius = Style.cardViewCornerRadius
+        contentView.layer.cornerRadius = Style.cardViewCornerRadius
         contentView.layer.masksToBounds = true
 
         addSubview(contentView)

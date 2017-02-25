@@ -5,6 +5,20 @@
 import UIKit
 import GoogleMaps
 
+private let mapViewAnchorFromTop = mapViewMaskTopOffset - mapViewMaskMargin
+
+/// If we use the search radius as the map mask diameter, the places are within the circle but the
+/// markers overflow: this is padding to prevent the overflow.
+private let mapViewPaddingForPins: CGFloat = 50
+
+// Note: the constants are for inner circle. I haven't implemented see-through outer circle for time (yet?).
+// The outer numbers are expanded by 30 in every direction (i.e. outside the view). 80% white
+private let mapViewMaskMargin: CGFloat = 20
+private let mapViewMaskTopOffset: CGFloat = 74
+
+private let footerBottomOffset = Style.cardViewCornerRadius
+private let footerCardMargin = 16
+
 class MapViewController: UIViewController {
 
     fileprivate let searchRadiusInMeters: Double = RemoteConfigKeys.searchRadiusInKm.value * 1000
@@ -12,40 +26,20 @@ class MapViewController: UIViewController {
     weak var placesProvider: PlacesProvider?
     weak var locationProvider: LocationProvider?
 
-    private lazy var rootContainer: UIStackView = {
-        let container = UIStackView(arrangedSubviews: [self.titleHeader, self.mapView, self.placeFooter])
-        container.axis = .vertical
-        container.distribution = .fill
-        container.alignment = .fill
-        return container
-    }()
+    fileprivate var displayedPlaces: [Place]!
 
-    private lazy var titleHeader: UILabel = {
-        let titleView = UILabel()
-        titleView.text = "Map view (tap me to dismiss)"
-        titleView.textAlignment = .center
-        titleView.font = Fonts.mapViewTitleText
-
-        // TODO: temporary: need latest designs & focusing on hard stuff.
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.close))
-        titleView.addGestureRecognizer(tapRecognizer)
-        titleView.isUserInteractionEnabled = true
-        return titleView
-    }()
-
+    private let mapViewMask = CAShapeLayer()
     private lazy var mapView: GMSMapView = {
         let camera = GMSCameraPosition.camera(withTarget: CLLocationCoordinate2D(latitude: 0, longitude: 0), zoom: 1.0) // initial position unused.
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.isMyLocationEnabled = true
+        mapView.delegate = self
+
+        mapView.layer.mask = self.mapViewMask
         return mapView
     }()
 
-    private lazy var placeFooter: UIView = {
-        let placeholderView = UILabel()
-        placeholderView.text = "Placeholder footer"
-        placeholderView.textAlignment = .center
-        return placeholderView
-    }()
+    fileprivate lazy var placeFooter: MapViewCardFooter = MapViewCardFooter(bottomInset: footerBottomOffset)
 
     init() { super.init(nibName: nil, bundle: nil) }
 
@@ -54,15 +48,44 @@ class MapViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        view.addSubview(rootContainer)
-        let constraints = [
-                rootContainer.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor),
-                rootContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                rootContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                rootContainer.bottomAnchor.constraint(equalTo: bottomLayoutGuide.topAnchor),
-        ]
+        view.backgroundColor = Colors.mapViewBackgroundColor
 
-        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+        let closeButton = UIButton()
+        closeButton.setImage(#imageLiteral(resourceName: "button_dismiss"), for: .normal)
+        closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
+
+        for subview in [self.mapView, self.placeFooter, closeButton] as [UIView] {
+            view.addSubview(subview)
+        }
+
+        closeButton.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(45)
+            make.trailing.equalToSuperview().inset(27)
+        }
+
+        mapView.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(mapViewAnchorFromTop)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(placeFooter.snp.top)
+        }
+
+        placeFooter.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(footerCardMargin)
+            make.bottom.equalTo(bottomLayoutGuide.snp.top).offset(footerBottomOffset)
+        }
+
+        placeFooter.alpha = 0 // hide until the first place is selected.
+    }
+
+    override func viewDidLayoutSubviews() {
+        updateMapViewMask()
+    }
+
+    private func updateMapViewMask() {
+        let diameter = mapView.bounds.width - mapViewMaskMargin * 2 // roughly duplicated in resetMapToUserLocation.
+        let rect = CGRect(x: mapViewMaskMargin, y: mapViewMaskMargin, width: diameter, height: diameter)
+        let ellipseInRect = CGPath(ellipseIn: rect, transform: nil)
+        mapViewMask.path = ellipseInRect
     }
 
     @objc private func close() {
@@ -74,8 +97,9 @@ class MapViewController: UIViewController {
 
         // Keep the old places on the map if we don't have them (should never happen).
         guard let places = placesProvider?.getDisplayedPlacesCopy() else { return }
+        displayedPlaces = places
         mapView.clear()
-        addToMap(places: places)
+        addToMap(places: displayedPlaces)
     }
 
     private func resetMapToUserLocation() {
@@ -94,9 +118,9 @@ class MapViewController: UIViewController {
         //
         // One alternative is to use GMSMapView.cameraForBounds with something like: http://stackoverflow.com/a/6635926/2219998
         // I could do that, but this already works. :)
-        let mapWidthPoints = view.frame.width
-        let mapWidthMeters = searchRadiusInMeters * 2 // convert radius to diameter.
-        let desiredZoom = GMSCameraPosition.zoom(at: userCoordinate, forMeters: mapWidthMeters, perPoints: mapWidthPoints)
+        let mapDiameterPoints = view.frame.width - mapViewMaskMargin * 2 - mapViewPaddingForPins // roughly duplicated in updateMapViewMask
+        let mapDiameterMeters = searchRadiusInMeters * 2 // convert radius to diameter.
+        let desiredZoom = GMSCameraPosition.zoom(at: userCoordinate, forMeters: mapDiameterMeters, perPoints: mapDiameterPoints)
         let cameraUpdate = GMSCameraUpdate.setTarget(userCoordinate, zoom: desiredZoom)
         mapView.moveCamera(cameraUpdate)
     }
@@ -107,5 +131,23 @@ class MapViewController: UIViewController {
             let marker = GMSMarker(for: place)
             marker.map = mapView
         }
+    }
+}
+
+extension MapViewController: GMSMapViewDelegate {
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        guard let placeID = marker.userData as? String,
+                let place = displayedPlaces.first(where: { $0.id == placeID }) else {
+            log.error("Unable to get place for marker data: \(marker.userData)")
+            return true // if we return false, the map will do move & display an overlay, which we don't want.
+        }
+
+        placeFooter.update(for: place)
+        if placeFooter.alpha != 1 {
+            UIView.animate(withDuration: 0.4) {
+                self.placeFooter.alpha = 1
+            }
+        }
+        return true
     }
 }

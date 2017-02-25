@@ -66,3 +66,9 @@ extension Colors {
     public static let notificationText = Colors.detailsViewEventText
     public static let notificationBackground = Colors.detailsViewEventBackground
 }
+
+// map view
+extension Colors {
+    static let mapViewBackgroundColor = UIColor(rgb: 0xfafafa, alpha: 1)
+    static let mapViewFooterReviewCount = UIColor.black.withAlphaComponent(0.5)
+}

@@ -14,6 +14,7 @@ target 'Prox' do
 	pod 'BuddyBuildSDK'
 	pod 'FXPageControl', '1.4'
 	pod 'GoogleMaps'
+	pod 'SnapKit', '~> 3.2.0'
 end
 
 target 'ProxTests' do
