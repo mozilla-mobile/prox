@@ -4,9 +4,13 @@
 
 import Foundation
 
+protocol ObservableScrollViewDelegate: class {
+    func observableScrollView(_: ObservableScrollView, onContentSizeUpdate: CGSize)
+}
+
 class ObservableScrollView: UIScrollView {
 
-    var onContentSizeUpdated: ((CGSize) -> Void)?
+    weak var observableScrollViewDelegate: ObservableScrollViewDelegate? // name conflict with `UIScrollView.delegate`
 
     init() {
         super.init(frame: .zero)
@@ -15,6 +19,6 @@ class ObservableScrollView: UIScrollView {
     required init(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     override var contentSize: CGSize {
-        didSet { onContentSizeUpdated?(contentSize) }
+        didSet { observableScrollViewDelegate?.observableScrollView(self, onContentSizeUpdate: contentSize) }
     }
 }

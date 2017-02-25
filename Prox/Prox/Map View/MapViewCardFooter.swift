@@ -78,9 +78,9 @@ class MapViewCardFooter: ExpandingCardView {
     private func initStyle() {
         cornerRadius = Style.cardViewCornerRadius
 
-        shadowOffset = Style.cardViewShadowOffset
-        shadowRadius = Style.cardViewShadowRadius
-        shadowOpacity = Style.cardViewShadowOpacity
+        layer.shadowOffset = Style.cardViewShadowOffset
+        layer.shadowRadius = Style.cardViewShadowRadius
+        layer.shadowOpacity = Style.cardViewShadowOpacity
     }
 
     func update(for place: Place) {

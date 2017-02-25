@@ -6,6 +6,8 @@ import Foundation
 
 private let viewHeight: CGFloat = 20
 
+private let disabledAlpha: CGFloat = 0.4
+
 protocol MapViewReviewProviderView {
 
     var scoreView: UIImageView { get }
@@ -27,10 +29,11 @@ protocol MapViewReviewProviderView {
 extension MapViewReviewProviderView {
     func initViews(withParent parent: UIView) {
         scoreView.image = image(forScore: 5)
+        scoreView.alpha = disabledAlpha
         scoreView.clipsToBounds = true
         scoreView.contentMode = .scaleAspectFit
 
-        reviewCountView.text = "10 reviews"
+        reviewCountView.text = Strings.mapView.noInfo
         reviewCountView.font = Fonts.mapViewFooterReviewCount
         reviewCountView.textColor = Colors.mapViewFooterReviewCount
 
@@ -61,7 +64,7 @@ extension MapViewReviewProviderView {
         guard let provider = provider(from: place),
                 let rating = provider.rating,
                 let reviewCount = provider.totalReviewCount else {
-            scoreView.alpha = 0.4
+            scoreView.alpha = disabledAlpha
             scoreView.image = image(forScore: 0)
             reviewCountView.text = Strings.mapView.noInfo
             return

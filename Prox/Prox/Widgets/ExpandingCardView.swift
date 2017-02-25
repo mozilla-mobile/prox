@@ -33,23 +33,6 @@ public class ExpandingCardView: UIView {
         set { scrollView.layer.cornerRadius = newValue }
     }
 
-    public var shadowColor: CGColor? {
-        get { return layer.shadowColor }
-        set { layer.shadowColor = newValue }
-    }
-    public var shadowOpacity: Float {
-        get { return layer.shadowOpacity }
-        set { layer.shadowOpacity = newValue }
-    }
-    public var shadowRadius: CGFloat {
-        get { return layer.shadowRadius }
-        set { layer.shadowRadius = newValue }
-    }
-    public var shadowOffset: CGSize {
-        get { return layer.shadowOffset }
-        set { layer.shadowOffset = newValue }
-    }
-
     public var contentView: UIView? {
         didSet {
             oldValue?.removeFromSuperview()
@@ -80,7 +63,7 @@ public class ExpandingCardView: UIView {
 
     // MARK: implementation.
 
-    private lazy var heightConstraint: NSLayoutConstraint = {
+    fileprivate lazy var heightConstraint: NSLayoutConstraint = {
         // Default constant is high enough to see (for debugging purposes) but low enough
         // that the caller knows they've done something wrong.
         let constraint = self.heightAnchor.constraint(equalToConstant: 1)
@@ -96,9 +79,7 @@ public class ExpandingCardView: UIView {
 
     private lazy var scrollView: UIScrollView = {
         let view = ObservableScrollView()
-        view.onContentSizeUpdated = { [unowned self] contentSize in
-            self.heightConstraint.constant = contentSize.height
-        }
+        view.observableScrollViewDelegate = self
         return view
     }()
 
@@ -132,4 +113,10 @@ private func tlbrConstraintsEqual(_ v1: UIView, _ v2: UIView) -> [NSLayoutConstr
         v1.trailingAnchor.constraint(equalTo: v2.trailingAnchor),
         v1.bottomAnchor.constraint(equalTo: v2.bottomAnchor),
     ]
+}
+
+extension ExpandingCardView: ObservableScrollViewDelegate {
+    func observableScrollView(_ scrollView: ObservableScrollView, onContentSizeUpdate contentSize: CGSize) {
+        self.heightConstraint.constant = contentSize.height
+    }
 }
