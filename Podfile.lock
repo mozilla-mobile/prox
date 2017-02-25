@@ -14,7 +14,6 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
-  - BadgeSwift (3.0.0)
   - BNRDeferred (3.0.0-beta.3)
   - BuddyBuildSDK (1.0.12)
   - Firebase/Auth (3.8.0):
@@ -75,7 +74,6 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
-  - BadgeSwift (~> 3.0)
   - BNRDeferred (~> 3.0-beta)
   - BuddyBuildSDK
   - Firebase/Auth
@@ -88,7 +86,6 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
-  BadgeSwift: 30310290b4073da62879813c2071bab535509ff4
   BNRDeferred: 17042a76318cc1f23af85f1ee4fad4cc3172f272
   BuddyBuildSDK: f4682598772ae66c9ef5554d2d78d0a19fb413a0
   Firebase: fdbecadb7b5cbef2774852d4fa659b9daf11f2af
@@ -106,6 +103,6 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
 
-PODFILE CHECKSUM: 1fb53da2a19330afec784420fba49ef14a7a712e
+PODFILE CHECKSUM: 19b3cc9231e64ac6fb5abc7d643c7829d464a0d1
 
 COCOAPODS: 1.2.0
