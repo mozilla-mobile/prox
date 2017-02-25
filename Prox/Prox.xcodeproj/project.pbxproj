@@ -93,7 +93,6 @@
 		E662FF4E1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662FF4D1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift */; };
 		E67146361DB54896007A99E4 /* CLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67146351DB54896007A99E4 /* CLLocationManager.swift */; };
 		E67D49FD1DDE42F0005E17F9 /* LoadingOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D49FC1DDE42F0005E17F9 /* LoadingOverlayView.swift */; };
-		E681E7581DE3562200902CDA /* Animatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E681E7571DE3562200902CDA /* Animatable.swift */; };
 		E68BD90D1DCA9E8E007B51A3 /* DayOfWeekTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68BD90C1DCA9E8E007B51A3 /* DayOfWeekTests.swift */; };
 		E68BD90F1DCAAD6B007B51A3 /* OpenHoursTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68BD90E1DCAAD6B007B51A3 /* OpenHoursTests.swift */; };
 		E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */; };
@@ -237,7 +236,6 @@
 		E662FF4D1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsDescriptionView.swift; sourceTree = "<group>"; };
 		E67146351DB54896007A99E4 /* CLLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLLocationManager.swift; path = Extensions/CLLocationManager.swift; sourceTree = "<group>"; };
 		E67D49FC1DDE42F0005E17F9 /* LoadingOverlayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingOverlayView.swift; sourceTree = "<group>"; };
-		E681E7571DE3562200902CDA /* Animatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Animatable.swift; sourceTree = "<group>"; };
 		E68BD90C1DCA9E8E007B51A3 /* DayOfWeekTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayOfWeekTests.swift; sourceTree = "<group>"; };
 		E68BD90E1DCAAD6B007B51A3 /* OpenHoursTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenHoursTests.swift; sourceTree = "<group>"; };
 		E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossFadeTransition.swift; sourceTree = "<group>"; };
@@ -406,7 +404,6 @@
 			children = (
 				E62CE0C21E579AC90083FA7B /* SDKs.swift */,
 				234AF1591DDFD91C00097B0B /* AnalyticsUtilities.swift */,
-				E681E7571DE3562200902CDA /* Animatable.swift */,
 				7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */,
 				E6101A971DDA7B8500D05B74 /* CategoriesUtil.swift */,
 				7B5095701DB5352E007C54F0 /* Colors.swift */,
@@ -897,7 +894,6 @@
 				E618319B1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift in Sources */,
 				D3656D981E4A7D0F00040448 /* Logger.swift in Sources */,
 				7B1C657B1DDCA9A90047559C /* FirebaseEventsDatabase.swift in Sources */,
-				E681E7581DE3562200902CDA /* Animatable.swift in Sources */,
 				7B9DA1571DBE6EE300A68C82 /* PlaceCarouselViewController.swift in Sources */,
 				7B5095751DB62590007C54F0 /* NSLayoutConstraint.swift in Sources */,
 				2380CA911DE4140A002D73F1 /* AppState.swift in Sources */,

@@ -9,14 +9,6 @@ enum PanDirection {
     case vertical, horizontal, none
 }
 
-struct PlaceDetailAnimatableViews {
-    var nextCard: PlaceDetailsCardView?
-    var previousCard: PlaceDetailsCardView?
-    var mapButton: UIButton
-    var currentCard: PlaceDetailsCardView
-    var backgroundImage: UIImageView
-}
-
 // MARK: Animation Constants
 fileprivate let cardFadeOutAlpha: CGFloat = 0.6
 private let spacing: CGFloat = 10
@@ -678,18 +670,6 @@ extension PlaceDetailViewController: UIGestureRecognizerDelegate {
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return gestureRecognizer == panGestureRecognizer && otherGestureRecognizer == scrollView.panGestureRecognizer
-    }
-}
-
-extension PlaceDetailViewController: Animatable {
-    func animatableProperties() -> PlaceDetailAnimatableViews {
-        return PlaceDetailAnimatableViews(
-            nextCard: self.nextCardViewController?.cardView,
-            previousCard: self.previousCardViewController?.cardView,
-            mapButton: self.mapButton,
-            currentCard: self.currentCardViewController.cardView,
-            backgroundImage: self.backgroundImage
-        )
     }
 }
 
