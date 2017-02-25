@@ -56,16 +56,6 @@ struct PlaceUtilities {
         return result.successResult()
     }
 
-    static func isTopRated(place: Place) -> Bool {
-        guard let rating = place.yelpProvider.rating,
-              let reviewCount = place.yelpProvider.totalReviewCount else {
-            log.warn("missing rating or review count for place \(place.id)")
-            return false
-        }
-
-        return rating >= 2.5 && reviewCount >= 4
-    }
-
     static func getString(forCategories categories: [String]?) -> String? {
         return categories?.prefix(MaxDisplayedCategories).joined(separator: " • ")
     }

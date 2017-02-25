@@ -15,6 +15,9 @@ protocol PlacesProviderDelegate: class {
     func placesProvider(_ controller: PlacesProvider, didUpdatePlaces places: [Place])
 }
 
+private let ratingWeight: Float = 1
+private let reviewWeight: Float = 2
+
 class PlacesProvider {
     weak var delegate: PlacesProviderDelegate?
 
@@ -112,11 +115,36 @@ class PlacesProvider {
     /// Callers must acquire a read lock before calling this method!
     /// TODO: Terrible name, terrible pattern. Fix this with #529.
     private func filterPlacesLocked(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) -> [Place] {
-        return allPlaces.filter { place in
-            guard !topRatedOnly || PlaceUtilities.isTopRated(place: place),
-                  let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first else { return false }
-            return enabledFilters.contains(firstFilter)
+        var reviewCounts = [Int]()
+
+        let distanceSortedPlaces = allPlaces.filter { place in
+            guard let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first,
+                  enabledFilters.contains(firstFilter) else { return false }
+
+            reviewCounts.append(place.yelpProvider.totalReviewCount ?? 0)
+            return true
         }
+
+        guard topRatedOnly else { return distanceSortedPlaces }
+
+        let maxReviews = distanceSortedPlaces.reduce(0) { max($0, ($1.yelpProvider.totalReviewCount ?? 0) + ($1.tripAdvisorProvider?.totalReviewCount ?? 0)) }
+        let logMaxReviews = log10(Float(maxReviews))
+
+        let sorted = distanceSortedPlaces.sorted { a, b in
+            return proxRating(forPlace: a, logMaxReviews: logMaxReviews) > proxRating(forPlace: b, logMaxReviews: logMaxReviews)
+        }
+
+        return sorted
+    }
+
+    private func proxRating(forPlace place: Place, logMaxReviews: Float) -> Float {
+        let yelpCount = Float(place.yelpProvider.totalReviewCount ?? 0)
+        let taCount = Float(place.tripAdvisorProvider?.totalReviewCount ?? 0)
+        let yelpRating = place.yelpProvider.rating ?? 0
+        let taRating = place.tripAdvisorProvider?.rating ?? 0
+        let ratingScore = (yelpRating * yelpCount + taRating * taCount) / (yelpCount + taCount)
+        let reviewScore = log10(yelpCount + taCount) / logMaxReviews * 5
+        return (ratingScore * ratingWeight + reviewScore * reviewWeight) / (ratingWeight + reviewWeight)
     }
 
     /// Applies the current set of filters to all places, setting `displayedPlaces` to the result.
