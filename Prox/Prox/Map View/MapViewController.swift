@@ -19,14 +19,20 @@ private let mapViewMaskTopOffset: CGFloat = 74
 private let footerBottomOffset = Style.cardViewCornerRadius
 private let footerCardMargin = 16
 
+protocol MapViewControllerDelegate: class {
+    func mapViewController(didSelect: Place)
+}
+
 class MapViewController: UIViewController {
 
     fileprivate let searchRadiusInMeters: Double = RemoteConfigKeys.searchRadiusInKm.value * 1000
 
+    weak var delegate: MapViewControllerDelegate?
     weak var placesProvider: PlacesProvider?
     weak var locationProvider: LocationProvider?
 
     fileprivate var displayedPlaces: [Place]!
+    var selectedPlace: Place?
 
     private let mapViewMask = CAShapeLayer()
     private lazy var mapView: GMSMapView = {
@@ -39,7 +45,13 @@ class MapViewController: UIViewController {
         return mapView
     }()
 
-    fileprivate lazy var placeFooter: MapViewCardFooter = MapViewCardFooter(bottomInset: footerBottomOffset)
+    fileprivate lazy var placeFooter: MapViewCardFooter = {
+        let footer = MapViewCardFooter(bottomInset: footerBottomOffset)
+        footer.alpha = 0 // hide until the first place is selected.
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(closeWithSelected))
+        footer.addGestureRecognizer(tapRecognizer)
+        return footer
+    }()
 
     init() { super.init(nibName: nil, bundle: nil) }
 
@@ -73,8 +85,6 @@ class MapViewController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(footerCardMargin)
             make.bottom.equalTo(bottomLayoutGuide.snp.top).offset(footerBottomOffset)
         }
-
-        placeFooter.alpha = 0 // hide until the first place is selected.
     }
 
     override func viewDidLayoutSubviews() {
@@ -90,6 +100,13 @@ class MapViewController: UIViewController {
 
     @objc private func close() {
         dismiss(animated: true)
+    }
+
+    @objc private func closeWithSelected() {
+        if let selectedPlace = selectedPlace {
+            delegate?.mapViewController(didSelect: selectedPlace)
+        }
+        close()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -142,6 +159,7 @@ extension MapViewController: GMSMapViewDelegate {
             return true // if we return false, the map will do move & display an overlay, which we don't want.
         }
 
+        selectedPlace = place
         placeFooter.update(for: place)
         if placeFooter.alpha != 1 {
             UIView.animate(withDuration: 0.4) {
