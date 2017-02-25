@@ -4,14 +4,14 @@
 
 import Foundation
 
-enum Filter: Int {
+enum PlaceFilter: Int {
     case discover
     case eatAndDrink
     case shop
     case services
 
-    static let categories: [Filter: [String]] = [
-        Filter.discover: [
+    static let categories: [PlaceFilter: [String]] = [
+        PlaceFilter.discover: [
             "arts",
             "localflavor",
 
@@ -75,17 +75,17 @@ enum Filter: Int {
             "silentdisco",
         ],
 
-        Filter.eatAndDrink: [
+        PlaceFilter.eatAndDrink: [
             "food",
             "nightlife",
             "restaurants"
         ],
 
-        Filter.shop: [
+        PlaceFilter.shop: [
             "shopping",
         ],
 
-        Filter.services: [
+        PlaceFilter.services: [
             "active",
             "auto",
             "beautysvc",

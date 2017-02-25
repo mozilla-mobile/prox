@@ -125,11 +125,13 @@ struct CategoriesUtil {
         return categoryToName
     }()
 
-    static let categoryToFilter: [String: Filter] = {
-        var categoryToFilter = [String: Filter]()
+    /// A category may not map to a filter if we recrawl after Yelp changes its categories
+    /// (thus making yelp_categories_v3.json out of sync).
+    static let categoryToFilter: [String: PlaceFilter] = {
+        var categoryToFilter = [String: PlaceFilter]()
 
         // Build the initial map of categories -> filters that we set explicitly.
-        for (filter, categories) in Filter.categories {
+        for (filter, categories) in PlaceFilter.categories {
             for category in categories {
                 categoryToFilter[category] = filter
             }
@@ -145,10 +147,10 @@ struct CategoriesUtil {
     }()
 
     /// Returns this category, its root categories, and all parents in between.
-    /// The result is DFS-ordered.
+    /// The result is DFS-ordered from this category to its roots.
     private static func getAncestors(forCategory category: String) -> [String] {
         let ancestors = categoryToParentsMap[category] ?? []
-        let hierarchy = ancestors.map { getAncestors(forCategory: $0) }.reduce([category], +)
+        let hierarchy = ancestors.reduce([category]) { $0 + getAncestors(forCategory: $1) }
         return Array(NSOrderedSet(array: hierarchy)) as! [String]
     }
 }

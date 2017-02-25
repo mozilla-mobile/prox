@@ -74,7 +74,7 @@
 		D32F73F41E4D44B000D504A7 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32F73F31E4D44B000D504A7 /* Strings.swift */; };
 		D3656D981E4A7D0F00040448 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3656D971E4A7D0F00040448 /* Logger.swift */; };
 		D3C815681E4542E30066A97B /* PlaceProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C815671E4542E30066A97B /* PlaceProviders.swift */; };
-		D3D6F5C21E60E8140093BFD4 /* Filters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D6F5C11E60E8130093BFD4 /* Filters.swift */; };
+		D3D6F5C21E60E8140093BFD4 /* PlaceFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D6F5C11E60E8130093BFD4 /* PlaceFilter.swift */; };
 		E60A42711DF28E01008BE74D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42701DF28E01008BE74D /* URL.swift */; };
 		E60A42771DF29127008BE74D /* URLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42761DF29127008BE74D /* URLTests.swift */; };
 		E6101A901DDA45CD00D05B74 /* Data.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E6101A8F1DDA45CD00D05B74 /* Data.bundle */; };
@@ -221,7 +221,7 @@
 		D32F73F31E4D44B000D504A7 /* Strings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		D3656D971E4A7D0F00040448 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		D3C815671E4542E30066A97B /* PlaceProviders.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceProviders.swift; sourceTree = "<group>"; };
-		D3D6F5C11E60E8130093BFD4 /* Filters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filters.swift; sourceTree = "<group>"; };
+		D3D6F5C11E60E8130093BFD4 /* PlaceFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceFilter.swift; sourceTree = "<group>"; };
 		D3DA777E1DC2776C009C114E /* BuddyBuildSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BuddyBuildSDK.framework; path = ../Pods/BuddyBuildSDK/BuddyBuildSDK.framework; sourceTree = "<group>"; };
 		D3DA77821DC289A4009C114E /* Prox-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Prox-Bridging-Header.h"; sourceTree = "<group>"; };
 		D4ACFAE1468306F6BC08DB51 /* Pods-ProxUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -426,12 +426,12 @@
 				E6101A971DDA7B8500D05B74 /* CategoriesUtil.swift */,
 				7B5095701DB5352E007C54F0 /* Colors.swift */,
 				7BA05BEA1DD4D602009AC121 /* EventNotificationsManager.swift */,
-				D3D6F5C11E60E8130093BFD4 /* Filters.swift */,
 				738289665759F7DA1EC836B9 /* FirebaseBranches.swift */,
 				7B5095711DB5352E007C54F0 /* Fonts.swift */,
 				7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */,
 				D3656D971E4A7D0F00040448 /* Logger.swift */,
 				7B9D15C51DC0D2E70051B760 /* OpenInHelper.swift */,
+				D3D6F5C11E60E8130093BFD4 /* PlaceFilter.swift */,
 				7B8651911DBFAF19002A666A /* PlaceUtilities.swift */,
 				E62CE0C21E579AC90083FA7B /* SDKs.swift */,
 				D32F73F31E4D44B000D504A7 /* Strings.swift */,
@@ -917,7 +917,7 @@
 				7BD5CC801DAFF07E00BCF50D /* GFGeoHashQuery.m in Sources */,
 				E618319B1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift in Sources */,
 				E628DEBD1E5E528600404FE3 /* MapViewCardFooter.swift in Sources */,
-				D3D6F5C21E60E8140093BFD4 /* Filters.swift in Sources */,
+				D3D6F5C21E60E8140093BFD4 /* PlaceFilter.swift in Sources */,
 				D3656D981E4A7D0F00040448 /* Logger.swift in Sources */,
 				7B1C657B1DDCA9A90047559C /* FirebaseEventsDatabase.swift in Sources */,
 				7B9DA1571DBE6EE300A68C82 /* PlaceCarouselViewController.swift in Sources */,

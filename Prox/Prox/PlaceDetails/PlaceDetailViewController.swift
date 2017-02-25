@@ -719,12 +719,12 @@ extension PlaceDetailViewController: UIGestureRecognizerDelegate {
 }
 
 extension PlaceDetailViewController: FilterViewControllerDelegate {
-    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters enabledFilters: Set<Filter>, topRatedOnly: Bool) {
+    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) {
         guard let count = dataSource?.filterPlaces(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly).count else { return }
         filterViewController.placeCount = count
     }
 
-    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters enabledFilters: Set<Filter>, topRatedOnly: Bool) {
+    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) {
         guard let dataSource = dataSource else { return }
         dataSource.refresh(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
     }

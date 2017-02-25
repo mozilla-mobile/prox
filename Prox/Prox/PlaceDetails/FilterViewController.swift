@@ -5,8 +5,8 @@
 import Foundation
 
 protocol FilterViewControllerDelegate: class {
-    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters enabledFilters: Set<Filter>, topRatedOnly: Bool)
-    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters enabledFilters: Set<Filter>, topRatedOnly: Bool)
+    func filterViewController(_ filterViewController: FilterViewController, didUpdateFilters enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool)
+    func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool)
 }
 
 /// A drop-down view from the top of the screen that displays a list of categories to filter.
@@ -18,18 +18,18 @@ class FilterViewController: UIViewController {
 
     fileprivate let background = UIButton()
     private let stackView = UIStackView()
-    private(set) var enabledFilters: Set<Filter>
+    private(set) var enabledFilters: Set<PlaceFilter>
     private let placeCountLabel = UILabel()
     private let topRatedSwitch = UISwitch()
 
-    private let filterLabels: [Filter: String] = [
-        .discover: Strings.filterView.discover,
-        .eatAndDrink: Strings.filterView.eatAndDrink,
-        .shop: Strings.filterView.shop,
-        .services: Strings.filterView.services,
+    private let filterLabels: [(PlaceFilter, String)] = [
+        (.discover, Strings.filterView.discover),
+        (.eatAndDrink, Strings.filterView.eatAndDrink),
+        (.shop, Strings.filterView.shop),
+        (.services, Strings.filterView.services),
     ]
 
-    init(enabledFilters: Set<Filter>, topRatedOnly: Bool) {
+    init(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) {
         self.enabledFilters = Set(enabledFilters)
         super.init(nibName: nil, bundle: nil)
 
@@ -147,7 +147,7 @@ class FilterViewController: UIViewController {
     }
 
     @objc private func didToggleFilter(sender: FilterButton) {
-        let filter = Filter(rawValue: sender.tag)!
+        let filter = PlaceFilter(rawValue: sender.tag)!
         enabledFilters.formSymmetricDifference([filter])
         sender.isSelected = enabledFilters.contains(filter)
         delegate?.filterViewController(self, didUpdateFilters: enabledFilters, topRatedOnly: topRatedSwitch.isOn)
