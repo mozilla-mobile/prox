@@ -4,19 +4,9 @@
 
 import UIKit
 import AFNetworking
-import BadgeSwift
 
 enum PanDirection {
     case vertical, horizontal, none
-}
-
-struct PlaceDetailAnimatableViews {
-    var nextCard: PlaceDetailsCardView?
-    var previousCard: PlaceDetailsCardView?
-    var mapButton: UIButton
-    var currentCard: PlaceDetailsCardView
-    var mapButtonBadge: BadgeSwift
-    var backgroundImage: UIImageView
 }
 
 // MARK: Animation Constants
@@ -39,11 +29,7 @@ fileprivate let scaleOutTransformRight = CGAffineTransform.identity.translatedBy
  **/
 class PlaceDetailViewController: UIViewController {
 
-    weak var dataSource: PlacesProvider? {
-        didSet {
-            mapButtonBadge.text = "\(dataSource?.numberOfPlaces() ?? 0)"
-        }
-    }
+    weak var dataSource: PlacesProvider?
 
     weak var locationProvider: LocationProvider? {
         didSet {
@@ -79,18 +65,6 @@ class PlaceDetailViewController: UIViewController {
         button.setImage(#imageLiteral(resourceName: "button_filter"), for: .normal)
         button.addTarget(self, action: #selector(didPressFilter), for: .touchUpInside)
         return button
-    }()
-
-    lazy var mapButtonBadge: BadgeSwift = {
-        let badge = BadgeSwift()
-        badge.font = Fonts.detailsViewMapButtonBadgeText
-        badge.badgeColor = Colors.detailsViewMapButtonBadgeBackground
-        badge.textColor = Colors.detailsViewMapButtonBadgeFont
-        badge.shadowOpacityBadge = 0.5
-        badge.shadowOffsetBadge = CGSize(width: 0, height: 0)
-        badge.shadowRadiusBadge = 1.0
-        badge.shadowColorBadge = Colors.detailsViewMapButtonShadow
-        return badge
     }()
 
     fileprivate var previousCardViewController: PlaceDetailsCardViewController?
@@ -256,12 +230,6 @@ class PlaceDetailViewController: UIViewController {
                         mapButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: spacing),
                         mapButton.heightAnchor.constraint(equalToConstant: 48),
                         mapButton.widthAnchor.constraint(equalToConstant: 48)]
-
-        view.addSubview(mapButtonBadge)
-        constraints += [mapButtonBadge.leadingAnchor.constraint(equalTo: mapButton.trailingAnchor, constant: -spacing),
-                        mapButtonBadge.topAnchor.constraint(equalTo: mapButton.topAnchor),
-                        mapButtonBadge.heightAnchor.constraint(equalToConstant: 20.0),
-                        mapButtonBadge.widthAnchor.constraint(greaterThanOrEqualToConstant: 20.0)]
 
         view.addSubview(filterButton)
         constraints += [filterButton.centerYAnchor.constraint(equalTo: mapButton.centerYAnchor),
@@ -702,19 +670,6 @@ extension PlaceDetailViewController: UIGestureRecognizerDelegate {
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return gestureRecognizer == panGestureRecognizer && otherGestureRecognizer == scrollView.panGestureRecognizer
-    }
-}
-
-extension PlaceDetailViewController: Animatable {
-    func animatableProperties() -> PlaceDetailAnimatableViews {
-        return PlaceDetailAnimatableViews(
-            nextCard: self.nextCardViewController?.cardView,
-            previousCard: self.previousCardViewController?.cardView,
-            mapButton: self.mapButton,
-            currentCard: self.currentCardViewController.cardView,
-            mapButtonBadge: self.mapButtonBadge,
-            backgroundImage: self.backgroundImage
-        )
     }
 }
 
