@@ -15,7 +15,7 @@ protocol PlaceProvider {
     var address: String? { get }
     var hours: OpenHours? { get }
     var rating: Float? { get }
-    var totalReviewCount: Int? { get }
+    var totalReviewCount: Int { get }
 }
 
 class SinglePlaceProvider: PlaceProvider {
@@ -29,7 +29,7 @@ class SinglePlaceProvider: PlaceProvider {
     let address: String?
     let hours: OpenHours?
     let rating: Float?
-    let totalReviewCount: Int?
+    let totalReviewCount: Int
 
     init(fromDictionary dict: [String: Any]) {
         id = dict["id"] as? String
@@ -80,7 +80,7 @@ class SinglePlaceProvider: PlaceProvider {
 
         rating = dict["rating"] as? Float
 
-        totalReviewCount = dict["totalReviewCount"] as? Int
+        totalReviewCount = dict["totalReviewCount"] as? Int ?? 0
     }
 }
 
@@ -96,7 +96,7 @@ class CompositePlaceProvider: PlaceProvider {
     private(set) var address: String?
     private(set) var hours: OpenHours?
     private(set) var rating: Float? = nil
-    private(set) var totalReviewCount: Int? = nil
+    private(set) var totalReviewCount: Int = 0
 
     init(fromProviders providers: [PlaceProvider]) {
         for provider in providers {
@@ -142,9 +142,7 @@ class CompositePlaceProvider: PlaceProvider {
                 rating = provider.rating
             }
 
-            if totalReviewCount == nil {
-                totalReviewCount = provider.totalReviewCount
-            }
+            totalReviewCount += provider.totalReviewCount
         }
     }
 }

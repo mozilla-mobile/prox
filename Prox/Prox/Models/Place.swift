@@ -38,6 +38,7 @@ class Place: Hashable {
     let url: URL?
     let address: String?
     let hours: OpenHours?
+    let totalReviewCount: Int
     let yelpProvider: PlaceProvider
     let tripAdvisorProvider: PlaceProvider?
     let wikipediaProvider: PlaceProvider?
@@ -52,6 +53,7 @@ class Place: Hashable {
          url: URL? = nil,
          address: String? = nil,
          hours: OpenHours? = nil,
+         totalReviewCount: Int = 0,
          yelpProvider: PlaceProvider,
          tripAdvisorProvider: PlaceProvider? = nil,
          wikipediaProvider: PlaceProvider? = nil) {
@@ -63,6 +65,7 @@ class Place: Hashable {
             self.address = address
             self.photoURLs = photoURLs
             self.hours = hours
+            self.totalReviewCount = totalReviewCount
             self.yelpProvider = yelpProvider
             self.tripAdvisorProvider = tripAdvisorProvider
             self.wikipediaProvider = wikipediaProvider
@@ -112,6 +115,7 @@ class Place: Hashable {
                   url: compositeProvider.url,
                   address: compositeProvider.address,
                   hours: compositeProvider.hours,
+                  totalReviewCount: compositeProvider.totalReviewCount,
                   yelpProvider: yelpProvider,
                   tripAdvisorProvider: tripAdvisorProvider,
                   wikipediaProvider: wikipediaProvider)
