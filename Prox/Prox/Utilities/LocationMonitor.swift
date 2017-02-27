@@ -185,7 +185,14 @@ extension LocationMonitor: CLLocationManagerDelegate {
             locationManager.stopUpdatingLocation()
         }
     }
+
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        if AppConstants.MOZ_LOCATION_FAKING,
+                let location = getCurrentLocation() { // should never be nil.
+            self.delegate?.locationMonitor(self, didUpdateLocation: location)
+            return
+        }
+
         guard currentLocation == nil else {
             // If we have a cached location, we can use that - no need to display another error.
             return
