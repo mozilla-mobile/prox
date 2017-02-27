@@ -121,13 +121,13 @@ class PlacesProvider {
             guard let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first,
                   enabledFilters.contains(firstFilter) else { return false }
 
-            reviewCounts.append(place.yelpProvider.totalReviewCount ?? 0)
+            reviewCounts.append(place.yelpProvider.totalReviewCount)
             return true
         }
 
         guard topRatedOnly else { return distanceSortedPlaces }
 
-        let maxReviews = distanceSortedPlaces.reduce(0) { max($0, ($1.yelpProvider.totalReviewCount ?? 0) + ($1.tripAdvisorProvider?.totalReviewCount ?? 0)) }
+        let maxReviews = distanceSortedPlaces.map { $0.totalReviewCount }.max() ?? 0
         let logMaxReviews = log10(Float(maxReviews))
 
         let sorted = distanceSortedPlaces.sorted { a, b in
@@ -137,13 +137,14 @@ class PlacesProvider {
         return sorted
     }
 
+    /// Returns a number from 0-1 that weighs different properties on the place.
     private func proxRating(forPlace place: Place, logMaxReviews: Float) -> Float {
-        let yelpCount = Float(place.yelpProvider.totalReviewCount ?? 0)
+        let yelpCount = Float(place.yelpProvider.totalReviewCount)
         let taCount = Float(place.tripAdvisorProvider?.totalReviewCount ?? 0)
         let yelpRating = place.yelpProvider.rating ?? 0
         let taRating = place.tripAdvisorProvider?.rating ?? 0
-        let ratingScore = (yelpRating * yelpCount + taRating * taCount) / (yelpCount + taCount)
-        let reviewScore = log10(yelpCount + taCount) / logMaxReviews * 5
+        let ratingScore = (yelpRating * yelpCount + taRating * taCount) / (yelpCount + taCount) / 5
+        let reviewScore = log10(yelpCount + taCount) / logMaxReviews
         return (ratingScore * ratingWeight + reviewScore * reviewWeight) / (ratingWeight + reviewWeight)
     }
 
@@ -236,6 +237,14 @@ class PlacesProvider {
     func index(forPlace place: Place) -> Int? {
         return self.placesLock.withReadLock {
             return placeKeyMap[place.id]
+        }
+    }
+
+    func sortPlaces(byLocation location: CLLocation) {
+        self.placesLock.withWriteLock {
+            guard !topRatedOnly else { return }
+            let sortedPlaces = PlaceUtilities.sort(places: displayedPlaces, byDistanceFromLocation: location)
+            self.displayedPlaces = sortedPlaces
         }
     }
 
