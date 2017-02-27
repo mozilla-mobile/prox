@@ -77,6 +77,9 @@ class PlaceCarouselViewController: UIViewController {
         if UIApplication.shared.applicationState != .background {
             if shouldFetchPlaces {
                 fetchPlaces(forLocation: location)
+            } else {
+                // re-sort places based on new location
+                placesProvider.sortPlaces(byLocation: location)
             }
         }
     }

@@ -63,13 +63,14 @@ extension MapViewReviewProviderView {
     func update(for place: Place) {
         guard let provider = provider(from: place),
                 let rating = provider.rating,
-                let reviewCount = provider.totalReviewCount else {
+                provider.totalReviewCount > 0 else {
             scoreView.alpha = disabledAlpha
             scoreView.image = image(forScore: 0)
             reviewCountView.text = Strings.mapView.noInfo
             return
         }
 
+        let reviewCount = provider.totalReviewCount
         scoreView.alpha = 1
         scoreView.image = image(forScore: rating)
         reviewCountView.text = String(format: Strings.mapView.numReviews, reviewCount, (reviewCount == 1) ? "" : "s")

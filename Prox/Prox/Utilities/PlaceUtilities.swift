@@ -62,7 +62,7 @@ struct PlaceUtilities {
 
     static func updateReviewUI(fromProvider provider: PlaceProvider?, onView view: ReviewContainerView, isTextShortened: Bool = false) {
         guard let provider = provider,
-                !(provider.totalReviewCount == nil && provider.rating == nil) else { // intentional: if both null, short-circuit
+                !(provider.totalReviewCount == 0 && provider.rating == nil) else { // intentional: if both null, short-circuit
             setSubviewAlpha(0.4, forParent: view)
             view.score = 0
             view.numberOfReviewersLabel.text = "No info" + (isTextShortened ? "" : " available")
@@ -79,7 +79,7 @@ struct PlaceUtilities {
         }
 
         let reviewPrefix: String
-        if let reviewCount = provider.totalReviewCount { reviewPrefix = String(reviewCount) }
+        if provider.totalReviewCount > 0 { reviewPrefix = String(provider.totalReviewCount) }
         else { reviewPrefix = "No" }
         view.numberOfReviewersLabel.text = reviewPrefix + " Reviews"
     }
