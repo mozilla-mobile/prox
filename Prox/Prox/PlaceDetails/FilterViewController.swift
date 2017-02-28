@@ -210,7 +210,7 @@ fileprivate class FilterButton: InsetButton {
         super.init()
 
         titleLabel?.font = Fonts.filterButtonLabel
-        contentEdgeInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 16)
+        contentEdgeInsets = UIEdgeInsets(top: 6, left: 0, bottom: 6, right: 16)
         titleEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
         layer.borderWidth = 1
         layer.borderColor = Colors.filterButtonBorder.cgColor
