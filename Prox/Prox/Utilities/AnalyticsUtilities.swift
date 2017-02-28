@@ -62,12 +62,6 @@ public struct AnalyticsEvent {
     static let CARD_INDEX         = "card_index"
     static let SESSION_STATE      = "session_state"
 
-    // Events
-    static let EVENT_BANNER_LINK  = "event_banner_link"
-    static let EVENT_NOTIFICATION = "event_notification"
-    static let BACKGROUND         = "notified_background" // Event was notified while app was in the background
-    static let FOREGROUND         = "notified_foreground" // Event was notified while the app is open
-    static let CLICKED            = "notification_clicked" // Clicked on the notification
     static let NO_PLACES_DIALOG   = "no_places_dialog" // No places nearby dialog
     static let LOCATION_REPROMPT  = "location_reprompt" // Dialog re-prompt for users who have denied the location permission
 }

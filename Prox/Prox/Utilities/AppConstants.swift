@@ -23,9 +23,6 @@ public struct AppConstants {
     public static var backgroundFetchInterval: TimeInterval {
         return RemoteConfigKeys.backgroundFetchIntervalMins.value * 60.0
     }
-    public static var minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval {
-        return RemoteConfigKeys.notificationVisitIntervalMins.value * 60.0
-    }
     #endif
 
     public static var cacheEvents: Bool {
@@ -79,9 +76,5 @@ public struct AppConstants {
         //let root = FirebaseBranches.getBranch(forUser: "jane") // for debugging.
         assert(root.hasSuffix("/"))
         return root
-    }()
-
-    public static let areNotificationsEnabled: Bool = {
-        return BuildChannel == .Debug
     }()
 }

@@ -14,7 +14,6 @@ protocol LocationMonitorDelegate: class {
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidExitCurrentLocation location: CLLocation)
     func locationMonitorNeedsUserPermissionsPrompt(_ locationMonitor: LocationMonitor)
     func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation)
-
     func locationMonitor(_ locationMonitor: LocationMonitor, didFailInitialUpdateWithError error: Error)
 }
 
@@ -57,7 +56,6 @@ class LocationMonitor: NSObject {
     var fakeLocation: CLLocation = CLLocation(latitude: 19.924043, longitude: -155.887652)
 
     fileprivate var monitoredRegions: [String: GeofenceRegion] = [String: GeofenceRegion]()
-    fileprivate var timeAtLocationTimer: Timer?
 
     fileprivate var isAuthorized = false
 
@@ -72,29 +70,10 @@ class LocationMonitor: NSObject {
         }
     }
 
-
-    func cancelTimeAtLocationTimer() {
-        timeAtLocationTimer?.invalidate()
-        timeAtLocationTimer = nil
-    }
-
-    func startTimeAtLocationTimer() {
-        if timeAtLocationTimer == nil {
-            timeAtLocationTimer = Timer.scheduledTimer(timeInterval: AppConstants.minimumIntervalAtLocationBeforeFetchingEvents, target: self, selector: #selector(timerFired(timer:)), userInfo: nil, repeats: true)
-        }
-    }
-
-    @objc fileprivate func timerFired(timer: Timer) {
-        guard let currentLocation = getCurrentLocation() else { return }
-        delegate?.locationMonitor(self, userDidVisitLocation: currentLocation)
-    }
-
     func startMonitoringForVisitAtCurrentLocation() {
         guard let currentLocation = getCurrentLocation(),
             !monitoredRegions.keys.contains(currentLocationIdentifier) else { return }
-        startTimeAtLocationTimer()
         startMonitoring(location: currentLocation, withIdentifier: currentLocationIdentifier, withRadius: RemoteConfigKeys.radiusForCurrentLocationMonitoringMeters.value, forEntry: nil, forExit: { region in
-            self.cancelTimeAtLocationTimer()
             self.stopMonitoringRegion(withIdentifier: self.currentLocationIdentifier)
             self.delegate?.locationMonitor(self, userDidExitCurrentLocation: currentLocation)
         })

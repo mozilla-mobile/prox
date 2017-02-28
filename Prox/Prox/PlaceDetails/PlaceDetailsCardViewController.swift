@@ -112,10 +112,6 @@ class PlaceDetailsCardViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    func showEvent() {
-        self.cardView.showEvent(atPlace: place)
-    }
-
     // TODO: set the view values in cardView to values in place
     fileprivate func setPlace(place: Place?) {
         guard let place = place else {
@@ -132,17 +128,6 @@ class PlaceDetailsCardViewController: UIViewController {
 
     private func setLocation(location: CLLocation?) {
         PlaceUtilities.updateTravelTimeUI(fromPlace: place, toLocation: location, forView: cardView.travelTimeView)
-        if let location = location {
-            if let event = self.place.events.first {
-                // check that travel times are within current location limits before deciding whether to send notification
-                TravelTimesProvider.canTravelFrom(fromLocation: location.coordinate, toLocation: place.latLong, before: event.arrivalByTime()) { canTravel in
-                    guard canTravel else { return }
-                    DispatchQueue.main.async {
-                        self.cardView.showEvent(atPlace: self.place)
-                    }
-                }
-            }
-        }
     }
 
     private func setupCardInteractions() {
@@ -150,7 +135,6 @@ class PlaceDetailsCardViewController: UIViewController {
         cardView.yelpReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openYelpReview(gestureRecognizer:))))
         cardView.tripAdvisorReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTripAdvisorReview(gestureRecognizer:))))
         cardView.travelTimeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openDirections(gestureRecgonizer:))))
-        cardView.eventView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openEventURL(gestureRecognizer:))))
         cardView.wikiDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openWikipediaURL(gestureRecognizer:))))
         cardView.tripAdvisorDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openReadMoreTripAdvisorLink(gestureRecgonizer:))))
         cardView.yelpDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openReadMoreYelpLink(gestureRecognizer:))))
@@ -210,17 +194,6 @@ class PlaceDetailsCardViewController: UIViewController {
             log.error("unable to open travel directions")
         } else {
             Analytics.logEvent(event: AnalyticsEvent.DIRECTIONS, params: [AnalyticsEvent.PARAM_ACTION: transportString])
-        }
-    }
-
-    @objc private func openEventURL(gestureRecognizer: UITapGestureRecognizer) {
-        guard let event = place.events.first,
-            let urlString = event.url,
-            let url = URL(httpStringMaybeWithScheme: urlString) else { return }
-        if !OpenInHelper.open(url: url) {
-            log.error("unable to open web address")
-        } else {
-            Analytics.logEvent(event: AnalyticsEvent.EVENT_BANNER_LINK, params: [AnalyticsEvent.PARAM_ACTION: AnalyticsEvent.CLICKED])
         }
     }
 

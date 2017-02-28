@@ -54,50 +54,6 @@ class PlacesProvider {
         database.getPlace(forKey: key).upon { callback($0.successResult() )}
     }
 
-    func place(withKey placeKey: String, forEventWithKey eventKey: String, callback: @escaping (Place?) -> ()) {
-        let eventProvider = EventsProvider()
-        var placeWithEvent: Place?
-        var eventForPlace: Event?
-        let lock = NSLock()
-        var placeReturned = false
-        var eventReturned = false
-        place(forKey: placeKey) { place in
-            defer {
-                lock.unlock()
-            }
-            lock.lock()
-            placeReturned = true
-            guard let foundPlace = place,
-                let event = eventForPlace else {
-                    placeWithEvent = place
-                    if (eventReturned) {
-                        callback(nil)
-                    }
-                    return
-            }
-            foundPlace.events.append(event)
-            callback(foundPlace)
-        }
-
-        eventProvider.event(forKey: eventKey) { event in
-            defer {
-                lock.unlock()
-            }
-            lock.lock()
-            eventReturned = true
-            guard let foundEvent = event,
-                let place = placeWithEvent else {
-                    eventForPlace = event
-                    if (placeReturned) {
-                        callback(nil)
-                    }
-                    return
-            }
-            place.events.append(foundEvent)
-            callback(place)
-        }
-    }
-
     func updatePlaces(forLocation location: CLLocation) {
         // Fetch a stable list of places from firebase.
         database.getPlaces(forLocation: location, withRadius: radius).upon { results in
@@ -160,10 +116,6 @@ class PlacesProvider {
         placeKeyMap = placesMap
     }
 
-    /**
-     * displayPlaces merges found places with events with places we have found nearby, giving us a combined list of
-     * all the places that we need to show to the user.
-     **/
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
         return PlaceUtilities.sort(places: places, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
             self.placesLock.withWriteLock {
@@ -182,17 +134,7 @@ class PlacesProvider {
     }
 
     private func didFinishFetchingPlaces(places: [Place], forLocation location: CLLocation) {
-        let eventsProvider = EventsProvider()
-        eventsProvider.getEventsWithPlaces(forLocation: location, usingPlacesDatabase: self.database) { placesWithEvents in
-            let placesSet = Set<Place>(places)
-            let eventPlacesSet = Set<Place>(placesWithEvents)
-            let union = eventPlacesSet.union(placesSet)
-
-            // TODO refactor for a more incremental load, and therefore
-            // insertion sort approach to ranking. We shouldn't do too much of this until
-            // we have the waiting states implemented.
-            self.displayPlaces(places: Array(union), forLocation: location)
-        }
+        displayPlaces(places: places, forLocation: location)
     }
 
     func nextPlace(forPlace place: Place) -> Place? {
