@@ -68,13 +68,19 @@ class PlaceDetailViewController: UIViewController {
     }()
 
     fileprivate var previousCardViewController: PlaceDetailsCardViewController?
-    fileprivate var currentCardViewController: PlaceDetailsCardViewController!
+    fileprivate var currentCardViewController: PlaceDetailsCardViewController! {
+        didSet {
+            updateCurrentCardConstraints()
+        }
+    }
     fileprivate var nextCardViewController: PlaceDetailsCardViewController?
 
     fileprivate var currentCardViewCenterXConstraint: NSLayoutConstraint?
     fileprivate var previousCardViewTrailingConstraint: NSLayoutConstraint?
     fileprivate var nextCardViewLeadingConstraint: NSLayoutConstraint?
     fileprivate var backgroundImageHeightConstraint: NSLayoutConstraint?
+    fileprivate var filterShowConstraints = [NSLayoutConstraint]()
+    fileprivate var filterHideConstraints = [NSLayoutConstraint]()
 
     var imageCarousel: UIView!
 
@@ -88,6 +94,7 @@ class PlaceDetailViewController: UIViewController {
     fileprivate var cardViewWidth: CGFloat = 0
     fileprivate let imageCarouselHeightConstant: CGFloat = 240
     fileprivate let animationDurationConstant = 0.5
+    fileprivate let cardSlideDuration: TimeInterval = 0.15
 
     fileprivate var startConstant: CGFloat!
 
@@ -195,9 +202,11 @@ class PlaceDetailViewController: UIViewController {
                            imageCarousel.heightAnchor.constraint(equalToConstant: imageCarouselHeightConstant)]
 
         scrollView.addSubview(currentCardViewController.cardView)
+
+        updateCurrentCardConstraints()
         currentCardViewCenterXConstraint = currentCardViewController.cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        constraints += [currentCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
-                        currentCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
+        constraints += filterHideConstraints
+        constraints += [currentCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
                         currentCardViewCenterXConstraint!]
         self.addChildViewController(currentCardViewController)
 
@@ -252,6 +261,11 @@ class PlaceDetailViewController: UIViewController {
             nextCardViewLeadingConstraint!
         ]
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+    }
+
+    private func updateCurrentCardConstraints() {
+        filterShowConstraints = [ currentCardViewController.cardView.topAnchor.constraint(equalTo: view.bottomAnchor) ]
+        filterHideConstraints = [ currentCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant) ]
     }
 
     override func viewDidLayoutSubviews() {
@@ -683,6 +697,21 @@ class PlaceDetailViewController: UIViewController {
         filterVC.delegate = self
         filterVC.placeCount = dataSource.numberOfPlaces()
         present(filterVC, animated: true, completion: nil)
+
+        slideCurrentCardView(willBeShown: false)
+    }
+
+    fileprivate func slideCurrentCardView(willBeShown: Bool) {
+        UIView.animate(withDuration: cardSlideDuration) {
+            if willBeShown {
+                NSLayoutConstraint.deactivate(self.filterShowConstraints)
+                NSLayoutConstraint.activate(self.filterHideConstraints)
+            } else {
+                NSLayoutConstraint.deactivate(self.filterHideConstraints)
+                NSLayoutConstraint.activate(self.filterShowConstraints)
+            }
+            self.view.layoutIfNeeded()
+        }
     }
 }
 
@@ -727,6 +756,8 @@ extension PlaceDetailViewController: FilterViewControllerDelegate {
     func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) {
         guard let dataSource = dataSource else { return }
         dataSource.refresh(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
+
+        slideCurrentCardView(willBeShown: true)
     }
 }
 
