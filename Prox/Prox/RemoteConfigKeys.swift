@@ -59,8 +59,6 @@ class RemoteConfigKeys {
     // the number of times the PlaceProvider should try to fetch places before timing out
     public static let numberOfPlaceFetchRetries = RemoteConfigInt(key: "number_of_place_fetch_retries", defaultValue: 60)
     public static let travelTimePaddingMins = RemoteConfigDouble(key: "travel_time_padding_mins", defaultValue: 10.0)
-
-    public static let cacheEvents = RemoteConfigInt(key: "cache_events", defaultValue: 1)
 }
 
 /*
