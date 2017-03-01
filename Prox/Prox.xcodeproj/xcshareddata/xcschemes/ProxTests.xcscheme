@@ -27,7 +27,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox.app"
+            BuildableName = "Prox Mock Location.app"
             BlueprintName = "Prox"
             ReferencedContainer = "container:Prox.xcodeproj">
          </BuildableReference>
@@ -50,7 +50,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox.app"
+            BuildableName = "Prox Mock Location.app"
             BlueprintName = "Prox"
             ReferencedContainer = "container:Prox.xcodeproj">
          </BuildableReference>
@@ -68,7 +68,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox.app"
+            BuildableName = "Prox Mock Location.app"
             BlueprintName = "Prox"
             ReferencedContainer = "container:Prox.xcodeproj">
          </BuildableReference>
