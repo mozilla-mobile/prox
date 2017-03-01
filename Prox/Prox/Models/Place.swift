@@ -12,6 +12,7 @@ private let YELP2_PATH = PROVIDERS_PATH + "yelp"
 private let YELP3_PATH = PROVIDERS_PATH + "yelp3"
 private let TRIP_ADVISOR_PATH = PROVIDERS_PATH + "tripAdvisor"
 private let WIKIPEDIA_PATH = PROVIDERS_PATH + "wikipedia"
+private let GOOGLE_PATH = PROVIDERS_PATH + "google"
 private let CUSTOM_PATH = PROVIDERS_PATH + "custom"
 
 typealias CachedTravelTime = (deferred: Deferred<DatabaseResult<TravelTimes>>, forLocation: CLLocation)
@@ -37,12 +38,14 @@ class Place: Hashable {
     let latLong: CLLocationCoordinate2D
     let photoURLs: [URL]
     let url: URL?
+    let website: URL?
     let address: String?
     let hours: OpenHours?
     let totalReviewCount: Int
     let yelpProvider: PlaceProvider
     let tripAdvisorProvider: PlaceProvider?
     let wikipediaProvider: PlaceProvider?
+    let googleProvider: PlaceProvider?
     let customProvider: PlaceProvider?
 
     init(id: String,
@@ -51,18 +54,21 @@ class Place: Hashable {
          categories: (names: [String], ids: [String]),
          photoURLs: [URL] = [],
          url: URL? = nil,
+         website: URL? = nil,
          address: String? = nil,
          hours: OpenHours? = nil,
          totalReviewCount: Int = 0,
          yelpProvider: PlaceProvider,
          tripAdvisorProvider: PlaceProvider? = nil,
          wikipediaProvider: PlaceProvider? = nil,
+         googleProvider: PlaceProvider? = nil,
          customProvider: PlaceProvider? = nil) {
             self.id = id
             self.name = name
             self.categories = categories
             self.latLong = latLong
             self.url = url
+            self.website = website
             self.address = address
             self.photoURLs = photoURLs
             self.hours = hours
@@ -70,6 +76,7 @@ class Place: Hashable {
             self.yelpProvider = yelpProvider
             self.tripAdvisorProvider = tripAdvisorProvider
             self.wikipediaProvider = wikipediaProvider
+            self.googleProvider = googleProvider
             self.customProvider = customProvider
     }
 
@@ -94,12 +101,18 @@ class Place: Hashable {
             wikipediaProvider = SinglePlaceProvider(fromDictionary: wikipediaDict)
         }
 
+        var googleProvider: SinglePlaceProvider?
+        if let googleDict = details.childSnapshot(forPath: GOOGLE_PATH).value as? [String: Any] {
+            googleProvider = SinglePlaceProvider(fromDictionary: googleDict)
+        }
+
         var customProvider: SinglePlaceProvider?
         if let customDict = details.childSnapshot(forPath: CUSTOM_PATH).value as? [String: Any] {
             customProvider = SinglePlaceProvider(fromDictionary: customDict)
         }
 
-        let providers: [PlaceProvider?] = [customProvider, yelpProvider, tripAdvisorProvider, wikipediaProvider]
+        let providers: [PlaceProvider?] = [customProvider, googleProvider, yelpProvider, tripAdvisorProvider, wikipediaProvider]
+
         let compositeProvider = CompositePlaceProvider(fromProviders: providers.flatMap { $0 })
 
         guard let id = compositeProvider.id else {
@@ -120,6 +133,7 @@ class Place: Hashable {
                   categories: compositeProvider.categories,
                   photoURLs: compositeProvider.photoURLs,
                   url: compositeProvider.url,
+                  website: compositeProvider.website,
                   address: compositeProvider.address,
                   hours: compositeProvider.hours,
                   totalReviewCount: compositeProvider.totalReviewCount,

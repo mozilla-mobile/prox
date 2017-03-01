@@ -12,6 +12,7 @@ protocol PlaceProvider {
     var latLong: CLLocationCoordinate2D? { get }
     var photoURLs: [URL] { get }
     var url: URL? { get }
+    var website: URL? { get }
     var address: String? { get }
     var hours: OpenHours? { get }
     var rating: Float? { get }
@@ -26,6 +27,7 @@ class SinglePlaceProvider: PlaceProvider {
     let latLong: CLLocationCoordinate2D?
     let photoURLs: [URL]
     let url: URL?
+    let website: URL?
     let address: String?
     let hours: OpenHours?
     let rating: Float?
@@ -69,6 +71,13 @@ class SinglePlaceProvider: PlaceProvider {
             self.url = nil
         }
 
+        if let websiteString = dict["website"] as? String,
+            let website = URL(string: websiteString) {
+            self.website = website
+        } else {
+            self.website = nil
+        }
+
         address = (dict["address"] as? [String])?.joined(separator: " ")
 
         if let hoursDictFromServer = dict["hours"] as? [String : [[String]]],
@@ -93,6 +102,7 @@ class CompositePlaceProvider: PlaceProvider {
     private(set) var latLong: CLLocationCoordinate2D?
     private(set) var photoURLs = [URL]()
     private(set) var url: URL?
+    private(set) var website: URL?
     private(set) var address: String?
     private(set) var hours: OpenHours?
     private(set) var rating: Float? = nil
@@ -128,6 +138,10 @@ class CompositePlaceProvider: PlaceProvider {
 
             if url == nil {
                 url = provider.url
+            }
+
+            if website == nil {
+                website = provider.website
             }
 
             if address == nil {
