@@ -291,20 +291,6 @@ class PlaceDetailViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    /// MAYBE DON'T USE THIS METHOD - may be the cause of #492. Opens the place card for the event
-    /// by inserting it into the linked list (which is a bit sketchy). You probably want
-    /// `openCard(forExistingPlace:)` instead.
-    func openCard(forPlaceWithEvent placeWithEvent: Place) {
-        if currentCardViewController.place == placeWithEvent {
-            currentCardViewController.place.events = placeWithEvent.events
-            // if we're currently looking at that card then just animate in the event
-            currentCardViewController.showEvent()
-        } else {
-            // Page to new card.
-            pageForwardToCard(forPlace: placeWithEvent)
-        }
-    }
-
     /// Opens the existing place card without animation.
     func openCard(forExistingPlace placeToOpen: Place) {
         guard let dataSource = dataSource,

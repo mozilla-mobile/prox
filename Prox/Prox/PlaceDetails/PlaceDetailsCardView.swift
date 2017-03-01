@@ -21,11 +21,8 @@ class PlaceDetailsCardView: UIView {
     // visual artifact where the card's white background shown through the corners.
     lazy var contentView = UIView()
 
-    lazy var eventView: PlaceDetailsEventView = PlaceDetailsEventView()
-
     lazy var containingStackView: UIStackView = {
-        let view = UIStackView(arrangedSubviews:[self.eventView,
-                                                 self.labelContainer,
+        let view = UIStackView(arrangedSubviews:[self.labelContainer,
                                                  self.iconInfoViewContainer,
                                                  self.reviewViewContainer,
                                                  self.wikiDescriptionView,
@@ -242,7 +239,6 @@ class PlaceDetailsCardView: UIView {
     }
 
     func updateUI(forPlace place: Place) {
-        showEventView(isHidden: true)
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories.names)
@@ -289,31 +285,6 @@ class PlaceDetailsCardView: UIView {
         view.isHidden = text == nil ? true : false
         view.descriptionLabel.text = text
         view.setExpandableView(isExpanded: expanded)
-    }
-
-    fileprivate func showEventView(isHidden: Bool) {
-        setContainingStackViewMargins(isTopMarginPresent: isHidden)
-        eventView.isHidden = isHidden
-    }
-
-     func updateEventUI(forPlace place: Place) {
-        if let event = place.events.first,
-            let message = event.placeDisplayString {
-            eventView.setText(message, underlined: event.url == nil ? nil : "More info.")
-            showEventView(isHidden: false)
-        } else {
-            eventView.setText("", underlined: nil)
-            showEventView(isHidden: true)
-        }
-    }
-
-
-    func showEvent(atPlace place: Place) {
-        updateEventUI(forPlace: place)
-        // this is here as we want to animate the appearance of the card later
-        // TODO: Animate the appearance of the event card
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
     }
 
     private func getStringsForOpenHours(_ openHours: OpenHours?, forDate date: Date) -> (primary: String, secondary: String)? {

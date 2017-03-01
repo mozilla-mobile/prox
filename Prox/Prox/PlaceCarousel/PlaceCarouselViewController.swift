@@ -56,7 +56,7 @@ class PlaceCarouselViewController: UIViewController {
 
     func openDetail(forPlace place: Place, withCompletion completion: (() -> ())? = nil) {
         if let presented = self.presentedViewController as? PlaceDetailViewController {
-            presented.openCard(forPlaceWithEvent: place)
+            presented.openCard(forExistingPlace: place)
             return
         }
 
@@ -93,21 +93,6 @@ class PlaceCarouselViewController: UIViewController {
         })
         self.shouldFetchPlaces = false
     }
-
-    func openPlace(placeKey: String, forEventWithKey eventKey: String) {
-        placesProvider.place(withKey: placeKey, forEventWithKey: eventKey) { place in
-            guard let place = place else { return }
-            DispatchQueue.main.async {
-                guard let presentedVC = self.presentedViewController else {
-                    // open the details screen for the place
-                    return self.openDetail(forPlace: place)
-                }
-
-                // handle when the user is already looking at the app
-                (presentedVC as? PlaceDetailViewController)?.openCard(forPlaceWithEvent: place)
-            }
-        }
-    }
 }
 
 extension PlaceCarouselViewController: LocationMonitorDelegate {
@@ -132,9 +117,6 @@ extension PlaceCarouselViewController: LocationMonitorDelegate {
         }
 
         updatePlaces(forLocation: location)
-    }
-
-    func locationMonitor(_ locationMonitor: LocationMonitor, userDidVisitLocation location: CLLocation) {
     }
     
     func locationMonitorNeedsUserPermissionsPrompt(_ locationMonitor: LocationMonitor) {

@@ -43,8 +43,6 @@ class Place: Hashable {
     let tripAdvisorProvider: PlaceProvider?
     let wikipediaProvider: PlaceProvider?
 
-    var events = [Event]()
-
     init(id: String,
          name: String,
          latLong: CLLocationCoordinate2D,
@@ -175,27 +173,6 @@ class Place: Hashable {
         }
 
         return false
-    }
-
-    private func replaceEventName( string: String, withName name: String) -> String {
-        return string.replacingOccurrences(of: "{event_name}", with: name)
-    }
-
-    private func replacePlaceName(string: String) -> String {
-        return string.replacingOccurrences(of: "{venue_name}", with: self.name)
-    }
-
-    private func replaceTimeToEvent(string: String, withStartTime startTime: Date) -> String {
-        let now = Date()
-        let timeToEvent = startTime.timeIntervalSince(now)
-        let timeString = timeToEvent.asHoursAndMinutesString()
-        return string.replacingOccurrences(of: "{time_to_event}", with: "\(timeString)")
-    }
-
-    private func replaceStartTime(string: String, withStartTime startTime: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
-        return string.replacingOccurrences(of: "{start_time}", with: formatter.string(from: startTime))
     }
 }
 
