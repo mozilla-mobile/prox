@@ -69,8 +69,8 @@
 		D3656D981E4A7D0F00040448 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3656D971E4A7D0F00040448 /* Logger.swift */; };
 		D3C815681E4542E30066A97B /* PlaceProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C815671E4542E30066A97B /* PlaceProviders.swift */; };
 		D3D6F5C21E60E8140093BFD4 /* PlaceFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D6F5C11E60E8130093BFD4 /* PlaceFilter.swift */; };
-		D3F698201E70D35200464641 /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F6981F1E70D35200464641 /* Future.swift */; };
 		D3F6981E1E70C81C00464641 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F6981D1E70C81C00464641 /* Toast.swift */; };
+		D3F698201E70D35200464641 /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F6981F1E70D35200464641 /* Future.swift */; };
 		E60A42711DF28E01008BE74D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42701DF28E01008BE74D /* URL.swift */; };
 		E60A42771DF29127008BE74D /* URLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A42761DF29127008BE74D /* URLTests.swift */; };
 		E6101A901DDA45CD00D05B74 /* Data.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E6101A8F1DDA45CD00D05B74 /* Data.bundle */; };
@@ -101,6 +101,7 @@
 		E69D69871E6E27DE00E6F6CA /* CLLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D69861E6E27DE00E6F6CA /* CLLocation.swift */; };
 		E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */; };
 		E6B3FFBE1E6F7ED7008B085C /* PlaceDetailsEventHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B3FFBD1E6F7ED7008B085C /* PlaceDetailsEventHeader.swift */; };
+		E6B3FFC01E72037D008B085C /* ProviderStarImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B3FFBF1E72037D008B085C /* ProviderStarImage.swift */; };
 		E6CF08DF1E57B6300083CAD8 /* GMSMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CF08DE1E57B6300083CAD8 /* GMSMarker.swift */; };
 		E6F151471E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */; };
 		EC42FE32127D2BD0FE36402D /* Pods_ProxUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */; };
@@ -226,8 +227,8 @@
 		D3D6F5C11E60E8130093BFD4 /* PlaceFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceFilter.swift; sourceTree = "<group>"; };
 		D3DA777E1DC2776C009C114E /* BuddyBuildSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BuddyBuildSDK.framework; path = ../Pods/BuddyBuildSDK/BuddyBuildSDK.framework; sourceTree = "<group>"; };
 		D3DA77821DC289A4009C114E /* Prox-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Prox-Bridging-Header.h"; sourceTree = "<group>"; };
-		D3F6981F1E70D35200464641 /* Future.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Future.swift; path = Extensions/Future.swift; sourceTree = "<group>"; };
 		D3F6981D1E70C81C00464641 /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
+		D3F6981F1E70D35200464641 /* Future.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Future.swift; path = Extensions/Future.swift; sourceTree = "<group>"; };
 		D4ACFAE1468306F6BC08DB51 /* Pods-ProxUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProxUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCBB957739FDB3296D165BBD /* Pods-ProxUITests.current location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.current location.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.current location.xcconfig"; sourceTree = "<group>"; };
@@ -259,6 +260,7 @@
 		E69D69861E6E27DE00E6F6CA /* CLLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLLocation.swift; path = Extensions/CLLocation.swift; sourceTree = "<group>"; };
 		E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossFadeTransition.swift; sourceTree = "<group>"; };
 		E6B3FFBD1E6F7ED7008B085C /* PlaceDetailsEventHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsEventHeader.swift; sourceTree = "<group>"; };
+		E6B3FFBF1E72037D008B085C /* ProviderStarImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProviderStarImage.swift; sourceTree = "<group>"; };
 		E6CF08DE1E57B6300083CAD8 /* GMSMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GMSMarker.swift; path = "Extensions/Google Maps/GMSMarker.swift"; sourceTree = "<group>"; };
 		E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockLocationSelectionTableViewController.swift; sourceTree = "<group>"; };
 		E9D33947ADBD130D6225B1C7 /* Pods-ProxUITests.currentlocationdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.currentlocationdebug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.currentlocationdebug.xcconfig"; sourceTree = "<group>"; };
@@ -409,6 +411,7 @@
 		7B5095681DB53382007C54F0 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				E6B3FFBF1E72037D008B085C /* ProviderStarImage.swift */,
 				7B23BD1E1DE862F500A23604 /* ChevronView.swift */,
 				E628DEB81E5E525000404FE3 /* ExpandingCardView.swift */,
 				7B50956D1DB53429007C54F0 /* HorizontalLineView.swift */,
@@ -924,6 +927,7 @@
 				E69D69871E6E27DE00E6F6CA /* CLLocation.swift in Sources */,
 				7BB1CA451DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift in Sources */,
 				7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */,
+				E6B3FFC01E72037D008B085C /* ProviderStarImage.swift in Sources */,
 				7B50956B1DB53382007C54F0 /* ReviewContainerView.swift in Sources */,
 				7BD5CC7E1DAFF07E00BCF50D /* GFBase32Utils.m in Sources */,
 				E628DEB31E5E4FFE00404FE3 /* Style.swift in Sources */,
