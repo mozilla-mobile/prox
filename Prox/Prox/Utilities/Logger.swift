@@ -26,7 +26,7 @@ class Logger {
     /// Create a Logger instance that prints messages with the given tag.
     /// Assigns the level based on the current build channel.
     convenience init(tag: String) {
-        let minPrintedLevel: LoggerLevel = AppConstants.isDebug ? .debug : .warn
+        let minPrintedLevel: LoggerLevel = AppConstants.isDebug ? .debug : .info
 
         self.init(tag: tag, minPrintedLevel: minPrintedLevel)
     }
