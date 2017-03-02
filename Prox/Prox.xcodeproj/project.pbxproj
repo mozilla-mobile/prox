@@ -31,7 +31,6 @@
 		7B48EBDA1DD1F679005C36CB /* GeofenceRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B48EBD91DD1F679005C36CB /* GeofenceRegion.swift */; };
 		7B5095651DB531CA007C54F0 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095641DB531CA007C54F0 /* Place.swift */; };
 		7B50956B1DB53382007C54F0 /* ReviewContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095691DB53382007C54F0 /* ReviewContainerView.swift */; };
-		7B50956C1DB53382007C54F0 /* ReviewScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B50956A1DB53382007C54F0 /* ReviewScoreView.swift */; };
 		7B50956E1DB53429007C54F0 /* HorizontalLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B50956D1DB53429007C54F0 /* HorizontalLineView.swift */; };
 		7B5095721DB5352E007C54F0 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095701DB5352E007C54F0 /* Colors.swift */; };
 		7B5095731DB5352E007C54F0 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5095711DB5352E007C54F0 /* Fonts.swift */; };
@@ -170,7 +169,6 @@
 		7B48EBD91DD1F679005C36CB /* GeofenceRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeofenceRegion.swift; sourceTree = "<group>"; };
 		7B5095641DB531CA007C54F0 /* Place.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
 		7B5095691DB53382007C54F0 /* ReviewContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewContainerView.swift; sourceTree = "<group>"; };
-		7B50956A1DB53382007C54F0 /* ReviewScoreView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewScoreView.swift; sourceTree = "<group>"; };
 		7B50956D1DB53429007C54F0 /* HorizontalLineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalLineView.swift; sourceTree = "<group>"; };
 		7B5095701DB5352E007C54F0 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		7B5095711DB5352E007C54F0 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
@@ -415,7 +413,6 @@
 				E628DEB91E5E525000404FE3 /* ObservableScrollView.swift */,
 				E62CE0C01E5786BE0083FA7B /* Prompts.swift */,
 				7B5095691DB53382007C54F0 /* ReviewContainerView.swift */,
-				7B50956A1DB53382007C54F0 /* ReviewScoreView.swift */,
 				D3F6981D1E70C81C00464641 /* Toast.swift */,
 				E61831981DE0BDBA00D1810F /* TravelTimesView.swift */,
 			);
@@ -927,7 +924,6 @@
 				E628DEB31E5E4FFE00404FE3 /* Style.swift in Sources */,
 				E628DEBB1E5E525000404FE3 /* ObservableScrollView.swift in Sources */,
 				E628DEBA1E5E525000404FE3 /* ExpandingCardView.swift in Sources */,
-				7B50956C1DB53382007C54F0 /* ReviewScoreView.swift in Sources */,
 				7B9DA15A1DBE6F7500A68C82 /* PlaceDetailViewController.swift in Sources */,
 				7BD5CC801DAFF07E00BCF50D /* GFGeoHashQuery.m in Sources */,
 				E618319B1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift in Sources */,

@@ -126,13 +126,13 @@ class PlaceDetailsCardView: UIView {
 
 
     lazy var yelpReviewView: ReviewContainerView = {
-        let view = ReviewContainerView(color: Colors.yelp)
+        let view = ReviewContainerView(starImageAccessor: YelpStarImageAccessor())
         view.reviewSiteLogo.image = UIImage(named: "logo_yelp")
         return view
     }()
 
     lazy var tripAdvisorReviewView: ReviewContainerView = {
-        let view = ReviewContainerView(color: Colors.tripAdvisor)
+        let view = ReviewContainerView(starImageAccessor: TripAdvisorStarImageAccessor())
         view.reviewSiteLogo.image = UIImage(named: "logo_ta")
         view.isUserInteractionEnabled = true
         return view
