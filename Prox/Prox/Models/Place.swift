@@ -141,7 +141,8 @@ class Place: Hashable {
                   totalReviewCount: compositeProvider.totalReviewCount,
                   yelpProvider: yelpProvider,
                   tripAdvisorProvider: tripAdvisorProvider,
-                  wikipediaProvider: wikipediaProvider)
+                  wikipediaProvider: wikipediaProvider,
+                  customProvider: customProvider)
     }
 
     static func ==(lhs: Place, rhs: Place) -> Bool {
