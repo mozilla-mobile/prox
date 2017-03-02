@@ -8,18 +8,26 @@ private let viewHeight: CGFloat = 20
 
 private let disabledAlpha: CGFloat = 0.4
 
-protocol MapViewReviewProviderView {
+class MapViewReviewProviderView: UIView {
 
-    var scoreView: UIImageView { get }
-    var reviewCountView: UILabel { get }
+    private let scoreView = UIImageView()
+    private let reviewCountView = UILabel()
 
-    var providerStarImageAccessor: ProviderStarImageAccessor { get }
+    private let providerStarImageAccessor: ProviderStarImageAccessor
+    private let providerFromPlace: (Place) -> PlaceProvider?
 
-    func provider(from place: Place) -> PlaceProvider?
-}
+    init(providerStarImageAccessor: ProviderStarImageAccessor, providerFromPlace: @escaping (Place) -> PlaceProvider?) {
+        self.providerStarImageAccessor = providerStarImageAccessor
+        self.providerFromPlace = providerFromPlace
+        super.init(frame: .zero)
 
-extension MapViewReviewProviderView {
-    func initViews(withParent parent: UIView) {
+        initViews(withParent: self)
+    }
+
+    required init?(coder aDecoder: NSCoder) { fatalError("coder not implemented") }
+
+    // TODO: replace parent param with self in these methods: left in to save time during refactor.
+    private func initViews(withParent parent: UIView) {
         scoreView.image = providerStarImageAccessor.image(forScore: 5)
         scoreView.alpha = disabledAlpha
         scoreView.clipsToBounds = true
@@ -52,7 +60,7 @@ extension MapViewReviewProviderView {
     }
 
     func update(for place: Place) {
-        guard let provider = provider(from: place),
+        guard let provider = providerFromPlace(place),
                 let rating = provider.rating,
                 provider.totalReviewCount > 0 else {
             scoreView.alpha = disabledAlpha
