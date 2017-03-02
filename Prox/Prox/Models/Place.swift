@@ -127,6 +127,8 @@ class Place: Hashable {
             return nil
         }
 
+        log.debug("found place: \(id)")
+
         self.init(id: id,
                   name: name,
                   latLong: latLong,
