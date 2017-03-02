@@ -6,17 +6,15 @@ import UIKit
 import FirebaseRemoteConfig
 
 public enum AppBuildChannel {
-    case Debug
     case CurrentLocation
     case MockLocation
-    case Release
 }
 
 public struct AppConstants {
 
     public static let isRunningTest = NSClassFromString("XCTestCase") != nil
     
-    #if MOZ_CHANNEL_DEBUG
+    #if DEBUG
     public static let backgroundFetchInterval: TimeInterval = 1 * 60
     public static let minimumIntervalAtLocationBeforeFetchingEvents: TimeInterval = 1 * 60
     #else
@@ -32,18 +30,21 @@ public struct AppConstants {
     public static let BuildChannel: AppBuildChannel = {
         #if MOZ_CHANNEL_CURRENT_LOCATION
             return AppBuildChannel.CurrentLocation
-        #elseif MOZ_CHANNEL_RELEASE
-            return AppBuildChannel.Release
-        #elseif MOZ_CHANNEL_MOCK_LOCATION
-            return AppBuildChannel.MockLocation
         #else
-            return AppBuildChannel.Debug
+            #if !MOZ_CHANNEL_MOCK_LOCATION
+                assertionFailure("Unknown channel")
+            #endif
+            return AppBuildChannel.MockLocation
         #endif
     }()
 
     /// Flag indiciating if we are running in Debug mode or not.
     public static let isDebug: Bool = {
-        return BuildChannel == .Debug
+        #if DEBUG
+            return true
+        #else
+            return false
+        #endif
     }()
 
     /// Flag indiciating if we are running in Enterprise mode or not.

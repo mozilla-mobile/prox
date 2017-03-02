@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "0820"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,15 +15,43 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-               BuildableName = "Prox.app"
+               BuildableName = "Prox Mock Location.app"
                BlueprintName = "Prox"
+               ReferencedContainer = "container:Prox/Prox.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7B29E7D21DA3EC360099AF38"
+               BuildableName = "ProxTests.xctest"
+               BlueprintName = "ProxTests"
+               ReferencedContainer = "container:Prox/Prox.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7B29E7DD1DA3EC360099AF38"
+               BuildableName = "ProxUITests.xctest"
+               BlueprintName = "ProxUITests"
                ReferencedContainer = "container:Prox/Prox.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Current Location (Debug)"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -33,16 +61,16 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox.app"
+            BuildableName = "Prox Mock Location.app"
             BlueprintName = "Prox"
-            ReferencedContainer = "container:Prox.xcodeproj">
+            ReferencedContainer = "container:Prox/Prox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Current Location"
+      buildConfiguration = "Current Location (Debug)"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -56,7 +84,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox.app"
+            BuildableName = "Prox Mock Location.app"
             BlueprintName = "Prox"
             ReferencedContainer = "container:Prox/Prox.xcodeproj">
          </BuildableReference>
@@ -69,7 +97,7 @@
       </LocationScenarioReference>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Current Location"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -79,14 +107,14 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox.app"
+            BuildableName = "Prox Mock Location.app"
             BlueprintName = "Prox"
             ReferencedContainer = "container:Prox/Prox.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug">
+      buildConfiguration = "Current Location (Debug)">
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Current Location"

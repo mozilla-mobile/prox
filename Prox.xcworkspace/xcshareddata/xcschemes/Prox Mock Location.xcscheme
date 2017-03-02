@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "0820"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-               BuildableName = "Prox.app"
+               BuildableName = "Prox Mock Location.app"
                BlueprintName = "Prox"
                ReferencedContainer = "container:Prox/Prox.xcodeproj">
             </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox.app"
+            BuildableName = "Prox Mock Location.app"
             BlueprintName = "Prox"
             ReferencedContainer = "container:Prox/Prox.xcodeproj">
          </BuildableReference>
@@ -71,9 +71,9 @@
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Mock Location"
-      selectedDebuggerIdentifier = ""
-      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
+      buildConfiguration = "Mock Location (Debug)"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -85,7 +85,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox.app"
+            BuildableName = "Prox Mock Location.app"
             BlueprintName = "Prox"
             ReferencedContainer = "container:Prox/Prox.xcodeproj">
          </BuildableReference>
@@ -98,7 +98,7 @@
       </LocationScenarioReference>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Mock Location (Debug)"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -108,7 +108,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox.app"
+            BuildableName = "Prox Mock Location.app"
             BlueprintName = "Prox"
             ReferencedContainer = "container:Prox/Prox.xcodeproj">
          </BuildableReference>

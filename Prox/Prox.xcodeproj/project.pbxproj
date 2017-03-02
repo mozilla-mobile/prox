@@ -135,6 +135,7 @@
 		392F3D8F1DD20EAE00B44B01 /* PlacesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlacesController.swift; path = Data/PlacesController.swift; sourceTree = "<group>"; };
 		392F3D961DD4395000B44B01 /* RemoteConfigDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RemoteConfigDefaults.plist; sourceTree = "<group>"; };
 		39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigKeys.swift; sourceTree = "<group>"; };
+		540AE16648C8BAEAEEE39C47 /* Pods-Prox.current location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.current location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.current location (debug).xcconfig"; sourceTree = "<group>"; };
 		55740F6C4426324FDA569848 /* Pods-Prox.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.enterprise.xcconfig"; sourceTree = "<group>"; };
 		5CC567CFCFA28F4EC7ACFB4B /* Pods-ProxUITests.chicago.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.chicago.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.chicago.xcconfig"; sourceTree = "<group>"; };
 		64E189E4D93A85A43CF269E2 /* Pods-ProxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -144,7 +145,7 @@
 		7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationMonitor.swift; sourceTree = "<group>"; };
 		7B1C657C1DDF28F00047559C /* TimeInterval.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TimeInterval.swift; path = Extensions/TimeInterval.swift; sourceTree = "<group>"; };
 		7B23BD1E1DE862F500A23604 /* ChevronView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChevronView.swift; sourceTree = "<group>"; };
-		7B29E7BF1DA3EC360099AF38 /* Prox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prox.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B29E7BF1DA3EC360099AF38 /* Prox Mock Location.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Prox Mock Location.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7B29E7C91DA3EC360099AF38 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7B29E7CC1DA3EC360099AF38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -196,6 +197,10 @@
 		7BD5CC7B1DAFF07E00BCF50D /* GFQuery+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GFQuery+Private.h"; sourceTree = "<group>"; };
 		7BD5CC7C1DAFF07E00BCF50D /* GFQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFQuery.m; sourceTree = "<group>"; };
 		7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		82848A15413EA01642DE6C7A /* Pods-ProxTests.mock location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.mock location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.mock location (debug).xcconfig"; sourceTree = "<group>"; };
+		833CA3633791C2AEE817F87F /* Pods-ProxUITests.mock location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.mock location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.mock location (debug).xcconfig"; sourceTree = "<group>"; };
+		93EE3B889D13E2BF65ED08E9 /* Pods-ProxTests.current location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.current location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.current location (debug).xcconfig"; sourceTree = "<group>"; };
+		A05E792F692B76E576E1E207 /* Pods-Prox.mock location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.mock location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.mock location (debug).xcconfig"; sourceTree = "<group>"; };
 		A62868128BA3BDA4EF8E22F1 /* Pods-ProxTests.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.enterprise.xcconfig"; sourceTree = "<group>"; };
 		B4BB960AEC6AA0772A2E4665 /* Pods-ProxUITests.mock location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.mock location.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.mock location.xcconfig"; sourceTree = "<group>"; };
 		BD2188137E599F03500C7FBD /* Pods-ProxUITests.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise kona.xcconfig"; sourceTree = "<group>"; };
@@ -243,6 +248,7 @@
 		E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockLocationSelectionTableViewController.swift; sourceTree = "<group>"; };
 		EF6099637798B2B2023BBF66 /* Pods-ProxTests.mock location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.mock location.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.mock location.xcconfig"; sourceTree = "<group>"; };
 		F4965C182C4F2F17D19D8D2D /* Pods-ProxTests.current location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.current location.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.current location.xcconfig"; sourceTree = "<group>"; };
+		F523936BD85B582F6A1881AC /* Pods-ProxUITests.current location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.current location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.current location (debug).xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -312,7 +318,7 @@
 		7B29E7C01DA3EC360099AF38 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7B29E7BF1DA3EC360099AF38 /* Prox.app */,
+				7B29E7BF1DA3EC360099AF38 /* Prox Mock Location.app */,
 				7B29E7D31DA3EC360099AF38 /* ProxTests.xctest */,
 				7B29E7DE1DA3EC360099AF38 /* ProxUITests.xctest */,
 			);
@@ -527,6 +533,12 @@
 				CE887CEB1CF45A1D782FC885 /* Pods-Prox.current location.xcconfig */,
 				F4965C182C4F2F17D19D8D2D /* Pods-ProxTests.current location.xcconfig */,
 				DCBB957739FDB3296D165BBD /* Pods-ProxUITests.current location.xcconfig */,
+				A05E792F692B76E576E1E207 /* Pods-Prox.mock location (debug).xcconfig */,
+				540AE16648C8BAEAEEE39C47 /* Pods-Prox.current location (debug).xcconfig */,
+				82848A15413EA01642DE6C7A /* Pods-ProxTests.mock location (debug).xcconfig */,
+				93EE3B889D13E2BF65ED08E9 /* Pods-ProxTests.current location (debug).xcconfig */,
+				833CA3633791C2AEE817F87F /* Pods-ProxUITests.mock location (debug).xcconfig */,
+				F523936BD85B582F6A1881AC /* Pods-ProxUITests.current location (debug).xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -583,7 +595,7 @@
 			);
 			name = Prox;
 			productName = Prox;
-			productReference = 7B29E7BF1DA3EC360099AF38 /* Prox.app */;
+			productReference = 7B29E7BF1DA3EC360099AF38 /* Prox Mock Location.app */;
 			productType = "com.apple.product-type.application";
 		};
 		7B29E7D21DA3EC360099AF38 /* ProxTests */ = {
@@ -635,12 +647,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0800;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = Mozilla;
 				TargetAttributes = {
 					7B29E7BE1DA3EC360099AF38 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 43AQ936H96;
+						DevelopmentTeam = 9G8J6YA743;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -982,7 +994,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		7B29E7E51DA3EC360099AF38 /* Debug */ = {
+		7B29E7E51DA3EC360099AF38 /* Mock Location (Debug) */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1000,10 +1012,10 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1030,90 +1042,29 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Debug;
+			name = "Mock Location (Debug)";
 		};
-		7B29E7E61DA3EC360099AF38 /* Release */ = {
+		7B29E7E81DA3EC360099AF38 /* Mock Location (Debug) */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		7B29E7E81DA3EC360099AF38 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 75091F0A7DE7F3D6E008D07B /* Pods-Prox.debug.xcconfig */;
+			baseConfigurationReference = A05E792F692B76E576E1E207 /* Pods-Prox.mock location (debug).xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 43AQ936H96;
+				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = Prox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.MockLocation;
+				PRODUCT_NAME = "$(TARGET_NAME) Mock Location";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG MOZ_CHANNEL_MOCK_LOCATION";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
-			name = Debug;
+			name = "Mock Location (Debug)";
 		};
-		7B29E7E91DA3EC360099AF38 /* Release */ = {
+		7B29E7EB1DA3EC360099AF38 /* Mock Location (Debug) */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 246E3C4ADD7C4DD2150C111B /* Pods-Prox.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				DEVELOPMENT_TEAM = 43AQ936H96;
-				INFOPLIST_FILE = Prox/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
-			};
-			name = Release;
-		};
-		7B29E7EB1DA3EC360099AF38 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 64E189E4D93A85A43CF269E2 /* Pods-ProxTests.debug.xcconfig */;
+			baseConfigurationReference = 82848A15413EA01642DE6C7A /* Pods-ProxTests.mock location (debug).xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1125,27 +1076,11 @@
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
 			};
-			name = Debug;
+			name = "Mock Location (Debug)";
 		};
-		7B29E7EC1DA3EC360099AF38 /* Release */ = {
+		7B29E7EE1DA3EC360099AF38 /* Mock Location (Debug) */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0EA57261799D082127AF0A24 /* Pods-ProxTests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 9G8J6YA743;
-				INFOPLIST_FILE = ProxTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
-			};
-			name = Release;
-		};
-		7B29E7EE1DA3EC360099AF38 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D4ACFAE1468306F6BC08DB51 /* Pods-ProxUITests.debug.xcconfig */;
+			baseConfigurationReference = 833CA3633791C2AEE817F87F /* Pods-ProxUITests.mock location (debug).xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
@@ -1156,22 +1091,7 @@
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Prox;
 			};
-			name = Debug;
-		};
-		7B29E7EF1DA3EC360099AF38 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 324CE3415A3E66A0F7F7CF54 /* Pods-ProxUITests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
-				DEVELOPMENT_TEAM = 9G8J6YA743;
-				INFOPLIST_FILE = ProxUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(FRAMEWORK_SEARCH_PATHS)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = Prox;
-			};
-			name = Release;
+			name = "Mock Location (Debug)";
 		};
 		7B4678A81DB5013800AC5B5D /* Current Location */ = {
 			isa = XCBuildConfiguration;
@@ -1191,10 +1111,10 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1222,13 +1142,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = Prox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_CURRENT_LOCATION";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.CurrentLocation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = MOZ_CHANNEL_CURRENT_LOCATION;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
@@ -1265,6 +1185,105 @@
 			};
 			name = "Current Location";
 		};
+		D340FDC61E674319006A7B0F /* Current Location (Debug) */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Current Location (Debug)";
+		};
+		D340FDC71E674319006A7B0F /* Current Location (Debug) */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 540AE16648C8BAEAEEE39C47 /* Pods-Prox.current location (debug).xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 9G8J6YA743;
+				INFOPLIST_FILE = Prox/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.CurrentLocation;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG MOZ_CHANNEL_CURRENT_LOCATION";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
+			};
+			name = "Current Location (Debug)";
+		};
+		D340FDC81E674319006A7B0F /* Current Location (Debug) */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 93EE3B889D13E2BF65ED08E9 /* Pods-ProxTests.current location (debug).xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 9G8J6YA743;
+				INFOPLIST_FILE = ProxTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
+			};
+			name = "Current Location (Debug)";
+		};
+		D340FDC91E674319006A7B0F /* Current Location (Debug) */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F523936BD85B582F6A1881AC /* Pods-ProxUITests.current location (debug).xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				DEVELOPMENT_TEAM = 9G8J6YA743;
+				INFOPLIST_FILE = ProxUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(FRAMEWORK_SEARCH_PATHS)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.ProxUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = Prox;
+			};
+			name = "Current Location (Debug)";
+		};
 		E68D1F861E25998A0052F52A /* Mock Location */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1283,10 +1302,10 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1314,13 +1333,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 43AQ936H96;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = Prox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_MOCK_LOCATION";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.MockLocation;
 				PRODUCT_NAME = "$(TARGET_NAME) Mock Location";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = MOZ_CHANNEL_MOCK_LOCATION;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
@@ -1363,46 +1382,46 @@
 		7B29E7BA1DA3EC360099AF38 /* Build configuration list for PBXProject "Prox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7B29E7E51DA3EC360099AF38 /* Debug */,
-				7B29E7E61DA3EC360099AF38 /* Release */,
+				7B29E7E51DA3EC360099AF38 /* Mock Location (Debug) */,
+				D340FDC61E674319006A7B0F /* Current Location (Debug) */,
 				E68D1F861E25998A0052F52A /* Mock Location */,
 				7B4678A81DB5013800AC5B5D /* Current Location */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Mock Location (Debug)";
 		};
 		7B29E7E71DA3EC360099AF38 /* Build configuration list for PBXNativeTarget "Prox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7B29E7E81DA3EC360099AF38 /* Debug */,
-				7B29E7E91DA3EC360099AF38 /* Release */,
+				7B29E7E81DA3EC360099AF38 /* Mock Location (Debug) */,
+				D340FDC71E674319006A7B0F /* Current Location (Debug) */,
 				E68D1F871E25998A0052F52A /* Mock Location */,
 				7B4678A91DB5013800AC5B5D /* Current Location */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Mock Location (Debug)";
 		};
 		7B29E7EA1DA3EC360099AF38 /* Build configuration list for PBXNativeTarget "ProxTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7B29E7EB1DA3EC360099AF38 /* Debug */,
-				7B29E7EC1DA3EC360099AF38 /* Release */,
+				7B29E7EB1DA3EC360099AF38 /* Mock Location (Debug) */,
+				D340FDC81E674319006A7B0F /* Current Location (Debug) */,
 				E68D1F881E25998A0052F52A /* Mock Location */,
 				7B4678AA1DB5013800AC5B5D /* Current Location */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Mock Location (Debug)";
 		};
 		7B29E7ED1DA3EC360099AF38 /* Build configuration list for PBXNativeTarget "ProxUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7B29E7EE1DA3EC360099AF38 /* Debug */,
-				7B29E7EF1DA3EC360099AF38 /* Release */,
+				7B29E7EE1DA3EC360099AF38 /* Mock Location (Debug) */,
+				D340FDC91E674319006A7B0F /* Current Location (Debug) */,
 				E68D1F891E25998A0052F52A /* Mock Location */,
 				7B4678AB1DB5013800AC5B5D /* Current Location */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Mock Location (Debug)";
 		};
 /* End XCConfigurationList section */
 	};
