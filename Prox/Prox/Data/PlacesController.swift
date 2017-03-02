@@ -74,8 +74,14 @@ class PlacesProvider {
         var reviewCounts = [Int]()
 
         let distanceSortedPlaces = allPlaces.filter { place in
-            guard let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first,
-                  enabledFilters.contains(firstFilter) else { return false }
+            let filter: PlaceFilter
+            if place.id.hasPrefix("proxdiscover-") {
+                filter = .discover
+            } else {
+                guard let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first else { return false }
+                filter = firstFilter
+            }
+            guard enabledFilters.contains(filter) else { return false }
 
             reviewCounts.append(place.yelpProvider.totalReviewCount)
             return true
