@@ -9,7 +9,7 @@ fileprivate enum UIMode {
 }
 
 enum DetailType {
-    case wikipedia, yelp, tripadvisor
+    case wikipedia, yelp, tripadvisor, event
 }
 
 class PlaceDetailsDescriptionView: UIView {
@@ -101,6 +101,9 @@ class PlaceDetailsDescriptionView: UIView {
             toggleEventType = AnalyticsEvent.WIKIPEDIA_TOGGLE
         case .tripadvisor:
             toggleEventType = AnalyticsEvent.TRIPADVISOR_TOGGLE
+        case .event:
+            toggleEventType = AnalyticsEvent.EVENT_TOGGLE
+            break
         }
         uiMode = expanded ? .expanded : .collapsed
         super.init(frame: .zero)
@@ -129,8 +132,9 @@ class PlaceDetailsDescriptionView: UIView {
                         logoBottomConstraint]
 
         descriptionTitleView.addSubview(label)
+        let titleOffset: CGFloat = (logoView.image == nil) ? 16 : 48
         constraints += [label.centerYAnchor.constraint(equalTo: logoView.centerYAnchor),
-                        label.leadingAnchor.constraint(equalTo: descriptionTitleView.leadingAnchor, constant: 48),
+                        label.leadingAnchor.constraint(equalTo: descriptionTitleView.leadingAnchor, constant: titleOffset),
                         label.trailingAnchor.constraint(equalTo: expandButton.leadingAnchor, constant: -horizontalMargin)]
 
         descriptionTitleView.addSubview(expandButton)

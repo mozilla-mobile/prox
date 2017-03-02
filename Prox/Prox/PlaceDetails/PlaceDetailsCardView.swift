@@ -25,6 +25,7 @@ class PlaceDetailsCardView: UIView {
         let view = UIStackView(arrangedSubviews:[self.labelContainer,
                                                  self.iconInfoViewContainer,
                                                  self.reviewViewContainer,
+                                                 self.eventDescriptionView,
                                                  self.wikiDescriptionView,
                                                  self.tripAdvisorDescriptionView,
                                                  self.yelpDescriptionView
@@ -165,6 +166,14 @@ class PlaceDetailsCardView: UIView {
         return view
     } ()
 
+    lazy var eventDescriptionView: PlaceDetailsDescriptionView = {
+        let view = PlaceDetailsDescriptionView(labelText: "Event details",
+                                               icon: nil,
+                                               type: DetailType.event,
+                                               expanded: false)
+        return view
+    } ()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -215,6 +224,7 @@ class PlaceDetailsCardView: UIView {
         tripAdvisorDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
         wikiDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
         yelpDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
+        eventDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
     }
 
     @objc private func didTap(gestureRecognizer: UITapGestureRecognizer) {
@@ -246,9 +256,18 @@ class PlaceDetailsCardView: UIView {
 
         updateHoursUI(place.hours)
 
-        updateDescriptionViewUI(forText: place.wikipediaProvider?.description, onView: wikiDescriptionView, expanded: place.wikipediaProvider?.description != nil)
-        updateDescriptionViewUI(forText: place.tripAdvisorProvider?.description, onView: tripAdvisorDescriptionView, expanded: place.wikipediaProvider?.description == nil && place.tripAdvisorProvider?.description != nil)
-        updateDescriptionViewUI(forText: place.yelpProvider.description, onView: yelpDescriptionView, expanded: place.tripAdvisorProvider?.description == nil && place.wikipediaProvider?.description == nil && place.yelpProvider.description != nil)
+        let viewDescriptions: [(view: PlaceDetailsDescriptionView, description: String?)] = [
+            (eventDescriptionView, place.customProvider?.description),
+            (wikiDescriptionView, place.wikipediaProvider?.description),
+            (tripAdvisorDescriptionView, place.tripAdvisorProvider?.description),
+            (yelpDescriptionView, place.yelpProvider.description),
+        ]
+
+        var didExpand = false
+        for viewDescription in viewDescriptions {
+            updateDescriptionViewUI(forText: viewDescription.description, onView: viewDescription.view, expanded: !didExpand)
+            didExpand = didExpand || viewDescription.description != nil
+        }
 
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)

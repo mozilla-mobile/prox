@@ -52,6 +52,8 @@ public struct AnalyticsEvent {
     static let WIKIPEDIA_TOGGLE   = "wikipedia_toggle"
     static let WIKIPEDIA_READ     = "wikipedia_read_more"
 
+    static let EVENT_TOGGLE       = "event_toggle"
+
     static let DIRECTIONS         = "directions_link"
     static let WEBSITE            = "website_link"
     static let MAP_BUTTON         = "map_button" // For returning to the Carousel
