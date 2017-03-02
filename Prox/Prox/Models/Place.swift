@@ -12,6 +12,7 @@ private let YELP2_PATH = PROVIDERS_PATH + "yelp"
 private let YELP3_PATH = PROVIDERS_PATH + "yelp3"
 private let TRIP_ADVISOR_PATH = PROVIDERS_PATH + "tripAdvisor"
 private let WIKIPEDIA_PATH = PROVIDERS_PATH + "wikipedia"
+private let CUSTOM_PATH = PROVIDERS_PATH + "custom"
 
 typealias CachedTravelTime = (deferred: Deferred<DatabaseResult<TravelTimes>>, forLocation: CLLocation)
 
@@ -42,6 +43,7 @@ class Place: Hashable {
     let yelpProvider: PlaceProvider
     let tripAdvisorProvider: PlaceProvider?
     let wikipediaProvider: PlaceProvider?
+    let customProvider: PlaceProvider?
 
     init(id: String,
          name: String,
@@ -54,7 +56,8 @@ class Place: Hashable {
          totalReviewCount: Int = 0,
          yelpProvider: PlaceProvider,
          tripAdvisorProvider: PlaceProvider? = nil,
-         wikipediaProvider: PlaceProvider? = nil) {
+         wikipediaProvider: PlaceProvider? = nil,
+         customProvider: PlaceProvider? = nil) {
             self.id = id
             self.name = name
             self.categories = categories
@@ -67,6 +70,7 @@ class Place: Hashable {
             self.yelpProvider = yelpProvider
             self.tripAdvisorProvider = tripAdvisorProvider
             self.wikipediaProvider = wikipediaProvider
+            self.customProvider = customProvider
     }
 
     convenience init?(fromFirebaseSnapshot details: FIRDataSnapshot) {
@@ -90,7 +94,12 @@ class Place: Hashable {
             wikipediaProvider = SinglePlaceProvider(fromDictionary: wikipediaDict)
         }
 
-        let providers: [PlaceProvider?] = [yelpProvider, tripAdvisorProvider, wikipediaProvider]
+        var customProvider: SinglePlaceProvider?
+        if let customDict = details.childSnapshot(forPath: CUSTOM_PATH).value as? [String: Any] {
+            customProvider = SinglePlaceProvider(fromDictionary: customDict)
+        }
+
+        let providers: [PlaceProvider?] = [customProvider, yelpProvider, tripAdvisorProvider, wikipediaProvider]
         let compositeProvider = CompositePlaceProvider(fromProviders: providers.flatMap { $0 })
 
         guard let id = compositeProvider.id else {
