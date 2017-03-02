@@ -81,6 +81,10 @@ struct PlaceUtilities {
 
     static func filter(places: [Place], withFilters enabledFilters: Set<PlaceFilter>) -> [Place] {
         return places.filter { place in
+            // If the place has listed times but won't be open in the near future, skip it.
+            let now = Date()
+            if let hours = place.hours, !hours.isOpen(atTime: now), hours.nextOpeningTime(forTime: now) == nil { return false }
+
             let filter: PlaceFilter
             if place.id.hasPrefix(AppConstants.testPrefixDiscover) {
                 filter = .discover
