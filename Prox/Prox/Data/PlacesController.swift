@@ -15,9 +15,6 @@ protocol PlacesProviderDelegate: class {
     func placesProvider(_ controller: PlacesProvider, didUpdatePlaces places: [Place])
 }
 
-private let ratingWeight: Float = 1
-private let reviewWeight: Float = 2
-
 class PlacesProvider {
     weak var delegate: PlacesProviderDelegate?
 
@@ -83,27 +80,9 @@ class PlacesProvider {
         }
 
         guard topRatedOnly else { return distanceSortedPlaces }
-
-        let maxReviews = distanceSortedPlaces.map { $0.totalReviewCount }.max() ?? 0
-        let logMaxReviews = log10(Float(maxReviews))
-
-        let sorted = distanceSortedPlaces.sorted { a, b in
-            return proxRating(forPlace: a, logMaxReviews: logMaxReviews) > proxRating(forPlace: b, logMaxReviews: logMaxReviews)
-        }
-
-        return sorted
+        return PlaceUtilities.sortByTopRated(places: distanceSortedPlaces)
     }
 
-    /// Returns a number from 0-1 that weighs different properties on the place.
-    private func proxRating(forPlace place: Place, logMaxReviews: Float) -> Float {
-        let yelpCount = Float(place.yelpProvider.totalReviewCount)
-        let taCount = Float(place.tripAdvisorProvider?.totalReviewCount ?? 0)
-        let yelpRating = place.yelpProvider.rating ?? 0
-        let taRating = place.tripAdvisorProvider?.rating ?? 0
-        let ratingScore = (yelpRating * yelpCount + taRating * taCount) / (yelpCount + taCount) / 5
-        let reviewScore = log10(yelpCount + taCount) / logMaxReviews
-        return (ratingScore * ratingWeight + reviewScore * reviewWeight) / (ratingWeight + reviewWeight)
-    }
 
     /// Applies the current set of filters to all places, setting `displayedPlaces` to the result.
     /// Callers must acquire a write lock before calling this method!
@@ -123,6 +102,7 @@ class PlacesProvider {
                 self.allPlaces = sortedPlaces
                 self.updateDisplayedPlaces()
             }
+
             DispatchQueue.main.async {
                 var displayedPlaces: [Place]!
                 self.placesLock.withReadLock {
@@ -130,7 +110,6 @@ class PlacesProvider {
                 }
                 self.delegate?.placesProvider(self, didUpdatePlaces: displayedPlaces)
             }
-
         })
     }
 
