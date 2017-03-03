@@ -79,6 +79,19 @@ struct PlaceUtilities {
         return (ratingScore * ratingWeight + reviewScore * reviewWeight) / (ratingWeight + reviewWeight)
     }
 
+    static func filter(places: [Place], withFilters enabledFilters: Set<PlaceFilter>) -> [Place] {
+        return places.filter { place in
+            let filter: PlaceFilter
+            if place.id.hasPrefix(AppConstants.testPrefixDiscover) {
+                filter = .discover
+            } else {
+                guard let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first else { return false }
+                filter = firstFilter
+            }
+            return enabledFilters.contains(filter)
+        }
+    }
+
     static func getString(forCategories categories: [String]?) -> String? {
         return categories?.prefix(MaxDisplayedCategories).joined(separator: " • ")
     }

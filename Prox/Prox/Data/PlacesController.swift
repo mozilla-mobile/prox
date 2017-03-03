@@ -68,19 +68,9 @@ class PlacesProvider {
     /// Callers must acquire a read lock before calling this method!
     /// TODO: Terrible name, terrible pattern. Fix this with #529.
     private func filterPlacesLocked(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) -> [Place] {
-        let distanceSortedPlaces = allPlaces.filter { place in
-            let filter: PlaceFilter
-            if place.id.hasPrefix(AppConstants.testPrefixDiscover) {
-                filter = .discover
-            } else {
-                guard let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first else { return false }
-                filter = firstFilter
-            }
-            return enabledFilters.contains(filter)
-        }
-
-        guard topRatedOnly else { return distanceSortedPlaces }
-        return PlaceUtilities.sortByTopRated(places: distanceSortedPlaces)
+        let filteredPlaces = PlaceUtilities.filter(places: allPlaces, withFilters: enabledFilters)
+        guard topRatedOnly else { return filteredPlaces }
+        return PlaceUtilities.sortByTopRated(places: filteredPlaces)
     }
 
 
