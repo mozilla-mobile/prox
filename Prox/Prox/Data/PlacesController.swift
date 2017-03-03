@@ -72,12 +72,6 @@ class PlacesProvider {
         }
     }
 
-    func filterPlaces(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) -> [Place] {
-        return placesLock.withReadLock {
-            return filterPlacesLocked(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
-        }
-    }
-
     /// Callers must acquire a read lock before calling this method!
     /// TODO: Terrible name, terrible pattern. Fix this with #529.
     private func filterPlacesLocked(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) -> [Place] {
@@ -85,7 +79,6 @@ class PlacesProvider {
         guard topRatedOnly else { return filteredPlaces }
         return PlaceUtilities.sortByTopRated(places: filteredPlaces)
     }
-
 
     /// Applies the current set of filters to all places, setting `displayedPlaces` to the result.
     /// Callers must acquire a write lock before calling this method!
@@ -187,10 +180,20 @@ class PlacesProvider {
         delegate?.placesProvider(self, didUpdatePlaces: displayedPlaces)
     }
 
+    /// Returns a copy of all the places. Callers should not be locked.
+    func getAllPlacesCopy() -> [Place] {
+        return getCopy(ofPlaces: allPlaces)
+    }
+
+    /// Returns a copy of the displayed places. Callers should not be locked.
     func getDisplayedPlacesCopy() -> [Place] {
+        return getCopy(ofPlaces: displayedPlaces)
+    }
+
+    private func getCopy(ofPlaces places: [Place]) -> [Place] {
         var placesCopy: [Place] = []
         placesLock.withReadLock {
-            placesCopy = Array(self.displayedPlaces)
+            placesCopy = Array(places)
         }
         return placesCopy
     }
