@@ -58,7 +58,7 @@ class PlacesProvider {
         // Fetch a stable list of places from firebase.
         database.getPlaces(forLocation: location, withRadius: radius).upon { results in
             let places = results.flatMap { $0.successResult() }
-            self.didFinishFetchingPlaces(places: places, forLocation: location)
+            self.displayPlaces(places: places, forLocation: location)
         }
     }
 
@@ -137,10 +137,6 @@ class PlacesProvider {
             }
 
         })
-    }
-
-    private func didFinishFetchingPlaces(places: [Place], forLocation location: CLLocation) {
-        displayPlaces(places: places, forLocation: location)
     }
 
     func nextPlace(forPlace place: Place) -> Place? {
