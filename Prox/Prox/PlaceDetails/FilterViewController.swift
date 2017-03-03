@@ -26,7 +26,6 @@ class FilterViewController: UIViewController {
         (.discover, Strings.filterView.discover),
         (.eatAndDrink, Strings.filterView.eatAndDrink),
         (.shop, Strings.filterView.shop),
-        (.services, Strings.filterView.services),
     ]
 
     init(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) {
