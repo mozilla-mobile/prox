@@ -72,18 +72,17 @@ class PlacesProvider {
         }
     }
 
-    /// Callers must acquire a read lock before calling this method!
-    /// TODO: Terrible name, terrible pattern. Fix this with #529.
-    private func filterPlacesLocked(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) -> [Place] {
-        let filteredPlaces = PlaceUtilities.filter(places: allPlaces, withFilters: enabledFilters)
-        guard topRatedOnly else { return filteredPlaces }
-        return PlaceUtilities.sortByTopRated(places: filteredPlaces)
-    }
-
     /// Applies the current set of filters to all places, setting `displayedPlaces` to the result.
     /// Callers must acquire a write lock before calling this method!
     fileprivate func updateDisplayedPlaces() {
-        displayedPlaces = filterPlacesLocked(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
+        let filteredPlaces = PlaceUtilities.filter(places: allPlaces, withFilters: enabledFilters)
+        let sortedPlaces: [Place]
+        if topRatedOnly {
+            sortedPlaces = PlaceUtilities.sortByTopRated(places: filteredPlaces)
+        } else {
+            sortedPlaces = filteredPlaces // allPlaces is already sorted.
+        }
+        displayedPlaces = sortedPlaces
     }
 
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
