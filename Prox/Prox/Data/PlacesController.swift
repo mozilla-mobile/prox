@@ -71,8 +71,6 @@ class PlacesProvider {
     /// Callers must acquire a read lock before calling this method!
     /// TODO: Terrible name, terrible pattern. Fix this with #529.
     private func filterPlacesLocked(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) -> [Place] {
-        var reviewCounts = [Int]()
-
         let distanceSortedPlaces = allPlaces.filter { place in
             let filter: PlaceFilter
             if place.id.hasPrefix(AppConstants.testPrefixDiscover) {
@@ -81,10 +79,7 @@ class PlacesProvider {
                 guard let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first else { return false }
                 filter = firstFilter
             }
-            guard enabledFilters.contains(filter) else { return false }
-
-            reviewCounts.append(place.yelpProvider.totalReviewCount)
-            return true
+            return enabledFilters.contains(filter)
         }
 
         guard topRatedOnly else { return distanceSortedPlaces }
