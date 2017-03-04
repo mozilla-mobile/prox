@@ -104,11 +104,7 @@ class PlacesProvider {
             }
 
             DispatchQueue.main.async {
-                var displayedPlaces: [Place]!
-                self.placesLock.withReadLock {
-                    displayedPlaces = self.displayedPlaces
-                }
-                self.delegate?.placesProvider(self, didUpdatePlaces: displayedPlaces)
+                self.delegate?.placesProvider(self, didUpdatePlaces: self.getDisplayedPlacesCopy())
             }
         })
     }
