@@ -47,9 +47,14 @@ class SinglePlaceProvider: PlaceProvider {
         let categoryIds = dict["categories"] as? [String] ?? []
         var categories = (names: [String], ids: [String])([], [])
         for id in categoryIds {
-            guard let name = CategoriesUtil.categoryToName[id] else { continue }
-            categories.ids.append(id)
-            categories.names.append(name)
+            if let name = CategoriesUtil.categoryToName[id] {
+                categories.ids.append(id)
+                categories.names.append(name)
+            } else if let placeid = self.id, placeid.hasPrefix("proxdiscover-") {
+                // HACK: proxdiscover categories are stored by name without id
+                categories.ids.append(id)
+                categories.names.append(id)
+            }
         }
         self.categories = categories
 
