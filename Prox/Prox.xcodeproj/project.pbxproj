@@ -120,24 +120,29 @@
 
 /* Begin PBXFileReference section */
 		032E1A5B4FC2DB4F395E29E9 /* Pods_ProxTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProxTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		069E25CEA6138CD582BD90D4 /* Pods-Prox.currentlocationdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.currentlocationdebug.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.currentlocationdebug.xcconfig"; sourceTree = "<group>"; };
+		098F723A5179BAECB3FC066A /* Pods-ProxUITests.mocklocation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.mocklocation.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.mocklocation.xcconfig"; sourceTree = "<group>"; };
 		0B1AEE149C15EBFD638A2EFC /* Pods-Prox.mock location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.mock location.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.mock location.xcconfig"; sourceTree = "<group>"; };
 		0B7888AD8C6E7538A1FCCDD3 /* Pods-ProxTests.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		0EA57261799D082127AF0A24 /* Pods-ProxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.release.xcconfig"; sourceTree = "<group>"; };
+		10A7039B48327F56FC68124B /* Pods-ProxTests.currentlocation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.currentlocation.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.currentlocation.xcconfig"; sourceTree = "<group>"; };
 		18F1C6CC1D18EC45A9072FF1 /* Pods-ProxUITests.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise.xcconfig"; sourceTree = "<group>"; };
 		1E318DF6890B9E7221222152 /* Pods-Prox.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		23039CD31DE56D5200653FCD /* APIKeys.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = APIKeys.plist; sourceTree = "<group>"; };
 		234AF1591DDFD91C00097B0B /* AnalyticsUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsUtilities.swift; sourceTree = "<group>"; };
 		2380CA901DE4140A002D73F1 /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		246E3C4ADD7C4DD2150C111B /* Pods-Prox.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.release.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.release.xcconfig"; sourceTree = "<group>"; };
+		26711FEEF61384415337CDE5 /* Pods-ProxTests.mocklocation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.mocklocation.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.mocklocation.xcconfig"; sourceTree = "<group>"; };
 		29190FCA903C1D1AF4C77316 /* Pods_Prox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Prox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B3DB0289BF252BFF0C3FB63 /* Pods-Prox.mocklocationdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.mocklocationdebug.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.mocklocationdebug.xcconfig"; sourceTree = "<group>"; };
 		324CE3415A3E66A0F7F7CF54 /* Pods-ProxUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.release.xcconfig"; sourceTree = "<group>"; };
 		36CBC82AAA922ABFFFACE3FE /* Pods-Prox.chicago.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.chicago.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.chicago.xcconfig"; sourceTree = "<group>"; };
 		392F3D8F1DD20EAE00B44B01 /* PlacesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlacesController.swift; path = Data/PlacesController.swift; sourceTree = "<group>"; };
 		392F3D961DD4395000B44B01 /* RemoteConfigDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RemoteConfigDefaults.plist; sourceTree = "<group>"; };
 		39C4EC9C1DDB464200B53B77 /* RemoteConfigKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigKeys.swift; sourceTree = "<group>"; };
-		540AE16648C8BAEAEEE39C47 /* Pods-Prox.current location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.current location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.current location (debug).xcconfig"; sourceTree = "<group>"; };
 		55740F6C4426324FDA569848 /* Pods-Prox.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.enterprise.xcconfig"; sourceTree = "<group>"; };
 		5CC567CFCFA28F4EC7ACFB4B /* Pods-ProxUITests.chicago.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.chicago.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.chicago.xcconfig"; sourceTree = "<group>"; };
+		62C8B0E3A72B11AEA61DB86E /* Pods-ProxTests.currentlocationdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.currentlocationdebug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.currentlocationdebug.xcconfig"; sourceTree = "<group>"; };
 		64E189E4D93A85A43CF269E2 /* Pods-ProxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		738289665759F7DA1EC836B9 /* FirebaseBranches.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseBranches.swift; sourceTree = "<group>"; };
 		73828CC8A84055028C4CA03E /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
@@ -145,7 +150,7 @@
 		7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationMonitor.swift; sourceTree = "<group>"; };
 		7B1C657C1DDF28F00047559C /* TimeInterval.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TimeInterval.swift; path = Extensions/TimeInterval.swift; sourceTree = "<group>"; };
 		7B23BD1E1DE862F500A23604 /* ChevronView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChevronView.swift; sourceTree = "<group>"; };
-		7B29E7BF1DA3EC360099AF38 /* Prox Mock Location.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Prox Mock Location.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B29E7BF1DA3EC360099AF38 /* Prox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B29E7C21DA3EC360099AF38 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7B29E7C91DA3EC360099AF38 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7B29E7CC1DA3EC360099AF38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -197,15 +202,15 @@
 		7BD5CC7B1DAFF07E00BCF50D /* GFQuery+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GFQuery+Private.h"; sourceTree = "<group>"; };
 		7BD5CC7C1DAFF07E00BCF50D /* GFQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFQuery.m; sourceTree = "<group>"; };
 		7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		82848A15413EA01642DE6C7A /* Pods-ProxTests.mock location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.mock location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.mock location (debug).xcconfig"; sourceTree = "<group>"; };
-		833CA3633791C2AEE817F87F /* Pods-ProxUITests.mock location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.mock location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.mock location (debug).xcconfig"; sourceTree = "<group>"; };
-		93EE3B889D13E2BF65ED08E9 /* Pods-ProxTests.current location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.current location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.current location (debug).xcconfig"; sourceTree = "<group>"; };
-		A05E792F692B76E576E1E207 /* Pods-Prox.mock location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.mock location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.mock location (debug).xcconfig"; sourceTree = "<group>"; };
+		8756B7DC56277FB664DE7E83 /* Pods-ProxUITests.mocklocationdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.mocklocationdebug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.mocklocationdebug.xcconfig"; sourceTree = "<group>"; };
+		94AD2B2289DA7E1A50B285BF /* Pods-ProxTests.mocklocationdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.mocklocationdebug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.mocklocationdebug.xcconfig"; sourceTree = "<group>"; };
 		A62868128BA3BDA4EF8E22F1 /* Pods-ProxTests.enterprise.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.enterprise.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.enterprise.xcconfig"; sourceTree = "<group>"; };
 		B4BB960AEC6AA0772A2E4665 /* Pods-ProxUITests.mock location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.mock location.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.mock location.xcconfig"; sourceTree = "<group>"; };
+		B5CBF4D893B5DA51A28D0C21 /* Pods-Prox.currentlocation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.currentlocation.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.currentlocation.xcconfig"; sourceTree = "<group>"; };
 		BD2188137E599F03500C7FBD /* Pods-ProxUITests.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		CBFE1FD0629546576538F51D /* Pods-ProxTests.chicago.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.chicago.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.chicago.xcconfig"; sourceTree = "<group>"; };
 		CE887CEB1CF45A1D782FC885 /* Pods-Prox.current location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.current location.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.current location.xcconfig"; sourceTree = "<group>"; };
+		D00B70A0AB629759A1B878F4 /* Pods-Prox.mocklocation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.mocklocation.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.mocklocation.xcconfig"; sourceTree = "<group>"; };
 		D32F73EB1E4CF31400D504A7 /* FilterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
 		D32F73ED1E4D07AE00D504A7 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIColor.swift; path = Extensions/UIColor.swift; sourceTree = "<group>"; };
 		D32F73EF1E4D08C600D504A7 /* InsetButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InsetButton.swift; sourceTree = "<group>"; };
@@ -246,9 +251,10 @@
 		E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossFadeTransition.swift; sourceTree = "<group>"; };
 		E6CF08DE1E57B6300083CAD8 /* GMSMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GMSMarker.swift; path = "Extensions/Google Maps/GMSMarker.swift"; sourceTree = "<group>"; };
 		E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockLocationSelectionTableViewController.swift; sourceTree = "<group>"; };
+		E9D33947ADBD130D6225B1C7 /* Pods-ProxUITests.currentlocationdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.currentlocationdebug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.currentlocationdebug.xcconfig"; sourceTree = "<group>"; };
 		EF6099637798B2B2023BBF66 /* Pods-ProxTests.mock location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.mock location.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.mock location.xcconfig"; sourceTree = "<group>"; };
 		F4965C182C4F2F17D19D8D2D /* Pods-ProxTests.current location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.current location.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.current location.xcconfig"; sourceTree = "<group>"; };
-		F523936BD85B582F6A1881AC /* Pods-ProxUITests.current location (debug).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.current location (debug).xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.current location (debug).xcconfig"; sourceTree = "<group>"; };
+		FC536B573A1056E3440F87D4 /* Pods-ProxUITests.currentlocation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.currentlocation.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.currentlocation.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -318,7 +324,7 @@
 		7B29E7C01DA3EC360099AF38 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7B29E7BF1DA3EC360099AF38 /* Prox Mock Location.app */,
+				7B29E7BF1DA3EC360099AF38 /* Prox.app */,
 				7B29E7D31DA3EC360099AF38 /* ProxTests.xctest */,
 				7B29E7DE1DA3EC360099AF38 /* ProxUITests.xctest */,
 			);
@@ -533,12 +539,18 @@
 				CE887CEB1CF45A1D782FC885 /* Pods-Prox.current location.xcconfig */,
 				F4965C182C4F2F17D19D8D2D /* Pods-ProxTests.current location.xcconfig */,
 				DCBB957739FDB3296D165BBD /* Pods-ProxUITests.current location.xcconfig */,
-				A05E792F692B76E576E1E207 /* Pods-Prox.mock location (debug).xcconfig */,
-				540AE16648C8BAEAEEE39C47 /* Pods-Prox.current location (debug).xcconfig */,
-				82848A15413EA01642DE6C7A /* Pods-ProxTests.mock location (debug).xcconfig */,
-				93EE3B889D13E2BF65ED08E9 /* Pods-ProxTests.current location (debug).xcconfig */,
-				833CA3633791C2AEE817F87F /* Pods-ProxUITests.mock location (debug).xcconfig */,
-				F523936BD85B582F6A1881AC /* Pods-ProxUITests.current location (debug).xcconfig */,
+				069E25CEA6138CD582BD90D4 /* Pods-Prox.currentlocationdebug.xcconfig */,
+				62C8B0E3A72B11AEA61DB86E /* Pods-ProxTests.currentlocationdebug.xcconfig */,
+				E9D33947ADBD130D6225B1C7 /* Pods-ProxUITests.currentlocationdebug.xcconfig */,
+				2B3DB0289BF252BFF0C3FB63 /* Pods-Prox.mocklocationdebug.xcconfig */,
+				D00B70A0AB629759A1B878F4 /* Pods-Prox.mocklocation.xcconfig */,
+				B5CBF4D893B5DA51A28D0C21 /* Pods-Prox.currentlocation.xcconfig */,
+				94AD2B2289DA7E1A50B285BF /* Pods-ProxTests.mocklocationdebug.xcconfig */,
+				26711FEEF61384415337CDE5 /* Pods-ProxTests.mocklocation.xcconfig */,
+				10A7039B48327F56FC68124B /* Pods-ProxTests.currentlocation.xcconfig */,
+				8756B7DC56277FB664DE7E83 /* Pods-ProxUITests.mocklocationdebug.xcconfig */,
+				098F723A5179BAECB3FC066A /* Pods-ProxUITests.mocklocation.xcconfig */,
+				FC536B573A1056E3440F87D4 /* Pods-ProxUITests.currentlocation.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -595,7 +607,7 @@
 			);
 			name = Prox;
 			productName = Prox;
-			productReference = 7B29E7BF1DA3EC360099AF38 /* Prox Mock Location.app */;
+			productReference = 7B29E7BF1DA3EC360099AF38 /* Prox.app */;
 			productType = "com.apple.product-type.application";
 		};
 		7B29E7D21DA3EC360099AF38 /* ProxTests */ = {
@@ -994,7 +1006,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		7B29E7E51DA3EC360099AF38 /* Mock Location (Debug) */ = {
+		7B29E7E51DA3EC360099AF38 /* CurrentLocationDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1042,11 +1054,11 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = "Mock Location (Debug)";
+			name = CurrentLocationDebug;
 		};
-		7B29E7E81DA3EC360099AF38 /* Mock Location (Debug) */ = {
+		7B29E7E81DA3EC360099AF38 /* CurrentLocationDebug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A05E792F692B76E576E1E207 /* Pods-Prox.mock location (debug).xcconfig */;
+			baseConfigurationReference = 069E25CEA6138CD582BD90D4 /* Pods-Prox.currentlocationdebug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1054,17 +1066,17 @@
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = Prox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.MockLocation;
-				PRODUCT_NAME = "$(TARGET_NAME) Mock Location";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG MOZ_CHANNEL_MOCK_LOCATION";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_CURRENT_LOCATION";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.CurrentLocation;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
-			name = "Mock Location (Debug)";
+			name = CurrentLocationDebug;
 		};
-		7B29E7EB1DA3EC360099AF38 /* Mock Location (Debug) */ = {
+		7B29E7EB1DA3EC360099AF38 /* CurrentLocationDebug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 82848A15413EA01642DE6C7A /* Pods-ProxTests.mock location (debug).xcconfig */;
+			baseConfigurationReference = 62C8B0E3A72B11AEA61DB86E /* Pods-ProxTests.currentlocationdebug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1076,11 +1088,11 @@
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
 			};
-			name = "Mock Location (Debug)";
+			name = CurrentLocationDebug;
 		};
-		7B29E7EE1DA3EC360099AF38 /* Mock Location (Debug) */ = {
+		7B29E7EE1DA3EC360099AF38 /* CurrentLocationDebug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 833CA3633791C2AEE817F87F /* Pods-ProxUITests.mock location (debug).xcconfig */;
+			baseConfigurationReference = E9D33947ADBD130D6225B1C7 /* Pods-ProxUITests.currentlocationdebug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
@@ -1091,9 +1103,9 @@
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Prox;
 			};
-			name = "Mock Location (Debug)";
+			name = CurrentLocationDebug;
 		};
-		7B4678A81DB5013800AC5B5D /* Current Location */ = {
+		7B4678A81DB5013800AC5B5D /* CurrentLocation */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1134,11 +1146,11 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = "Current Location";
+			name = CurrentLocation;
 		};
-		7B4678A91DB5013800AC5B5D /* Current Location */ = {
+		7B4678A91DB5013800AC5B5D /* CurrentLocation */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CE887CEB1CF45A1D782FC885 /* Pods-Prox.current location.xcconfig */;
+			baseConfigurationReference = B5CBF4D893B5DA51A28D0C21 /* Pods-Prox.currentlocation.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1146,17 +1158,17 @@
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = Prox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_CURRENT_LOCATION";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.CurrentLocation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = MOZ_CHANNEL_CURRENT_LOCATION;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
-			name = "Current Location";
+			name = CurrentLocation;
 		};
-		7B4678AA1DB5013800AC5B5D /* Current Location */ = {
+		7B4678AA1DB5013800AC5B5D /* CurrentLocation */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F4965C182C4F2F17D19D8D2D /* Pods-ProxTests.current location.xcconfig */;
+			baseConfigurationReference = 10A7039B48327F56FC68124B /* Pods-ProxTests.currentlocation.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1168,11 +1180,11 @@
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
 			};
-			name = "Current Location";
+			name = CurrentLocation;
 		};
-		7B4678AB1DB5013800AC5B5D /* Current Location */ = {
+		7B4678AB1DB5013800AC5B5D /* CurrentLocation */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DCBB957739FDB3296D165BBD /* Pods-ProxUITests.current location.xcconfig */;
+			baseConfigurationReference = FC536B573A1056E3440F87D4 /* Pods-ProxUITests.currentlocation.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
@@ -1183,9 +1195,9 @@
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Prox;
 			};
-			name = "Current Location";
+			name = CurrentLocation;
 		};
-		D340FDC61E674319006A7B0F /* Current Location (Debug) */ = {
+		D33A2E181E6C973800F148D3 /* MockLocationDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1233,11 +1245,11 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = "Current Location (Debug)";
+			name = MockLocationDebug;
 		};
-		D340FDC71E674319006A7B0F /* Current Location (Debug) */ = {
+		D33A2E191E6C973800F148D3 /* MockLocationDebug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 540AE16648C8BAEAEEE39C47 /* Pods-Prox.current location (debug).xcconfig */;
+			baseConfigurationReference = 2B3DB0289BF252BFF0C3FB63 /* Pods-Prox.mocklocationdebug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1245,17 +1257,17 @@
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = Prox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.CurrentLocation;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG MOZ_CHANNEL_CURRENT_LOCATION";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_MOCK_LOCATION";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.MockLocation;
+				PRODUCT_NAME = "$(TARGET_NAME) Mock Location";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
-			name = "Current Location (Debug)";
+			name = MockLocationDebug;
 		};
-		D340FDC81E674319006A7B0F /* Current Location (Debug) */ = {
+		D33A2E1A1E6C973800F148D3 /* MockLocationDebug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 93EE3B889D13E2BF65ED08E9 /* Pods-ProxTests.current location (debug).xcconfig */;
+			baseConfigurationReference = 94AD2B2289DA7E1A50B285BF /* Pods-ProxTests.mocklocationdebug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1267,11 +1279,11 @@
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
 			};
-			name = "Current Location (Debug)";
+			name = MockLocationDebug;
 		};
-		D340FDC91E674319006A7B0F /* Current Location (Debug) */ = {
+		D33A2E1B1E6C973800F148D3 /* MockLocationDebug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F523936BD85B582F6A1881AC /* Pods-ProxUITests.current location (debug).xcconfig */;
+			baseConfigurationReference = 8756B7DC56277FB664DE7E83 /* Pods-ProxUITests.mocklocationdebug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
@@ -1282,9 +1294,9 @@
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Prox;
 			};
-			name = "Current Location (Debug)";
+			name = MockLocationDebug;
 		};
-		E68D1F861E25998A0052F52A /* Mock Location */ = {
+		E68D1F861E25998A0052F52A /* MockLocation */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1325,11 +1337,11 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = "Mock Location";
+			name = MockLocation;
 		};
-		E68D1F871E25998A0052F52A /* Mock Location */ = {
+		E68D1F871E25998A0052F52A /* MockLocation */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0B1AEE149C15EBFD638A2EFC /* Pods-Prox.mock location.xcconfig */;
+			baseConfigurationReference = D00B70A0AB629759A1B878F4 /* Pods-Prox.mocklocation.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1337,17 +1349,17 @@
 				DEVELOPMENT_TEAM = 9G8J6YA743;
 				INFOPLIST_FILE = Prox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D MOZ_CHANNEL_MOCK_LOCATION";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.Prox.MockLocation;
 				PRODUCT_NAME = "$(TARGET_NAME) Mock Location";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = MOZ_CHANNEL_MOCK_LOCATION;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Prox/Prox-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
-			name = "Mock Location";
+			name = MockLocation;
 		};
-		E68D1F881E25998A0052F52A /* Mock Location */ = {
+		E68D1F881E25998A0052F52A /* MockLocation */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EF6099637798B2B2023BBF66 /* Pods-ProxTests.mock location.xcconfig */;
+			baseConfigurationReference = 26711FEEF61384415337CDE5 /* Pods-ProxTests.mocklocation.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1359,11 +1371,11 @@
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prox.app/Prox";
 			};
-			name = "Mock Location";
+			name = MockLocation;
 		};
-		E68D1F891E25998A0052F52A /* Mock Location */ = {
+		E68D1F891E25998A0052F52A /* MockLocation */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B4BB960AEC6AA0772A2E4665 /* Pods-ProxUITests.mock location.xcconfig */;
+			baseConfigurationReference = 098F723A5179BAECB3FC066A /* Pods-ProxUITests.mocklocation.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = 9G8J6YA743;
@@ -1374,7 +1386,7 @@
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Prox;
 			};
-			name = "Mock Location";
+			name = MockLocation;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1382,46 +1394,46 @@
 		7B29E7BA1DA3EC360099AF38 /* Build configuration list for PBXProject "Prox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7B29E7E51DA3EC360099AF38 /* Mock Location (Debug) */,
-				D340FDC61E674319006A7B0F /* Current Location (Debug) */,
-				E68D1F861E25998A0052F52A /* Mock Location */,
-				7B4678A81DB5013800AC5B5D /* Current Location */,
+				7B29E7E51DA3EC360099AF38 /* CurrentLocationDebug */,
+				D33A2E181E6C973800F148D3 /* MockLocationDebug */,
+				E68D1F861E25998A0052F52A /* MockLocation */,
+				7B4678A81DB5013800AC5B5D /* CurrentLocation */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Mock Location (Debug)";
+			defaultConfigurationName = CurrentLocationDebug;
 		};
 		7B29E7E71DA3EC360099AF38 /* Build configuration list for PBXNativeTarget "Prox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7B29E7E81DA3EC360099AF38 /* Mock Location (Debug) */,
-				D340FDC71E674319006A7B0F /* Current Location (Debug) */,
-				E68D1F871E25998A0052F52A /* Mock Location */,
-				7B4678A91DB5013800AC5B5D /* Current Location */,
+				7B29E7E81DA3EC360099AF38 /* CurrentLocationDebug */,
+				D33A2E191E6C973800F148D3 /* MockLocationDebug */,
+				E68D1F871E25998A0052F52A /* MockLocation */,
+				7B4678A91DB5013800AC5B5D /* CurrentLocation */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Mock Location (Debug)";
+			defaultConfigurationName = CurrentLocationDebug;
 		};
 		7B29E7EA1DA3EC360099AF38 /* Build configuration list for PBXNativeTarget "ProxTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7B29E7EB1DA3EC360099AF38 /* Mock Location (Debug) */,
-				D340FDC81E674319006A7B0F /* Current Location (Debug) */,
-				E68D1F881E25998A0052F52A /* Mock Location */,
-				7B4678AA1DB5013800AC5B5D /* Current Location */,
+				7B29E7EB1DA3EC360099AF38 /* CurrentLocationDebug */,
+				D33A2E1A1E6C973800F148D3 /* MockLocationDebug */,
+				E68D1F881E25998A0052F52A /* MockLocation */,
+				7B4678AA1DB5013800AC5B5D /* CurrentLocation */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Mock Location (Debug)";
+			defaultConfigurationName = CurrentLocationDebug;
 		};
 		7B29E7ED1DA3EC360099AF38 /* Build configuration list for PBXNativeTarget "ProxUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7B29E7EE1DA3EC360099AF38 /* Mock Location (Debug) */,
-				D340FDC91E674319006A7B0F /* Current Location (Debug) */,
-				E68D1F891E25998A0052F52A /* Mock Location */,
-				7B4678AB1DB5013800AC5B5D /* Current Location */,
+				7B29E7EE1DA3EC360099AF38 /* CurrentLocationDebug */,
+				D33A2E1B1E6C973800F148D3 /* MockLocationDebug */,
+				E68D1F891E25998A0052F52A /* MockLocation */,
+				7B4678AB1DB5013800AC5B5D /* CurrentLocation */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Mock Location (Debug)";
+			defaultConfigurationName = CurrentLocationDebug;
 		};
 /* End XCConfigurationList section */
 	};

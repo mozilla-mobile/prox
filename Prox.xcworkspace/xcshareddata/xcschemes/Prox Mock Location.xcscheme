@@ -15,17 +15,21 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-               BuildableName = "Prox Mock Location.app"
+               BuildableName = "Prox.app"
                BlueprintName = "Prox"
                ReferencedContainer = "container:Prox/Prox.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "NO"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "CurrentLocationDebug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7B29E7D21DA3EC360099AF38"
@@ -33,36 +37,13 @@
                BlueprintName = "ProxTests"
                ReferencedContainer = "container:Prox/Prox.xcodeproj">
             </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "NO"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7B29E7DD1DA3EC360099AF38"
-               BuildableName = "ProxUITests.xctest"
-               BlueprintName = "ProxUITests"
-               ReferencedContainer = "container:Prox/Prox.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-      </BuildActionEntries>
-   </BuildAction>
-   <TestAction
-      buildConfiguration = "Mock Location"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      codeCoverageEnabled = "YES">
-      <Testables>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox Mock Location.app"
+            BuildableName = "Prox.app"
             BlueprintName = "Prox"
             ReferencedContainer = "container:Prox/Prox.xcodeproj">
          </BuildableReference>
@@ -71,7 +52,7 @@
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Mock Location (Debug)"
+      buildConfiguration = "MockLocationDebug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -85,7 +66,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox Mock Location.app"
+            BuildableName = "Prox.app"
             BlueprintName = "Prox"
             ReferencedContainer = "container:Prox/Prox.xcodeproj">
          </BuildableReference>
@@ -98,7 +79,7 @@
       </LocationScenarioReference>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Mock Location (Debug)"
+      buildConfiguration = "MockLocation"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -108,18 +89,17 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7B29E7BE1DA3EC360099AF38"
-            BuildableName = "Prox Mock Location.app"
+            BuildableName = "Prox.app"
             BlueprintName = "Prox"
             ReferencedContainer = "container:Prox/Prox.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Mock Location">
+      buildConfiguration = "MockLocationDebug">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Mock Location"
-      customArchiveName = "Prox Kona"
+      buildConfiguration = "MockLocation"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
