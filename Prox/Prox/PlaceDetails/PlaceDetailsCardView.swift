@@ -4,22 +4,10 @@
 
 import Foundation
 
-protocol PlaceDetailsCardDelegate: class {
-    func placeDetailsCardView(cardView: PlaceDetailsCardView, heightDidChange newHeight: CGFloat)
-}
-
-class PlaceDetailsCardView: UIView {
-
-    weak var delegate: PlaceDetailsCardDelegate?
+class PlaceDetailsCardView: ExpandingCardView {
 
     let margin: CGFloat = 24
     let CardMarginBottom: CGFloat = 20 // TODO: name
-
-    // Contains the content: the outer view is used to display a shadow.
-    // This is necessary because the eventView drew its background color over the round corners.
-    // I tried a solution that added also rounded the top corners to the eventView, but there was a
-    // visual artifact where the card's white background shown through the corners.
-    lazy var contentView = UIView()
 
     lazy var containingStackView: UIStackView = {
         let view = UIStackView(arrangedSubviews:[self.labelContainer,
@@ -168,8 +156,8 @@ class PlaceDetailsCardView: UIView {
         return view
     } ()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init() {
+        super.init()
         setupViews()
         setupShadow()
     }
@@ -186,33 +174,17 @@ class PlaceDetailsCardView: UIView {
     }
 
     private func setupViews() {
-        backgroundColor = Colors.detailsViewCardBackground // cannot be transparent to display shadow
-        contentView.backgroundColor = Colors.detailsViewCardBackground
+        let backgroundColorView = UIView()
+        backgroundColorView.backgroundColor = Colors.detailsViewCardBackground
+        backgroundColorView.addSubview(containingStackView)
+        contentView = backgroundColorView
 
-        layer.cornerRadius = Style.cardViewCornerRadius
-        contentView.layer.cornerRadius = Style.cardViewCornerRadius
-        contentView.layer.masksToBounds = true
-
-        addSubview(contentView)
-        var constraints = [contentView.topAnchor.constraint(equalTo: topAnchor),
-                           contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                           contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                           contentView.bottomAnchor.constraint(equalTo: bottomAnchor)]
-
-        // Note: The constraints of subviews broke when I used leading/trailing, rather than
-        // centerX & width. The parent constraints are set with centerX & width - related?
-        contentView.addSubview(containingStackView)
-        constraints += [containingStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                        containingStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                        containingStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-                        containingStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)]
-
-        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
+        containingStackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
         setupGestureRecognizers()
-
     }
-
 
     private func setupGestureRecognizers() {
         tripAdvisorDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
@@ -230,16 +202,6 @@ class PlaceDetailsCardView: UIView {
         descriptionView.didTap()
         self.layoutIfNeeded()
 
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        updateViewSize()
-    }
-
-    // TODO: when else can we call this? layoutSubviews is called when we scroll and we don't want to calculate all this each time...
-    private func updateViewSize() {
-        delegate?.placeDetailsCardView(cardView: self, heightDidChange: bounds.height)
     }
 
     func updateUI(forPlace place: Place) {
