@@ -39,12 +39,6 @@ class PlaceDetailsCardView: UIView {
         return view
     }()
 
-    func setContainingStackViewMargins(isTopMarginPresent: Bool) {
-        // Margins initialized in lazy init.
-        containingStackView.layoutMargins = UIEdgeInsets(top: isTopMarginPresent ? self.margin : 0, left: 0,
-                                                         bottom: self.CardMarginBottom, right: 0)
-    }
-
     // MARK: Outer views.
     // TODO: accessibility labels (and parent view)
     // TODO: set line height on all text. http://stackoverflow.com/a/5513730
