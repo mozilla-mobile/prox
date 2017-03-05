@@ -5,10 +5,6 @@
 import UIKit
 import AFNetworking
 
-enum PanDirection {
-    case vertical, horizontal, none
-}
-
 private let cardBottomMargin: CGFloat = 10 // eyeballed. Sorry antlam.
 
 // MARK: Animation Constants
@@ -39,19 +35,10 @@ class PlaceDetailViewController: UIViewController {
         }
     }
 
-    lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.isScrollEnabled = false
-        scrollView.contentSize = CGSize(width: 1, height: self.view.bounds.height)
-        scrollView.bounces = false
-        return scrollView
-    }()
-
     fileprivate lazy var panGestureRecognizer: UIPanGestureRecognizer = {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.didPan(gestureRecognizer:)))
         panGesture.maximumNumberOfTouches = 1
         panGesture.minimumNumberOfTouches = 1
-        panGesture.delegate = self
         return panGesture
     }()
     
@@ -80,7 +67,6 @@ class PlaceDetailViewController: UIViewController {
     fileprivate var currentCardViewCenterXConstraint: NSLayoutConstraint?
     fileprivate var previousCardViewTrailingConstraint: NSLayoutConstraint?
     fileprivate var nextCardViewLeadingConstraint: NSLayoutConstraint?
-    fileprivate var backgroundImageHeightConstraint: NSLayoutConstraint?
     fileprivate var filterShowConstraints = [NSLayoutConstraint]()
     fileprivate var filterHideConstraints = [NSLayoutConstraint]()
 
@@ -97,8 +83,6 @@ class PlaceDetailViewController: UIViewController {
     fileprivate let imageCarouselHeightConstant: CGFloat = 240
     fileprivate let animationDurationConstant = 0.5
     fileprivate let cardSlideDuration: TimeInterval = 0.15
-
-    fileprivate var startConstant: CGFloat!
 
     lazy var backgroundImage: UIImageView = {
         let view = UIImageView()
@@ -117,8 +101,6 @@ class PlaceDetailViewController: UIViewController {
                         Colors.detailsViewBackgroundGradientEnd.cgColor]
         return layer
     }()
-
-    fileprivate var panDirection: PanDirection = .none
 
     init(place: Place) {
         super.init(nibName: nil, bundle: nil)
@@ -164,26 +146,18 @@ class PlaceDetailViewController: UIViewController {
         // Add some additional height to the background image so when the spring animation runs when
         // transitioning to the this VC we don't see a blank space poke through the bottom due to the spring
         let springOverlap: CGFloat = 5
-        
-        view.addSubview(scrollView)
-        var constraints = [scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-                           scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                           scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                           scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor)]
 
         imageCarousel = currentCardViewController.imageCarousel
-        scrollView.addSubview(backgroundImage)
-        scrollView.addSubview(imageCarousel)
+        view.addSubview(backgroundImage)
+        view.addSubview(imageCarousel)
 
-        backgroundImageHeightConstraint = backgroundImage.heightAnchor.constraint(equalToConstant: scrollView.contentSize.height)
-
-        constraints += [backgroundImage.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageCarouselHeightConstant - springOverlap),
-                           backgroundImage.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-                           backgroundImageHeightConstraint!,
-                           backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor)]
+        backgroundImage.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalToSuperview()
+            make.topMargin.equalTo(imageCarouselHeightConstant - springOverlap)
+        }
 
         backgroundImage.addSubview(backgroundBlurEffect)
-        constraints += [backgroundBlurEffect.topAnchor.constraint(equalTo: backgroundImage.topAnchor),
+        var constraints = [backgroundBlurEffect.topAnchor.constraint(equalTo: backgroundImage.topAnchor),
                        backgroundBlurEffect.leadingAnchor.constraint(equalTo: backgroundImage.leadingAnchor),
                        backgroundBlurEffect.bottomAnchor.constraint(equalTo: backgroundImage.bottomAnchor),
                        backgroundBlurEffect.trailingAnchor.constraint(equalTo: backgroundImage.trailingAnchor)]
@@ -198,12 +172,12 @@ class PlaceDetailViewController: UIViewController {
                         gradientView.bottomAnchor.constraint(equalTo: backgroundImage.bottomAnchor),
                         gradientView.trailingAnchor.constraint(equalTo: backgroundImage.trailingAnchor)]
 
-        constraints += [imageCarousel.topAnchor.constraint(equalTo: scrollView.topAnchor),
-                           imageCarousel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+        constraints += [imageCarousel.topAnchor.constraint(equalTo: view.topAnchor),
+                           imageCarousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                            imageCarousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                            imageCarousel.heightAnchor.constraint(equalToConstant: imageCarouselHeightConstant)]
 
-        scrollView.addSubview(currentCardViewController.cardView)
+        view.addSubview(currentCardViewController.cardView)
 
         updateCurrentCardConstraints()
         currentCardViewCenterXConstraint = currentCardViewController.cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
@@ -243,10 +217,10 @@ class PlaceDetailViewController: UIViewController {
         // Constraint duplication with insertNewCardViewController, updateCurrentCardConstraints & initCardViewController(forNext:). See usages of -cardBottomMargin.
         previousCardViewController = dequeuePlaceCardViewController(forPlace: place)
         previousCardViewController?.cardView.transform = scaleOutTransformLeft
-        scrollView.addSubview(previousCardViewController!.cardView)
+        view.addSubview(previousCardViewController!.cardView)
         previousCardViewTrailingConstraint = previousCardViewController!.cardView.trailingAnchor.constraint(equalTo: currentCardViewController.cardView.leadingAnchor, constant: -cardViewSpacingConstant)
         let constraints = [
-            previousCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
+            previousCardViewController!.cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: cardViewTopAnchorConstant),
             previousCardViewController!.cardView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -cardBottomMargin),
             previousCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
             previousCardViewTrailingConstraint!
@@ -258,10 +232,10 @@ class PlaceDetailViewController: UIViewController {
         // Constraint duplication with insertNewCardViewController, updateCurrentCardConstraints & initCardViewController(forPrevious:). See usages of -cardBottomMargin.
         nextCardViewController = dequeuePlaceCardViewController(forPlace: place)
         nextCardViewController?.cardView.transform = scaleOutTransformRight
-        scrollView.addSubview(nextCardViewController!.cardView)
+        view.addSubview(nextCardViewController!.cardView)
         nextCardViewLeadingConstraint = nextCardViewController!.cardView.leadingAnchor.constraint(equalTo: currentCardViewController.cardView.trailingAnchor, constant: cardViewSpacingConstant)
         let constraints = [
-            nextCardViewController!.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
+            nextCardViewController!.cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: cardViewTopAnchorConstant),
             nextCardViewController!.cardView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -cardBottomMargin),
             nextCardViewController!.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth),
             nextCardViewLeadingConstraint!
@@ -273,7 +247,7 @@ class PlaceDetailViewController: UIViewController {
         // Constraint duplication with insertNewCardViewController & initCardViewController(*. See usages of -cardBottomMargin.
         filterShowConstraints = [ currentCardViewController.cardView.topAnchor.constraint(equalTo: view.bottomAnchor) ]
         filterHideConstraints = [
-            currentCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
+            currentCardViewController.cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: cardViewTopAnchorConstant),
             currentCardViewController.cardView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -cardBottomMargin),
         ]
     }
@@ -355,63 +329,36 @@ class PlaceDetailViewController: UIViewController {
     }
 
     @objc fileprivate func didPan(gestureRecognizer: UIPanGestureRecognizer) {
-        defer {
-            if gestureRecognizer.state == .ended {
-                panDirection = .none
-            }
-        }
+        let translationX = gestureRecognizer.translation(in: self.view).x
 
-        let translationInScrollView = gestureRecognizer.translation(in: self.scrollView)
+        if gestureRecognizer.state == .ended {
+            // figure out where the view would stop based on the velocity with which the user is panning
+            // this is so that paging quickly feels natural
+            let velocityX = (0.2 * gestureRecognizer.velocity(in: self.view).x)
+            let finalX = translationX + velocityX;
+            let animationDuration = 0.5
 
-        if gestureRecognizer.state == .began {
-            startConstant = currentCardViewCenterXConstraint?.constant ?? 0
-
-            // detect whether we are scrolling up & down, or left to right.
-            // if scrolling up and down, simply set content offset for scrollview
-            // otherwise pan and page
-            if scrollView.contentSize.height > view.bounds.height
-                && abs(translationInScrollView.y) > abs(translationInScrollView.x) {
-                panDirection = .vertical
+            if canPageToNextPlaceCard(finalXPosition: finalX) {
+                pageToNextPlaceCard(animateWithDuration: animationDuration)
+            } else if canPageToPreviousPlaceCard(finalXPosition: finalX) {
+                pageToPreviousPlaceCard(animateWithDuration: animationDuration)
             } else {
-                panDirection = .horizontal
+                unwindToCurrentPlaceCard(animateWithDuration: animationDuration)
+            }
+        } else {
+            currentCardViewCenterXConstraint?.constant = translationX
+
+            let currentCenter = currentCardViewController.cardView.center
+            currentCardViewController.cardView.alpha = calculateAlpha(forCenterPosition: currentCenter)
+
+            if let nextCenter = nextCardViewController?.cardView.center {
+                nextCardViewController?.cardView.alpha = calculateAlpha(forCenterPosition: nextCenter)
+            }
+
+            if let prevCenter = previousCardViewController?.cardView.center {
+                previousCardViewController?.cardView.alpha = calculateAlpha(forCenterPosition: prevCenter)
             }
         }
-        switch panDirection {
-        case .horizontal:
-            let translationX = gestureRecognizer.translation(in: self.view).x
-
-            if gestureRecognizer.state == .ended {
-                // figure out where the view would stop based on the velocity with which the user is panning
-                // this is so that paging quickly feels natural
-                let velocityX = (0.2 * gestureRecognizer.velocity(in: self.view).x)
-                let finalX = startConstant + translationX + velocityX;
-                let animationDuration = 0.5
-
-                if canPageToNextPlaceCard(finalXPosition: finalX) {
-                    pageToNextPlaceCard(animateWithDuration: animationDuration)
-                } else if canPageToPreviousPlaceCard(finalXPosition: finalX) {
-                    pageToPreviousPlaceCard(animateWithDuration: animationDuration)
-                } else {
-                    unwindToCurrentPlaceCard(animateWithDuration: animationDuration)
-                }
-            } else {
-                currentCardViewCenterXConstraint?.constant = startConstant + translationX
-
-                let currentCenter = currentCardViewController.cardView.center
-                currentCardViewController.cardView.alpha = calculateAlpha(forCenterPosition: currentCenter)
-
-                if let nextCenter = nextCardViewController?.cardView.center {
-                    nextCardViewController?.cardView.alpha = calculateAlpha(forCenterPosition: nextCenter)
-                }
-
-                if let prevCenter = previousCardViewController?.cardView.center {
-                    previousCardViewController?.cardView.alpha = calculateAlpha(forCenterPosition: prevCenter)
-                }
-            }
-        default:
-            return
-        }
-
     }
 
     fileprivate func calculateAlpha(forCenterPosition position: CGPoint) -> CGFloat {
@@ -556,11 +503,11 @@ class PlaceDetailViewController: UIViewController {
         }
 
         let newCardViewController = dequeuePlaceCardViewController(forPlace:newPlace)
-        self.scrollView.addSubview(newCardViewController.cardView)
+        self.view.addSubview(newCardViewController.cardView)
         self.addChildViewController(newCardViewController)
         // Constraint duplication with updateCurrentCardConstraints & initCardViewController(*. See usages of -cardBottomMargin.
         NSLayoutConstraint.activate([
-            newCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
+            newCardViewController.cardView.topAnchor.constraint(equalTo: view.topAnchor, constant: cardViewTopAnchorConstant),
             newCardViewController.cardView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -cardBottomMargin),
             newCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth)
             ], translatesAutoresizingMaskIntoConstraints: false)
@@ -612,9 +559,9 @@ class PlaceDetailViewController: UIViewController {
         // we need to ensure these constraints are applied and rendered before we animate the rest, otherwise we end
         // up with a very odd looking fade transition
         let nextCardImageCarousel = nextCard.imageCarousel
-        scrollView.insertSubview(nextCardImageCarousel, belowSubview: imageCarousel)
-        NSLayoutConstraint.activate([nextCardImageCarousel.topAnchor.constraint(equalTo: scrollView.topAnchor),
-                                     nextCardImageCarousel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+        view.insertSubview(nextCardImageCarousel, belowSubview: imageCarousel)
+        NSLayoutConstraint.activate([nextCardImageCarousel.topAnchor.constraint(equalTo: view.topAnchor),
+                                     nextCardImageCarousel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                      nextCardImageCarousel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                                      nextCardImageCarousel.heightAnchor.constraint(equalToConstant: imageCarouselHeightConstant)], translatesAutoresizingMaskIntoConstraints: false)
 
@@ -661,13 +608,6 @@ extension PlaceDetailViewController: PlaceDetailsImageDelegate {
         }
     }
 
-}
-
-extension PlaceDetailViewController: UIGestureRecognizerDelegate {
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return gestureRecognizer == panGestureRecognizer && otherGestureRecognizer == scrollView.panGestureRecognizer
-    }
 }
 
 extension PlaceDetailViewController: FilterViewControllerDelegate {
