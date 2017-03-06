@@ -18,4 +18,8 @@ struct Strings {
         static let noInfo = "No info"
         static let numReviews = "%d Review%@"
     }
+
+    struct place {
+        static let tomorrow = "tomorrow"
+    }
 }
