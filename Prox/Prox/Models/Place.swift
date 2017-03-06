@@ -366,7 +366,7 @@ struct OpenHours {
     private func getNextOpeningPeriod(fromOpeningPeriods openingPeriods: [OpenPeriodDates], forDate date: Date) -> OpenPeriodDates? {
         var nextOpenPeriod: OpenPeriodDates? = nil
         for openPeriod in openingPeriods {
-            if openPeriod.openTime > date {
+            if openPeriod.openTime >= date {
                 guard let currentNextOpenPeriod = nextOpenPeriod else {
                     nextOpenPeriod = openPeriod
                     break
@@ -415,6 +415,8 @@ struct OpenHours {
         var timeDateComponents = dateComponents(fromDate: date)
         timeDateComponents.hour = time.hour
         timeDateComponents.minute = time.minute
+        timeDateComponents.second = 0
+        timeDateComponents.nanosecond = 0
 
         return OpenHours.calendar.date(from: timeDateComponents)
     }
