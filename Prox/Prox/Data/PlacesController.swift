@@ -87,6 +87,16 @@ class PlacesProvider {
     }
 
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
+        // HACK (#584): we want the initial set of places the user sees to have travel times. However,
+        // our implementation sorts *all* the places, so we're rate limited on some of the places the
+        // user will actually see. Here, we force load the travel times for the places the user will
+        // see first, before we're rate limited in the final sort (note: these travel times will cache).
+        //
+        // A proper implementation would sort only the places the user will see (#605) but I don't
+        // have time to implement that.
+        let placesUserWillSee = PlaceUtilities.filter(places: places, withFilters: enabledFilters)
+        PlaceUtilities.sort(places: placesUserWillSee, byTravelTimeFromLocation: location) { places in }
+
         return PlaceUtilities.sort(places: places, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
             self.placesLock.withWriteLock {
                 self.allPlaces = sortedPlaces
