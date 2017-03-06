@@ -15,9 +15,6 @@ protocol PlacesProviderDelegate: class {
     func placesProvider(_ controller: PlacesProvider, didUpdatePlaces places: [Place])
 }
 
-private let ratingWeight: Float = 1
-private let reviewWeight: Float = 2
-
 class PlacesProvider {
     weak var delegate: PlacesProviderDelegate?
 
@@ -58,7 +55,7 @@ class PlacesProvider {
         // Fetch a stable list of places from firebase.
         database.getPlaces(forLocation: location, withRadius: radius).upon { results in
             let places = results.flatMap { $0.successResult() }
-            self.didFinishFetchingPlaces(places: places, forLocation: location)
+            self.displayPlaces(places: places, forLocation: location)
         }
     }
 
@@ -71,44 +68,11 @@ class PlacesProvider {
     /// Callers must acquire a read lock before calling this method!
     /// TODO: Terrible name, terrible pattern. Fix this with #529.
     private func filterPlacesLocked(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) -> [Place] {
-        var reviewCounts = [Int]()
-
-        let distanceSortedPlaces = allPlaces.filter { place in
-            let filter: PlaceFilter
-            if place.id.hasPrefix(AppConstants.testPrefixDiscover) {
-                filter = .discover
-            } else {
-                guard let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first else { return false }
-                filter = firstFilter
-            }
-            guard enabledFilters.contains(filter) else { return false }
-
-            reviewCounts.append(place.yelpProvider.totalReviewCount)
-            return true
-        }
-
-        guard topRatedOnly else { return distanceSortedPlaces }
-
-        let maxReviews = distanceSortedPlaces.map { $0.totalReviewCount }.max() ?? 0
-        let logMaxReviews = log10(Float(maxReviews))
-
-        let sorted = distanceSortedPlaces.sorted { a, b in
-            return proxRating(forPlace: a, logMaxReviews: logMaxReviews) > proxRating(forPlace: b, logMaxReviews: logMaxReviews)
-        }
-
-        return sorted
+        let filteredPlaces = PlaceUtilities.filter(places: allPlaces, withFilters: enabledFilters)
+        guard topRatedOnly else { return filteredPlaces }
+        return PlaceUtilities.sortByTopRated(places: filteredPlaces)
     }
 
-    /// Returns a number from 0-1 that weighs different properties on the place.
-    private func proxRating(forPlace place: Place, logMaxReviews: Float) -> Float {
-        let yelpCount = Float(place.yelpProvider.totalReviewCount)
-        let taCount = Float(place.tripAdvisorProvider?.totalReviewCount ?? 0)
-        let yelpRating = place.yelpProvider.rating ?? 0
-        let taRating = place.tripAdvisorProvider?.rating ?? 0
-        let ratingScore = (yelpRating * yelpCount + taRating * taCount) / (yelpCount + taCount) / 5
-        let reviewScore = log10(yelpCount + taCount) / logMaxReviews
-        return (ratingScore * ratingWeight + reviewScore * reviewWeight) / (ratingWeight + reviewWeight)
-    }
 
     /// Applies the current set of filters to all places, setting `displayedPlaces` to the result.
     /// Callers must acquire a write lock before calling this method!
@@ -123,11 +87,22 @@ class PlacesProvider {
     }
 
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
+        // HACK (#584): we want the initial set of places the user sees to have travel times. However,
+        // our implementation sorts *all* the places, so we're rate limited on some of the places the
+        // user will actually see. Here, we force load the travel times for the places the user will
+        // see first, before we're rate limited in the final sort (note: these travel times will cache).
+        //
+        // A proper implementation would sort only the places the user will see (#605) but I don't
+        // have time to implement that.
+        let placesUserWillSee = PlaceUtilities.filter(places: places, withFilters: enabledFilters)
+        PlaceUtilities.sort(places: placesUserWillSee, byTravelTimeFromLocation: location) { places in }
+
         return PlaceUtilities.sort(places: places, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
             self.placesLock.withWriteLock {
                 self.allPlaces = sortedPlaces
                 self.updateDisplayedPlaces()
             }
+
             DispatchQueue.main.async {
                 var displayedPlaces: [Place]!
                 self.placesLock.withReadLock {
@@ -135,12 +110,7 @@ class PlacesProvider {
                 }
                 self.delegate?.placesProvider(self, didUpdatePlaces: displayedPlaces)
             }
-
         })
-    }
-
-    private func didFinishFetchingPlaces(places: [Place], forLocation location: CLLocation) {
-        displayPlaces(places: places, forLocation: location)
     }
 
     func nextPlace(forPlace place: Place) -> Place? {

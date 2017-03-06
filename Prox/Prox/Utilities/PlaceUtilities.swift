@@ -5,6 +5,9 @@
 import Foundation
 import Deferred
 
+private let ratingWeight: Float = 1
+private let reviewWeight: Float = 2
+
 struct PlaceUtilities {
 
     private static let MaxDisplayedCategories = 3 // via #54
@@ -44,6 +47,15 @@ struct PlaceUtilities {
         }
     }
 
+    static func sortByTopRated(places: [Place]) -> [Place] {
+        let maxReviews = places.map { $0.totalReviewCount }.max() ?? 0
+        let logMaxReviews = log10(Float(maxReviews))
+
+        return places.sorted { a, b in
+            return proxRating(forPlace: a, logMaxReviews: logMaxReviews) > proxRating(forPlace: b, logMaxReviews: logMaxReviews)
+        }
+    }
+
     private static func getTravelTimes(forPlaces places: [Place], fromLocation location: CLLocation, withTransitTypes transitTypes: [MKDirectionsTransportType]) -> Future<[DatabaseResult<TravelTimes>]> {
         return places.map { $0.travelTimes(fromLocation: location, withTransitTypes: transitTypes) }.allFilled()
     }
@@ -54,6 +66,30 @@ struct PlaceUtilities {
             return nil
         }
         return result.successResult()
+    }
+
+    /// Returns a number from 0-1 that weighs different properties on the place.
+    private static func proxRating(forPlace place: Place, logMaxReviews: Float) -> Float {
+        let yelpCount = Float(place.yelpProvider.totalReviewCount)
+        let taCount = Float(place.tripAdvisorProvider?.totalReviewCount ?? 0)
+        let yelpRating = place.yelpProvider.rating ?? 0
+        let taRating = place.tripAdvisorProvider?.rating ?? 0
+        let ratingScore = (yelpRating * yelpCount + taRating * taCount) / (yelpCount + taCount) / 5
+        let reviewScore = log10(yelpCount + taCount) / logMaxReviews
+        return (ratingScore * ratingWeight + reviewScore * reviewWeight) / (ratingWeight + reviewWeight)
+    }
+
+    static func filter(places: [Place], withFilters enabledFilters: Set<PlaceFilter>) -> [Place] {
+        return places.filter { place in
+            let filter: PlaceFilter
+            if place.id.hasPrefix(AppConstants.testPrefixDiscover) {
+                filter = .discover
+            } else {
+                guard let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first else { return false }
+                filter = firstFilter
+            }
+            return enabledFilters.contains(filter)
+        }
     }
 
     static func getString(forCategories categories: [String]?) -> String? {
