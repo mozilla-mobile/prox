@@ -234,8 +234,10 @@ class OpenHoursTests: XCTestCase {
         let opening = dateComponents(withHour: 7, minute: 0)
         let closing = dateComponents(withHour: 14, minute: 30)
         let tuesdayOpening = dateComponents(withHour: 10, minute: 0)
+        let wednesdayOpening = dateComponents(withHour: 0, minute: 0)
         let hours = OpenHours(hours: [.monday : [(openTime: opening, closeTime: closing)],
-                                      .tuesday : [(openTime: tuesdayOpening, closeTime: closing)]])
+                                      .tuesday : [(openTime: tuesdayOpening, closeTime: closing)],
+                                      .wednesday : [(openTime: wednesdayOpening, closeTime: closing)]])
 
         var testDate = monday(atHour: 6, minute: 59)
 
@@ -243,8 +245,16 @@ class OpenHoursTests: XCTestCase {
         XCTAssertEqual(hours.nextOpeningTime(forTime: testDate), "7:00 AM")
         XCTAssertEqual(hours.closingTime(forTime: testDate), "2:30 PM")
 
-        // we are now past the opening time for today, so we are expecting tomorrows opening time to be returned from nextOpeningTime
+        // If today's hours are done, show "tomorrow".
         testDate = monday(atHour: 14, minute: 01)
-        XCTAssertEqual(hours.nextOpeningTime(forTime: testDate), "10:00 AM")
+        XCTAssertEqual(hours.nextOpeningTime(forTime: testDate), "tomorrow")
+
+        // If the hours start at midnight, also show that as "tomorrow".
+        testDate = tuesday(atHour: 10, minute: 1)
+        XCTAssertEqual(hours.nextOpeningTime(forTime: testDate), "tomorrow")
+
+        // Both days have passed, so look ahead to next week.
+        testDate = wednesday(atHour: 0, minute: 1)
+        XCTAssertEqual(hours.nextOpeningTime(forTime: testDate), "Monday")
     }
 }
