@@ -21,6 +21,7 @@ class FilterViewController: UIViewController {
     private(set) var enabledFilters: Set<PlaceFilter>
     private let placeCountLabel = UILabel()
     private let topRatedSwitch = UISwitch()
+    private let closeButton = UIButton()
 
     private let filterLabels: [(PlaceFilter, String)] = [
         (.discover, Strings.filterView.discover),
@@ -63,7 +64,6 @@ class FilterViewController: UIViewController {
         placeCountLabel.font = Fonts.filterPlaceCountLabel
         container.addSubview(placeCountLabel)
 
-        let closeButton = UIButton()
         closeButton.setImage(#imageLiteral(resourceName: "button_dismiss"), for: .normal)
         closeButton.addTarget(self, action: #selector(didPressClose), for: .touchUpInside)
         view.addSubview(closeButton)
@@ -142,6 +142,7 @@ class FilterViewController: UIViewController {
     var placeCount: Int = 0 {
         didSet {
             placeCountLabel.text = String(format: Strings.filterView.placeCount, placeCount)
+            closeButton.isHidden = (placeCount == 0)
         }
     }
 
@@ -153,6 +154,7 @@ class FilterViewController: UIViewController {
     }
 
     @objc private func didPressClose() {
+        guard placeCount > 0 else { return }
         dismiss(animated: true, completion: nil)
     }
 
