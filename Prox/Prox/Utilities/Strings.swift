@@ -17,6 +17,9 @@ struct Strings {
     struct mapView {
         static let noInfo = "No info"
         static let numReviews = "%d Review%@"
+
+        static let searchHere = "Search here"
+        static let searching = "Searching..."
     }
 
     struct place {

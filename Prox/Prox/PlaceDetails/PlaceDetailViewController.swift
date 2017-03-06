@@ -669,7 +669,7 @@ class PlaceDetailViewController: UIViewController {
     }
 
     @objc private func openMapView() {
-        let controller = MapViewController()
+        let controller = MapViewController(enabledFilters: dataSource?.enabledFilters ?? Set())
         controller.delegate = self
         controller.placesProvider = dataSource
         controller.locationProvider = locationProvider

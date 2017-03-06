@@ -30,9 +30,15 @@ class MapViewController: UIViewController {
     weak var delegate: MapViewControllerDelegate?
     weak var placesProvider: PlacesProvider?
     weak var locationProvider: LocationProvider?
+    private let database = FirebasePlacesDatabase()
 
     fileprivate var displayedPlaces: [Place]!
     var selectedPlace: Place?
+
+    /// The filters the displayed list of places is filtered with.
+    fileprivate let enabledFilters: Set<PlaceFilter>
+
+    fileprivate var isAfterFirstIdleAtCall = false
 
     private let mapViewMask = CAShapeLayer()
     private lazy var mapView: GMSMapView = {
@@ -45,6 +51,13 @@ class MapViewController: UIViewController {
         return mapView
     }()
 
+    fileprivate let searchButton: MapViewSearchButton = {
+        let button = MapViewSearchButton()
+        button.addTarget(self, action: #selector(searchInVisibleArea), for: .touchUpInside)
+        return button
+    }()
+    fileprivate var searchButtonTopConstraint: NSLayoutConstraint!
+
     fileprivate lazy var placeFooter: MapViewCardFooter = {
         let footer = MapViewCardFooter(bottomInset: footerBottomOffset)
         footer.alpha = 0 // hide until the first place is selected.
@@ -53,7 +66,10 @@ class MapViewController: UIViewController {
         return footer
     }()
 
-    init() { super.init(nibName: nil, bundle: nil) }
+    init(enabledFilters: Set<PlaceFilter>) {
+        self.enabledFilters = enabledFilters
+        super.init(nibName: nil, bundle: nil)
+    }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) not implemented")
@@ -66,7 +82,7 @@ class MapViewController: UIViewController {
         closeButton.setImage(#imageLiteral(resourceName: "button_dismiss"), for: .normal)
         closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
 
-        for subview in [self.mapView, self.placeFooter, closeButton] as [UIView] {
+        for subview in [self.mapView, searchButton, self.placeFooter, closeButton] as [UIView] {
             view.addSubview(subview)
         }
 
@@ -79,6 +95,12 @@ class MapViewController: UIViewController {
             make.top.equalToSuperview().inset(mapViewAnchorFromTop)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(placeFooter.snp.top)
+        }
+
+        searchButtonTopConstraint = searchButton.centerYAnchor.constraint(equalTo: mapView.topAnchor)
+        searchButtonTopConstraint.isActive = true
+        searchButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
         }
 
         placeFooter.snp.makeConstraints { make in
@@ -96,6 +118,8 @@ class MapViewController: UIViewController {
         let rect = CGRect(x: mapViewMaskMargin, y: mapViewMaskMargin, width: diameter, height: diameter)
         let ellipseInRect = CGPath(ellipseIn: rect, transform: nil)
         mapViewMask.path = ellipseInRect
+
+        searchButtonTopConstraint.constant = rect.maxY
     }
 
     @objc private func close() {
@@ -149,6 +173,22 @@ class MapViewController: UIViewController {
             marker.map = mapView
         }
     }
+
+    @objc private func searchInVisibleArea() {
+        searchButton.isEnabled = false
+        mapView.clear()
+
+        // todo: calculate radius for zoom level.
+        let tmpRadius = searchRadiusInMeters / 1000
+        database.getPlaces(forLocation: CLLocation(coordinate: mapView.camera.target), withRadius: tmpRadius).upon(.main) { results in
+            let rawPlaces = results.flatMap { $0.successResult() }
+            self.displayedPlaces = PlaceUtilities.filter(places: rawPlaces, withFilters: self.enabledFilters)
+            // todo: handle 0 places.
+            self.addToMap(places: self.displayedPlaces)
+
+            self.searchButton.setIsHiddenWithAnimations(true)
+        }
+    }
 }
 
 extension MapViewController: GMSMapViewDelegate {
@@ -167,5 +207,15 @@ extension MapViewController: GMSMapViewDelegate {
             }
         }
         return true
+    }
+
+    func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
+        // We move the map after init so we ignore that first call here.
+        guard isAfterFirstIdleAtCall else {
+            isAfterFirstIdleAtCall = true
+            return
+        }
+
+        searchButton.setIsHiddenWithAnimations(false)
     }
 }
