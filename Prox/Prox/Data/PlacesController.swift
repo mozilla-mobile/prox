@@ -75,7 +75,7 @@ class PlacesProvider {
 
         let distanceSortedPlaces = allPlaces.filter { place in
             let filter: PlaceFilter
-            if place.id.hasPrefix("proxdiscover-") {
+            if place.id.hasPrefix(AppConstants.testPrefixDiscover) {
                 filter = .discover
             } else {
                 guard let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first else { return false }

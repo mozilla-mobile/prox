@@ -50,7 +50,7 @@ class SinglePlaceProvider: PlaceProvider {
             if let name = CategoriesUtil.categoryToName[id] {
                 categories.ids.append(id)
                 categories.names.append(name)
-            } else if let placeid = self.id, placeid.hasPrefix("proxdiscover-") {
+            } else if let placeid = self.id, placeid.hasPrefix(AppConstants.testPrefixDiscover) {
                 // HACK: proxdiscover categories are stored by name without id
                 categories.ids.append(id)
                 categories.names.append(id)
