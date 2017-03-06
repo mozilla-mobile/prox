@@ -174,6 +174,8 @@ class PlaceDetailsCardView: UIView {
         return view
     } ()
 
+    private var collapsedReviewConstraints = [NSLayoutConstraint]()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -215,8 +217,9 @@ class PlaceDetailsCardView: UIView {
 
         NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
 
-        setupGestureRecognizers()
+        collapsedReviewConstraints = [ reviewViewContainer.heightAnchor.constraint(equalToConstant: 0) ]
 
+        setupGestureRecognizers()
     }
 
 
@@ -271,6 +274,10 @@ class PlaceDetailsCardView: UIView {
 
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)
+
+        let collapsed = (place.totalReviewCount == 0)
+        reviewViewContainer.isHidden = collapsed
+        collapsedReviewConstraints.forEach { $0.isActive = collapsed }
     }
 
     private func updateURLText(_ url: URL?) {
