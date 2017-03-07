@@ -4,13 +4,13 @@
 
 import Foundation
 
-private let enabledColor = UIColor.blue
+private let enabledColor = Colors.mapViewSearchButtonBackground
 
 class MapViewSearchButton: UIButton {
 
     override var isEnabled: Bool {
         didSet {
-            backgroundColor = isEnabled ? enabledColor : .gray
+            backgroundColor = isEnabled ? enabledColor : Colors.mapViewSearchButtonDisabledBackground
         }
     }
 
@@ -18,13 +18,19 @@ class MapViewSearchButton: UIButton {
         super.init(frame: .zero)
         isHidden = true
 
+        contentEdgeInsets = UIEdgeInsetsMake(10, 20, 10, 20)
         backgroundColor = enabledColor
-        layer.cornerRadius = 10
+        layer.cornerRadius = 20 // TODO technically we want frame.height / 2
+        layer.shadowOpacity = 0.4
+        layer.shadowColor = Colors.mapViewSearchButtonShadow
+        layer.shadowOffset = CGSize(width: 0, height: 2)
 
         setTitle(Strings.mapView.searchHere, for: .normal)
-        setTitleColor(.white, for: .normal)
+        setTitleColor(Colors.mapViewSearchButtonText, for: .normal)
 
         setTitle(Strings.mapView.searching, for: .disabled)
+
+        titleLabel?.font = Fonts.mapViewSearchButton
     }
 
     required init?(coder aDecoder: NSCoder) { fatalError("unused coder init") }

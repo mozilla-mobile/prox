@@ -47,6 +47,8 @@ extension Fonts {
     public static let mapViewTitleText = UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight)
     static let mapViewFooterTitle = UIFont.systemFont(ofSize: 18, weight: UIFontWeightSemibold)
     static let mapViewFooterReviewCount = UIFont.systemFont(ofSize: 14)
+
+    static let mapViewSearchButton = UIFont.systemFont(ofSize: 16)
 }
 
 extension Fonts {
