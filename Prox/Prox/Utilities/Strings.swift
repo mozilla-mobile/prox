@@ -20,6 +20,9 @@ struct Strings {
 
         static let searchHere = "Search here"
         static let searching = "Searching..."
+
+        static let noResultsYet = "No results for this area yet"
+        static let dismissNoResults = "Dismiss"
     }
 
     struct place {

@@ -183,11 +183,26 @@ class MapViewController: UIViewController {
         database.getPlaces(forLocation: CLLocation(coordinate: mapView.camera.target), withRadius: tmpRadius).upon(.main) { results in
             let rawPlaces = results.flatMap { $0.successResult() }
             self.displayedPlaces = PlaceUtilities.filter(places: rawPlaces, withFilters: self.enabledFilters)
-            // todo: handle 0 places.
-            self.addToMap(places: self.displayedPlaces)
 
+            guard self.displayedPlaces.count != 0 else {
+                self.present(self.getNoResultsController(), animated: true) {
+                    self.searchButton.setIsHiddenWithAnimations(true)
+                }
+                return
+            }
+
+            self.addToMap(places: self.displayedPlaces)
             self.searchButton.setIsHiddenWithAnimations(true)
         }
+    }
+
+    private func getNoResultsController() -> UIAlertController {
+        let controller = UIAlertController(title: Strings.mapView.noResultsYet, message: nil, preferredStyle: .alert)
+        let dismissAction = UIAlertAction(title: Strings.mapView.dismissNoResults, style: .default) { action in
+            controller.dismiss(animated: true)
+        }
+        controller.addAction(dismissAction)
+        return controller
     }
 }
 
