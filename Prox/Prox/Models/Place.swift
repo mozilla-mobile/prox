@@ -366,7 +366,7 @@ struct OpenHours {
     private func getNextOpeningPeriod(fromOpeningPeriods openingPeriods: [OpenPeriodDates], forDate date: Date) -> OpenPeriodDates? {
         var nextOpenPeriod: OpenPeriodDates? = nil
         for openPeriod in openingPeriods {
-            if openPeriod.openTime > date {
+            if openPeriod.openTime >= date {
                 guard let currentNextOpenPeriod = nextOpenPeriod else {
                     nextOpenPeriod = openPeriod
                     break
@@ -415,28 +415,35 @@ struct OpenHours {
         var timeDateComponents = dateComponents(fromDate: date)
         timeDateComponents.hour = time.hour
         timeDateComponents.minute = time.minute
+        timeDateComponents.second = 0
+        timeDateComponents.nanosecond = 0
 
         return OpenHours.calendar.date(from: timeDateComponents)
     }
 
-    func getEarliestOpeningPeriod(forDate date: Date) -> OpenPeriodDates? {
-        guard let allOpeningPeriods = getOpeningTimes(forDate: date) else {
-            return nil
-        }
-        return getEarliestOpeningPeriod(fromOpeningPeriods: allOpeningPeriods)
-    }
+    func nextOpeningTime(forTime baseTime: Date) -> String? {
+        let midnight = DateComponents(hour: 0, minute: 0)
+        let times = [baseTime] + (1...7).map { getDate(forTime: midnight, onDate: baseTime.addingTimeInterval(TimeInterval($0) * AppConstants.ONE_DAY))! }
 
-    func nextOpeningTime(forTime time: Date) -> String? {
-        guard let allOpeningTimes = getOpeningTimes(forDate: time),
-            let openingPeriod = getNextOpeningPeriod(fromOpeningPeriods: allOpeningTimes, forDate: time) else {
-            // get tomorrows earliest opening time if possible
-            if let openingPeriod = getEarliestOpeningPeriod(forDate: time + AppConstants.ONE_DAY) {
+        for time in times {
+            guard let allOpeningTimes = getOpeningTimes(forDate: time),
+                  let openingPeriod = getNextOpeningPeriod(fromOpeningPeriods: allOpeningTimes, forDate: time) else {
+                continue
+            }
+
+            if OpenHours.calendar.isDate(time, inSameDayAs: baseTime) {
                 return timeString(forDate: openingPeriod.openTime)
             }
-            return nil
+
+            if OpenHours.calendar.isDate(time, inSameDayAs: baseTime.addingTimeInterval(AppConstants.ONE_DAY)) {
+                return Strings.place.tomorrow
+            }
+
+            // Returns the localized day of week.
+            return DateFormatter().weekdaySymbols[OpenHours.calendar.component(.weekday, from: time) - 1]
         }
 
-        return timeString(forDate: openingPeriod.openTime)
+        return nil
     }
 
     func closingTime(forTime time: Date) -> String? {
