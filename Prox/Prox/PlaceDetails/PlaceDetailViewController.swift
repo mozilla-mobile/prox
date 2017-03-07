@@ -741,7 +741,9 @@ extension PlaceDetailViewController: FilterViewControllerDelegate {
 
     func filterViewController(_ filterViewController: FilterViewController, didDismissWithFilters enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) {
         guard let dataSource = dataSource else { return }
-        dataSource.refresh(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
+        if dataSource.enabledFilters != enabledFilters || dataSource.topRatedOnly != topRatedOnly {
+            dataSource.refresh(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
+        }
 
         slideCurrentCardView(willBeShown: true)
     }
