@@ -17,6 +17,12 @@ struct Strings {
     struct mapView {
         static let noInfo = "No info"
         static let numReviews = "%d Review%@"
+
+        static let searchHere = "Search here"
+        static let searching = "Searching..."
+
+        static let noResultsYet = "No results for this area yet"
+        static let dismissNoResults = "Dismiss"
     }
 
     struct place {

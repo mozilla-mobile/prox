@@ -95,6 +95,8 @@
 		E67D49FD1DDE42F0005E17F9 /* LoadingOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67D49FC1DDE42F0005E17F9 /* LoadingOverlayView.swift */; };
 		E68BD90D1DCA9E8E007B51A3 /* DayOfWeekTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68BD90C1DCA9E8E007B51A3 /* DayOfWeekTests.swift */; };
 		E68BD90F1DCAAD6B007B51A3 /* OpenHoursTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68BD90E1DCAAD6B007B51A3 /* OpenHoursTests.swift */; };
+		E69D69851E6E236500E6F6CA /* MapViewSearchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D69841E6E236500E6F6CA /* MapViewSearchButton.swift */; };
+		E69D69871E6E27DE00E6F6CA /* CLLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D69861E6E27DE00E6F6CA /* CLLocation.swift */; };
 		E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */; };
 		E6CF08DF1E57B6300083CAD8 /* GMSMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CF08DE1E57B6300083CAD8 /* GMSMarker.swift */; };
 		E6F151471E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */; };
@@ -248,6 +250,8 @@
 		E67D49FC1DDE42F0005E17F9 /* LoadingOverlayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingOverlayView.swift; sourceTree = "<group>"; };
 		E68BD90C1DCA9E8E007B51A3 /* DayOfWeekTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayOfWeekTests.swift; sourceTree = "<group>"; };
 		E68BD90E1DCAAD6B007B51A3 /* OpenHoursTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenHoursTests.swift; sourceTree = "<group>"; };
+		E69D69841E6E236500E6F6CA /* MapViewSearchButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewSearchButton.swift; sourceTree = "<group>"; };
+		E69D69861E6E27DE00E6F6CA /* CLLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLLocation.swift; path = Extensions/CLLocation.swift; sourceTree = "<group>"; };
 		E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossFadeTransition.swift; sourceTree = "<group>"; };
 		E6CF08DE1E57B6300083CAD8 /* GMSMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GMSMarker.swift; path = "Extensions/Google Maps/GMSMarker.swift"; sourceTree = "<group>"; };
 		E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockLocationSelectionTableViewController.swift; sourceTree = "<group>"; };
@@ -304,6 +308,7 @@
 				E628DEBE1E5E5C3B00404FE3 /* MapViewYelpReviewProviderView.swift */,
 				E628DEC01E5F777100404FE3 /* MapViewReviewProviderView.swift */,
 				E61BA8B61E5F7CCF002C0849 /* MapViewTripAdvisorReviewProviderView.swift */,
+				E69D69841E6E236500E6F6CA /* MapViewSearchButton.swift */,
 			);
 			path = "Map View";
 			sourceTree = "<group>";
@@ -575,6 +580,7 @@
 				7B1C657C1DDF28F00047559C /* TimeInterval.swift */,
 				D32F73ED1E4D07AE00D504A7 /* UIColor.swift */,
 				E60A42701DF28E01008BE74D /* URL.swift */,
+				E69D69861E6E27DE00E6F6CA /* CLLocation.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -885,6 +891,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B9D15C61DC0D2E70051B760 /* OpenInHelper.swift in Sources */,
+				E69D69851E6E236500E6F6CA /* MapViewSearchButton.swift in Sources */,
 				E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */,
 				7B1C657D1DDF28F00047559C /* TimeInterval.swift in Sources */,
 				D32F73EE1E4D07AE00D504A7 /* UIColor.swift in Sources */,
@@ -903,6 +910,7 @@
 				E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */,
 				7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */,
 				E60A42711DF28E01008BE74D /* URL.swift in Sources */,
+				E69D69871E6E27DE00E6F6CA /* CLLocation.swift in Sources */,
 				7BB1CA451DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift in Sources */,
 				7B5095851DB903B7007C54F0 /* DatabaseResult.swift in Sources */,
 				7B50956B1DB53382007C54F0 /* ReviewContainerView.swift in Sources */,

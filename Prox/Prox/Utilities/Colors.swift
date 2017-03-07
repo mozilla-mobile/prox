@@ -71,4 +71,9 @@ extension Colors {
 extension Colors {
     static let mapViewBackgroundColor = UIColor(rgb: 0xfafafa, alpha: 1)
     static let mapViewFooterReviewCount = UIColor.black.withAlphaComponent(0.5)
+
+    static let mapViewSearchButtonText = UIColor.white
+    static let mapViewSearchButtonBackground = UIColor(rgb: 0x007aff)
+    static let mapViewSearchButtonDisabledBackground = UIColor(rgb: 0x999999)
+    static let mapViewSearchButtonShadow = UIColor.black.cgColor
 }
