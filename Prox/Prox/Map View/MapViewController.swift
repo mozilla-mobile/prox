@@ -5,6 +5,8 @@
 import UIKit
 import GoogleMaps
 
+private let fadeDuration: TimeInterval = 0.4
+
 private let mapViewAnchorFromTop = mapViewMaskTopOffset - mapViewMaskMargin
 
 /// If we use the search radius as the map mask diameter, the places are within the circle but the
@@ -23,6 +25,12 @@ protocol MapViewControllerDelegate: class {
     func mapViewController(didSelect: Place)
 }
 
+enum MapState {
+    case initializing
+    case normal
+    case movingByCode
+}
+
 class MapViewController: UIViewController {
 
     fileprivate let searchRadiusInMeters: Double = RemoteConfigKeys.searchRadiusInKm.value * 1000
@@ -38,7 +46,7 @@ class MapViewController: UIViewController {
     /// The filters the displayed list of places is filtered with.
     fileprivate let enabledFilters: Set<PlaceFilter>
 
-    fileprivate var isAfterFirstIdleAtCall = false
+    fileprivate var mapState = MapState.initializing
 
     private let mapViewMask = CAShapeLayer()
     private lazy var mapView: GMSMapView = {
@@ -80,7 +88,7 @@ class MapViewController: UIViewController {
 
         let closeButton = UIButton()
         closeButton.setImage(#imageLiteral(resourceName: "button_dismiss"), for: .normal)
-        closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
+        closeButton.addTarget(self, action: #selector(closeWithButton), for: .touchUpInside)
 
         for subview in [self.mapView, searchButton, self.placeFooter, closeButton] as [UIView] {
             view.addSubview(subview)
@@ -122,19 +130,27 @@ class MapViewController: UIViewController {
         searchButtonTopConstraint.constant = rect.maxY
     }
 
-    @objc private func close() {
-        dismiss(animated: true)
+    @objc private func closeWithButton() {
+        resetMapToUserLocation(shouldAnimate: true)
+
+        // HACK: (no UX input) Delay the dismiss so the user can watch the animation and see what happens.
+        // TODO: we should change the delay depending on how far we animate.
+        // Note: I tried to add a listener for the end of the animation to dismiss but it complicated the code too much
+        // so here's this hack.
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(500)) {
+            self.dismiss(animated: true)
+        }
     }
 
     @objc private func closeWithSelected() {
         if let selectedPlace = selectedPlace {
             delegate?.mapViewController(didSelect: selectedPlace)
         }
-        close()
+        self.dismiss(animated: true)
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        resetMapToUserLocation()
+        resetMapToUserLocation(shouldAnimate: false)
 
         // Keep the old places on the map if we don't have them (should never happen).
         guard let places = placesProvider?.getDisplayedPlacesCopy() else { return }
@@ -143,12 +159,14 @@ class MapViewController: UIViewController {
         addToMap(places: displayedPlaces)
     }
 
-    private func resetMapToUserLocation() {
+    private func resetMapToUserLocation(shouldAnimate: Bool) {
         guard let userCoordinate = locationProvider?.getCurrentLocation()?.coordinate else {
             // TODO: do something clever
             log.warn("Map view controller does not have current location")
             return
         }
+
+        searchButton.setIsHiddenWithAnimations(true)
 
         // We want to display the full search circle in the map so we ensure the full search diameter
         // can be seen in the the smallest dimension of the map view. One hack is we use view.frame,
@@ -163,7 +181,13 @@ class MapViewController: UIViewController {
         let mapDiameterMeters = searchRadiusInMeters * 2 // convert radius to diameter.
         let desiredZoom = GMSCameraPosition.zoom(at: userCoordinate, forMeters: mapDiameterMeters, perPoints: mapDiameterPoints)
         let cameraUpdate = GMSCameraUpdate.setTarget(userCoordinate, zoom: desiredZoom)
-        mapView.moveCamera(cameraUpdate)
+
+        if mapState == .normal { mapState = .movingByCode } // todo: checking against mapState everywhere is fragile.
+        if (!shouldAnimate) {
+            mapView.moveCamera(cameraUpdate)
+        } else {
+            mapView.animate(with: cameraUpdate)
+        }
     }
 
     private func addToMap(places: [Place]) {
@@ -177,6 +201,9 @@ class MapViewController: UIViewController {
     @objc private func searchInVisibleArea() {
         searchButton.isEnabled = false
         mapView.clear()
+        UIView.animate(withDuration: fadeDuration) {
+            self.placeFooter.alpha = 0
+        }
 
         // todo: calculate radius for zoom level.
         let tmpRadius = searchRadiusInMeters / 1000
@@ -217,7 +244,7 @@ extension MapViewController: GMSMapViewDelegate {
         selectedPlace = place
         placeFooter.update(for: place)
         if placeFooter.alpha != 1 {
-            UIView.animate(withDuration: 0.4) {
+            UIView.animate(withDuration: fadeDuration) {
                 self.placeFooter.alpha = 1
             }
         }
@@ -225,12 +252,19 @@ extension MapViewController: GMSMapViewDelegate {
     }
 
     func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-        // We move the map after init so we ignore that first call here.
-        guard isAfterFirstIdleAtCall else {
-            isAfterFirstIdleAtCall = true
-            return
-        }
+        switch mapState {
+        case .initializing:
+            // We init the map view with a position and then update the position so idleAt gets called.
+            // Since it happens before the view is seen, we ignore this first call.
+            mapState = .normal
 
-        searchButton.setIsHiddenWithAnimations(false)
+        case .movingByCode:
+            mapState = .normal // done moving.
+
+        case .normal:
+            if searchButton.isHidden {
+                searchButton.setIsHiddenWithAnimations(false) // e.g. finger dragged.
+            }
+        }
     }
 }
