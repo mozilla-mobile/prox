@@ -56,3 +56,7 @@ extension Fonts {
     public static let filterPlaceCountLabel = UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight)
     public static let filterTopRatedLabel = UIFont.systemFont(ofSize: 14)
 }
+
+extension Fonts {
+    public static let toast = UIFont.systemFont(ofSize: 12)
+}

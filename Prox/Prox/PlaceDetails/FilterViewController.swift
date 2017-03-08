@@ -23,6 +23,8 @@ class FilterViewController: UIViewController {
     private let topRatedSwitch = UISwitch()
     private let closeButton = UIButton()
 
+    private static var didShowPopularityToast = false
+
     private let filterLabels: [(PlaceFilter, String)] = [
         (.discover, Strings.filterView.discover),
         (.eatAndDrink, Strings.filterView.eatAndDrink),
@@ -159,6 +161,11 @@ class FilterViewController: UIViewController {
     }
 
     @objc private func didToggleRatings() {
+        if !FilterViewController.didShowPopularityToast {
+            FilterViewController.didShowPopularityToast = true
+            Toast(text: Strings.filterView.popularityToast).show()
+        }
+
         delegate?.filterViewController(self, didUpdateFilters: enabledFilters, topRatedOnly: topRatedSwitch.isOn)
     }
 
