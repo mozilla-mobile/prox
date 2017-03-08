@@ -28,7 +28,7 @@ struct PlaceUtilities {
     static func sort(places: [Place], byTravelTimeFromLocation location: CLLocation, ascending: Bool = true, completion: @escaping ([Place]) -> ()) {
         var sortedPlaces = PlaceUtilities.sort(places: places, byDistanceFromLocation: location)
         // this means we will probably only get walking directions for places, but I think that will be OK for now
-        PlaceUtilities.getTravelTimes(forPlaces: sortedPlaces, fromLocation: location, withTransitTypes: [.walking]).upon { result in
+        PlaceUtilities.updateTravelTimes(forPlaces: sortedPlaces, fromLocation: location, withTransitTypes: [.walking]).upon {
             let sortedByTravelTime = places.sorted { (placeA, placeB) -> Bool in
                 let placeAETA = PlaceUtilities.lastTravelTimes(forPlace: placeA)?.getShortestTravelTime() ?? Double.greatestFiniteMagnitude
                 let placeBETA = PlaceUtilities.lastTravelTimes(forPlace: placeB)?.getShortestTravelTime() ?? Double.greatestFiniteMagnitude
@@ -56,8 +56,10 @@ struct PlaceUtilities {
         }
     }
 
-    private static func getTravelTimes(forPlaces places: [Place], fromLocation location: CLLocation, withTransitTypes transitTypes: [MKDirectionsTransportType]) -> Future<[DatabaseResult<TravelTimes>]> {
-        return places.map { $0.travelTimes(fromLocation: location, withTransitTypes: transitTypes) }.allFilled()
+    private static func updateTravelTimes(forPlaces places: [Place], fromLocation location: CLLocation, withTransitTypes transitTypes: [MKDirectionsTransportType]) -> Future<Void> {
+        // HACK: travelTimes(fromLocation: location) may not fill its Deferred due to an apparent bug where
+        // MKDirections.calculateETA() never executes its callback. We set a timeout as a workaround.
+        return places.map { $0.travelTimes(fromLocation: location, withTransitTypes: transitTypes) }.allFilled().timeout(deadline: .now() + 5).ignored()
     }
 
     private static func lastTravelTimes(forPlace place: Place) -> TravelTimes? {
