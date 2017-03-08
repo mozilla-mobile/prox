@@ -87,6 +87,7 @@ enum PlaceFilter: Int {
 
         PlaceFilter.services: [
             "active",
+            "adultentertainment", // Hack: quickly removing "Adult Entertainment"
             "auto",
             "beautysvc",
             "bicycles",
