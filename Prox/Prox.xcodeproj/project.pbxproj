@@ -77,7 +77,6 @@
 		E6101A981DDA7B8500D05B74 /* CategoriesUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6101A971DDA7B8500D05B74 /* CategoriesUtil.swift */; };
 		E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61831981DE0BDBA00D1810F /* TravelTimesView.swift */; };
 		E618319B1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */; };
-		E61972141DD28B7A00C9D093 /* PlaceDetailsEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */; };
 		E61BA8B71E5F7CCF002C0849 /* MapViewTripAdvisorReviewProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61BA8B61E5F7CCF002C0849 /* MapViewTripAdvisorReviewProviderView.swift */; };
 		E628DEB31E5E4FFE00404FE3 /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = E628DEB21E5E4FFE00404FE3 /* Style.swift */; };
 		E628DEBA1E5E525000404FE3 /* ExpandingCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E628DEB81E5E525000404FE3 /* ExpandingCardView.swift */; };
@@ -232,7 +231,6 @@
 		E6101A971DDA7B8500D05B74 /* CategoriesUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoriesUtil.swift; sourceTree = "<group>"; };
 		E61831981DE0BDBA00D1810F /* TravelTimesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TravelTimesView.swift; sourceTree = "<group>"; };
 		E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsTravelTimesView.swift; sourceTree = "<group>"; };
-		E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsEventView.swift; sourceTree = "<group>"; };
 		E61BA8B61E5F7CCF002C0849 /* MapViewTripAdvisorReviewProviderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewTripAdvisorReviewProviderView.swift; sourceTree = "<group>"; };
 		E628DEB21E5E4FFE00404FE3 /* Style.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		E628DEB81E5E525000404FE3 /* ExpandingCardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpandingCardView.swift; sourceTree = "<group>"; };
@@ -465,7 +463,6 @@
 				E662FF491DC022940042C4A9 /* PlaceDetailsCardView.swift */,
 				7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */,
 				E662FF4D1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift */,
-				E61972131DD28B7A00C9D093 /* PlaceDetailsEventView.swift */,
 				E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */,
 				E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */,
 				7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */,
@@ -953,7 +950,6 @@
 				E62CE0C31E579AC90083FA7B /* SDKs.swift in Sources */,
 				D32F73F01E4D08C600D504A7 /* InsetButton.swift in Sources */,
 				7B0ECE481DD6145500ABBD72 /* LocationMonitor.swift in Sources */,
-				E61972141DD28B7A00C9D093 /* PlaceDetailsEventView.swift in Sources */,
 				738285279A22EAD0F67AEEEC /* FirebaseBranches.swift in Sources */,
 				E61BA8B71E5F7CCF002C0849 /* MapViewTripAdvisorReviewProviderView.swift in Sources */,
 				738282518946B44B6A28766A /* MapViewController.swift in Sources */,
