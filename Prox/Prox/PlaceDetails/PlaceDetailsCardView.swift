@@ -22,7 +22,8 @@ class PlaceDetailsCardView: UIView {
     lazy var contentView = UIView()
 
     lazy var containingStackView: UIStackView = {
-        let view = UIStackView(arrangedSubviews:[self.labelContainer,
+        let view = UIStackView(arrangedSubviews:[self.eventHeader,
+                                                 self.labelContainer,
                                                  self.iconInfoViewContainer,
                                                  self.reviewViewContainer,
                                                  self.eventDescriptionView,
@@ -44,6 +45,12 @@ class PlaceDetailsCardView: UIView {
         containingStackView.layoutMargins = UIEdgeInsets(top: isTopMarginPresent ? self.margin : 0, left: 0,
                                                          bottom: self.CardMarginBottom, right: 0)
     }
+
+    private let eventHeader: PlaceDetailsEventHeader = {
+        let view = PlaceDetailsEventHeader()
+        view.isHidden = true // view depends on top margin, which exists by default
+        return view
+    }()
 
     // MARK: Outer views.
     // TODO: accessibility labels (and parent view)
@@ -256,8 +263,8 @@ class PlaceDetailsCardView: UIView {
         titleLabel.text = place.name
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories.names)
         updateURLText(place.website)
-
         updateHoursUI(place.hours)
+        updateEventUI(forPlace: place)
 
         let viewDescriptions: [(view: PlaceDetailsDescriptionView, description: String?)] = [
             (eventDescriptionView, place.customProvider?.description),
@@ -278,6 +285,13 @@ class PlaceDetailsCardView: UIView {
         let collapsed = (place.totalReviewCount == 0)
         reviewViewContainer.isHidden = collapsed
         collapsedReviewConstraints.forEach { $0.isActive = collapsed }
+    }
+
+    private func updateEventUI(forPlace place: Place) {
+        let description = place.customProvider?.description ?? ""
+        let hideEventUI = description.isEmpty
+        eventHeader.isHidden = hideEventUI
+        setContainingStackViewMargins(isTopMarginPresent: hideEventUI)
     }
 
     private func updateURLText(_ url: URL?) {

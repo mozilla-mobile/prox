@@ -5,6 +5,10 @@
 import Foundation
 
 struct Strings {
+    struct detailsView {
+        static let eventTitle = "Event"
+    }
+
     struct filterView {
         static let discover = "Discover"
         static let eatAndDrink = "Eat & Drink"
