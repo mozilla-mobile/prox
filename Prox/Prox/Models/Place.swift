@@ -451,6 +451,37 @@ struct OpenHours {
         return nil
     }
 
+    func getEventTimeText(forToday todayDate: Date) -> (String, String)? {
+        // Note: this function is basically a modified version of nextOpeningTime()
+        let midnight = DateComponents(hour: 0, minute: 0)
+
+        // HACK: Keeping this as a range so we can easily change this function look ahead more days if needed.
+        // (1...N) will look ahead N days after today.
+        let daysToCheck = [todayDate] + (1...1).map { getDate(forTime: midnight, onDate: todayDate.addingTimeInterval(TimeInterval($0) * AppConstants.ONE_DAY))! }
+
+        for day in daysToCheck {
+            guard let allOpeningTimes = getOpeningTimes(forDate: day),
+                  let openingPeriod = getCurrentOpeningPeriod(fromOpeningPeriods: allOpeningTimes, forDate: day) ?? getNextOpeningPeriod(fromOpeningPeriods: allOpeningTimes, forDate: day) else {
+                continue
+            }
+
+            let openingDayText: String
+            if OpenHours.calendar.isDate(day, inSameDayAs: todayDate) {
+                openingDayText = Strings.place.today.capitalized
+
+            } else if OpenHours.calendar.isDate(day, inSameDayAs: todayDate.addingTimeInterval(AppConstants.ONE_DAY)) {
+                openingDayText = Strings.place.tomorrow.capitalized
+
+            } else {
+                openingDayText = DateFormatter().weekdaySymbols[OpenHours.calendar.component(.weekday, from: day) - 1]
+            }
+
+            let openingTimeText = timeString(forDate: openingPeriod.openTime);
+            return (openingDayText, openingTimeText)
+        }
+        return nil
+    }
+
     func closingTime(forTime time: Date) -> String? {
         guard let allOpeningTimes = getOpeningTimes(forDate: time) else {
             return nil

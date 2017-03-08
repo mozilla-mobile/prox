@@ -33,6 +33,7 @@ struct Strings {
     }
 
     struct place {
+        static let today = "today"
         static let tomorrow = "tomorrow"
     }
 }

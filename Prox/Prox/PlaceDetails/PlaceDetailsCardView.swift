@@ -319,7 +319,7 @@ class PlaceDetailsCardView: UIView {
             return
         }
 
-        guard let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date()) else {
+        guard let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date(), isEvent: !String.isEmpty(place.customProvider?.description)) else {
             hoursView.iconView.isHidden = true
             hoursView.isPrimaryTextLabelHidden = true
             hoursView.secondaryTextLabel.text = "Check listing\nfor hours"
@@ -340,14 +340,16 @@ class PlaceDetailsCardView: UIView {
         view.setExpandableView(isExpanded: expanded)
     }
 
-    private func getStringsForOpenHours(_ openHours: OpenHours?, forDate date: Date) -> (primary: String, secondary: String)? {
+    private func getStringsForOpenHours(_ openHours: OpenHours?, forDate date: Date, isEvent: Bool) -> (primary: String, secondary: String)? {
         guard let openHours = openHours else {
             // if hours is nil, we assume this place has no listed hours (e.g. beach).
             return nil
         }
 
         let now = Date()
-        if openHours.isOpen(atTime: now),
+        if isEvent {
+            return openHours.getEventTimeText(forToday: now)
+        } else if openHours.isOpen(atTime: now),
             let closingTime = openHours.closingTime(forTime: now) {
             return ("Open", "Until \(closingTime)")
         } else if let openingTime = openHours.nextOpeningTime(forTime: now) {

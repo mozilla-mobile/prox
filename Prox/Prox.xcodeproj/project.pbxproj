@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		23039CD41DE56D5200653FCD /* APIKeys.plist in Resources */ = {isa = PBXBuildFile; fileRef = 23039CD31DE56D5200653FCD /* APIKeys.plist */; };
 		234AF15A1DDFD91C00097B0B /* AnalyticsUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234AF1591DDFD91C00097B0B /* AnalyticsUtilities.swift */; };
+		23739F5C1E70B74C00C6323B /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23739F5B1E70B74C00C6323B /* String.swift */; };
 		2380CA911DE4140A002D73F1 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2380CA901DE4140A002D73F1 /* AppState.swift */; };
 		392F3D901DD20EAE00B44B01 /* PlacesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392F3D8F1DD20EAE00B44B01 /* PlacesController.swift */; };
 		392F3D971DD4395000B44B01 /* RemoteConfigDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 392F3D961DD4395000B44B01 /* RemoteConfigDefaults.plist */; };
@@ -132,6 +133,7 @@
 		1E318DF6890B9E7221222152 /* Pods-Prox.enterprise kona.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.enterprise kona.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.enterprise kona.xcconfig"; sourceTree = "<group>"; };
 		23039CD31DE56D5200653FCD /* APIKeys.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = APIKeys.plist; sourceTree = "<group>"; };
 		234AF1591DDFD91C00097B0B /* AnalyticsUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsUtilities.swift; sourceTree = "<group>"; };
+		23739F5B1E70B74C00C6323B /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = String.swift; path = Extensions/String.swift; sourceTree = "<group>"; };
 		2380CA901DE4140A002D73F1 /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		246E3C4ADD7C4DD2150C111B /* Pods-Prox.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prox.release.xcconfig"; path = "../Pods/Target Support Files/Pods-Prox/Pods-Prox.release.xcconfig"; sourceTree = "<group>"; };
 		26711FEEF61384415337CDE5 /* Pods-ProxTests.mocklocation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.mocklocation.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.mocklocation.xcconfig"; sourceTree = "<group>"; };
@@ -581,6 +583,7 @@
 				D32F73ED1E4D07AE00D504A7 /* UIColor.swift */,
 				E60A42701DF28E01008BE74D /* URL.swift */,
 				E69D69861E6E27DE00E6F6CA /* CLLocation.swift */,
+				23739F5B1E70B74C00C6323B /* String.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -904,6 +907,7 @@
 				7B5095721DB5352E007C54F0 /* Colors.swift in Sources */,
 				7B48EBDA1DD1F679005C36CB /* GeofenceRegion.swift in Sources */,
 				234AF15A1DDFD91C00097B0B /* AnalyticsUtilities.swift in Sources */,
+				23739F5C1E70B74C00C6323B /* String.swift in Sources */,
 				E662FF4A1DC022940042C4A9 /* PlaceDetailsCardView.swift in Sources */,
 				E6101A981DDA7B8500D05B74 /* CategoriesUtil.swift in Sources */,
 				D32F73F41E4D44B000D504A7 /* Strings.swift in Sources */,
