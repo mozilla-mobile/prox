@@ -263,7 +263,7 @@ class PlaceDetailsCardView: UIView {
         titleLabel.text = place.name
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories.names)
         updateURLText(place.website)
-        updateHoursUI(place.hours)
+        updateHoursUI(forPlace: place, with: place.hours)
         updateEventUI(forPlace: place)
 
         let viewDescriptions: [(view: PlaceDetailsDescriptionView, description: String?)] = [
@@ -305,7 +305,20 @@ class PlaceDetailsCardView: UIView {
         urlLabel.attributedText = underlineAttributedString
     }
 
-    private func updateHoursUI(_ hours: OpenHours?) {
+    private func updateHoursUI(forPlace place: Place, with hours: OpenHours?) {
+        // HACK: For hand-curated Discover data, places open 24hrs have nil hours data so we update
+        // their strings here. I didn't write a solution to handle *all* places open 24hrs because
+        // the open hours code is complicated and I didn't have time.
+        if place.id.hasPrefix(AppConstants.testPrefixDiscover),
+                hours == nil {
+            hoursView.iconView.isHidden = false
+            hoursView.isPrimaryTextLabelHidden = false
+            hoursView.primaryTextLabel.text = Strings.detailsView.open
+            hoursView.secondaryTextLabel.text = Strings.detailsView.twentyFourHours
+            hoursView.secondaryTextLabel.numberOfLines = 1
+            return
+        }
+
         guard let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date()) else {
             hoursView.iconView.isHidden = true
             hoursView.isPrimaryTextLabelHidden = true
