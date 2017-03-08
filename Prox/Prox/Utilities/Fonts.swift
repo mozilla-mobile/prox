@@ -29,7 +29,7 @@ extension Fonts {
     public static let detailsViewIconInfoPrimaryText = UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight)
     public static let detailsViewIconInfoSecondaryText = UIFont.systemFont(ofSize: 14)
 
-    public static let detailsViewEventText = UIFont.systemFont(ofSize: 16, weight: UIFontWeightMedium)
+    public static let detailsViewEventText = UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight)
 }
 
 // Loading View
