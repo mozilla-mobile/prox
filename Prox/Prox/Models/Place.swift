@@ -421,9 +421,14 @@ struct OpenHours {
         return OpenHours.calendar.date(from: timeDateComponents)
     }
 
+    /// Returns a string for the next opening time.
+    /// This will return an opening time only if there's a time later today or tomorrow; otherwise, this returns nil.
     func nextOpeningTime(forTime baseTime: Date) -> String? {
         let midnight = DateComponents(hour: 0, minute: 0)
-        let times = [baseTime] + (1...7).map { getDate(forTime: midnight, onDate: baseTime.addingTimeInterval(TimeInterval($0) * AppConstants.ONE_DAY))! }
+
+        // HACK: Keeping this as a range so we can easily change this function look ahead more days if needed.
+        // (1...N) will look ahead N days after today.
+        let times = [baseTime] + (1...1).map { getDate(forTime: midnight, onDate: baseTime.addingTimeInterval(TimeInterval($0) * AppConstants.ONE_DAY))! }
 
         for time in times {
             guard let allOpeningTimes = getOpeningTimes(forDate: time),
