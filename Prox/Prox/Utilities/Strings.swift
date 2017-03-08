@@ -6,6 +6,9 @@ import Foundation
 
 struct Strings {
     struct detailsView {
+        static let open = "Open"
+        static let twentyFourHours = "24 hours"
+
         static let eventTitle = "Event"
     }
 
