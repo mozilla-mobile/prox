@@ -77,3 +77,9 @@ extension Colors {
     static let mapViewSearchButtonDisabledBackground = UIColor(rgb: 0x999999)
     static let mapViewSearchButtonShadow = UIColor.black.cgColor
 }
+
+// Toasts
+extension Colors {
+    static let toastBackground = UIColor(rgb: 0x007AFF)
+    static let toastText = UIColor.white
+}
