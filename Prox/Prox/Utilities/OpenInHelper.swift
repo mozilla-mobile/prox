@@ -68,8 +68,7 @@ struct OpenInHelper {
         // open in Apple maps app
         } else if  let schemeURL = URL(string: appleMapsSchemeString),
             UIApplication.shared.canOpenURL(schemeURL),
-            let address = place.address,
-            let appleMapsRoutingRequest = appleMapsURLForRoute(fromLocation: fromLocation, toAddress: address, by: transportType),
+            let appleMapsRoutingRequest = appleMapsURLForRoute(fromLocation: fromLocation, toLocation: place.latLong, by: transportType),
             UIApplication.shared.openURL(appleMapsRoutingRequest) {
             return true
         // open google maps in a browser
@@ -103,12 +102,12 @@ struct OpenInHelper {
     }
 
 
-    fileprivate static func appleMapsURLForRoute(fromLocation: CLLocationCoordinate2D, toAddress: String, by transportType: MKDirectionsTransportType) -> URL? {
+    fileprivate static func appleMapsURLForRoute(fromLocation: CLLocationCoordinate2D, toLocation: CLLocationCoordinate2D, by transportType: MKDirectionsTransportType) -> URL? {
         guard let dirFlg = transportType.dirFlg() else {
             return nil
         }
 
-        let queryParams = ["daddr=\(encodeByAddingPercentEscapes(toAddress))", "dirflg=\(dirFlg)"]
+        let queryParams = ["daddr=\(toLocation.latitude),\(toLocation.longitude)", "dirflg=\(dirFlg)"]
 
         let appleMapsRoutingRequestURLString = appleMapsSchemeString + "?" + queryParams.joined(separator: "&")
         return URL(string: appleMapsRoutingRequestURLString)
