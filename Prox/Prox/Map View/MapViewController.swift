@@ -4,6 +4,7 @@
 
 import UIKit
 import GoogleMaps
+import SnapKit
 
 private let fadeDuration: TimeInterval = 0.4
 
@@ -22,7 +23,7 @@ private let footerBottomOffset = Style.cardViewCornerRadius
 private let footerCardMargin = 16
 
 protocol MapViewControllerDelegate: class {
-    func mapViewController(didSelect: Place)
+    func mapViewController(_ mapViewController: MapViewController, didDismissWithSelectedPlace place: Place?)
 }
 
 enum MapState {
@@ -48,6 +49,9 @@ class MapViewController: UIViewController {
     fileprivate let enabledFilters: Set<PlaceFilter>
 
     fileprivate var mapState = MapState.initializing
+
+    fileprivate var showMapConstraints = [Constraint]()
+    fileprivate var hideMapConstraints = [Constraint]()
 
     private let mapViewMask = CAShapeLayer()
     private lazy var mapView: GMSMapView = {
@@ -78,6 +82,9 @@ class MapViewController: UIViewController {
     init(enabledFilters: Set<PlaceFilter>) {
         self.enabledFilters = enabledFilters
         super.init(nibName: nil, bundle: nil)
+
+        self.modalPresentationStyle = .overCurrentContext
+        self.transitioningDelegate = self
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -85,15 +92,25 @@ class MapViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        view.backgroundColor = Colors.mapViewBackgroundColor
-
         let closeButton = UIButton()
         closeButton.setImage(#imageLiteral(resourceName: "button_dismiss"), for: .normal)
         closeButton.addTarget(self, action: #selector(closeWithButton), for: .touchUpInside)
 
-        for subview in [self.mapView, searchButton, self.placeFooter, closeButton] as [UIView] {
+        let container = UIView()
+        container.backgroundColor = Colors.mapViewBackgroundColor
+
+        for subview in [container, mapView, searchButton, placeFooter, closeButton] as [UIView] {
             view.addSubview(subview)
         }
+
+        container.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+
+            showMapConstraints = [ make.top.bottom.equalToSuperview().constraint ]
+            hideMapConstraints = [ make.bottom.equalTo(view.snp.top).constraint ]
+        }
+
+        showMapConstraints.forEach { $0.deactivate() }
 
         closeButton.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(45)
@@ -101,8 +118,8 @@ class MapViewController: UIViewController {
         }
 
         mapView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(mapViewAnchorFromTop)
             make.leading.trailing.equalToSuperview()
+            make.top.equalTo(container).inset(mapViewAnchorFromTop)
             make.bottom.equalTo(placeFooter.snp.top)
         }
 
@@ -114,7 +131,7 @@ class MapViewController: UIViewController {
 
         placeFooter.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(footerCardMargin)
-            make.bottom.equalTo(bottomLayoutGuide.snp.top).offset(footerBottomOffset)
+            make.bottom.equalTo(container).offset(footerBottomOffset)
         }
     }
 
@@ -132,22 +149,13 @@ class MapViewController: UIViewController {
     }
 
     @objc private func closeWithButton() {
-        resetMapToUserLocation(shouldAnimate: true)
-
-        // HACK: (no UX input) Delay the dismiss so the user can watch the animation and see what happens.
-        // TODO: we should change the delay depending on how far we animate.
-        // Note: I tried to add a listener for the end of the animation to dismiss but it complicated the code too much
-        // so here's this hack.
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(500)) {
-            self.dismiss(animated: true)
-        }
+        self.dismiss(animated: true)
+        delegate?.mapViewController(self, didDismissWithSelectedPlace: nil)
     }
 
     @objc private func closeWithSelected() {
-        if let selectedPlace = selectedPlace {
-            delegate?.mapViewController(didSelect: selectedPlace)
-        }
         self.dismiss(animated: true)
+        delegate?.mapViewController(self, didDismissWithSelectedPlace: selectedPlace)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -275,5 +283,38 @@ extension MapViewController: GMSMapViewDelegate {
                 searchButton.setIsHiddenWithAnimations(false) // e.g. finger dragged.
             }
         }
+    }
+}
+
+extension MapViewController: UIViewControllerAnimatedTransitioning, UIViewControllerTransitioningDelegate {
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        transitionContext.containerView.addSubview(view)
+        view.layoutIfNeeded()
+
+        UIView.animate(withDuration: 0.2, animations: {
+            if transitionContext.viewController(forKey: .to) == self {
+                self.hideMapConstraints.forEach { $0.deactivate() }
+                self.showMapConstraints.forEach { $0.activate() }
+            } else {
+                self.showMapConstraints.forEach { $0.deactivate() }
+                self.hideMapConstraints.forEach { $0.activate() }
+            }
+
+            self.view.layoutIfNeeded()
+        }, completion: { _ in
+            transitionContext.completeTransition(true)
+        })
+    }
+
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+        return 0.2
+    }
+
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return self
+    }
+
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return self
     }
 }
