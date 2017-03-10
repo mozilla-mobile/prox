@@ -47,6 +47,7 @@ class Place: Hashable {
     let wikipediaProvider: PlaceProvider?
     let googleProvider: PlaceProvider?
     let customProvider: PlaceProvider?
+    let isEvent: Bool
 
     init(id: String,
          name: String,
@@ -78,6 +79,7 @@ class Place: Hashable {
             self.wikipediaProvider = wikipediaProvider
             self.googleProvider = googleProvider
             self.customProvider = customProvider
+            self.isEvent = !(customProvider?.description ?? "").isEmpty
     }
 
     convenience init?(fromFirebaseSnapshot details: FIRDataSnapshot) {
