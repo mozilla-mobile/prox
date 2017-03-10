@@ -32,13 +32,13 @@ class PlacesProvider {
             for (index, place) in displayedPlaces.enumerated() {
                 placesMap[place.id] = index
             }
-            placeKeyMap = placesMap
+            placeKeyToDisplayedPlacesIndexMap = placesMap
         }
     }
 
     /// A mapping from place key to index in `displayedPlaces` - this must update when
     /// `displayedPlaces` does.
-    fileprivate var placeKeyMap = [String: Int]()
+    fileprivate var placeKeyToDisplayedPlacesIndexMap = [String: Int]()
 
     /// Protects allPlaces, displayedPlaces, and placeKeyMap.
     fileprivate let placesLock = NSLock()
@@ -55,7 +55,7 @@ class PlacesProvider {
         for (index, place) in displayedPlaces.enumerated() {
             placesMap[place.id] = index
         }
-        self.placeKeyMap = placesMap
+        self.placeKeyToDisplayedPlacesIndexMap = placesMap
     }
 
     func place(forKey key: String, callback: @escaping (Place?) -> ()) {
@@ -121,7 +121,7 @@ class PlacesProvider {
     func nextPlace(forPlace place: Place) -> Place? {
         return self.placesLock.withReadLock {
             // if the place isn't in the list, make the first item in the list the next item
-            guard let currentPlaceIndex = self.placeKeyMap[place.id] else {
+            guard let currentPlaceIndex = self.placeKeyToDisplayedPlacesIndexMap[place.id] else {
                 return displayedPlaces.count > 0 ? displayedPlaces[displayedPlaces.startIndex] : nil
             }
 
@@ -133,7 +133,7 @@ class PlacesProvider {
 
     func previousPlace(forPlace place: Place) -> Place? {
         return self.placesLock.withReadLock {
-            guard let currentPlaceIndex = self.placeKeyMap[place.id],
+            guard let currentPlaceIndex = self.placeKeyToDisplayedPlacesIndexMap[place.id],
                 currentPlaceIndex > displayedPlaces.startIndex else { return nil }
 
             return displayedPlaces[displayedPlaces.index(before: currentPlaceIndex)]
@@ -159,7 +159,7 @@ class PlacesProvider {
 
     func index(forPlace place: Place) -> Int? {
         return self.placesLock.withReadLock {
-            return placeKeyMap[place.id]
+            return placeKeyToDisplayedPlacesIndexMap[place.id]
         }
     }
 
