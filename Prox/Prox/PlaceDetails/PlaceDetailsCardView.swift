@@ -327,7 +327,7 @@ class PlaceDetailsCardView: UIView {
 
         hoursView.iconView.isHidden = false
         hoursView.isPrimaryTextLabelHidden = false
-        hoursView.primaryTextLabel.text = primaryText
+        hoursView.primaryTextLabel.text = primaryText.capitalized
         hoursView.secondaryTextLabel.text = secondaryText
         hoursView.secondaryTextLabel.numberOfLines = 1
     }
