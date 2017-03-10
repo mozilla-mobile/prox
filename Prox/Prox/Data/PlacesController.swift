@@ -24,8 +24,10 @@ class PlacesProvider {
         return RemoteConfigKeys.searchRadiusInKm.value
     }()
 
+    /// The collection of all fetched places sorted by travel times (up until rate limiting).
     private var allPlaces = [Place]()
 
+    /// The collection of places displayed to the user.
     private var displayedPlaces = [Place]() {
         didSet {
             var placesMap = [String: Int]()
