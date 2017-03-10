@@ -7,9 +7,9 @@ import Foundation
 import MapKit
 
 private enum Scheme: String {
-    case yelp = "www.yelp.com"
-    case tripAdvisor = "www.tripadvisor.co.uk"
-    case wikipedia = "en.wikipedia.org"
+    case yelp = "yelp"
+    case tripAdvisor = "tripadvisor"
+    case wikipedia = "wikipedia"
 }
 
 struct OpenInHelper {
@@ -23,7 +23,8 @@ struct OpenInHelper {
 
     static func open(url: URL) -> Bool {
         guard let host = url.host,
-            let scheme = Scheme(rawValue: host),
+            let hostname = extractHostname(fromHost: host),
+            let scheme = Scheme(rawValue: hostname),
             let schemeURL = schemeURL(forScheme: scheme),
             UIApplication.shared.canOpenURL(schemeURL),
             UIApplication.shared.openURL(url) else {
@@ -31,6 +32,16 @@ struct OpenInHelper {
         }
 
         return true
+    }
+
+    private static func extractHostname(fromHost host: String) -> String? {
+        // We assume hosts have a *.*.* url format  (which is true for our currently supported hosts)
+        let components = host.components(separatedBy: ".")
+        if components.count > 0 {
+            return components[1]
+        } else {
+            return nil
+        }
     }
 
     fileprivate static func schemeURL(forScheme scheme: Scheme) -> URL? {
