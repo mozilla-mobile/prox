@@ -94,6 +94,7 @@
 		E68E56B31E73532D003F5C7D /* GFGeoHashQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = E68E56AD1E73532D003F5C7D /* GFGeoHashQuery.m */; };
 		E68E56B41E73532D003F5C7D /* GFQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = E68E56AE1E73532D003F5C7D /* GFQuery.m */; };
 		E68E56B71E735341003F5C7D /* OpenInFirefoxControllerSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68E56B61E735341003F5C7D /* OpenInFirefoxControllerSwift.swift */; };
+		E68E56B91E7353CA003F5C7D /* UIImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68E56B81E7353CA003F5C7D /* UIImageExtensions.swift */; };
 		E69D69851E6E236500E6F6CA /* MapViewSearchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D69841E6E236500E6F6CA /* MapViewSearchButton.swift */; };
 		E69D69871E6E27DE00E6F6CA /* CLLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D69861E6E27DE00E6F6CA /* CLLocation.swift */; };
 		E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */; };
@@ -250,6 +251,7 @@
 		E68E56AE1E73532D003F5C7D /* GFQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GFQuery.m; path = Prox/ThirdParty/GeoFire/Implementation/GFQuery.m; sourceTree = SOURCE_ROOT; };
 		E68E56AF1E73532D003F5C7D /* GFQuery+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "GFQuery+Private.h"; path = "Prox/ThirdParty/GeoFire/Implementation/GFQuery+Private.h"; sourceTree = SOURCE_ROOT; };
 		E68E56B61E735341003F5C7D /* OpenInFirefoxControllerSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OpenInFirefoxControllerSwift.swift; path = "ThirdParty/firefox-ios/OpenInFirefoxControllerSwift.swift"; sourceTree = "<group>"; };
+		E68E56B81E7353CA003F5C7D /* UIImageExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIImageExtensions.swift; path = "ThirdParty/firefox-ios/UIImageExtensions.swift"; sourceTree = "<group>"; };
 		E69D69841E6E236500E6F6CA /* MapViewSearchButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewSearchButton.swift; sourceTree = "<group>"; };
 		E69D69861E6E27DE00E6F6CA /* CLLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLLocation.swift; path = Extensions/CLLocation.swift; sourceTree = "<group>"; };
 		E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossFadeTransition.swift; sourceTree = "<group>"; };
@@ -584,6 +586,7 @@
 		E68E56B51E735333003F5C7D /* firefox-ios */ = {
 			isa = PBXGroup;
 			children = (
+				E68E56B81E7353CA003F5C7D /* UIImageExtensions.swift */,
 				E68E56B61E735341003F5C7D /* OpenInFirefoxControllerSwift.swift */,
 			);
 			name = "firefox-ios";
@@ -924,6 +927,7 @@
 				7B50956B1DB53382007C54F0 /* ReviewContainerView.swift in Sources */,
 				E628DEB31E5E4FFE00404FE3 /* Style.swift in Sources */,
 				E628DEBB1E5E525000404FE3 /* ObservableScrollView.swift in Sources */,
+				E68E56B91E7353CA003F5C7D /* UIImageExtensions.swift in Sources */,
 				E628DEBA1E5E525000404FE3 /* ExpandingCardView.swift in Sources */,
 				7B9DA15A1DBE6F7500A68C82 /* PlaceDetailViewController.swift in Sources */,
 				E618319B1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift in Sources */,
