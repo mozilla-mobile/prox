@@ -674,6 +674,8 @@ class PlaceDetailViewController: UIViewController {
         controller.placesProvider = dataSource
         controller.locationProvider = locationProvider
         self.present(controller, animated: true)
+
+        slideCurrentCardView(willBeShown: false)
     }
 
     @objc private func didPressFilter() {
@@ -750,7 +752,11 @@ extension PlaceDetailViewController: FilterViewControllerDelegate {
 }
 
 extension PlaceDetailViewController: MapViewControllerDelegate {
-    func mapViewController(didSelect selectedPlace: Place) {
-        openCard(forExistingPlace: selectedPlace)
+    func mapViewController(_ mapViewController: MapViewController, didDismissWithSelectedPlace place: Place?) {
+        if let place = place {
+            openCard(forExistingPlace: place)
+        }
+
+        slideCurrentCardView(willBeShown: true)
     }
 }
