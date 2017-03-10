@@ -6,7 +6,7 @@ import UIKit
 import GoogleMaps
 import SnapKit
 
-private let fadeDuration: TimeInterval = 0.4
+private let fadeDuration: TimeInterval = 0.1
 
 private let mapViewAnchorFromTop = mapViewMaskTopOffset - mapViewMaskMargin
 
@@ -52,6 +52,8 @@ class MapViewController: UIViewController {
 
     fileprivate var showMapConstraints = [Constraint]()
     fileprivate var hideMapConstraints = [Constraint]()
+    fileprivate var showFooterConstraints = [Constraint]()
+    fileprivate var hideFooterConstraints = [Constraint]()
 
     private let mapViewMask = CAShapeLayer()
     private lazy var mapView: GMSMapView = {
@@ -73,7 +75,6 @@ class MapViewController: UIViewController {
 
     fileprivate lazy var placeFooter: MapViewCardFooter = {
         let footer = MapViewCardFooter(bottomInset: footerBottomOffset)
-        footer.alpha = 0 // hide until the first place is selected.
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(closeWithSelected))
         footer.addGestureRecognizer(tapRecognizer)
         return footer
@@ -111,17 +112,14 @@ class MapViewController: UIViewController {
             hideMapConstraints = [ make.bottom.equalTo(view.snp.top).constraint ]
         }
 
-        showMapConstraints.forEach { $0.deactivate() }
-
         closeButton.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(45)
             make.trailing.equalToSuperview().inset(27)
         }
 
         mapView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.bottom.equalTo(container)
             make.top.equalTo(container).inset(mapViewAnchorFromTop)
-            make.bottom.equalTo(placeFooter.snp.top)
         }
 
         searchButtonTopConstraint = searchButton.centerYAnchor.constraint(equalTo: mapView.topAnchor)
@@ -132,8 +130,13 @@ class MapViewController: UIViewController {
 
         placeFooter.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(footerCardMargin)
-            make.bottom.equalTo(container).offset(footerBottomOffset)
+
+            showFooterConstraints = [ make.bottom.equalToSuperview().offset(footerBottomOffset).constraint ]
+            hideFooterConstraints = [ make.top.equalTo(view.snp.bottom).constraint ]
         }
+
+        showMapConstraints.forEach { $0.deactivate() }
+        showFooterConstraints.forEach { $0.deactivate() }
     }
 
     override func viewDidLayoutSubviews() {
@@ -150,13 +153,19 @@ class MapViewController: UIViewController {
     }
 
     @objc private func closeWithButton() {
-        self.dismiss(animated: true)
-        delegate?.mapViewController(self, didDismissWithSelectedPlace: nil)
+        dismiss(withSelectedPlace: nil)
     }
 
     @objc private func closeWithSelected() {
+        dismiss(withSelectedPlace: selectedPlace)
+    }
+
+    private func dismiss(withSelectedPlace place: Place?) {
         self.dismiss(animated: true)
-        delegate?.mapViewController(self, didDismissWithSelectedPlace: selectedPlace)
+        delegate?.mapViewController(self, didDismissWithSelectedPlace: place)
+
+        view.layoutIfNeeded()
+        slideCard(toBeShown: false)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -215,9 +224,7 @@ class MapViewController: UIViewController {
     @objc private func searchInVisibleArea() {
         searchButton.isEnabled = false
         mapView.clear()
-        UIView.animate(withDuration: fadeDuration) {
-            self.placeFooter.alpha = 0
-        }
+        slideCard(toBeShown: false)
 
         // todo: calculate radius for zoom level.
         let tmpRadius = searchRadiusInMeters / 1000
@@ -252,12 +259,24 @@ class MapViewController: UIViewController {
         selectedMarker?.updateMarker(forSelected: true)
         selectedPlace = newPlace
 
-        placeFooter.update(for: newPlace)
-        if placeFooter.alpha != 1 {
-            UIView.animate(withDuration: fadeDuration) {
-                self.placeFooter.alpha = 1
-            }
+        slideCard(toBeShown: false) { _ in
+            self.placeFooter.update(for: newPlace)
+            self.slideCard(toBeShown: true)
         }
+    }
+
+    private func slideCard(toBeShown shown: Bool, completion: ((Bool) -> ())? = nil) {
+        view.layoutIfNeeded()
+        UIView.animate(withDuration: fadeDuration, animations: {
+            if shown {
+                self.hideFooterConstraints.forEach { $0.deactivate() }
+                self.showFooterConstraints.forEach { $0.activate() }
+            } else {
+                self.showFooterConstraints.forEach { $0.deactivate() }
+                self.hideFooterConstraints.forEach { $0.activate() }
+            }
+            self.view.layoutIfNeeded()
+        }, completion: completion)
     }
 }
 
