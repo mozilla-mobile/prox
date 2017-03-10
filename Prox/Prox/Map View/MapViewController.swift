@@ -79,12 +79,13 @@ class MapViewController: UIViewController {
         return footer
     }()
 
-    init(enabledFilters: Set<PlaceFilter>) {
+    init(selectedPlace: Place, enabledFilters: Set<PlaceFilter>) {
         self.enabledFilters = enabledFilters
         super.init(nibName: nil, bundle: nil)
 
         self.modalPresentationStyle = .overCurrentContext
         self.transitioningDelegate = self
+        self.selectedPlace = selectedPlace
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -204,6 +205,10 @@ class MapViewController: UIViewController {
         for place in places {
             let marker = GMSMarker(for: place)
             marker.map = mapView
+
+            if place == selectedPlace {
+                updateSelected(marker: marker, andPlace: place)
+            }
         }
     }
 
@@ -240,6 +245,20 @@ class MapViewController: UIViewController {
         controller.addAction(dismissAction)
         return controller
     }
+
+    fileprivate func updateSelected(marker newMarker: GMSMarker, andPlace newPlace: Place) {
+        selectedMarker?.updateMarker(forSelected: false)
+        selectedMarker = newMarker
+        selectedMarker?.updateMarker(forSelected: true)
+        selectedPlace = newPlace
+
+        placeFooter.update(for: newPlace)
+        if placeFooter.alpha != 1 {
+            UIView.animate(withDuration: fadeDuration) {
+                self.placeFooter.alpha = 1
+            }
+        }
+    }
 }
 
 extension MapViewController: GMSMapViewDelegate {
@@ -251,21 +270,8 @@ extension MapViewController: GMSMapViewDelegate {
         }
 
         updateSelected(marker: marker, andPlace: place)
-        placeFooter.update(for: place)
-        if placeFooter.alpha != 1 {
-            UIView.animate(withDuration: fadeDuration) {
-                self.placeFooter.alpha = 1
-            }
-        }
 
         return true
-    }
-
-    fileprivate func updateSelected(marker newMarker: GMSMarker, andPlace newPlace: Place) {
-        selectedMarker?.updateMarker(forSelected: false)
-        selectedMarker = newMarker
-        selectedMarker?.updateMarker(forSelected: true)
-        selectedPlace = newPlace
     }
 
     func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
