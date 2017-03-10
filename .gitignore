@@ -70,3 +70,7 @@ fastlane/test_output
 
 # OS X
 .DS_Store
+
+# convert_ta_assets.py
+in/
+out/
