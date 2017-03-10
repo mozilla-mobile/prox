@@ -41,7 +41,8 @@ class MapViewController: UIViewController {
     private let database = FirebasePlacesDatabase()
 
     fileprivate var displayedPlaces: [Place]!
-    var selectedPlace: Place?
+    fileprivate var selectedPlace: Place?
+    fileprivate var selectedMarker: GMSMarker?
 
     /// The filters the displayed list of places is filtered with.
     fileprivate let enabledFilters: Set<PlaceFilter>
@@ -241,14 +242,22 @@ extension MapViewController: GMSMapViewDelegate {
             return true // if we return false, the map will do move & display an overlay, which we don't want.
         }
 
-        selectedPlace = place
+        updateSelected(marker: marker, andPlace: place)
         placeFooter.update(for: place)
         if placeFooter.alpha != 1 {
             UIView.animate(withDuration: fadeDuration) {
                 self.placeFooter.alpha = 1
             }
         }
+
         return true
+    }
+
+    fileprivate func updateSelected(marker newMarker: GMSMarker, andPlace newPlace: Place) {
+        selectedMarker?.updateMarker(forSelected: false)
+        selectedMarker = newMarker
+        selectedMarker?.updateMarker(forSelected: true)
+        selectedPlace = newPlace
     }
 
     func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
