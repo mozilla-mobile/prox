@@ -6,7 +6,8 @@ import UIKit
 import GoogleMaps
 import SnapKit
 
-private let fadeDuration: TimeInterval = 0.1
+private let fadeDuration: TimeInterval = 0.4
+private let slideDuration: TimeInterval = 0.1
 
 private let mapViewAnchorFromTop = mapViewMaskTopOffset - mapViewMaskMargin
 
@@ -77,6 +78,7 @@ class MapViewController: UIViewController {
         let footer = MapViewCardFooter(bottomInset: footerBottomOffset)
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(closeWithSelected))
         footer.addGestureRecognizer(tapRecognizer)
+        footer.alpha = 0
         return footer
     }()
 
@@ -165,7 +167,7 @@ class MapViewController: UIViewController {
         delegate?.mapViewController(self, didDismissWithSelectedPlace: place)
 
         view.layoutIfNeeded()
-        slideCard(toBeShown: false)
+        animateCard(toBeShown: false, slide: false)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -175,7 +177,7 @@ class MapViewController: UIViewController {
         guard let places = placesProvider?.getDisplayedPlacesCopy() else { return }
         displayedPlaces = places
         mapView.clear()
-        addToMap(places: displayedPlaces)
+        addToMap(places: displayedPlaces, slideSelected: false)
     }
 
     private func resetMapToUserLocation(shouldAnimate: Bool) {
@@ -209,14 +211,14 @@ class MapViewController: UIViewController {
         }
     }
 
-    private func addToMap(places: [Place]) {
+    private func addToMap(places: [Place], slideSelected: Bool) {
         // Consider limiting the place count if we hit performance issues.
         for place in places {
             let marker = GMSMarker(for: place)
             marker.map = mapView
 
             if place == selectedPlace {
-                updateSelected(marker: marker, andPlace: place)
+                updateSelected(marker: marker, andPlace: place, slide: slideSelected)
             }
         }
     }
@@ -224,7 +226,7 @@ class MapViewController: UIViewController {
     @objc private func searchInVisibleArea() {
         searchButton.isEnabled = false
         mapView.clear()
-        slideCard(toBeShown: false)
+        animateCard(toBeShown: false, slide: true)
 
         // todo: calculate radius for zoom level.
         let tmpRadius = searchRadiusInMeters / 1000
@@ -239,7 +241,7 @@ class MapViewController: UIViewController {
                 return
             }
 
-            self.addToMap(places: self.displayedPlaces)
+            self.addToMap(places: self.displayedPlaces, slideSelected: true)
             self.searchButton.setIsHiddenWithAnimations(true)
         }
     }
@@ -253,21 +255,25 @@ class MapViewController: UIViewController {
         return controller
     }
 
-    fileprivate func updateSelected(marker newMarker: GMSMarker, andPlace newPlace: Place) {
+    fileprivate func updateSelected(marker newMarker: GMSMarker, andPlace newPlace: Place, slide: Bool) {
         selectedMarker?.updateMarker(forSelected: false)
         selectedMarker = newMarker
         selectedMarker?.updateMarker(forSelected: true)
         selectedPlace = newPlace
 
-        slideCard(toBeShown: false) { _ in
+        animateCard(toBeShown: false, slide: slide) { _ in
             self.placeFooter.update(for: newPlace)
-            self.slideCard(toBeShown: true)
+            self.animateCard(toBeShown: true, slide: slide)
         }
+    }
+
+    private func animateCard(toBeShown shown: Bool, slide: Bool, completion: ((Bool) -> ())? = nil) {
+        return slide ? slideCard(toBeShown: shown, completion: completion) : fadeCard(toBeShown: shown, completion: completion)
     }
 
     private func slideCard(toBeShown shown: Bool, completion: ((Bool) -> ())? = nil) {
         view.layoutIfNeeded()
-        UIView.animate(withDuration: fadeDuration, animations: {
+        UIView.animate(withDuration: slideDuration, animations: {
             if shown {
                 self.hideFooterConstraints.forEach { $0.deactivate() }
                 self.showFooterConstraints.forEach { $0.activate() }
@@ -275,6 +281,18 @@ class MapViewController: UIViewController {
                 self.showFooterConstraints.forEach { $0.deactivate() }
                 self.hideFooterConstraints.forEach { $0.activate() }
             }
+            self.view.layoutIfNeeded()
+        }, completion: completion)
+    }
+
+    private func fadeCard(toBeShown shown: Bool, completion: ((Bool) -> ())? = nil) {
+        // Make the footer immediately visible so it doesn't slide in.
+        self.hideFooterConstraints.forEach { $0.deactivate() }
+        self.showFooterConstraints.forEach { $0.activate() }
+        view.layoutIfNeeded()
+
+        UIView.animate(withDuration: fadeDuration, animations: {
+            self.placeFooter.alpha = shown ? 1 : 0
             self.view.layoutIfNeeded()
         }, completion: completion)
     }
@@ -288,7 +306,7 @@ extension MapViewController: GMSMapViewDelegate {
             return true // if we return false, the map will do move & display an overlay, which we don't want.
         }
 
-        updateSelected(marker: marker, andPlace: place)
+        updateSelected(marker: marker, andPlace: place, slide: true)
 
         return true
     }
