@@ -55,7 +55,7 @@ struct YelpStarImageAccessor: ProviderStarImageAccessor {
 }
 
 struct TripAdvisorStarImageAccessor: ProviderStarImageAccessor {
-    let assetSize = CGSize(width: 143, height: 24)
+    let assetSize = CGSize(width: 121, height: 25)
 
     func image(forScore score: Float) -> UIImage? {
         let img: UIImage
