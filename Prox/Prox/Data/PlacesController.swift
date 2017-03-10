@@ -26,7 +26,18 @@ class PlacesProvider {
 
     private var allPlaces = [Place]()
 
-    private var displayedPlaces = [Place]()
+    private var displayedPlaces = [Place]() {
+        didSet {
+            var placesMap = [String: Int]()
+            for (index, place) in displayedPlaces.enumerated() {
+                placesMap[place.id] = index
+            }
+            placeKeyMap = placesMap
+        }
+    }
+
+    /// A mapping from place key to index in `displayedPlaces` - this must update when
+    /// `displayedPlaces` does.
     fileprivate var placeKeyMap = [String: Int]()
 
     /// Protects allPlaces, displayedPlaces, and placeKeyMap.
@@ -78,12 +89,6 @@ class PlacesProvider {
     /// Callers must acquire a write lock before calling this method!
     fileprivate func updateDisplayedPlaces() {
         displayedPlaces = filterPlacesLocked(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
-
-        var placesMap = [String: Int]()
-        for (index, place) in displayedPlaces.enumerated() {
-            placesMap[place.id] = index
-        }
-        placeKeyMap = placesMap
     }
 
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
