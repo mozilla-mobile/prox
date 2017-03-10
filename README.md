@@ -4,6 +4,10 @@
 Install CocoaPods. If you already have CocoaPods installed, run the same
 command to update:
 
+    # If you have Ruby installed via Homebrew - Strongly preferred since it requires no root access
+    gem install cocoapods 
+    
+    # If you are using the macOS provided Ruby (not recommended)
     sudo gem install cocoapods
 
 If it has been a while since you last updated CocoaPods, you may want to update
