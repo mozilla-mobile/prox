@@ -31,6 +31,8 @@ struct Strings {
 
         static let noResultsYet = "No results for this area yet"
         static let dismissNoResults = "Dismiss"
+
+        static let eventHeader = "Event %@ at %@"
     }
 
     struct place {

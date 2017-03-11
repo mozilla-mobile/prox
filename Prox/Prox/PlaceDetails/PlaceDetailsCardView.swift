@@ -288,10 +288,8 @@ class PlaceDetailsCardView: UIView {
     }
 
     private func updateEventUI(forPlace place: Place) {
-        let description = place.customProvider?.description ?? ""
-        let hideEventUI = description.isEmpty
-        eventHeader.isHidden = hideEventUI
-        setContainingStackViewMargins(isTopMarginPresent: hideEventUI)
+        eventHeader.isHidden = !place.isEvent
+        setContainingStackViewMargins(isTopMarginPresent: !place.isEvent)
     }
 
     private func updateURLText(_ url: URL?) {
@@ -319,7 +317,7 @@ class PlaceDetailsCardView: UIView {
             return
         }
 
-        guard let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date(), isEvent: !String.isEmpty(place.customProvider?.description)) else {
+        guard let (primaryText, secondaryText) = getStringsForOpenHours(hours, forDate: Date(), isEvent: place.isEvent) else {
             hoursView.iconView.isHidden = true
             hoursView.isPrimaryTextLabelHidden = true
             hoursView.secondaryTextLabel.text = "Check listing\nfor hours"
@@ -329,7 +327,7 @@ class PlaceDetailsCardView: UIView {
 
         hoursView.iconView.isHidden = false
         hoursView.isPrimaryTextLabelHidden = false
-        hoursView.primaryTextLabel.text = primaryText
+        hoursView.primaryTextLabel.text = primaryText.capitalized
         hoursView.secondaryTextLabel.text = secondaryText
         hoursView.secondaryTextLabel.numberOfLines = 1
     }

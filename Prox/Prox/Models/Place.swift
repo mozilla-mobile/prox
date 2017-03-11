@@ -47,6 +47,7 @@ class Place: Hashable {
     let wikipediaProvider: PlaceProvider?
     let googleProvider: PlaceProvider?
     let customProvider: PlaceProvider?
+    let isEvent: Bool
 
     init(id: String,
          name: String,
@@ -78,6 +79,7 @@ class Place: Hashable {
             self.wikipediaProvider = wikipediaProvider
             self.googleProvider = googleProvider
             self.customProvider = customProvider
+            self.isEvent = !String.isEmpty(customProvider?.description)
     }
 
     convenience init?(fromFirebaseSnapshot details: FIRDataSnapshot) {
@@ -467,10 +469,10 @@ struct OpenHours {
 
             let openingDayText: String
             if OpenHours.calendar.isDate(day, inSameDayAs: todayDate) {
-                openingDayText = Strings.place.today.capitalized
+                openingDayText = Strings.place.today
 
             } else if OpenHours.calendar.isDate(day, inSameDayAs: todayDate.addingTimeInterval(AppConstants.ONE_DAY)) {
-                openingDayText = Strings.place.tomorrow.capitalized
+                openingDayText = Strings.place.tomorrow
 
             } else {
                 openingDayText = DateFormatter().weekdaySymbols[OpenHours.calendar.component(.weekday, from: day) - 1]
