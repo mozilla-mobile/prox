@@ -101,6 +101,7 @@
 		E6B3FFBE1E6F7ED7008B085C /* PlaceDetailsEventHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B3FFBD1E6F7ED7008B085C /* PlaceDetailsEventHeader.swift */; };
 		E6B3FFC01E72037D008B085C /* ProviderStarImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B3FFBF1E72037D008B085C /* ProviderStarImage.swift */; };
 		E6CF08DF1E57B6300083CAD8 /* GMSMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CF08DE1E57B6300083CAD8 /* GMSMarker.swift */; };
+		E6DE95101E738E8200321076 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DE950F1E738E8200321076 /* UIImage.swift */; };
 		E6F151471E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */; };
 		EC42FE32127D2BD0FE36402D /* Pods_ProxUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7E6AA9F3734D8F66B0C39F3 /* Pods_ProxUITests.framework */; };
 /* End PBXBuildFile section */
@@ -258,6 +259,7 @@
 		E6B3FFBD1E6F7ED7008B085C /* PlaceDetailsEventHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsEventHeader.swift; sourceTree = "<group>"; };
 		E6B3FFBF1E72037D008B085C /* ProviderStarImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProviderStarImage.swift; sourceTree = "<group>"; };
 		E6CF08DE1E57B6300083CAD8 /* GMSMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GMSMarker.swift; path = "Extensions/Google Maps/GMSMarker.swift"; sourceTree = "<group>"; };
+		E6DE950F1E738E8200321076 /* UIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIImage.swift; path = Extensions/UIImage.swift; sourceTree = "<group>"; };
 		E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockLocationSelectionTableViewController.swift; sourceTree = "<group>"; };
 		E9D33947ADBD130D6225B1C7 /* Pods-ProxUITests.currentlocationdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.currentlocationdebug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.currentlocationdebug.xcconfig"; sourceTree = "<group>"; };
 		EF6099637798B2B2023BBF66 /* Pods-ProxTests.mock location.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.mock location.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.mock location.xcconfig"; sourceTree = "<group>"; };
@@ -539,6 +541,7 @@
 				23739F5B1E70B74C00C6323B /* String.swift */,
 				7B1C657C1DDF28F00047559C /* TimeInterval.swift */,
 				D32F73ED1E4D07AE00D504A7 /* UIColor.swift */,
+				E6DE950F1E738E8200321076 /* UIImage.swift */,
 				E60A42701DF28E01008BE74D /* URL.swift */,
 			);
 			name = Extensions;
@@ -938,6 +941,7 @@
 				7B5095751DB62590007C54F0 /* NSLayoutConstraint.swift in Sources */,
 				2380CA911DE4140A002D73F1 /* AppState.swift in Sources */,
 				E67146361DB54896007A99E4 /* CLLocationManager.swift in Sources */,
+				E6DE95101E738E8200321076 /* UIImage.swift in Sources */,
 				E662FF4E1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift in Sources */,
 				E68E56B11E73532D003F5C7D /* GFBase32Utils.m in Sources */,
 				7B8651921DBFAF19002A666A /* PlaceUtilities.swift in Sources */,
