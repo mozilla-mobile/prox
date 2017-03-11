@@ -5,25 +5,15 @@
 import UIKit
 import QuartzCore
 
-enum ReviewContainerViewMode {
-    case carouselView, detailsView
-}
+private let verticalMargin: CGFloat = 6
 
 class ReviewContainerView: UIView {
 
-    let verticalMargin: CGFloat
-    let logoHeight: CGFloat
-    let scoreHorizontalMargin: CGFloat
-
-    var color: UIColor {
-        didSet {
-            self.reviewScore.color = color
-        }
-    }
+    private let getStarsFromScore: ProviderStarsForScore
 
     var score: Float = 0 {
         didSet {
-            reviewScore.score = score
+            reviewScore.image = getStarsFromScore(score)
         }
     }
 
@@ -33,8 +23,10 @@ class ReviewContainerView: UIView {
         return imageView
     }()
 
-    lazy var reviewScore: ReviewScoreView = {
-        let view = ReviewScoreView(color: self.color)
+    let reviewScore: UIImageView = {
+        let view = UIImageView()
+        view.contentMode = .scaleAspectFit
+        view.clipsToBounds = true
         return view
     }()
 
@@ -44,41 +36,14 @@ class ReviewContainerView: UIView {
         return label
     }()
 
-    convenience init(color: UIColor, mode: ReviewContainerViewMode) {
-        self.init(score: 0, color: color, mode: mode)
-    }
-
-    init(score: Float, color: UIColor, mode: ReviewContainerViewMode) {
+    init(score: Float = 0, getStarsFromScore: @escaping ProviderStarsForScore) {
         self.score = score
-        self.color = color
-
-        switch mode {
-        case .carouselView:
-            verticalMargin = 4
-            logoHeight = 19
-            scoreHorizontalMargin = 16
-
-        case .detailsView:
-            verticalMargin = 9
-            logoHeight = 28
-            scoreHorizontalMargin = 0
-        }
+        self.getStarsFromScore = getStarsFromScore
 
         super.init(frame: .zero)
         setupSubviews()
-        configure(byMode: mode) // must be called after super.init: references self.
-    }
-
-    private func configure(byMode mode: ReviewContainerViewMode) {
-        switch mode {
-        case .carouselView:
-            numberOfReviewersLabel.font = Fonts.reviewsNumberOfReviewers
-            numberOfReviewersLabel.textColor = Colors.reviewsNumberOfReviewers
-
-        case.detailsView:
-            numberOfReviewersLabel.font = Fonts.detailsViewReviewerText
-            numberOfReviewersLabel.textColor = Colors.detailsViewCardSecondaryText
-        }
+        numberOfReviewersLabel.font = Fonts.detailsViewReviewerText
+        numberOfReviewersLabel.textColor = Colors.detailsViewCardSecondaryText
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -86,17 +51,20 @@ class ReviewContainerView: UIView {
     }
 
     private func setupSubviews() {
-        addSubview(reviewSiteLogo)
+        for view in [reviewSiteLogo, reviewScore, numberOfReviewersLabel] as [UIView] {
+            addSubview(view)
+        }
+
         var constraints = [reviewSiteLogo.topAnchor.constraint(equalTo: self.topAnchor),
                            reviewSiteLogo.leadingAnchor.constraint(equalTo: self.leadingAnchor),
                            reviewSiteLogo.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-                           reviewSiteLogo.heightAnchor.constraint(equalToConstant: logoHeight)]
-        addSubview(reviewScore)
+                           reviewSiteLogo.heightAnchor.constraint(equalToConstant: 28)]
+
         constraints.append(contentsOf: [reviewScore.topAnchor.constraint(equalTo: reviewSiteLogo.bottomAnchor, constant: verticalMargin),
-                                        reviewScore.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: scoreHorizontalMargin),
-                                        reviewScore.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -scoreHorizontalMargin),
-                                        reviewScore.heightAnchor.constraint(equalToConstant: 4)])
-        addSubview(numberOfReviewersLabel)
+                                        reviewScore.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+                                        reviewScore.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+                                        reviewScore.heightAnchor.constraint(equalToConstant: 20),])
+
         constraints.append(contentsOf: [numberOfReviewersLabel.topAnchor.constraint(equalTo: reviewScore.bottomAnchor, constant: verticalMargin),
                                         numberOfReviewersLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
                                         numberOfReviewersLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),

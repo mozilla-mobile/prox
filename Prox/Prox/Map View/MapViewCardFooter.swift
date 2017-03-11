@@ -64,8 +64,12 @@ class MapViewCardFooter: ExpandingCardView {
         return view
     }()
 
-    fileprivate lazy var yelpProviderView = MapViewYelpReviewProviderView()
-    fileprivate lazy var tripAdvisorProviderView = MapViewTripAdvisorReviewProviderView()
+    fileprivate lazy var yelpProviderView =
+        MapViewReviewProviderView(getStarsFromScore: ProviderStarImage.yelp(forScore:),
+                                  providerFromPlace: { place in return place.yelpProvider })
+    fileprivate lazy var tripAdvisorProviderView =
+        MapViewReviewProviderView(getStarsFromScore: ProviderStarImage.tripAdvisor(forScore:),
+                                  providerFromPlace: { place in return place.tripAdvisorProvider })
 
     private var eventConstraints = [Constraint]()
     private var placeConstraints = [Constraint]()
