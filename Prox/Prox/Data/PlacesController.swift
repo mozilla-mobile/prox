@@ -24,10 +24,23 @@ class PlacesProvider {
         return RemoteConfigKeys.searchRadiusInKm.value
     }()
 
+    /// The collection of all fetched places sorted by travel times (up until rate limiting).
     private var allPlaces = [Place]()
 
-    private var displayedPlaces = [Place]()
-    fileprivate var placeKeyMap = [String: Int]()
+    /// The collection of places displayed to the user.
+    private var displayedPlaces = [Place]() {
+        didSet {
+            var placesMap = [String: Int]()
+            for (index, place) in displayedPlaces.enumerated() {
+                placesMap[place.id] = index
+            }
+            placeKeyToDisplayedPlacesIndexMap = placesMap
+        }
+    }
+
+    /// A mapping from place key to index in `displayedPlaces` - this must update when
+    /// `displayedPlaces` does.
+    fileprivate var placeKeyToDisplayedPlacesIndexMap = [String: Int]()
 
     /// Protects allPlaces, displayedPlaces, and placeKeyMap.
     fileprivate let placesLock = NSLock()
@@ -44,7 +57,7 @@ class PlacesProvider {
         for (index, place) in displayedPlaces.enumerated() {
             placesMap[place.id] = index
         }
-        self.placeKeyMap = placesMap
+        self.placeKeyToDisplayedPlacesIndexMap = placesMap
     }
 
     func place(forKey key: String, callback: @escaping (Place?) -> ()) {
@@ -78,12 +91,6 @@ class PlacesProvider {
     /// Callers must acquire a write lock before calling this method!
     fileprivate func updateDisplayedPlaces() {
         displayedPlaces = filterPlacesLocked(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
-
-        var placesMap = [String: Int]()
-        for (index, place) in displayedPlaces.enumerated() {
-            placesMap[place.id] = index
-        }
-        placeKeyMap = placesMap
     }
 
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
@@ -116,7 +123,7 @@ class PlacesProvider {
     func nextPlace(forPlace place: Place) -> Place? {
         return self.placesLock.withReadLock {
             // if the place isn't in the list, make the first item in the list the next item
-            guard let currentPlaceIndex = self.placeKeyMap[place.id] else {
+            guard let currentPlaceIndex = self.placeKeyToDisplayedPlacesIndexMap[place.id] else {
                 return displayedPlaces.count > 0 ? displayedPlaces[displayedPlaces.startIndex] : nil
             }
 
@@ -128,7 +135,7 @@ class PlacesProvider {
 
     func previousPlace(forPlace place: Place) -> Place? {
         return self.placesLock.withReadLock {
-            guard let currentPlaceIndex = self.placeKeyMap[place.id],
+            guard let currentPlaceIndex = self.placeKeyToDisplayedPlacesIndexMap[place.id],
                 currentPlaceIndex > displayedPlaces.startIndex else { return nil }
 
             return displayedPlaces[displayedPlaces.index(before: currentPlaceIndex)]
@@ -154,7 +161,7 @@ class PlacesProvider {
 
     func index(forPlace place: Place) -> Int? {
         return self.placesLock.withReadLock {
-            return placeKeyMap[place.id]
+            return placeKeyToDisplayedPlacesIndexMap[place.id]
         }
     }
 
