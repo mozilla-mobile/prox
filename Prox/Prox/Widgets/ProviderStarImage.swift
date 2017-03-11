@@ -4,34 +4,11 @@
 
 import Foundation
 
-// All items in the protocol could be static but I don't know how to do that in swift.
-protocol ProviderStarImageAccessor {
+typealias ProviderStarsForScore = (Float) -> UIImage?
 
-    /// The size, in pixels, of the review score asset. Used for `widthConstraint(for:withViewHeight)`
-    var assetSize: CGSize { get }
-    func image(forScore score: Float) -> UIImage?
-}
+struct ProviderStarImage {
 
-extension ProviderStarImageAccessor {
-
-    /// Returns a width constraint that, when activated, constrains the image view to the asset size,
-    /// based on the given height.
-    ///
-    /// HACK: when we scale inside a UIImageView, the UIImageView keeps the size the of the original image
-    /// (rather than taking the scaled image size) so, in this case, the view is too wide and has whitespace
-    /// on either side of the image. For dev speed, we hardcode the asset sizes and set width constraints
-    /// with this method. A proper alternative would be to scale the image outside the image view
-    /// and set the image view with the scaled image.
-    func widthConstraint(for view: UIImageView, withViewHeight viewHeight: CGFloat) -> NSLayoutConstraint {
-        let scoreViewWidth = (viewHeight / assetSize.height) * assetSize.width
-        return view.widthAnchor.constraint(equalToConstant: scoreViewWidth)
-    }
-}
-
-struct YelpStarImageAccessor: ProviderStarImageAccessor {
-    let assetSize = CGSize(width: 132, height: 24)
-
-    func image(forScore score: Float) -> UIImage? {
+    static func yelp(forScore score: Float) -> UIImage? {
         let img: UIImage
         switch score {
         case 0: img = #imageLiteral(resourceName: "score_yelp_0") // Yelp has no 0.5 image - I guess you can only rate lowest 1 star.
@@ -52,12 +29,8 @@ struct YelpStarImageAccessor: ProviderStarImageAccessor {
 
         return img
     }
-}
 
-struct TripAdvisorStarImageAccessor: ProviderStarImageAccessor {
-    let assetSize = CGSize(width: 121, height: 25)
-
-    func image(forScore score: Float) -> UIImage? {
+    static func tripAdvisor(forScore score: Float) -> UIImage? {
         let img: UIImage
         switch score {
         case 0..<0.5: img = #imageLiteral(resourceName: "score_ta_0")

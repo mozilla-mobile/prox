@@ -9,11 +9,11 @@ private let verticalMargin: CGFloat = 6
 
 class ReviewContainerView: UIView {
 
-    private let starImageAccessor: ProviderStarImageAccessor
+    private let getStarsFromScore: ProviderStarsForScore
 
     var score: Float = 0 {
         didSet {
-            reviewScore.image = starImageAccessor.image(forScore: score)
+            reviewScore.image = getStarsFromScore(score)
         }
     }
 
@@ -36,9 +36,9 @@ class ReviewContainerView: UIView {
         return label
     }()
 
-    init(score: Float = 0, starImageAccessor: ProviderStarImageAccessor) {
+    init(score: Float = 0, getStarsFromScore: @escaping ProviderStarsForScore) {
         self.score = score
-        self.starImageAccessor = starImageAccessor
+        self.getStarsFromScore = getStarsFromScore
 
         super.init(frame: .zero)
         setupSubviews()

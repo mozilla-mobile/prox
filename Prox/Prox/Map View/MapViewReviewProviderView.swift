@@ -13,11 +13,11 @@ class MapViewReviewProviderView: UIView {
     private let scoreView = UIImageView()
     private let reviewCountView = UILabel()
 
-    private let providerStarImageAccessor: ProviderStarImageAccessor
+    private let getStarsFromScore: ProviderStarsForScore
     private let providerFromPlace: (Place) -> PlaceProvider?
 
-    init(providerStarImageAccessor: ProviderStarImageAccessor, providerFromPlace: @escaping (Place) -> PlaceProvider?) {
-        self.providerStarImageAccessor = providerStarImageAccessor
+    init(getStarsFromScore: @escaping ProviderStarsForScore, providerFromPlace: @escaping (Place) -> PlaceProvider?) {
+        self.getStarsFromScore = { score in return getStarsFromScore(score)?.createScaled(withHeight: viewHeight) }
         self.providerFromPlace = providerFromPlace
         super.init(frame: .zero)
 
@@ -28,7 +28,7 @@ class MapViewReviewProviderView: UIView {
 
     // TODO: replace parent param with self in these methods: left in to save time during refactor.
     private func initViews(withParent parent: UIView) {
-        scoreView.image = providerStarImageAccessor.image(forScore: 5)
+        scoreView.image = getStarsFromScore(5)
         scoreView.alpha = disabledAlpha
         scoreView.clipsToBounds = true
         scoreView.contentMode = .scaleAspectFit
@@ -49,7 +49,6 @@ class MapViewReviewProviderView: UIView {
             make.height.equalTo(viewHeight)
         }
 
-        providerStarImageAccessor.widthConstraint(for: scoreView, withViewHeight: viewHeight).isActive = true
         scoreView.snp.makeConstraints { make in
             make.top.bottom.leading.equalToSuperview()
         }
@@ -64,14 +63,14 @@ class MapViewReviewProviderView: UIView {
                 let rating = provider.rating,
                 provider.totalReviewCount > 0 else {
             scoreView.alpha = disabledAlpha
-            scoreView.image = providerStarImageAccessor.image(forScore: 0)
+            scoreView.image = getStarsFromScore(0)
             reviewCountView.text = Strings.mapView.noInfo
             return
         }
 
         let reviewCount = provider.totalReviewCount
         scoreView.alpha = 1
-        scoreView.image = providerStarImageAccessor.image(forScore: rating)
+        scoreView.image = getStarsFromScore(rating)
         reviewCountView.text = String(format: Strings.mapView.numReviews, reviewCount, (reviewCount == 1) ? "" : "s")
     }
 }
