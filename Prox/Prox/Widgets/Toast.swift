@@ -12,6 +12,7 @@ class Toast {
     }
 
     func show() {
+        assert(Thread.isMainThread)
         guard let window = UIApplication.shared.windows.first else { return }
 
         let toast = UIView()
