@@ -79,7 +79,7 @@ class Place: Hashable {
             self.wikipediaProvider = wikipediaProvider
             self.googleProvider = googleProvider
             self.customProvider = customProvider
-            self.isEvent = !(customProvider?.description ?? "").isEmpty
+            self.isEvent = !String.isEmpty(customProvider?.description)
     }
 
     convenience init?(fromFirebaseSnapshot details: FIRDataSnapshot) {

@@ -13,6 +13,12 @@ private let cardProviderSpacing = 12
 
 private let cardCoverPhotoHeight = 72
 
+private let eventInsets = UIEdgeInsetsMake(10, 16, 10, 16)
+
+// HACK: The amount of spacing needed to keep the event card the same height
+// as the place card.
+private let eventBottomSpacing = 67
+
 class MapViewCardFooter: ExpandingCardView {
 
     private lazy var containerView: UIView = {
@@ -22,6 +28,8 @@ class MapViewCardFooter: ExpandingCardView {
             self.titleLabel,
             self.yelpProviderView,
             self.tripAdvisorProviderView,
+            self.eventContainer,
+            self.eventLabel,
             ] as [UIView] {
             container.addSubview(view)
         }
@@ -43,8 +51,24 @@ class MapViewCardFooter: ExpandingCardView {
         return view
     }()
 
+    private lazy var eventLabel: UILabel = {
+        let view = UILabel()
+        view.font = Fonts.mapViewFooterEvent
+        view.textColor = UIColor.white
+        return view
+    }()
+
+    private lazy var eventContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = Colors.detailsViewEventBackground
+        return view
+    }()
+
     fileprivate lazy var yelpProviderView = MapViewYelpReviewProviderView()
     fileprivate lazy var tripAdvisorProviderView = MapViewTripAdvisorReviewProviderView()
+
+    private var eventConstraints = [Constraint]()
+    private var placeConstraints = [Constraint]()
 
     init(bottomInset: CGFloat) {
         super.init()
@@ -54,12 +78,28 @@ class MapViewCardFooter: ExpandingCardView {
         coverPhotoView.snp.makeConstraints { make in
             make.height.equalTo(cardCoverPhotoHeight)
             make.top.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(titleLabel.snp.top).offset(-cardSpacing)
+        }
+
+        eventContainer.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.top.equalTo(coverPhotoView.snp.bottom)
+        }
+
+        eventLabel.snp.makeConstraints { make in
+            make.edges.equalTo(eventContainer).inset(eventInsets)
         }
 
         titleLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(cardHorizontalPadding)
-            make.bottom.equalTo(yelpProviderView.snp.top).offset(-cardSpacing)
+
+            eventConstraints += [
+                make.top.equalTo(eventContainer.snp.bottom).offset(cardSpacing).constraint,
+                make.bottom.equalToSuperview().constraint.update(offset: -eventBottomSpacing),
+            ]
+            placeConstraints += [
+                make.top.equalTo(coverPhotoView.snp.bottom).offset(cardSpacing).constraint,
+                make.bottom.equalTo(yelpProviderView.snp.top).offset(-cardSpacing).constraint,
+            ]
         }
 
         yelpProviderView.snp.makeConstraints { make in
@@ -71,6 +111,8 @@ class MapViewCardFooter: ExpandingCardView {
             make.leading.trailing.equalToSuperview().inset(cardHorizontalPadding)
             make.bottom.equalToSuperview().offset(-cardBottomPadding - bottomInset)
         }
+
+        eventConstraints.forEach { $0.deactivate() }
     }
 
     required init?(coder aDecoder: NSCoder) { fatalError("coder not implemented") }
@@ -93,5 +135,21 @@ class MapViewCardFooter: ExpandingCardView {
         for provider in [yelpProviderView, tripAdvisorProviderView] as [MapViewReviewProviderView] {
             provider.update(for: place)
         }
+
+        tripAdvisorProviderView.isHidden = place.isEvent
+        yelpProviderView.isHidden = place.isEvent
+        eventContainer.isHidden = !place.isEvent
+
+        if place.isEvent {
+            placeConstraints.forEach { $0.deactivate() }
+            eventConstraints.forEach { $0.activate() }
+        } else {
+            eventConstraints.forEach { $0.deactivate() }
+            placeConstraints.forEach { $0.activate() }
+        }
+        layoutIfNeeded()
+
+        guard let (day, time) = place.hours?.getEventTimeText(forToday: Date()) else { return }
+        eventLabel.text = String(format: Strings.mapView.eventHeader, day, time)
     }
 }
