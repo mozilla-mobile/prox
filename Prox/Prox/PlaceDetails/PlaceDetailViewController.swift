@@ -238,6 +238,7 @@ class PlaceDetailViewController: UIViewController {
     }
 
     private func initCardViewController(forPrevious place: Place) {
+        // Constraint duplication with insertNewCardViewController, updateCurrentCardConstraints & initCardViewController(forNext:).
         previousCardViewController = dequeuePlaceCardViewController(forPlace: place)
         previousCardViewController?.cardView.transform = scaleOutTransformLeft
         scrollView.addSubview(previousCardViewController!.cardView)
@@ -251,6 +252,7 @@ class PlaceDetailViewController: UIViewController {
     }
 
     private func initCardViewController(forNext place: Place) {
+        // Constraint duplication with insertNewCardViewController, updateCurrentCardConstraints & initCardViewController(forPrevious:).
         nextCardViewController = dequeuePlaceCardViewController(forPlace: place)
         nextCardViewController?.cardView.transform = scaleOutTransformRight
         scrollView.addSubview(nextCardViewController!.cardView)
@@ -264,6 +266,7 @@ class PlaceDetailViewController: UIViewController {
     }
 
     private func updateCurrentCardConstraints() {
+        // Constraint duplication with insertNewCardViewController & initCardViewController(*.
         filterShowConstraints = [ currentCardViewController.cardView.topAnchor.constraint(equalTo: view.bottomAnchor) ]
         filterHideConstraints = [ currentCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant) ]
     }
@@ -551,6 +554,7 @@ class PlaceDetailViewController: UIViewController {
         let newCardViewController = dequeuePlaceCardViewController(forPlace:newPlace)
         self.scrollView.addSubview(newCardViewController.cardView)
         self.addChildViewController(newCardViewController)
+        // Constraint duplication with updateCurrentCardConstraints & initCardViewController(*.
         NSLayoutConstraint.activate([newCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
                                      newCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth)], translatesAutoresizingMaskIntoConstraints: false)
         return newCardViewController
