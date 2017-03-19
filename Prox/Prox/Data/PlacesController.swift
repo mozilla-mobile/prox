@@ -50,6 +50,7 @@ class PlacesProvider {
 
     init() {}
 
+    // only accessible for tests.
     convenience init(places: [Place]) {
         self.init()
         self.displayedPlaces = places
