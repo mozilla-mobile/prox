@@ -163,8 +163,8 @@ class MapViewController: UIViewController {
         resetMapToUserLocation(shouldAnimate: false)
 
         // Keep the old places on the map if we don't have them (should never happen).
-        guard let places = placesProvider?.getDisplayedPlacesCopy() else { return }
-        displayedPlaces = places
+        guard let places = placesProvider?.getPlaces() else { return }
+        displayedPlaces = places.displayedPlaces
         mapView.clear()
         addToMap(places: displayedPlaces)
     }

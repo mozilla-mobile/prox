@@ -98,13 +98,14 @@ class PlacesProvider {
         PlaceUtilities.sort(places: placesUserWillSee, byTravelTimeFromLocation: location) { places in }
 
         return PlaceUtilities.sort(places: places, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
-            self.placesLock.withWriteLock {
+            let newDisplayedPlaces = self.placesLock.withWriteLock { () -> [Place] in
                 self.allPlaces = sortedPlaces
                 self.updateDisplayedPlaces()
+                return self.displayedPlaces
             }
 
             DispatchQueue.main.async {
-                self.delegate?.placesProvider(self, didUpdatePlaces: self.getDisplayedPlacesCopy())
+                self.delegate?.placesProvider(self, didUpdatePlaces: newDisplayedPlaces)
             }
         })
     }
@@ -165,32 +166,20 @@ class PlacesProvider {
     func refresh(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) {
         assert(Thread.isMainThread)
 
-        var displayedPlaces: [Place]!
-        placesLock.withWriteLock {
+        let newDisplayedPlaces = placesLock.withWriteLock { () -> [Place] in
             self.enabledFilters = enabledFilters
             self.topRatedOnly = topRatedOnly
             updateDisplayedPlaces()
-            displayedPlaces = self.displayedPlaces
+            return self.displayedPlaces
         }
 
-        delegate?.placesProvider(self, didUpdatePlaces: displayedPlaces)
+        delegate?.placesProvider(self, didUpdatePlaces: newDisplayedPlaces)
     }
 
-    /// Returns a copy of all the places. Callers should not be locked.
-    func getAllPlacesCopy() -> [Place] {
-        return getCopy(ofPlaces: allPlaces)
-    }
-
-    /// Returns a copy of the displayed places. Callers should not be locked.
-    func getDisplayedPlacesCopy() -> [Place] {
-        return getCopy(ofPlaces: displayedPlaces)
-    }
-
-    private func getCopy(ofPlaces places: [Place]) -> [Place] {
-        var placesCopy: [Place] = []
-        placesLock.withReadLock {
-            placesCopy = Array(places)
+    /// Gets all internal place representations, atomically.
+    func getPlaces() -> (allPlaces: [Place], displayedPlaces: [Place]) {
+        return placesLock.withReadLock {
+            return (allPlaces, displayedPlaces)
         }
-        return placesCopy
     }
 }
