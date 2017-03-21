@@ -50,6 +50,7 @@ class PlacesProvider {
 
     init() {}
 
+    // only accessible for tests.
     convenience init(places: [Place]) {
         self.init()
         self.displayedPlaces = places
@@ -72,25 +73,17 @@ class PlacesProvider {
         }
     }
 
-    func filterPlaces(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) -> [Place] {
-        return placesLock.withReadLock {
-            return filterPlacesLocked(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
-        }
-    }
-
-    /// Callers must acquire a read lock before calling this method!
-    /// TODO: Terrible name, terrible pattern. Fix this with #529.
-    private func filterPlacesLocked(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) -> [Place] {
-        let filteredPlaces = PlaceUtilities.filter(places: allPlaces, withFilters: enabledFilters)
-        guard topRatedOnly else { return filteredPlaces }
-        return PlaceUtilities.sortByTopRated(places: filteredPlaces)
-    }
-
-
     /// Applies the current set of filters to all places, setting `displayedPlaces` to the result.
     /// Callers must acquire a write lock before calling this method!
     fileprivate func updateDisplayedPlaces() {
-        displayedPlaces = filterPlacesLocked(enabledFilters: enabledFilters, topRatedOnly: topRatedOnly)
+        let filteredPlaces = PlaceUtilities.filter(places: allPlaces, withFilters: enabledFilters)
+        let sortedPlaces: [Place]
+        if topRatedOnly {
+            sortedPlaces = PlaceUtilities.sortByTopRated(places: filteredPlaces)
+        } else {
+            sortedPlaces = filteredPlaces // allPlaces is already sorted.
+        }
+        displayedPlaces = sortedPlaces
     }
 
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
@@ -105,17 +98,14 @@ class PlacesProvider {
         PlaceUtilities.sort(places: placesUserWillSee, byTravelTimeFromLocation: location) { places in }
 
         return PlaceUtilities.sort(places: places, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
-            self.placesLock.withWriteLock {
+            let newDisplayedPlaces = self.placesLock.withWriteLock { () -> [Place] in
                 self.allPlaces = sortedPlaces
                 self.updateDisplayedPlaces()
+                return self.displayedPlaces
             }
 
             DispatchQueue.main.async {
-                var displayedPlaces: [Place]!
-                self.placesLock.withReadLock {
-                    displayedPlaces = self.displayedPlaces
-                }
-                self.delegate?.placesProvider(self, didUpdatePlaces: displayedPlaces)
+                self.delegate?.placesProvider(self, didUpdatePlaces: newDisplayedPlaces)
             }
         })
     }
@@ -176,22 +166,20 @@ class PlacesProvider {
     func refresh(enabledFilters: Set<PlaceFilter>, topRatedOnly: Bool) {
         assert(Thread.isMainThread)
 
-        var displayedPlaces: [Place]!
-        placesLock.withWriteLock {
+        let newDisplayedPlaces = placesLock.withWriteLock { () -> [Place] in
             self.enabledFilters = enabledFilters
             self.topRatedOnly = topRatedOnly
             updateDisplayedPlaces()
-            displayedPlaces = self.displayedPlaces
+            return self.displayedPlaces
         }
 
-        delegate?.placesProvider(self, didUpdatePlaces: displayedPlaces)
+        delegate?.placesProvider(self, didUpdatePlaces: newDisplayedPlaces)
     }
 
-    func getDisplayedPlacesCopy() -> [Place] {
-        var placesCopy: [Place] = []
-        placesLock.withReadLock {
-            placesCopy = Array(self.displayedPlaces)
+    /// Gets all internal place representations, atomically.
+    func getPlaces() -> (allPlaces: [Place], displayedPlaces: [Place]) {
+        return placesLock.withReadLock {
+            return (allPlaces, displayedPlaces)
         }
-        return placesCopy
     }
 }
