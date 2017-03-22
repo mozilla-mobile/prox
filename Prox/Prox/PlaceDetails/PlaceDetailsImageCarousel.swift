@@ -37,7 +37,7 @@ class PlaceDetailsImageCarousel: UIView {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.isPagingEnabled = true
         collectionView.delaysContentTouches = false
-        collectionView.touchDetected = { self.stopAutoMovingOfCarousel() }
+        collectionView.touchDetected = { self.stopAutoMove() }
         return collectionView
     }()
 
@@ -90,23 +90,23 @@ class PlaceDetailsImageCarousel: UIView {
         }
     }
 
-    func beginAutoMovingOfCarousel() {
+    func beginAutoMove() {
         carouselTimer = Timer.scheduledTimer(timeInterval: 6, target: self,
-                                             selector: #selector(autoMoveToNextCarouselImage), userInfo: nil,
+                                             selector: #selector(autoMoveToNextImage), userInfo: nil,
                                              repeats: true)
     }
 
-    func stopAutoMovingOfCarousel() {
+    func stopAutoMove() {
         carouselTimer?.invalidate()
         carouselTimer = nil
     }
 
-    @objc private func autoMoveToNextCarouselImage() {
+    @objc private func autoMoveToNextImage() {
         collectionView.scrollToItem(at: IndexPath(item: getNextCarouselPageIndex(), section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
     }
 
-    func pageControlDidPage(sender: AnyObject) {
-        stopAutoMovingOfCarousel()
+    @objc private func pageControlDidPage(sender: AnyObject) {
+        stopAutoMove()
         collectionView.scrollToItem(at: IndexPath(item: getNextCarouselPageIndex(), section: 0), at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
     }
 
