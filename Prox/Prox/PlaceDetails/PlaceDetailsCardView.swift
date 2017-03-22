@@ -15,9 +15,16 @@ protocol PlaceDetailsCardDelegate: class {
 
 class PlaceDetailsCardView: ExpandingCardView {
 
-    private var place: Place
+    private(set) var place: Place
 
     weak var delegate: PlaceDetailsCardDelegate?
+
+    // HACK: The code was originally written assuming there is an image carousel per card view so I
+    // put the carousel in the card view instance. A better implementation would have one image carousel
+    // for the PlaceDetailViewController (or 2 so we can cross-fade between them when switching place
+    // cards). If we want to preserve the current behavior, this implementation would need to keep track of
+    // and restore which image the user was last looking at for this particular card.
+    let imageCarousel: PlaceDetailsImageCarousel
 
     private lazy var containingStackView: UIStackView = {
         let view = UIStackView(arrangedSubviews:[self.eventHeader,
@@ -183,6 +190,7 @@ class PlaceDetailsCardView: ExpandingCardView {
 
     init(place: Place, userLocation: CLLocation?) {
         self.place = place
+        self.imageCarousel = PlaceDetailsImageCarousel(place: place)
         super.init()
         setupViews()
         setupShadow()
@@ -226,6 +234,7 @@ class PlaceDetailsCardView: ExpandingCardView {
 
     func updateUI(forPlace place: Place, withUserLocation userLocation: CLLocation?) {
         self.place = place
+        imageCarousel.place = place
 
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name

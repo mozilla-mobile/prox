@@ -50,7 +50,6 @@
 		7B9DA1571DBE6EE300A68C82 /* PlaceCarouselViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA1561DBE6EE300A68C82 /* PlaceCarouselViewController.swift */; };
 		7B9DA15A1DBE6F7500A68C82 /* PlaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */; };
 		7BB1CA451DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */; };
-		7BB1CA471DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */; };
 		7BD5CC891DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7BD5CC8A1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
 		7BD5CC8B1DB0EB7400BCF50D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */; };
@@ -192,7 +191,6 @@
 		7B9DA1561DBE6EE300A68C82 /* PlaceCarouselViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceCarouselViewController.swift; path = PlaceCarousel/PlaceCarouselViewController.swift; sourceTree = "<group>"; };
 		7B9DA1591DBE6F7500A68C82 /* PlaceDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailViewController.swift; sourceTree = "<group>"; };
 		7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCarouselCollectionViewCell.swift; sourceTree = "<group>"; };
-		7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsCardViewController.swift; sourceTree = "<group>"; };
 		7BD5CC881DB0EB7400BCF50D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8756B7DC56277FB664DE7E83 /* Pods-ProxUITests.mocklocationdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxUITests.mocklocationdebug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxUITests/Pods-ProxUITests.mocklocationdebug.xcconfig"; sourceTree = "<group>"; };
 		94AD2B2289DA7E1A50B285BF /* Pods-ProxTests.mocklocationdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProxTests.mocklocationdebug.xcconfig"; path = "../Pods/Target Support Files/Pods-ProxTests/Pods-ProxTests.mocklocationdebug.xcconfig"; sourceTree = "<group>"; };
@@ -467,7 +465,6 @@
 				E6CBD96B1E82E223004EB9EB /* PlaceDetailsImageCarousel.swift */,
 				7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */,
 				E662FF491DC022940042C4A9 /* PlaceDetailsCardView.swift */,
-				7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */,
 				E662FF4D1DC1861C0042C4A9 /* PlaceDetailsDescriptionView.swift */,
 				E662FF4B1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift */,
 				E618319A1DE0C57700D1810F /* PlaceDetailsTravelTimesView.swift */,
@@ -915,7 +912,6 @@
 				7B1C657D1DDF28F00047559C /* TimeInterval.swift in Sources */,
 				D32F73EE1E4D07AE00D504A7 /* UIColor.swift in Sources */,
 				7B5095731DB5352E007C54F0 /* Fonts.swift in Sources */,
-				7BB1CA471DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift in Sources */,
 				D3C815681E4542E30066A97B /* PlaceProviders.swift in Sources */,
 				E62CE0C11E5786BE0083FA7B /* Prompts.swift in Sources */,
 				E68E56B41E73532D003F5C7D /* GFQuery.m in Sources */,
