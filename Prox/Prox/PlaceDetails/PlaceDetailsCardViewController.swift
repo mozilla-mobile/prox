@@ -13,18 +13,9 @@ protocol PlaceDetailsImageDelegate: class {
 
 class PlaceDetailsCardViewController: UIViewController {
 
-    var place: Place! {
-        didSet {
-            setPlace(place: place)
-        }
-    }
+    private(set) var place: Place!
 
     weak var placeImageDelegate: PlaceDetailsImageDelegate?
-    weak var locationProvider: LocationProvider? {
-        didSet {
-            self.setLocation(location: locationProvider?.getCurrentLocation())
-        }
-    }
 
     lazy var cardView: PlaceDetailsCardView = {
         let view = PlaceDetailsCardView()
@@ -96,11 +87,9 @@ class PlaceDetailsCardViewController: UIViewController {
 
     fileprivate var carouselTimer: Timer?
 
-    init(place: Place) {
-        self.place = place
+    init(place: Place, userLocation: CLLocation?) {
         super.init(nibName: nil, bundle: nil)
-
-        setPlace(place: place)
+        set(place: place, withUserLocation: userLocation)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -112,21 +101,13 @@ class PlaceDetailsCardViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    // TODO: set the view values in cardView to values in place
-    fileprivate func setPlace(place: Place?) {
-        guard let place = place else {
-            return
-        }
-        imageCarouselCollectionView.reloadData()
-        cardView.updateUI(forPlace: place)
+    func set(place: Place, withUserLocation userLocation: CLLocation?) {
+        self.place = place
 
-        setLocation(location: locationProvider?.getCurrentLocation())
+        imageCarouselCollectionView.reloadData()
+        cardView.updateUI(forPlace: place, withUserLocation: userLocation)
 
         pageControl.numberOfPages = place.photoURLs.count
-    }
-
-    private func setLocation(location: CLLocation?) {
-        PlaceUtilities.updateTravelTimeUI(fromPlace: place, toLocation: location, forView: cardView.travelTimeView)
     }
 
     private func getNextCarouselPageIndex() -> Int {

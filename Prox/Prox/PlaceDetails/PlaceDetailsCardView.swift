@@ -222,7 +222,7 @@ class PlaceDetailsCardView: ExpandingCardView {
         delegate?.placeDetailsCardView(cardView: self, heightDidChange: bounds.height)
     }
 
-    func updateUI(forPlace place: Place) {
+    func updateUI(forPlace place: Place, withUserLocation userLocation: CLLocation?) {
         displayedPlace = place
 
         // Labels will gracefully collapse on nil.
@@ -244,6 +244,8 @@ class PlaceDetailsCardView: ExpandingCardView {
             updateDescriptionViewUI(forText: viewDescription.description, onView: viewDescription.view, expanded: !didExpand)
             didExpand = didExpand || viewDescription.description != nil
         }
+
+        PlaceUtilities.updateTravelTimeUI(fromPlace: place, toLocation: userLocation, forView: travelTimeView)
 
         PlaceUtilities.updateReviewUI(fromProvider: place.yelpProvider, onView: yelpReviewView)
         PlaceUtilities.updateReviewUI(fromProvider: place.tripAdvisorProvider, onView: tripAdvisorReviewView)

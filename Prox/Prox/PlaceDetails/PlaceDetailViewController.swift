@@ -300,7 +300,8 @@ class PlaceDetailViewController: UIViewController {
 
         // The VCs in this class handle like a linked list so we can just update the prev, middle,
         // and next nodes, and the view will continue working as usual.
-        currentCardViewController.place = placeToOpen
+        let userLocation = locationProvider?.getCurrentLocation()
+        currentCardViewController.set(place: placeToOpen, withUserLocation: userLocation)
 
         let nextIndex = index + 1
         if nextIndex >= dataSource.numberOfPlaces() {
@@ -308,7 +309,7 @@ class PlaceDetailViewController: UIViewController {
             nextCardViewController = nil
         } else if let nextPlace = try? dataSource.place(forIndex: nextIndex) {
             if let nextVC = nextCardViewController {
-                nextVC.place = nextPlace
+                nextVC.set(place: nextPlace, withUserLocation: userLocation)
             } else {
                 initCardViewController(forNext: nextPlace)
             }
@@ -320,7 +321,7 @@ class PlaceDetailViewController: UIViewController {
             previousCardViewController = nil
         } else if let previousPlace = try? dataSource.place(forIndex: previousIndex) {
             if let prevVC = previousCardViewController {
-                prevVC.place = previousPlace
+                prevVC.set(place: previousPlace, withUserLocation: userLocation)
             } else {
                 initCardViewController(forPrevious: previousPlace)
             }
@@ -336,10 +337,9 @@ class PlaceDetailViewController: UIViewController {
     }
 
     fileprivate func dequeuePlaceCardViewController(forPlace place: Place) -> PlaceDetailsCardViewController {
-        let newController = PlaceDetailsCardViewController(place: place)
+        let newController = PlaceDetailsCardViewController(place: place, userLocation: locationProvider?.getCurrentLocation())
         newController.placeImageDelegate = self
         newController.cardView.delegate = self
-        newController.locationProvider = locationProvider
         newController.cardView.alpha = cardFadeOutAlpha
         return newController
     }
