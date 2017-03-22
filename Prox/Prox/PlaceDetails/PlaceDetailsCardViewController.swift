@@ -8,17 +8,13 @@ class PlaceDetailsCardViewController: UIViewController {
 
     private(set) var place: Place!
 
-    lazy var cardView: PlaceDetailsCardView = {
-        let view = PlaceDetailsCardView()
-        return view
-    }()
-
+    let cardView: PlaceDetailsCardView
     let imageCarousel: PlaceDetailsImageCarousel
 
     init(place: Place, userLocation: CLLocation?) {
         imageCarousel = PlaceDetailsImageCarousel(place: place)
+        cardView = PlaceDetailsCardView(place: place, userLocation: userLocation)
         super.init(nibName: nil, bundle: nil)
-        set(place: place, withUserLocation: userLocation)
     }
 
     required init?(coder aDecoder: NSCoder) {
