@@ -102,6 +102,7 @@
 		E6B3FFC01E72037D008B085C /* ProviderStarImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B3FFBF1E72037D008B085C /* ProviderStarImage.swift */; };
 		E6CBD9681E81F602004EB9EB /* SnapKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CBD9671E81F602004EB9EB /* SnapKit.swift */; };
 		E6CBD96A1E820679004EB9EB /* MapKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CBD9691E820679004EB9EB /* MapKit.swift */; };
+		E6CBD96C1E82E223004EB9EB /* PlaceDetailsImageCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CBD96B1E82E223004EB9EB /* PlaceDetailsImageCarousel.swift */; };
 		E6CF08DF1E57B6300083CAD8 /* GMSMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CF08DE1E57B6300083CAD8 /* GMSMarker.swift */; };
 		E6DE95101E738E8200321076 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DE950F1E738E8200321076 /* UIImage.swift */; };
 		E6F151471E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */; };
@@ -262,6 +263,7 @@
 		E6B3FFBF1E72037D008B085C /* ProviderStarImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProviderStarImage.swift; sourceTree = "<group>"; };
 		E6CBD9671E81F602004EB9EB /* SnapKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapKit.swift; path = Extensions/SnapKit.swift; sourceTree = "<group>"; };
 		E6CBD9691E820679004EB9EB /* MapKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapKit.swift; path = Extensions/MapKit.swift; sourceTree = "<group>"; };
+		E6CBD96B1E82E223004EB9EB /* PlaceDetailsImageCarousel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsImageCarousel.swift; sourceTree = "<group>"; };
 		E6CF08DE1E57B6300083CAD8 /* GMSMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GMSMarker.swift; path = "Extensions/Google Maps/GMSMarker.swift"; sourceTree = "<group>"; };
 		E6DE950F1E738E8200321076 /* UIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIImage.swift; path = Extensions/UIImage.swift; sourceTree = "<group>"; };
 		E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockLocationSelectionTableViewController.swift; sourceTree = "<group>"; };
@@ -462,6 +464,7 @@
 			isa = PBXGroup;
 			children = (
 				D32F73EB1E4CF31400D504A7 /* FilterViewController.swift */,
+				E6CBD96B1E82E223004EB9EB /* PlaceDetailsImageCarousel.swift */,
 				7BB1CA441DC39756004AEE56 /* ImageCarouselCollectionViewCell.swift */,
 				E662FF491DC022940042C4A9 /* PlaceDetailsCardView.swift */,
 				7BB1CA461DC39FB3004AEE56 /* PlaceDetailsCardViewController.swift */,
@@ -925,6 +928,7 @@
 				E662FF4A1DC022940042C4A9 /* PlaceDetailsCardView.swift in Sources */,
 				E6101A981DDA7B8500D05B74 /* CategoriesUtil.swift in Sources */,
 				E68E56B01E73532D003F5C7D /* GeoFire.m in Sources */,
+				E6CBD96C1E82E223004EB9EB /* PlaceDetailsImageCarousel.swift in Sources */,
 				D32F73F41E4D44B000D504A7 /* Strings.swift in Sources */,
 				E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */,
 				7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */,

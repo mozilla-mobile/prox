@@ -274,7 +274,7 @@ class PlaceDetailViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.currentCardViewController.beginAutoMovingOfCarousel()
+        self.currentCardViewController.imageCarousel.beginAutoMovingOfCarousel()
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -338,7 +338,7 @@ class PlaceDetailViewController: UIViewController {
 
     fileprivate func dequeuePlaceCardViewController(forPlace place: Place) -> PlaceDetailsCardViewController {
         let newController = PlaceDetailsCardViewController(place: place, userLocation: locationProvider?.getCurrentLocation())
-        newController.placeImageDelegate = self
+        newController.imageCarousel.delegate = self
         newController.cardView.delegate = self
         newController.cardView.alpha = cardFadeOutAlpha
         return newController
@@ -419,7 +419,7 @@ class PlaceDetailViewController: UIViewController {
             return
         }
 
-        self.currentCardViewController.stopAutoMovingOfCarousel()
+        self.currentCardViewController.imageCarousel.stopAutoMovingOfCarousel()
         
         // check to see if there is a next card to the next card
         // add a new view controller to next card view controller
@@ -468,7 +468,7 @@ class PlaceDetailViewController: UIViewController {
                 self.nextCardViewController = newNextCardViewController
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
 
-                self.currentCardViewController.beginAutoMovingOfCarousel()
+                self.currentCardViewController.imageCarousel.beginAutoMovingOfCarousel()
 
                 let cardPos = self.dataSource?.index(forPlace: self.currentCardViewController.place) ?? -1
                 AppState.trackCardVisit(cardPos: cardPos)
@@ -489,7 +489,7 @@ class PlaceDetailViewController: UIViewController {
             return
         }
 
-        self.currentCardViewController.stopAutoMovingOfCarousel()
+        self.currentCardViewController.imageCarousel.stopAutoMovingOfCarousel()
 
         // add the image carousel for the previous place card underneath the existing carousel
         // we need to ensure these constraints are applied and rendered before we animate the rest, otherwise we end
@@ -535,7 +535,7 @@ class PlaceDetailViewController: UIViewController {
                 self.previousCardViewController = newPreviousCardViewController
                 self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
 
-                self.currentCardViewController.beginAutoMovingOfCarousel()
+                self.currentCardViewController.imageCarousel.beginAutoMovingOfCarousel()
                 let cardPos = self.dataSource?.index(forPlace: self.currentCardViewController.place) ?? -1
                 AppState.trackCardVisit(cardPos: cardPos)
             }
