@@ -7,9 +7,12 @@ import SnapKit
 
 protocol PlaceDetailsCardDelegate: class {
     func placeDetailsCardView(cardView: PlaceDetailsCardView, heightDidChange newHeight: CGFloat)
+    func placeDetailsCardView(cardView: PlaceDetailsCardView, directionsRequestedTo: Place, by: MKDirectionsTransportType)
 }
 
 class PlaceDetailsCardView: ExpandingCardView {
+
+    private var displayedPlace: Place?
 
     weak var delegate: PlaceDetailsCardDelegate?
 
@@ -209,24 +212,6 @@ class PlaceDetailsCardView: ExpandingCardView {
         setupGestureRecognizers()
     }
 
-    private func setupGestureRecognizers() {
-        tripAdvisorDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
-        wikiDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
-        yelpDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
-        eventDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
-    }
-
-    @objc private func didTap(gestureRecognizer: UITapGestureRecognizer) {
-        guard gestureRecognizer.state == .ended,
-            let descriptionView = gestureRecognizer.view as? PlaceDetailsDescriptionView else {
-                return
-        }
-
-        descriptionView.didTap()
-        self.layoutIfNeeded()
-
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
         updateViewSize()
@@ -238,6 +223,8 @@ class PlaceDetailsCardView: ExpandingCardView {
     }
 
     func updateUI(forPlace place: Place) {
+        displayedPlace = place
+
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
         categoryLabel.text = PlaceUtilities.getString(forCategories: place.categories.names)
@@ -334,5 +321,72 @@ class PlaceDetailsCardView: ExpandingCardView {
         }
 
         return nil
+    }
+
+    // MARK: gesture recognizers
+    private func setupGestureRecognizers() {
+        tripAdvisorDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapDescriptionView(gestureRecognizer:))))
+        wikiDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapDescriptionView(gestureRecognizer:))))
+        yelpDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapDescriptionView(gestureRecognizer:))))
+        eventDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapDescriptionView(gestureRecognizer:))))
+
+        urlLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openPlaceURL(gestureRecognizer:))))
+
+        yelpReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openYelpReview(gestureRecognizer:))))
+        tripAdvisorReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTripAdvisorReview(gestureRecognizer:))))
+
+        travelTimeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openDirections(gestureRecgonizer:))))
+
+        wikiDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openWikipediaURL(gestureRecognizer:))))
+        tripAdvisorDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openReadMoreTripAdvisorLink(gestureRecgonizer:))))
+        yelpDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openReadMoreYelpLink(gestureRecognizer:))))
+    }
+
+    @objc private func didTapDescriptionView(gestureRecognizer: UITapGestureRecognizer) {
+        guard gestureRecognizer.state == .ended,
+            let descriptionView = gestureRecognizer.view as? PlaceDetailsDescriptionView else {
+                return
+        }
+
+        descriptionView.didTap()
+        self.layoutIfNeeded()
+    }
+
+    /// Convenience function for calling into `OpenInHelper.open(url:)`.
+    private func open(optURL url: URL?, analyticsStr: String, errStr: String) {
+        guard let url = url else { return }
+        OpenInHelper.open(url: url, analyticsStr: analyticsStr, errStr: errStr)
+    }
+
+    @objc private func openPlaceURL(gestureRecognizer: UITapGestureRecognizer) {
+        open(optURL: displayedPlace?.website, analyticsStr: AnalyticsEvent.WEBSITE, errStr: "unable to open web address")
+    }
+
+    @objc private func openYelpReview(gestureRecognizer: UITapGestureRecognizer) {
+        open(optURL: displayedPlace?.yelpProvider.url, analyticsStr: AnalyticsEvent.YELP, errStr: "unable to open yelp review")
+    }
+
+    @objc private func openReadMoreYelpLink(gestureRecognizer: UITapGestureRecognizer) {
+        open(optURL: displayedPlace?.yelpProvider.url, analyticsStr: AnalyticsEvent.YELP_READ, errStr: "unable to open yelp review")
+    }
+
+    @objc private func openTripAdvisorReview(gestureRecognizer: UITapGestureRecognizer) {
+        open(optURL: displayedPlace?.tripAdvisorProvider?.url, analyticsStr: AnalyticsEvent.TRIPADVISOR, errStr: "unable to open trip advisor review")
+    }
+
+    @objc private func openReadMoreTripAdvisorLink(gestureRecgonizer: UITapGestureRecognizer) {
+        open(optURL: displayedPlace?.tripAdvisorProvider?.url, analyticsStr: AnalyticsEvent.TRIPADVISOR_READ, errStr: "unable to open trip advisor review")
+    }
+
+    @objc private func openWikipediaURL(gestureRecognizer: UITapGestureRecognizer) {
+        open(optURL: displayedPlace?.wikipediaProvider?.url, analyticsStr: AnalyticsEvent.WIKIPEDIA_READ, errStr: "unable to open wikipedia review")
+    }
+
+    @objc private func openDirections(gestureRecgonizer: UITapGestureRecognizer) {
+        guard let place = displayedPlace,
+            let transportString = travelTimeView.secondaryTextLabel.text else { return }
+        let transportType = transportString == "Walking" ? MKDirectionsTransportType.walking : MKDirectionsTransportType.automobile // TODO: fragile - change to enum.
+
+        delegate?.placeDetailsCardView(cardView: self, directionsRequestedTo: place, by: transportType)
     }
 }

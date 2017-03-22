@@ -673,6 +673,11 @@ extension PlaceDetailViewController: PlaceDetailsCardDelegate {
             scrollView.isScrollEnabled = false
         }
     }
+
+    func placeDetailsCardView(cardView: PlaceDetailsCardView, directionsRequestedTo place: Place, by transportType: MKDirectionsTransportType) {
+        guard let coord = locationProvider?.getCurrentLocation()?.coordinate else { return }
+        OpenInHelper.openRoute(fromLocation: coord, toPlace: place, by: transportType, analyticsStr: AnalyticsEvent.DIRECTIONS, errStr: "unable to open travel directions")
+    }
 }
 extension PlaceDetailViewController: UIGestureRecognizerDelegate {
 

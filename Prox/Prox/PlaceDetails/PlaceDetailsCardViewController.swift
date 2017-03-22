@@ -121,89 +121,12 @@ class PlaceDetailsCardViewController: UIViewController {
         cardView.updateUI(forPlace: place)
 
         setLocation(location: locationProvider?.getCurrentLocation())
-        setupCardInteractions()
 
         pageControl.numberOfPages = place.photoURLs.count
     }
 
     private func setLocation(location: CLLocation?) {
         PlaceUtilities.updateTravelTimeUI(fromPlace: place, toLocation: location, forView: cardView.travelTimeView)
-    }
-
-    private func setupCardInteractions() {
-        cardView.urlLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openPlaceURL(gestureRecognizer:))))
-        cardView.yelpReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openYelpReview(gestureRecognizer:))))
-        cardView.tripAdvisorReviewView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTripAdvisorReview(gestureRecognizer:))))
-        cardView.travelTimeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openDirections(gestureRecgonizer:))))
-        cardView.wikiDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openWikipediaURL(gestureRecognizer:))))
-        cardView.tripAdvisorDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openReadMoreTripAdvisorLink(gestureRecgonizer:))))
-        cardView.yelpDescriptionView.readMoreLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openReadMoreYelpLink(gestureRecognizer:))))
-    }
-
-    @objc private func openPlaceURL(gestureRecognizer: UITapGestureRecognizer) {
-        guard let url = place.website else { return }
-        if !OpenInHelper.open(url: url) {
-            log.error("unable to open web address")
-        } else {
-            Analytics.logEvent(event: AnalyticsEvent.WEBSITE, params: [:])
-        }
-    }
-
-    @objc private func openYelpReview(gestureRecognizer: UITapGestureRecognizer) {
-        guard let url = place.yelpProvider.url else { return }
-        if !OpenInHelper.open(url: url) {
-            log.error("unable to open yelp review")
-        } else {
-            Analytics.logEvent(event: AnalyticsEvent.YELP, params: [:])
-        }
-    }
-
-    @objc private func openReadMoreYelpLink(gestureRecognizer: UITapGestureRecognizer) {
-        guard let url = place.yelpProvider.url else { return }
-        if !OpenInHelper.open(url: url) {
-            log.error("unable to open yelp review")
-        } else {
-            Analytics.logEvent(event: AnalyticsEvent.YELP_READ, params: [:])
-        }
-    }
-
-    @objc private func openTripAdvisorReview(gestureRecognizer: UITapGestureRecognizer) {
-        guard let url = place.tripAdvisorProvider?.url else { return }
-        if !OpenInHelper.open(url: url) {
-            log.error("unable to open trip advisor review")
-        } else {
-            Analytics.logEvent(event: AnalyticsEvent.TRIPADVISOR, params: [:])
-        }
-    }
-
-    @objc private func openReadMoreTripAdvisorLink(gestureRecgonizer: UITapGestureRecognizer) {
-        guard let url = place.tripAdvisorProvider?.url else { return }
-        if !OpenInHelper.open(url: url) {
-            log.error("unable to open trip advisor review")
-        } else {
-            Analytics.logEvent(event: AnalyticsEvent.TRIPADVISOR_READ, params: [:])
-        }
-    }
-
-    @objc private func openDirections(gestureRecgonizer: UITapGestureRecognizer) {
-        guard let location = locationProvider?.getCurrentLocation(),
-            let transportString = cardView.travelTimeView.secondaryTextLabel.text else { return }
-        let transportType = transportString == "Walking" ? MKDirectionsTransportType.walking : MKDirectionsTransportType.automobile
-
-        if !OpenInHelper.openRoute(fromLocation: location.coordinate, toPlace: place, by: transportType) {
-            log.error("unable to open travel directions")
-        } else {
-            Analytics.logEvent(event: AnalyticsEvent.DIRECTIONS, params: [AnalyticsEvent.PARAM_ACTION: transportString])
-        }
-    }
-
-    @objc private func openWikipediaURL(gestureRecognizer: UITapGestureRecognizer) {
-        guard let url = place.wikipediaProvider?.url else { return }
-        if !OpenInHelper.open(url: url) {
-            log.error("unable to open wikipedia review")
-        } else {
-            Analytics.logEvent(event: AnalyticsEvent.WIKIPEDIA_READ, params: [:])
-        }
     }
 
     private func getNextCarouselPageIndex() -> Int {

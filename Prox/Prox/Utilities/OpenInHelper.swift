@@ -21,7 +21,18 @@ struct OpenInHelper {
     static let tripAdvisorAppURLSchemeString: String = "tripadvisor://"
     static let wikipediaAppURLSchemeString: String = "wikipedia://"
 
-    static func open(url: URL) -> Bool {
+    @discardableResult static func open(url: URL, analyticsStr: String, errStr: String) -> Bool {
+        let didOpen = openInner(url: url)
+        if didOpen {
+            Analytics.logEvent(event: analyticsStr, params: [:])
+        } else {
+            log.error(errStr)
+        }
+
+        return didOpen
+    }
+
+    private static func openInner(url: URL) -> Bool {
         guard let host = url.host,
             let hostname = extractHostname(fromHost: host),
             let scheme = Scheme(rawValue: hostname),
@@ -69,7 +80,16 @@ struct OpenInHelper {
 
     //MARK: Open route in maps
 
-    static func openRoute(fromLocation: CLLocationCoordinate2D, toPlace place: Place, by transportType: MKDirectionsTransportType) -> Bool {
+    static func openRoute(fromLocation: CLLocationCoordinate2D, toPlace place: Place, by transportType: MKDirectionsTransportType, analyticsStr: String, errStr: String) {
+        let didOpen = openRouteInner(fromLocation: fromLocation, toPlace: place, by: transportType)
+        if didOpen {
+            Analytics.logEvent(event: analyticsStr, params: [AnalyticsEvent.PARAM_ACTION: transportType.name])
+        } else {
+            log.error(errStr)
+        }
+    }
+
+    private static func openRouteInner(fromLocation: CLLocationCoordinate2D, toPlace place: Place, by transportType: MKDirectionsTransportType) -> Bool {
         // try and open in Google Maps app
         if let schemeURL = URL(string: gmapsAppSchemeString),
             UIApplication.shared.canOpenURL(schemeURL),
