@@ -5,6 +5,9 @@
 import Foundation
 import SnapKit
 
+private let margin: CGFloat = 24
+private let bottomMargin: CGFloat = 20
+
 protocol PlaceDetailsCardDelegate: class {
     func placeDetailsCardView(cardView: PlaceDetailsCardView, heightDidChange newHeight: CGFloat)
     func placeDetailsCardView(cardView: PlaceDetailsCardView, directionsRequestedTo: Place, by: MKDirectionsTransportType)
@@ -16,10 +19,7 @@ class PlaceDetailsCardView: ExpandingCardView {
 
     weak var delegate: PlaceDetailsCardDelegate?
 
-    let margin: CGFloat = 24
-    let CardMarginBottom: CGFloat = 20 // TODO: name
-
-    lazy var containingStackView: UIStackView = {
+    private lazy var containingStackView: UIStackView = {
         let view = UIStackView(arrangedSubviews:[self.eventHeader,
                                                  self.labelContainer,
                                                  self.iconInfoViewContainer,
@@ -30,18 +30,18 @@ class PlaceDetailsCardView: ExpandingCardView {
                                                  self.yelpDescriptionView
             ])
         view.axis = .vertical
-        view.spacing = self.margin
+        view.spacing = margin
 
-        view.layoutMargins = UIEdgeInsets(top: self.margin, left: 0,
-                                          bottom: self.CardMarginBottom, right: 0)
+        view.layoutMargins = UIEdgeInsets(top: margin, left: 0,
+                                          bottom: bottomMargin, right: 0)
         view.isLayoutMarginsRelativeArrangement = true
         return view
     }()
 
-    func setContainingStackViewMargins(isTopMarginPresent: Bool) {
+    private func setContainingStackViewMargins(isTopMarginPresent: Bool) {
         // Margins initialized in lazy init.
-        containingStackView.layoutMargins = UIEdgeInsets(top: isTopMarginPresent ? self.margin : 0, left: 0,
-                                                         bottom: self.CardMarginBottom, right: 0)
+        containingStackView.layoutMargins = UIEdgeInsets(top: isTopMarginPresent ? margin : 0, left: 0,
+                                                         bottom: bottomMargin, right: 0)
     }
 
     private let eventHeader: PlaceDetailsEventHeader = {
@@ -53,19 +53,19 @@ class PlaceDetailsCardView: ExpandingCardView {
     // MARK: Outer views.
     // TODO: accessibility labels (and parent view)
     // TODO: set line height on all text. http://stackoverflow.com/a/5513730
-    lazy var labelContainer: UIStackView = {
+    private lazy var labelContainer: UIStackView = {
         let view = UIStackView(arrangedSubviews: [self.titleLabel,
                                                   self.categoryLabel,
                                                   self.urlLabel])
         view.axis = .vertical
         view.spacing = 4
 
-        view.layoutMargins = UIEdgeInsets(top: 0, left: self.margin, bottom: 0, right: self.margin)
+        view.layoutMargins = UIEdgeInsets(top: 0, left: margin, bottom: 0, right: margin)
         view.isLayoutMarginsRelativeArrangement = true
         return view
     }()
 
-    lazy var iconInfoViewContainer: UIStackView = {
+    private lazy var iconInfoViewContainer: UIStackView = {
         let view = UIStackView(arrangedSubviews: [self.travelTimeView,
                                                   self.hoursView])
         view.axis = .horizontal
@@ -78,10 +78,10 @@ class PlaceDetailsCardView: ExpandingCardView {
 
     // Ideally we also use a UIStackView but the review dots stretched too
     // far across the screen and it was faster to do it this way.
-    lazy var reviewViewContainer: UIStackView = {
+    private lazy var reviewViewContainer: UIStackView = {
         let reviewStackView = UIStackView(arrangedSubviews: [self.yelpReviewView,
                                           self.tripAdvisorReviewView])
-        reviewStackView.layoutMargins = UIEdgeInsets(top: 0, left: self.margin, bottom: 0, right: self.margin)
+        reviewStackView.layoutMargins = UIEdgeInsets(top: 0, left: margin, bottom: 0, right: margin)
         reviewStackView.spacing = 25
         reviewStackView.axis = .horizontal
         reviewStackView.isLayoutMarginsRelativeArrangement = true
@@ -90,7 +90,7 @@ class PlaceDetailsCardView: ExpandingCardView {
     }()
 
     // MARK: Inner views
-    lazy var titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.textColor = Colors.detailsViewCardPrimaryText
         view.font = Fonts.detailsViewTitleText
@@ -99,14 +99,14 @@ class PlaceDetailsCardView: ExpandingCardView {
         return view
     }()
 
-    lazy var categoryLabel: UILabel = {
+    private lazy var categoryLabel: UILabel = {
         let view = UILabel()
         view.textColor = Colors.detailsViewCardPrimaryText
         view.font = Fonts.detailsViewCategoryText
         return view
     }()
 
-    lazy var urlLabel: UILabel = {
+    private lazy var urlLabel: UILabel = {
         let view = UILabel()
         view.textColor = Colors.detailsViewCardLinkText
         view.font = Fonts.detailsViewCategoryText
@@ -114,29 +114,29 @@ class PlaceDetailsCardView: ExpandingCardView {
         return view
     }()
 
-    lazy var travelTimeView = PlaceDetailsTravelTimesView()
+    private lazy var travelTimeView = PlaceDetailsTravelTimesView()
 
-    lazy var hoursView: PlaceDetailsIconInfoView = {
+    private lazy var hoursView: PlaceDetailsIconInfoView = {
         let view = PlaceDetailsIconInfoView(enableForwardArrow: false)
         view.iconView.image = UIImage(named: "icon_times")
         return view
     }()
 
 
-    lazy var yelpReviewView: ReviewContainerView = {
+    private lazy var yelpReviewView: ReviewContainerView = {
         let view = ReviewContainerView(getStarsFromScore: ProviderStarImage.yelp(forScore:))
         view.reviewSiteLogo.image = UIImage(named: "logo_yelp")
         return view
     }()
 
-    lazy var tripAdvisorReviewView: ReviewContainerView = {
+    private lazy var tripAdvisorReviewView: ReviewContainerView = {
         let view = ReviewContainerView(getStarsFromScore: ProviderStarImage.tripAdvisor(forScore:))
         view.reviewSiteLogo.image = UIImage(named: "logo_ta")
         view.isUserInteractionEnabled = true
         return view
     }()
 
-    lazy var tripAdvisorDescriptionView: PlaceDetailsDescriptionView = {
+    private lazy var tripAdvisorDescriptionView: PlaceDetailsDescriptionView = {
         let view = PlaceDetailsDescriptionView(labelText: "Highlights from TripAdvisor",
                                                icon: UIImage(named: "logo_TA_small"),
                                                type: DetailType.tripadvisor,
@@ -148,7 +148,7 @@ class PlaceDetailsCardView: ExpandingCardView {
         return view
     }()
 
-    lazy var wikiDescriptionView: PlaceDetailsDescriptionView = {
+    private lazy var wikiDescriptionView: PlaceDetailsDescriptionView = {
         let view = PlaceDetailsDescriptionView(labelText: "The top line from Wikipedia",
                                         icon: UIImage(named: "logo_wikipedia"),
                                         type: DetailType.wikipedia,
@@ -160,7 +160,7 @@ class PlaceDetailsCardView: ExpandingCardView {
         return view
     }()
 
-    lazy var yelpDescriptionView: PlaceDetailsDescriptionView = {
+    private lazy var yelpDescriptionView: PlaceDetailsDescriptionView = {
         let view = PlaceDetailsDescriptionView(labelText: "The latest from Yelp",
                                                                icon: UIImage(named: "logo_yelp_small"),
                                                                type: DetailType.yelp,
@@ -171,7 +171,7 @@ class PlaceDetailsCardView: ExpandingCardView {
         return view
     } ()
 
-    lazy var eventDescriptionView: PlaceDetailsDescriptionView = {
+    private lazy var eventDescriptionView: PlaceDetailsDescriptionView = {
         let view = PlaceDetailsDescriptionView(labelText: "Event details",
                                                icon: nil,
                                                type: DetailType.event,
