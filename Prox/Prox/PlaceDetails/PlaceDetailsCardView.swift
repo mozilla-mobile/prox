@@ -15,7 +15,7 @@ protocol PlaceDetailsCardDelegate: class {
 
 class PlaceDetailsCardView: ExpandingCardView {
 
-    private var displayedPlace: Place?
+    private var place: Place?
 
     weak var delegate: PlaceDetailsCardDelegate?
 
@@ -223,7 +223,7 @@ class PlaceDetailsCardView: ExpandingCardView {
     }
 
     func updateUI(forPlace place: Place, withUserLocation userLocation: CLLocation?) {
-        displayedPlace = place
+        self.place = place
 
         // Labels will gracefully collapse on nil.
         titleLabel.text = place.name
@@ -361,31 +361,31 @@ class PlaceDetailsCardView: ExpandingCardView {
     }
 
     @objc private func openPlaceURL(gestureRecognizer: UITapGestureRecognizer) {
-        open(optURL: displayedPlace?.website, analyticsStr: AnalyticsEvent.WEBSITE, errStr: "unable to open web address")
+        open(optURL: place?.website, analyticsStr: AnalyticsEvent.WEBSITE, errStr: "unable to open web address")
     }
 
     @objc private func openYelpReview(gestureRecognizer: UITapGestureRecognizer) {
-        open(optURL: displayedPlace?.yelpProvider.url, analyticsStr: AnalyticsEvent.YELP, errStr: "unable to open yelp review")
+        open(optURL: place?.yelpProvider.url, analyticsStr: AnalyticsEvent.YELP, errStr: "unable to open yelp review")
     }
 
     @objc private func openReadMoreYelpLink(gestureRecognizer: UITapGestureRecognizer) {
-        open(optURL: displayedPlace?.yelpProvider.url, analyticsStr: AnalyticsEvent.YELP_READ, errStr: "unable to open yelp review")
+        open(optURL: place?.yelpProvider.url, analyticsStr: AnalyticsEvent.YELP_READ, errStr: "unable to open yelp review")
     }
 
     @objc private func openTripAdvisorReview(gestureRecognizer: UITapGestureRecognizer) {
-        open(optURL: displayedPlace?.tripAdvisorProvider?.url, analyticsStr: AnalyticsEvent.TRIPADVISOR, errStr: "unable to open trip advisor review")
+        open(optURL: place?.tripAdvisorProvider?.url, analyticsStr: AnalyticsEvent.TRIPADVISOR, errStr: "unable to open trip advisor review")
     }
 
     @objc private func openReadMoreTripAdvisorLink(gestureRecgonizer: UITapGestureRecognizer) {
-        open(optURL: displayedPlace?.tripAdvisorProvider?.url, analyticsStr: AnalyticsEvent.TRIPADVISOR_READ, errStr: "unable to open trip advisor review")
+        open(optURL: place?.tripAdvisorProvider?.url, analyticsStr: AnalyticsEvent.TRIPADVISOR_READ, errStr: "unable to open trip advisor review")
     }
 
     @objc private func openWikipediaURL(gestureRecognizer: UITapGestureRecognizer) {
-        open(optURL: displayedPlace?.wikipediaProvider?.url, analyticsStr: AnalyticsEvent.WIKIPEDIA_READ, errStr: "unable to open wikipedia review")
+        open(optURL: place?.wikipediaProvider?.url, analyticsStr: AnalyticsEvent.WIKIPEDIA_READ, errStr: "unable to open wikipedia review")
     }
 
     @objc private func openDirections(gestureRecgonizer: UITapGestureRecognizer) {
-        guard let place = displayedPlace,
+        guard let place = place,
             let transportString = travelTimeView.secondaryTextLabel.text else { return }
         let transportType = transportString == "Walking" ? MKDirectionsTransportType.walking : MKDirectionsTransportType.automobile // TODO: fragile - change to enum.
 
