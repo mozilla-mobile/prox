@@ -30,12 +30,7 @@ fileprivate let scaleOutTransformRight = CGAffineTransform.identity.translatedBy
 class PlaceDetailViewController: UIViewController {
 
     weak var dataSource: PlacesProvider?
-
-    weak var locationProvider: LocationProvider? {
-        didSet {
-            self.currentCardViewController.locationProvider = locationProvider
-        }
-    }
+    weak var locationProvider: LocationProvider!
 
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -118,7 +113,8 @@ class PlaceDetailViewController: UIViewController {
 
     fileprivate var panDirection: PanDirection = .none
 
-    init(place: Place) {
+    init(place: Place, locationProvider: LocationProvider) {
+        self.locationProvider = locationProvider
         super.init(nibName: nil, bundle: nil)
 
         AppState.enterDetails()

@@ -60,9 +60,8 @@ class PlaceCarouselViewController: UIViewController {
             return
         }
 
-        let placeDetailViewController = PlaceDetailViewController(place: place)
+        let placeDetailViewController = PlaceDetailViewController(place: place, locationProvider: self.locationMonitor)
         placeDetailViewController.dataSource = placesProvider
-        placeDetailViewController.locationProvider = self.locationMonitor
         placeDetailViewController.transitioningDelegate = self
 
         self.present(placeDetailViewController, animated: true, completion: completion)
