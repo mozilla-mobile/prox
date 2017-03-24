@@ -238,6 +238,7 @@ class PlaceDetailViewController: UIViewController {
     }
 
     private func initCardViewController(forPrevious place: Place) {
+        // Constraint duplication with insertNewCardViewController, updateCurrentCardConstraints & initCardViewController(forNext:).
         previousCardViewController = dequeuePlaceCardViewController(forPlace: place)
         previousCardViewController?.cardView.transform = scaleOutTransformLeft
         scrollView.addSubview(previousCardViewController!.cardView)
@@ -251,6 +252,7 @@ class PlaceDetailViewController: UIViewController {
     }
 
     private func initCardViewController(forNext place: Place) {
+        // Constraint duplication with insertNewCardViewController, updateCurrentCardConstraints & initCardViewController(forPrevious:).
         nextCardViewController = dequeuePlaceCardViewController(forPlace: place)
         nextCardViewController?.cardView.transform = scaleOutTransformRight
         scrollView.addSubview(nextCardViewController!.cardView)
@@ -264,6 +266,7 @@ class PlaceDetailViewController: UIViewController {
     }
 
     private func updateCurrentCardConstraints() {
+        // Constraint duplication with insertNewCardViewController & initCardViewController(*.
         filterShowConstraints = [ currentCardViewController.cardView.topAnchor.constraint(equalTo: view.bottomAnchor) ]
         filterHideConstraints = [ currentCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant) ]
     }
@@ -334,64 +337,6 @@ class PlaceDetailViewController: UIViewController {
         controller.cardView.removeFromSuperview()
         controller.cardView.isHidden = false
         controller.removeFromParentViewController()
-    }
-
-    fileprivate func pageForwardToCard(forPlace place: Place) {
-        guard let newCurrentViewController = insertNewCardViewController(forPlace: place) else { return }
-
-        // check to see if there is a next card to the next card
-        // add a new view controller to next card view controller
-        // if so, remove currentCardViewController centerX constraint
-        // add center x constraint to nextCardViewController
-        
-        let nextCardImageCarousel = addImageCarousel(forNextCard: newCurrentViewController)
-
-        previousCardViewController?.cardView.isHidden = true
-
-        let newNextCardViewController = insertNewCardViewController(forPlace: dataSource?.nextPlace(forPlace: place))
-
-        let newPreviousCardViewController = insertNewCardViewController(forPlace: dataSource?.previousPlace(forPlace: place))
-
-        let springDamping:CGFloat = newNextCardViewController == nil ? 0.8 : 1.0
-        setupConstraints(forNewPreviousCard: newPreviousCardViewController, newCurrentCard: newCurrentViewController, newNextCard: newNextCardViewController)
-
-        view.layoutIfNeeded()
-
-        // setup constraints for new central card
-        if let currentCardViewCenterXConstraint = currentCardViewCenterXConstraint {
-            NSLayoutConstraint.deactivate([currentCardViewCenterXConstraint])
-        }
-
-        self.currentCardViewCenterXConstraint = newCurrentViewController.cardView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
-        NSLayoutConstraint.activate([self.currentCardViewCenterXConstraint!])
-
-        // animate the constraint changes
-        UIView.animate(withDuration: 0.1, delay: 0.0, usingSpringWithDamping: springDamping, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
-            self.imageCarousel.alpha = 0
-            nextCardImageCarousel.alpha = 1
-            newCurrentViewController.cardView.alpha = 1
-            self.currentCardViewController.cardView.alpha = cardFadeOutAlpha
-            newPreviousCardViewController?.cardView.alpha = cardFadeOutAlpha
-            newNextCardViewController?.cardView.alpha = cardFadeOutAlpha
-            self.setBackgroundImage(toPhotoAtURL: newCurrentViewController.place.photoURLs.first)
-            self.view.layoutIfNeeded()
-        }, completion: { finished in
-            if finished {
-                // ensure that the correct current, previous and next view controller references are set
-                self.imageCarousel.removeFromSuperview()
-                self.imageCarousel = nextCardImageCarousel
-                self.currentCardViewController.cardView.removeGestureRecognizer(self.panGestureRecognizer)
-                for controller in [self.previousCardViewController, self.currentCardViewController, self.nextCardViewController] {
-                    self.removeCardViewController(controller)
-                }
-
-                self.previousCardViewController = newPreviousCardViewController
-                self.currentCardViewController = newCurrentViewController
-                self.nextCardViewController = newNextCardViewController
-                self.placeDetailsCardView(cardView: self.currentCardViewController.cardView, heightDidChange: self.currentCardViewController.cardView.frame.height)
-                self.currentCardViewController.beginAutoMovingOfCarousel()
-            }
-        })
     }
 
     fileprivate func dequeuePlaceCardViewController(forPlace place: Place) -> PlaceDetailsCardViewController {
@@ -609,6 +554,7 @@ class PlaceDetailViewController: UIViewController {
         let newCardViewController = dequeuePlaceCardViewController(forPlace:newPlace)
         self.scrollView.addSubview(newCardViewController.cardView)
         self.addChildViewController(newCardViewController)
+        // Constraint duplication with updateCurrentCardConstraints & initCardViewController(*.
         NSLayoutConstraint.activate([newCardViewController.cardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: cardViewTopAnchorConstant),
                                      newCardViewController.cardView.widthAnchor.constraint(equalToConstant: cardViewWidth)], translatesAutoresizingMaskIntoConstraints: false)
         return newCardViewController

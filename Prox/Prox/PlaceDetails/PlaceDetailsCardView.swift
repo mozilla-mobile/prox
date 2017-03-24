@@ -3,23 +3,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
+import SnapKit
 
 protocol PlaceDetailsCardDelegate: class {
     func placeDetailsCardView(cardView: PlaceDetailsCardView, heightDidChange newHeight: CGFloat)
 }
 
-class PlaceDetailsCardView: UIView {
+class PlaceDetailsCardView: ExpandingCardView {
 
     weak var delegate: PlaceDetailsCardDelegate?
 
     let margin: CGFloat = 24
     let CardMarginBottom: CGFloat = 20 // TODO: name
-
-    // Contains the content: the outer view is used to display a shadow.
-    // This is necessary because the eventView drew its background color over the round corners.
-    // I tried a solution that added also rounded the top corners to the eventView, but there was a
-    // visual artifact where the card's white background shown through the corners.
-    lazy var contentView = UIView()
 
     lazy var containingStackView: UIStackView = {
         let view = UIStackView(arrangedSubviews:[self.eventHeader,
@@ -181,10 +176,10 @@ class PlaceDetailsCardView: UIView {
         return view
     } ()
 
-    private var collapsedReviewConstraints = [NSLayoutConstraint]()
+    private var collapsedReviewConstraints: [Constraint]!
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init() {
+        super.init()
         setupViews()
         setupShadow()
     }
@@ -194,41 +189,25 @@ class PlaceDetailsCardView: UIView {
     }
 
     private func setupShadow() {
-        layer.masksToBounds = false
         layer.shadowOffset = Style.cardViewShadowOffset
         layer.shadowRadius = Style.cardViewShadowRadius
         layer.shadowOpacity = Style.cardViewShadowOpacity
     }
 
     private func setupViews() {
-        backgroundColor = Colors.detailsViewCardBackground // cannot be transparent to display shadow
-        contentView.backgroundColor = Colors.detailsViewCardBackground
+        backgroundColor = Colors.detailsViewCardBackground
+        contentView = containingStackView
 
-        layer.cornerRadius = Style.cardViewCornerRadius
-        contentView.layer.cornerRadius = Style.cardViewCornerRadius
-        contentView.layer.masksToBounds = true
+        containingStackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
-        addSubview(contentView)
-        var constraints = [contentView.topAnchor.constraint(equalTo: topAnchor),
-                           contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                           contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                           contentView.bottomAnchor.constraint(equalTo: bottomAnchor)]
-
-        // Note: The constraints of subviews broke when I used leading/trailing, rather than
-        // centerX & width. The parent constraints are set with centerX & width - related?
-        contentView.addSubview(containingStackView)
-        constraints += [containingStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                        containingStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                        containingStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-                        containingStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)]
-
-        NSLayoutConstraint.activate(constraints, translatesAutoresizingMaskIntoConstraints: false)
-
-        collapsedReviewConstraints = [ reviewViewContainer.heightAnchor.constraint(equalToConstant: 0) ]
+        collapsedReviewConstraints = reviewViewContainer.snp.prepareConstraints { make in
+            make.height.equalTo(0)
+        }
 
         setupGestureRecognizers()
     }
-
 
     private func setupGestureRecognizers() {
         tripAdvisorDescriptionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap(gestureRecognizer:))))
@@ -284,7 +263,7 @@ class PlaceDetailsCardView: UIView {
 
         let collapsed = (place.totalReviewCount == 0)
         reviewViewContainer.isHidden = collapsed
-        collapsedReviewConstraints.forEach { $0.isActive = collapsed }
+        collapsedReviewConstraints.setAllActive(collapsed)
     }
 
     private func updateEventUI(forPlace place: Place) {

@@ -11,6 +11,7 @@ import UIKit
 // - TODOs in file
 // - Option to animate layout changes?
 // - Verify access control
+// - Warn if contentView not set (crash? log?)
 // - Break out into library (test using elsewhere, samples, readme w/ public methods;
 //   show how we can use constraint(equalTo:) and constraint(lessThanOrEqualTo:)
 

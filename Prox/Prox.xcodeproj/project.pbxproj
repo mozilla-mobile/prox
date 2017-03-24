@@ -100,6 +100,7 @@
 		E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */; };
 		E6B3FFBE1E6F7ED7008B085C /* PlaceDetailsEventHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B3FFBD1E6F7ED7008B085C /* PlaceDetailsEventHeader.swift */; };
 		E6B3FFC01E72037D008B085C /* ProviderStarImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B3FFBF1E72037D008B085C /* ProviderStarImage.swift */; };
+		E6CBD9681E81F602004EB9EB /* SnapKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CBD9671E81F602004EB9EB /* SnapKit.swift */; };
 		E6CF08DF1E57B6300083CAD8 /* GMSMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CF08DE1E57B6300083CAD8 /* GMSMarker.swift */; };
 		E6DE95101E738E8200321076 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DE950F1E738E8200321076 /* UIImage.swift */; };
 		E6F151471E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */; };
@@ -258,6 +259,7 @@
 		E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossFadeTransition.swift; sourceTree = "<group>"; };
 		E6B3FFBD1E6F7ED7008B085C /* PlaceDetailsEventHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailsEventHeader.swift; sourceTree = "<group>"; };
 		E6B3FFBF1E72037D008B085C /* ProviderStarImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProviderStarImage.swift; sourceTree = "<group>"; };
+		E6CBD9671E81F602004EB9EB /* SnapKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapKit.swift; path = Extensions/SnapKit.swift; sourceTree = "<group>"; };
 		E6CF08DE1E57B6300083CAD8 /* GMSMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GMSMarker.swift; path = "Extensions/Google Maps/GMSMarker.swift"; sourceTree = "<group>"; };
 		E6DE950F1E738E8200321076 /* UIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIImage.swift; path = Extensions/UIImage.swift; sourceTree = "<group>"; };
 		E6F151461E25B73C001BDA6A /* MockLocationSelectionTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockLocationSelectionTableViewController.swift; sourceTree = "<group>"; };
@@ -538,6 +540,7 @@
 				E6CF08DD1E57B61C0083CAD8 /* Google Maps */,
 				D3F6981F1E70D35200464641 /* Future.swift */,
 				7B5095741DB62590007C54F0 /* NSLayoutConstraint.swift */,
+				E6CBD9671E81F602004EB9EB /* SnapKit.swift */,
 				23739F5B1E70B74C00C6323B /* String.swift */,
 				7B1C657C1DDF28F00047559C /* TimeInterval.swift */,
 				D32F73ED1E4D07AE00D504A7 /* UIColor.swift */,
@@ -929,6 +932,7 @@
 				E6B3FFC01E72037D008B085C /* ProviderStarImage.swift in Sources */,
 				7B50956B1DB53382007C54F0 /* ReviewContainerView.swift in Sources */,
 				E628DEB31E5E4FFE00404FE3 /* Style.swift in Sources */,
+				E6CBD9681E81F602004EB9EB /* SnapKit.swift in Sources */,
 				E628DEBB1E5E525000404FE3 /* ObservableScrollView.swift in Sources */,
 				E68E56B91E7353CA003F5C7D /* UIImageExtensions.swift in Sources */,
 				E628DEBA1E5E525000404FE3 /* ExpandingCardView.swift in Sources */,
