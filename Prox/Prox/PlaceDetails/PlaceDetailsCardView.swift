@@ -4,6 +4,7 @@
 
 import Foundation
 import SnapKit
+import ScrollingCardView
 
 private let margin: CGFloat = 24
 private let bottomMargin: CGFloat = 20
@@ -13,7 +14,7 @@ protocol PlaceDetailsCardDelegate: class {
     func placeDetailsCardView(cardView: PlaceDetailsCardView, directionsRequestedTo: Place, by: MKDirectionsTransportType)
 }
 
-class PlaceDetailsCardView: ExpandingCardView {
+class PlaceDetailsCardView: ScrollingCardView {
 
     private(set) var place: Place
 
@@ -209,6 +210,7 @@ class PlaceDetailsCardView: ExpandingCardView {
 
     private func setupViews() {
         backgroundColor = Colors.detailsViewCardBackground
+        cornerRadius = Style.cardViewCornerRadius
         contentView = containingStackView
 
         containingStackView.snp.makeConstraints { make in

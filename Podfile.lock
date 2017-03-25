@@ -67,6 +67,7 @@ PODS:
   - GoogleToolboxForMac/NSString+URLArguments (2.1.1)
   - GTMSessionFetcher/Core (1.1.9)
   - Protobuf (3.2.0)
+  - ScrollingCardView (0.1.0)
   - SnapKit (3.2.0)
 
 DEPENDENCIES:
@@ -80,6 +81,7 @@ DEPENDENCIES:
   - Flurry-iOS-SDK (~> 7.10)
   - FXPageControl (= 1.4)
   - GoogleMaps (~> 2.2)
+  - ScrollingCardView (~> 0.1)
   - SnapKit (~> 3.2.0)
 
 SPEC CHECKSUMS:
@@ -99,8 +101,9 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 8e329f1b599f2512c6b10676d45736bcc2cbbeb0
   GTMSessionFetcher: 5c046c76a1f859bc9c187e918f18e4fc7bb57b5e
   Protobuf: 745f59e122e5de98d4d7ef291e264a0eef80f58e
+  ScrollingCardView: 5c99c548c143375a90247b43d5f4a0b8849f10ba
   SnapKit: 1ca44df72cfa543218d177cb8aab029d10d86ea7
 
-PODFILE CHECKSUM: 1bc30d0f0f65b895859fea1bbe21d6c4db352868
+PODFILE CHECKSUM: 04c13ad47d168a5e64a9559becbbba7ad4d3994e
 
 COCOAPODS: 1.2.0
