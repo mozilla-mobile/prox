@@ -30,7 +30,7 @@ fileprivate let scaleOutTransformRight = CGAffineTransform.identity.translatedBy
 class PlaceDetailViewController: UIViewController {
 
     weak var dataSource: PlacesProvider?
-    weak var locationProvider: LocationProvider!
+    let locationProvider: LocationProvider
 
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -299,7 +299,7 @@ class PlaceDetailViewController: UIViewController {
 
         // The VCs in this class handle like a linked list so we can just update the prev, middle,
         // and next nodes, and the view will continue working as usual.
-        let userLocation = locationProvider?.getCurrentLocation()
+        let userLocation = locationProvider.getCurrentLocation()
         currentCardView.updateUI(forPlace: placeToOpen, withUserLocation: userLocation)
 
         let nextIndex = index + 1
@@ -335,7 +335,7 @@ class PlaceDetailViewController: UIViewController {
     }
 
     fileprivate func dequeuePlaceCardView(forPlace place: Place) -> PlaceDetailsCardView {
-        let newView = PlaceDetailsCardView(place: place, userLocation: locationProvider?.getCurrentLocation())
+        let newView = PlaceDetailsCardView(place: place, userLocation: locationProvider.getCurrentLocation())
         newView.imageCarousel.delegate = self
         newView.delegate = self
         newView.alpha = cardFadeOutAlpha
@@ -668,7 +668,7 @@ extension PlaceDetailViewController: PlaceDetailsCardDelegate {
     }
 
     func placeDetailsCardView(cardView: PlaceDetailsCardView, directionsRequestedTo place: Place, by transportType: MKDirectionsTransportType) {
-        guard let coord = locationProvider?.getCurrentLocation()?.coordinate else { return }
+        guard let coord = locationProvider.getCurrentLocation()?.coordinate else { return }
         OpenInHelper.openRoute(fromLocation: coord, toPlace: place, by: transportType, analyticsStr: AnalyticsEvent.DIRECTIONS, errStr: "unable to open travel directions")
     }
 }
