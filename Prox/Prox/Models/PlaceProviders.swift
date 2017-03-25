@@ -110,7 +110,7 @@ class CompositePlaceProvider: PlaceProvider {
     private(set) var website: URL?
     private(set) var address: String?
     private(set) var hours: OpenHours?
-    private(set) var rating: Float? = nil
+    private(set) var rating: Float?
     private(set) var totalReviewCount: Int = 0
 
     init(fromProviders providers: [PlaceProvider]) {
