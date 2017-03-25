@@ -5,6 +5,7 @@ use_frameworks!
 
 target 'Prox' do
 	pod 'AFNetworking', '~> 3.0'
+	pod 'Alamofire', '~> 4.4'
 	pod 'BNRDeferred', '~> 3.0'
 	pod 'Firebase/Core', '~> 3.15'
 	pod 'Firebase/Database', '~> 3.15'

@@ -14,6 +14,7 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
+  - Alamofire (4.4.0)
   - BNRDeferred (3.0.0)
   - BuddyBuildSDK (1.0.14)
   - Firebase/Auth (3.15.0):
@@ -71,6 +72,7 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
+  - Alamofire (~> 4.4)
   - BNRDeferred (~> 3.0)
   - BuddyBuildSDK (~> 1.0)
   - Firebase/Auth (~> 3.15)
@@ -84,6 +86,7 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
   BNRDeferred: 0757b256613622d3f3db21bd126ba63031ca3deb
   BuddyBuildSDK: 2b2d35a61ad7fd3645beb2d48bc5123efd869918
   Firebase: 2b1cdfba1cda8589f32904a697cc753322bff9d8
@@ -101,6 +104,6 @@ SPEC CHECKSUMS:
   Protobuf: 745f59e122e5de98d4d7ef291e264a0eef80f58e
   SnapKit: 1ca44df72cfa543218d177cb8aab029d10d86ea7
 
-PODFILE CHECKSUM: 1bc30d0f0f65b895859fea1bbe21d6c4db352868
+PODFILE CHECKSUM: 953cef2c769632890017ecf4bd81f3a17efe9daa
 
 COCOAPODS: 1.2.0
