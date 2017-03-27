@@ -96,6 +96,8 @@
 		E68E56B91E7353CA003F5C7D /* UIImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68E56B81E7353CA003F5C7D /* UIImageExtensions.swift */; };
 		E68E8C2B1E89B62800EEF870 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68E8C2A1E89B62800EEF870 /* APIKeys.swift */; };
 		E68E8C311E89B6E400EEF870 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68E8C301E89B6E400EEF870 /* Dictionary.swift */; };
+		E68E8C351E89B71F00EEF870 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68E8C341E89B71F00EEF870 /* Event.swift */; };
+		E68E8C371E89BD4000EEF870 /* Eventbrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68E8C361E89BD4000EEF870 /* Eventbrite.swift */; };
 		E69D69851E6E236500E6F6CA /* MapViewSearchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D69841E6E236500E6F6CA /* MapViewSearchButton.swift */; };
 		E69D69871E6E27DE00E6F6CA /* CLLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D69861E6E27DE00E6F6CA /* CLLocation.swift */; };
 		E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */; };
@@ -258,6 +260,8 @@
 		E68E56B81E7353CA003F5C7D /* UIImageExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIImageExtensions.swift; path = "ThirdParty/firefox-ios/UIImageExtensions.swift"; sourceTree = "<group>"; };
 		E68E8C2A1E89B62800EEF870 /* APIKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
 		E68E8C301E89B6E400EEF870 /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Dictionary.swift; path = Extensions/Dictionary.swift; sourceTree = "<group>"; };
+		E68E8C341E89B71F00EEF870 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		E68E8C361E89BD4000EEF870 /* Eventbrite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Eventbrite.swift; sourceTree = "<group>"; };
 		E69D69841E6E236500E6F6CA /* MapViewSearchButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewSearchButton.swift; sourceTree = "<group>"; };
 		E69D69861E6E27DE00E6F6CA /* CLLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLLocation.swift; path = Extensions/CLLocation.swift; sourceTree = "<group>"; };
 		E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossFadeTransition.swift; sourceTree = "<group>"; };
@@ -405,6 +409,7 @@
 			isa = PBXGroup;
 			children = (
 				2380CA901DE4140A002D73F1 /* AppState.swift */,
+				E68E8C341E89B71F00EEF870 /* Event.swift */,
 				7B48EBD91DD1F679005C36CB /* GeofenceRegion.swift */,
 				7B5095641DB531CA007C54F0 /* Place.swift */,
 				D3C815671E4542E30066A97B /* PlaceProviders.swift */,
@@ -439,6 +444,7 @@
 				7B9DA14A1DBE332E00A68C82 /* AppConstants.swift */,
 				E6101A971DDA7B8500D05B74 /* CategoriesUtil.swift */,
 				7B5095701DB5352E007C54F0 /* Colors.swift */,
+				E68E8C361E89BD4000EEF870 /* Eventbrite.swift */,
 				738289665759F7DA1EC836B9 /* FirebaseBranches.swift */,
 				7B5095711DB5352E007C54F0 /* Fonts.swift */,
 				7B0ECE471DD6145500ABBD72 /* LocationMonitor.swift */,
@@ -955,6 +961,7 @@
 				D3656D981E4A7D0F00040448 /* Logger.swift in Sources */,
 				7B9DA1571DBE6EE300A68C82 /* PlaceCarouselViewController.swift in Sources */,
 				7B5095751DB62590007C54F0 /* NSLayoutConstraint.swift in Sources */,
+				E68E8C351E89B71F00EEF870 /* Event.swift in Sources */,
 				2380CA911DE4140A002D73F1 /* AppState.swift in Sources */,
 				E67146361DB54896007A99E4 /* CLLocationManager.swift in Sources */,
 				E6DE95101E738E8200321076 /* UIImage.swift in Sources */,
@@ -978,6 +985,7 @@
 				7B29E7C31DA3EC360099AF38 /* AppDelegate.swift in Sources */,
 				E662FF4C1DC030170042C4A9 /* PlaceDetailsIconInfoView.swift in Sources */,
 				D32F73EC1E4CF31400D504A7 /* FilterViewController.swift in Sources */,
+				E68E8C371E89BD4000EEF870 /* Eventbrite.swift in Sources */,
 				E6B3FFBE1E6F7ED7008B085C /* PlaceDetailsEventHeader.swift in Sources */,
 				7B9DA1551DBE6ED300A68C82 /* PlacesDatabase.swift in Sources */,
 				7B5095651DB531CA007C54F0 /* Place.swift in Sources */,
