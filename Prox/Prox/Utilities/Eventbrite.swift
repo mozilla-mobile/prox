@@ -30,7 +30,11 @@ struct Eventbrite {
             "location.longitude": String(location.longitude),
             "location.within": "\(radiusKm)km",
             "start_date.keyword": "this_week", // TODO: choose date range. as arg?
-            "expand": "logo,venue,format,category", // todo: choose. can slows down requests.
+
+            // The specified "Expansions" will let us download additional models;
+            // by default, we just receive the ID. More info:
+            //   https://www.eventbrite.com/developer/v3/api_overview/expansions/
+            "expand": "logo,venue,format,category", // todo: choose which ones we want; each one can slow down the request.
         ].filterToDict { (_, v) in v != nil } as! [String: String] // non-optional Value needed for request.
 
         let deferred = Deferred<DatabaseResult<[Event]>>()
