@@ -95,6 +95,7 @@
 		E68E56B71E735341003F5C7D /* OpenInFirefoxControllerSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68E56B61E735341003F5C7D /* OpenInFirefoxControllerSwift.swift */; };
 		E68E56B91E7353CA003F5C7D /* UIImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68E56B81E7353CA003F5C7D /* UIImageExtensions.swift */; };
 		E68E8C2B1E89B62800EEF870 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68E8C2A1E89B62800EEF870 /* APIKeys.swift */; };
+		E68E8C311E89B6E400EEF870 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68E8C301E89B6E400EEF870 /* Dictionary.swift */; };
 		E69D69851E6E236500E6F6CA /* MapViewSearchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D69841E6E236500E6F6CA /* MapViewSearchButton.swift */; };
 		E69D69871E6E27DE00E6F6CA /* CLLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D69861E6E27DE00E6F6CA /* CLLocation.swift */; };
 		E69E6C121DEF6679007FCE86 /* CrossFadeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */; };
@@ -256,6 +257,7 @@
 		E68E56B61E735341003F5C7D /* OpenInFirefoxControllerSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OpenInFirefoxControllerSwift.swift; path = "ThirdParty/firefox-ios/OpenInFirefoxControllerSwift.swift"; sourceTree = "<group>"; };
 		E68E56B81E7353CA003F5C7D /* UIImageExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIImageExtensions.swift; path = "ThirdParty/firefox-ios/UIImageExtensions.swift"; sourceTree = "<group>"; };
 		E68E8C2A1E89B62800EEF870 /* APIKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
+		E68E8C301E89B6E400EEF870 /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Dictionary.swift; path = Extensions/Dictionary.swift; sourceTree = "<group>"; };
 		E69D69841E6E236500E6F6CA /* MapViewSearchButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewSearchButton.swift; sourceTree = "<group>"; };
 		E69D69861E6E27DE00E6F6CA /* CLLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLLocation.swift; path = Extensions/CLLocation.swift; sourceTree = "<group>"; };
 		E69E6C111DEF6679007FCE86 /* CrossFadeTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossFadeTransition.swift; sourceTree = "<group>"; };
@@ -542,6 +544,7 @@
 			children = (
 				E69D69861E6E27DE00E6F6CA /* CLLocation.swift */,
 				E67146351DB54896007A99E4 /* CLLocationManager.swift */,
+				E68E8C301E89B6E400EEF870 /* Dictionary.swift */,
 				E6CF08DD1E57B61C0083CAD8 /* Google Maps */,
 				D3F6981F1E70D35200464641 /* Future.swift */,
 				E6CBD9691E820679004EB9EB /* MapKit.swift */,
@@ -929,6 +932,7 @@
 				E68E56B01E73532D003F5C7D /* GeoFire.m in Sources */,
 				E6CBD96C1E82E223004EB9EB /* PlaceDetailsImageCarousel.swift in Sources */,
 				D32F73F41E4D44B000D504A7 /* Strings.swift in Sources */,
+				E68E8C311E89B6E400EEF870 /* Dictionary.swift in Sources */,
 				E61831991DE0BDBA00D1810F /* TravelTimesView.swift in Sources */,
 				7B9DA1541DBE6ED300A68C82 /* FirebasePlacesDatabase.swift in Sources */,
 				E60A42711DF28E01008BE74D /* URL.swift in Sources */,
