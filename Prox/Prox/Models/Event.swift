@@ -4,11 +4,10 @@
 
 import Foundation
 
-private let idPrefix = "proxevent-"
-
 /// An event. Properties are modelled after an Eventbrite Event:
 ///   https://www.eventbrite.com/developer/v3/response_formats/event/#ebapi-std:format-event
 /// This is likely to change when we add events from other providers.
+
 struct Event {
 
     let name: String
@@ -60,7 +59,7 @@ struct Event {
     private static var idCount = 0
     private static func getID() -> String {
         idCount += 1
-        return idPrefix + String(idCount)
+        return AppConstants.testPrefixEvent + String(idCount)
     }
 }
 

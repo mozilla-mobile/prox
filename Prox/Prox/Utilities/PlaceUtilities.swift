@@ -89,7 +89,9 @@ struct PlaceUtilities {
 
             let filter: PlaceFilter
             if place.id.hasPrefix(AppConstants.testPrefixDiscover) {
-                filter = .discover
+                filter = .services
+            } else if place.id.hasPrefix(AppConstants.testPrefixEvent) {
+                filter = .localevents
             } else {
                 guard let firstFilter = place.categories.ids.flatMap({ CategoriesUtil.categoryToFilter[$0] }).first else { return false }
                 filter = firstFilter

@@ -14,6 +14,7 @@ public struct AppConstants {
 
     public static let isRunningTest = NSClassFromString("XCTestCase") != nil
     public static let testPrefixDiscover = "proxdiscover-"
+    public static let testPrefixEvent = "proxevent-"
 
     #if DEBUG
     public static let backgroundFetchInterval: TimeInterval = 1 * 60
