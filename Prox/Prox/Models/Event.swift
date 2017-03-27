@@ -23,4 +23,22 @@ struct Event {
     // is_free (can we get
     // is_online
     // capacity.
+
+     // TODO: get real data.
+    func toPlace() -> Place {
+        return Place(id: Event.getID(),
+                     name: name,
+                     latLong: CLLocationCoordinate2D(latitude: 41.877312, longitude: -87.625575),
+                     categories: ([], []),
+                     photoURLs: [URL(string: "http://www.m-magazine.co.uk/wp-content/uploads/2016/08/Eventbrite-logo-2016.jpg")!],
+                     url: url,
+                     yelpProvider: SinglePlaceProvider(fromDictionary: [:]))
+    }
+
+    // TODO: use name & date.
+    private static var idCount = 0
+    private static func getID() -> String {
+        idCount += 1
+        return idPrefix + String(idCount)
+    }
 }

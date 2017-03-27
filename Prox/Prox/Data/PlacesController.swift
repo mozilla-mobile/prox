@@ -66,10 +66,20 @@ class PlacesProvider {
     }
 
     func updatePlaces(forLocation location: CLLocation) {
-        // Fetch a stable list of places from firebase.
-        database.getPlaces(forLocation: location, withRadius: radius).upon { results in
-            let places = results.flatMap { $0.successResult() }
-            self.displayPlaces(places: places, forLocation: location)
+        let places = database.getPlaces(forLocation: location, withRadius: radius)
+        let events = Eventbrite.searchEvents(near: location.coordinate) // TODO: timeout?
+        places.and(events).upon { placesResult, eventsResult in
+            let places = placesResult.flatMap { $0.successResult() }
+            let placesToDisplay: [Place]
+            if let events = eventsResult.successResult() {
+                // HACK: for now, it's easier to make the events into fake places than
+                // figure out an extensible way to merge the two.
+                placesToDisplay = places + events.flatMap { $0.toPlace() }
+            } else {
+                // TODO: handle error for missing places?
+                placesToDisplay = places
+            }
+            self.displayPlaces(places: placesToDisplay, forLocation: location)
         }
     }
 
