@@ -6,6 +6,7 @@ import Foundation
 
 enum PlaceFilter: Int {
     case discover
+    case localevents
     case eatAndDrink
     case shop
     case services
@@ -73,6 +74,9 @@ enum PlaceFilter: Int {
             // Events & Services
             "boatcharters",
             "silentdisco",
+        ],
+
+        PlaceFilter.localevents: [
         ],
 
         PlaceFilter.eatAndDrink: [

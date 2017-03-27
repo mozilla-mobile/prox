@@ -14,6 +14,7 @@ struct Strings {
 
     struct filterView {
         static let discover = "Discover"
+        static let events = "Local events"
         static let eatAndDrink = "Eat & Drink"
         static let shop = "Shop"
         static let services = "Services"

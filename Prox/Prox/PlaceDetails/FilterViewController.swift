@@ -27,6 +27,7 @@ class FilterViewController: UIViewController {
 
     private let filterLabels: [(PlaceFilter, String)] = [
         (.discover, Strings.filterView.discover),
+        (.localevents, Strings.filterView.events),
         (.eatAndDrink, Strings.filterView.eatAndDrink),
         (.shop, Strings.filterView.shop),
     ]
