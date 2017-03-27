@@ -133,13 +133,6 @@ struct CategoriesUtil {
         // Build the initial map of categories -> filters that we set explicitly.
         for (var filter, categories) in PlaceFilter.categories {
             for category in categories {
-                // Remap Discover -> Services for now. We're hand-curating Discover places, so
-                // the previously-categorized Discover places are no longer relevant. We use
-                // Services as a general uncategorized dumping ground since Services won't be
-                // included in the UI.
-                if filter == .discover {
-                    filter = .services
-                }
                 categoryToFilter[category] = filter
             }
         }
