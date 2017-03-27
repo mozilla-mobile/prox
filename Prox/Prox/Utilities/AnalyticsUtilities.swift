@@ -8,18 +8,8 @@ import Flurry_iOS_SDK
 class Analytics {
 
     static func startAppSession() {
-        guard let apiPlistPath = Bundle.main.path(forResource: AppConstants.APIKEYS_PATH, ofType: "plist") else {
-            fatalError("Unable to load API keys plist. Did you include the API keys plist file?")
-        }
-
-        let keysDict = NSDictionary(contentsOfFile: apiPlistPath) as! [String: String]
-        guard let flurryKey = keysDict["FLURRY"] else {
-            print("No Flurry key! Not collecting analytics.")
-            return
-        }
-
         let builder = FlurrySessionBuilder().withSessionContinueSeconds(30)
-        Flurry.startSession(flurryKey, with: builder)
+        Flurry.startSession(APIKey.FLURRY.get(), with: builder)
     }
 
     static func logEvent(event: String, params: [String: Any]) {
