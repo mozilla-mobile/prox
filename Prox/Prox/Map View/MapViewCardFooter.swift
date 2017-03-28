@@ -4,6 +4,7 @@
 
 import UIKit
 import SnapKit
+import ScrollingCardView
 
 private let cardHorizontalPadding = 16
 private let cardBottomPadding: CGFloat = 24
@@ -19,7 +20,7 @@ private let eventInsets = UIEdgeInsetsMake(10, 16, 10, 16)
 // as the place card.
 private let eventBottomSpacing = 67
 
-class MapViewCardFooter: ExpandingCardView {
+class MapViewCardFooter: ScrollingCardView {
 
     private lazy var containerView: UIView = {
         let container = UIView()

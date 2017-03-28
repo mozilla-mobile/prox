@@ -15,6 +15,7 @@ target 'Prox' do
 	pod 'FXPageControl', '1.4'
 	pod 'GoogleMaps', '~> 2.2'
 	pod 'SnapKit', '~> 3.2.0'
+	pod 'ScrollingCardView', '~> 0.1'
 end
 
 target 'ProxTests' do
