@@ -80,7 +80,9 @@ enum EventbriteSortType: String {
 
 extension Event {
 
-    init?(fromEventbriteJSON json: [String: Any]) {
+    /// Create an event from text in the Eventbrite Event format:
+    ///   https://www.eventbrite.com/developer/v3/response_formats/event/#ebapi-std:format-event
+    fileprivate init?(fromEventbriteJSON json: [String: Any]) {
         guard let name = text(fromMultipartText: json["name"]),
             let venue = json["venue"] as? [String: Any],
             let address = venue["address"] as? [String: Any],
