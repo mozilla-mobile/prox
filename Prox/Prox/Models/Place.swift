@@ -260,7 +260,7 @@ struct OpenHours {
 
     private static let calendar = Calendar(identifier: .gregorian)
     private static let dateComponentsSet: Set<Calendar.Component> = [Calendar.Component.day, Calendar.Component.month, Calendar.Component.year]
-    private static let timeComponentsSet: Set<Calendar.Component> = [Calendar.Component.hour, Calendar.Component.minute]
+    static let timeComponentsSet: Set<Calendar.Component> = [Calendar.Component.hour, Calendar.Component.minute]
 
     /* Notes:
      *   - An entry for DayOfWeek is missing if a location is not open that day.

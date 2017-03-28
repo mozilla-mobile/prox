@@ -87,7 +87,12 @@ extension Event {
             let venue = json["venue"] as? [String: Any],
             let address = venue["address"] as? [String: Any],
             let latitude = CLLocationDegrees(address["latitude"] as? String ?? ""),
-            let longitude = CLLocationDegrees(address["longitude"] as? String ?? "") else { return nil }
+            let longitude = CLLocationDegrees(address["longitude"] as? String ?? ""),
+
+            let startDateObj = json["start"] as? [String: String],
+            let startDate = localDate(fromDatetimeTZ: startDateObj),
+            let endDateObj = json["end"] as? [String: String],
+            let endDate = localDate(fromDatetimeTZ: endDateObj) else { return nil }
 
         let categoryObj = json["category"] as? [String: Any]
         let subcategoryObj = json["subcategory"] as? [String: Any]
@@ -103,8 +108,11 @@ extension Event {
             url: URL(string: json["url"] as? String ?? ""),
 
             category: categoryObj?["short_name"] as? String,
-            subcategory: subcategoryObj?["name"] as? String, // there is no short_name.
+            subcategory: subcategoryObj?["name"] as? String, // there is no short_name. TODO: haven't been not nil yet
             format: formatObj?["short_name"] as? String,
+
+            start: startDate,
+            end: endDate,
 
             location: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
             photoURLs: [fullsizeLogoURL],
@@ -125,4 +133,21 @@ extension Event {
 private func text(fromMultipartText input: Any?) -> String? {
     let multipartText = input as? [String: String]
     return multipartText?["text"]
+}
+
+// ISO8601 via http://stackoverflow.com/a/28016614
+private let localDateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.timeZone = TimeZone(secondsFromGMT: 0)
+
+    // ISO8601 has multiple formats for timezone - this happens to be the one that works for local eventbrite.
+    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+    return formatter
+}()
+
+/// Extracts a local Date obj from Eventbrite's datetime-tz data type:
+///   https://www.eventbrite.com/developer/v3/response_formats/basic/#ebapi-std:format-datetime-tz
+private func localDate(fromDatetimeTZ json: [String: String]) -> Date? {
+    return localDateFormatter.date(from: json["local"] ?? "")
 }
