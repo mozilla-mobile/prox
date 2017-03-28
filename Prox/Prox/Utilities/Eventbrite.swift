@@ -7,6 +7,7 @@ import Alamofire
 import Deferred
 
 private let defaultRadiusKm = 2
+private let defaultLogo = URL(string: "http://www.m-magazine.co.uk/wp-content/uploads/2016/08/Eventbrite-logo-2016.jpg")!
 
 private let baseURL = "https://www.eventbriteapi.com/v3/"
 private let eventSearchURL = baseURL + "events/search/"
@@ -80,11 +81,39 @@ enum EventbriteSortType: String {
 extension Event {
 
     init?(fromEventbriteJSON json: [String: Any]) {
-        guard let name = text(fromMultipartText: json["name"]) else { return nil }
+        guard let name = text(fromMultipartText: json["name"]),
+            let venue = json["venue"] as? [String: Any],
+            let address = venue["address"] as? [String: Any],
+            let latitude = CLLocationDegrees(address["latitude"] as? String ?? ""),
+            let longitude = CLLocationDegrees(address["longitude"] as? String ?? "") else { return nil }
+
+        let categoryObj = json["category"] as? [String: Any]
+        let subcategoryObj = json["subcategory"] as? [String: Any]
+        let formatObj = json["format"] as? [String: Any]
+
+        let logo = json["logo"] as? [String: Any]
+        let fullsizeLogo = logo?["original"] as? [String: Any]
+        let fullsizeLogoURL = URL(string: fullsizeLogo?["url"] as? String ?? "") ?? defaultLogo
+
         self.init(
             name: name,
             description: text(fromMultipartText: json["description"]),
-            url: URL(string: json["url"] as? String ?? "")
+            url: URL(string: json["url"] as? String ?? ""),
+
+            category: categoryObj?["short_name"] as? String,
+            subcategory: subcategoryObj?["name"] as? String, // there is no short_name.
+            format: formatObj?["short_name"] as? String,
+
+            location: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+            photoURLs: [fullsizeLogoURL],
+
+            venueName: venue["name"] as? String,
+            isOnline: json["online_event"] as? Bool,
+            isFree: json["is_free"] as? Bool,
+            capacity: json["capacity"] as? Int,
+
+            isSeries: json["is_series"] as? Bool,
+            isSeriesParent: json["is_series_parent"] as? Bool
         )
     }
 }

@@ -6,33 +6,51 @@ import Foundation
 
 private let idPrefix = "proxevent-"
 
+/// An event. Properties are modelled after an Eventbrite Event:
+///   https://www.eventbrite.com/developer/v3/response_formats/event/#ebapi-std:format-event
+/// This is likely to change when we add events from other providers.
 struct Event {
 
     let name: String
-    //    let logo: UIImage?
     let description: String?
     let url: URL?
-    //    let start: Date?
-    //    let end: Date?
 
-    // TODO: other things we might care about.
-    // category_id, format_id, subcategory_id
-    // venue
-    // location
-    // is_series/is_series_parent
-    // is_free (can we get
-    // is_online
-    // capacity.
+    let category: String?
+    let subcategory: String?
+    let format: String? // called "Event Type" on Eventbrite's website.
 
-     // TODO: get real data.
+//    let start: Date?
+//    let end: Date?
+
+    let location: CLLocationCoordinate2D
+
+    let photoURLs: [URL]
+
+    // Unused things we might care about.
+    let venueName: String?
+    let isOnline: Bool? // maybe not relevant since we require a location.
+    let isFree: Bool? // TODO: would it be useful to get the ticket price too? Can we?
+    let capacity: Int?
+
+    /// True if this a repeating event.
+    let isSeries: Bool?
+    let isSeriesParent: Bool?
+
+    // let bookmarkInfo => we could get this property, which gives the count of ppl who bookmarked this event.
+
     func toPlace() -> Place {
+        let categoryNames = [category, subcategory, format].flatMap { $0 }
+
         return Place(id: Event.getID(),
                      name: name,
-                     latLong: CLLocationCoordinate2D(latitude: 41.877312, longitude: -87.625575),
-                     categories: ([], []),
-                     photoURLs: [URL(string: "http://www.m-magazine.co.uk/wp-content/uploads/2016/08/Eventbrite-logo-2016.jpg")!],
+                     latLong: location,
+                     categories: (categoryNames, categoryNames), // dupe names & ids because we don't actually have IDs.
+                     photoURLs: photoURLs,
                      url: url,
-                     yelpProvider: SinglePlaceProvider(fromDictionary: [:]))
+                     yelpProvider: SinglePlaceProvider(fromDictionary: [:]),
+                     // TODO: if description is empty, the event won't have an event banner.
+                     customProvider: SinglePlaceProvider(fromDictionary: ["description": description as Any])
+        )
     }
 
     // TODO: use name & date.
