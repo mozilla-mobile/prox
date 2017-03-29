@@ -72,6 +72,7 @@ private let openHoursCalendar: Calendar = {
     // Date objects are in GMT so we set the calendar to GMT to ensure the calendar doesn't offset
     // the Date objects for time zone.
     cal.timeZone = TimeZone(secondsFromGMT: 0)!
+    cal.locale = Locale(identifier: "en_US")  // necessary for Calendar.weekdaySymbols to return long symbols.
     return cal
 }()
 
