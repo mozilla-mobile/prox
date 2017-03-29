@@ -66,9 +66,9 @@ class SinglePlaceProvider: PlaceProvider {
             latLong = nil
         }
 
-        let photos = dict["images"] as? [[String:String]]
+        let photos = dict["images"] as? [[String:String]] ?? []
 
-        photoURLs = photos.flatMap { $0["src"] } ?? []
+        photoURLs = photos.flatMap { $0["src"] }
             .flatMap { URL(string: $0) }
 
         if let urlString = dict["url"] as? String,
@@ -120,7 +120,7 @@ class CompositePlaceProvider: PlaceProvider {
     }
 
     fileprivate func pullDataForProviders(_ providers: [PlaceProvider]) {
-        providers.forEach { (provider) in
+        providers.forEach { provider in
             if id == nil {
                 id = provider.id
             }
