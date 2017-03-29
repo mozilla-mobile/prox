@@ -9,8 +9,8 @@ class GeofenceRegion {
     let location: CLLocationCoordinate2D
     let identifier: String
     let radius: CLLocationDistance
-    var onEntry: ((GeofenceRegion) -> ())? = nil
-    var onExit: ((GeofenceRegion) -> ())? = nil
+    var onEntry: ((GeofenceRegion) -> ())?
+    var onExit: ((GeofenceRegion) -> ())?
 
     private(set) lazy var region: CLCircularRegion = {
         let region = CLCircularRegion(center: self.location, radius: self.radius, identifier: self.identifier)
