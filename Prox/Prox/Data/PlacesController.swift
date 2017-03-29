@@ -45,7 +45,7 @@ class PlacesProvider {
     /// Protects allPlaces, displayedPlaces, and placeKeyMap.
     fileprivate let placesLock = NSLock()
 
-    private(set) var enabledFilters: Set<PlaceFilter> = Set([ .discover ])
+    private(set) var enabledFilters: Set<PlaceFilter> = Set([ .discover, .localevents ])
     private(set) var topRatedOnly = false
 
     init() {}
