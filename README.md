@@ -1,3 +1,8 @@
+# INACTIVE PROJECT
+This repo sticks around for reference purposes and for those who wish to learn
+from our experiment. If you're trying to compile the project, please see [the
+wiki](https://github.com/mozilla-mobile/prox/wiki).
+
 # prox
 
 ## Installation
